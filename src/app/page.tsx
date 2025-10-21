@@ -8,36 +8,30 @@ const TOKEN_NAME = 'Burning Bear';
 const TOKEN_ADDRESS = 'So1ana...111111';
 const BURN_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 
-// ---------- DEMO DATA ----------
-type Burn = {
-  id: string;
-  amount: number;
-  timestamp: number;
-  tx: string;
-};
+// ---------- TYPES ----------
+type Burn = { id: string; amount: number; timestamp: number; tx: string };
 
-function rnd(min: number, max: number) {
-  return Math.floor(min + Math.random() * (max - min + 1));
-}
-function fakeTx() {
+// ---------- HELPERS ----------
+const rnd = (min: number, max: number) =>
+  Math.floor(min + Math.random() * (max - min + 1));
+
+const fakeTx = () => {
   const c = '0123456789abcdef';
   let s = 'https://explorer.solana.com/tx/0x';
   for (let i = 0; i < 64; i++) s += c[Math.floor(Math.random() * c.length)];
   return s;
-}
+};
 
 const fmtInt = (n: number) =>
   n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+
 const fmtClock = (ms: number) => {
   const total = Math.max(0, Math.floor(ms / 1000));
-  const m = Math.floor(total / 60)
-    .toString()
-    .padStart(2, '0');
-  const s = Math.floor(total % 60)
-    .toString()
-    .padStart(2, '0');
+  const m = String(Math.floor(total / 60)).padStart(2, '0');
+  const s = String(total % 60).padStart(2, '0');
   return `${m}m ${s}s`;
 };
+
 const preciseTime = (t: number) =>
   new Date(t).toLocaleString('en-GB', {
     hour: '2-digit',
@@ -47,13 +41,13 @@ const preciseTime = (t: number) =>
     month: 'short',
   });
 
-function timeTintClass(ts: number, now: number) {
+const timeTintClass = (ts: number, now: number) => {
   const ageSec = (now - ts) / 1000;
   if (ageSec < 120) return 'text-amber-200';
   if (ageSec < 600) return 'text-amber-300';
   if (ageSec < 3600) return 'text-amber-400/90';
   return 'text-amber-400/70';
-}
+};
 
 // ---------- PAGE ----------
 export default function Page() {
@@ -62,9 +56,9 @@ export default function Page() {
   const [burns, setBurns] = useState<Burn[]>([]);
   const [displayBurned, setDisplayBurned] = useState(5_550_000);
   const [copied, setCopied] = useState(false);
-  const prevBucket = useRef<number>(-1);
+  const bucketRef = useRef<number>(-1);
 
-  // mount once
+  // mount
   useEffect(() => {
     setReady(true);
     const base = Date.now();
@@ -77,28 +71,29 @@ export default function Page() {
     setBurns(demo.sort((a, b) => b.timestamp - a.timestamp));
   }, []);
 
-  // ticking
+  // tick
   useEffect(() => {
     const int = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(int);
   }, []);
 
-  // next burn timing
+  // next burn target
   const nextBurnAt = useMemo(() => {
     const mod = now % BURN_INTERVAL_MS;
     return now + (BURN_INTERVAL_MS - mod);
   }, [now]);
+
   const timeToNext = Math.max(0, nextBurnAt - now);
 
-  // demo burn trigger
+  // demo: add a burn each interval
   useEffect(() => {
     const bucket = Math.floor(now / BURN_INTERVAL_MS);
-    if (prevBucket.current === -1) {
-      prevBucket.current = bucket;
+    if (bucketRef.current === -1) {
+      bucketRef.current = bucket;
       return;
     }
-    if (bucket !== prevBucket.current) {
-      prevBucket.current = bucket;
+    if (bucket !== bucketRef.current) {
+      bucketRef.current = bucket;
       const amt = rnd(800_000, 4_800_000);
       const burn: Burn = {
         id: `b${now}`,
@@ -115,7 +110,7 @@ export default function Page() {
     try {
       await navigator.clipboard.writeText(TOKEN_ADDRESS);
       setCopied(true);
-      setTimeout(() => setCopied(false), 1400);
+      setTimeout(() => setCopied(false), 1300);
     } catch {}
   };
 
@@ -133,16 +128,33 @@ export default function Page() {
               className="h-9 w-9 rounded-full ring-1 ring-emerald-900/40"
             />
             <div className="text-left">
-              <div className="text-sm opacity-80">{TOKEN_NAME}</div>
+              <div className="text-sm opacity-90">Burning Bear</div>
               <div className="text-[11px] opacity-60">
                 {TOKEN_SYMBOL} • Live Burn Camp
               </div>
             </div>
           </div>
 
+          <nav className="hidden md:flex items-center gap-8 text-sm opacity-90">
+            <a className="hover:opacity-100 opacity-80" href="#burns">
+              Live Burns
+            </a>
+            <a className="hover:opacity-100 opacity-80" href="#how">
+              How It Works
+            </a>
+            <a
+              className="hover:opacity-100 opacity-80"
+              href="https://t.me/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Community
+            </a>
+          </nav>
+
           <div className="flex items-center gap-3">
             <span className="hidden sm:inline text-xs px-3 py-1 rounded-full bg-emerald-900/40 ring-1 ring-emerald-800/50">
-              {TOKEN_ADDRESS.slice(0, 6)}…{TOKEN_ADDRESS.slice(-6)}
+              So1ana…111111
             </span>
             <button
               onClick={copyCA}
@@ -167,26 +179,26 @@ export default function Page() {
           >
             <source src="/img/burning-bear.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0b1712]/40 via-[#0b1712]/45 to-[#0b1712]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0b1712]/40 via-[#0b1712]/55 to-[#0b1712]" />
         </div>
 
-        <div className="mx-auto max-w-6xl px-4 pt-16 pb-20">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
+        <div className="mx-auto max-w-6xl px-4 pt-16 pb-20 text-center">
+          <h1 className="mx-auto max-w-4xl text-5xl sm:text-6xl font-semibold tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
           {/* Countdown */}
           <div className="mt-8">
-            <div className="text-xs uppercase tracking-[0.2em] text-amber-200/65">
+            <div className="text-xs uppercase tracking-[0.2em] text-amber-200/60">
               Next burn in
             </div>
-            <div className="mt-2 text-[52px] md:text-[64px] font-semibold text-amber-100/80 drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]">
+            <div className="mt-2 text-[40px] sm:text-[48px] font-semibold text-amber-100/60 drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]">
               {fmtClock(timeToNext)}
             </div>
           </div>
 
           {/* Stats */}
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
             <Stat label="Initial Supply" value="1,000,000,000" />
             <Stat label="Burned (demo)" value={fmtInt(displayBurned)} accent />
             <Stat
@@ -206,11 +218,14 @@ export default function Page() {
           ))}
         </div>
       </section>
+
+      {/* HOW IT WORKS (anchor only to keep your layout) */}
+      <section id="how" className="pb-24" />
     </main>
   );
 }
 
-// ---------- UI COMPONENTS ----------
+// ---------- UI ----------
 function Stat({
   label,
   value,
