@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'Burning Bear',
   description: 'Meet The Burning Bear — the classiest arsonist in crypto.',
   icons: {
-    icon: '/favicon.png',
+    icon: '/favicon.ico',
   },
 }
 
