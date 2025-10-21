@@ -4,6 +4,9 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Burning Bear',
   description: 'Meet The Burning Bear — the classiest arsonist in crypto.',
+  icons: {
+    icon: '/favicon.png',
+  },
 }
 
 export default function RootLayout({
