@@ -1,3 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* subtle coin-like shadow on logos/buttons */
+.shadow-ember { box-shadow: 0 6px 24px rgba(255, 184, 76, 0.2); }
