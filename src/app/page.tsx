@@ -1,40 +1,33 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import Link from 'next/link';
 
 // ---------- CONFIG ----------
 const TOKEN_SYMBOL = '$BEAR';
 const TOKEN_NAME = 'Burning Bear';
-const TOKEN_ADDRESS = 'Solana…111111'; // put real CA here
+const TOKEN_ADDRESS = 'So1ana...111111';
 const BURN_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 
-// ---------- DEMO DATA (replace with real feed later) ----------
+// ---------- DEMO DATA ----------
 type Burn = {
   id: string;
   amount: number;
-  timestamp: number; // ms epoch
+  timestamp: number;
   tx: string;
 };
 
 function rnd(min: number, max: number) {
   return Math.floor(min + Math.random() * (max - min + 1));
 }
-function fakeTx(): string {
+function fakeTx() {
   const c = '0123456789abcdef';
   let s = 'https://explorer.solana.com/tx/0x';
   for (let i = 0; i < 64; i++) s += c[Math.floor(Math.random() * c.length)];
   return s;
 }
 
-// ---------- FONTS (system fallbacks) ----------
-const headingClass = 'font-serif';
-const bodyClass = 'font-sans';
-
-// Format helpers
 const fmtInt = (n: number) =>
   n.toLocaleString('en-US', { maximumFractionDigits: 0 });
-
 const fmtClock = (ms: number) => {
   const total = Math.max(0, Math.floor(ms / 1000));
   const m = Math.floor(total / 60)
@@ -45,7 +38,6 @@ const fmtClock = (ms: number) => {
     .padStart(2, '0');
   return `${m}m ${s}s`;
 };
-
 const preciseTime = (t: number) =>
   new Date(t).toLocaleString('en-GB', {
     hour: '2-digit',
@@ -55,38 +47,26 @@ const preciseTime = (t: number) =>
     month: 'short',
   });
 
-// recency tint for burn time label
 function timeTintClass(ts: number, now: number) {
   const ageSec = (now - ts) / 1000;
-  if (ageSec < 120) return 'text-amber-200'; // <2m fresh
-  if (ageSec < 600) return 'text-amber-300'; // <10m
-  if (ageSec < 3600) return 'text-amber-400/90'; // <1h
-  return 'text-amber-400/70'; // older
+  if (ageSec < 120) return 'text-amber-200';
+  if (ageSec < 600) return 'text-amber-300';
+  if (ageSec < 3600) return 'text-amber-400/90';
+  return 'text-amber-400/70';
 }
 
 // ---------- PAGE ----------
 export default function Page() {
-  // hydrate guard avoids SSR/CSR time mismatches
-  const [ready, setReady] = useState(false);
-  useEffect(() => setReady(true), []);
-  if (!ready) return null;
-
-  // now / ticking
   const [now, setNow] = useState(Date.now());
-  const ticking = useRef<ReturnType<typeof setInterval> | null>(null);
-  useEffect(() => {
-    ticking.current && clearInterval(ticking.current);
-    ticking.current = setInterval(() => setNow(Date.now()), 1000);
-    return () => ticking.current && clearInterval(ticking.current);
-  }, []);
-
-  // demo burns
+  const [ready, setReady] = useState(false);
   const [burns, setBurns] = useState<Burn[]>([]);
-  const [displayBurned, setDisplayBurned] = useState(5_550_000); // demo counter
+  const [displayBurned, setDisplayBurned] = useState(5_550_000);
   const [copied, setCopied] = useState(false);
+  const prevBucket = useRef<number>(-1);
 
-  // seed some demo burns on mount (stable timestamps)
+  // mount once
   useEffect(() => {
+    setReady(true);
     const base = Date.now();
     const demo: Burn[] = Array.from({ length: 12 }).map((_, i) => ({
       id: `b${i}`,
@@ -97,16 +77,20 @@ export default function Page() {
     setBurns(demo.sort((a, b) => b.timestamp - a.timestamp));
   }, []);
 
-  // next burn target (aligned every 10 minutes)
+  // ticking
+  useEffect(() => {
+    const int = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(int);
+  }, []);
+
+  // next burn timing
   const nextBurnAt = useMemo(() => {
     const mod = now % BURN_INTERVAL_MS;
     return now + (BURN_INTERVAL_MS - mod);
   }, [now]);
-
   const timeToNext = Math.max(0, nextBurnAt - now);
 
-  // simulate burn when the window flips (demo)
-  const prevBucket = useRef<number>(-1);
+  // demo burn trigger
   useEffect(() => {
     const bucket = Math.floor(now / BURN_INTERVAL_MS);
     if (prevBucket.current === -1) {
@@ -115,7 +99,6 @@ export default function Page() {
     }
     if (bucket !== prevBucket.current) {
       prevBucket.current = bucket;
-      // "perform" a demo burn
       const amt = rnd(800_000, 4_800_000);
       const burn: Burn = {
         id: `b${now}`,
@@ -128,7 +111,6 @@ export default function Page() {
     }
   }, [now]);
 
-  // header copy
   const copyCA = async () => {
     try {
       await navigator.clipboard.writeText(TOKEN_ADDRESS);
@@ -137,52 +119,26 @@ export default function Page() {
     } catch {}
   };
 
-  // smooth scroll
-  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-  const goTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
+  if (!ready) return null;
 
   return (
-    <main className={`${bodyClass} min-h-screen bg-[#0b1712] text-[#f7e6c2]`}>
-      {/* --- Header (sticky) --- */}
+    <main className="min-h-screen bg-[#0b1712] text-[#f7e6c2] font-sans">
+      {/* HEADER */}
       <header className="sticky top-0 z-40 backdrop-blur bg-[#0b1712]/70 border-b border-emerald-900/30">
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-          <button
-            onClick={scrollToTop}
-            className="flex items-center gap-3 group"
-            aria-label="Back to top"
-          >
+          <div className="flex items-center gap-3">
             <img
               src="/img/coin-logo.png"
               alt="Burning Bear"
-              className="h-9 w-9 rounded-full ring-1 ring-emerald-900/40 group-hover:ring-amber-400/60 transition"
+              className="h-9 w-9 rounded-full ring-1 ring-emerald-900/40"
             />
             <div className="text-left">
-              <div className="text-sm leading-none opacity-80">{TOKEN_NAME}</div>
-              <div className="text-[11px] leading-none opacity-60">
+              <div className="text-sm opacity-80">{TOKEN_NAME}</div>
+              <div className="text-[11px] opacity-60">
                 {TOKEN_SYMBOL} • Live Burn Camp
               </div>
             </div>
-          </button>
-
-          <nav className="hidden md:flex items-center gap-8 text-amber-200/90">
-            <button onClick={() => goTo('burns')} className="hover:text-amber-200">
-              Live Burns
-            </button>
-            <button onClick={() => goTo('how')} className="hover:text-amber-200">
-              How It Works
-            </button>
-            <a
-              href="https://x.com/MorkeDrevos"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-amber-200"
-            >
-              Community
-            </a>
-          </nav>
+          </div>
 
           <div className="flex items-center gap-3">
             <span className="hidden sm:inline text-xs px-3 py-1 rounded-full bg-emerald-900/40 ring-1 ring-emerald-800/50">
@@ -198,13 +154,8 @@ export default function Page() {
         </div>
       </header>
 
-      {/* --- Hero --- */}
-      <section
-        id="hero"
-        className="relative isolate overflow-hidden"
-        aria-label="Hero"
-      >
-        {/* background video / image */}
+      {/* HERO */}
+      <section className="relative isolate overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <video
             className="h-full w-full object-cover"
@@ -216,22 +167,20 @@ export default function Page() {
           >
             <source src="/img/burning-bear.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0b1712]/40 via-[#0b1712]/45 to-[#0b1712]"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0b1712]/40 via-[#0b1712]/45 to-[#0b1712]" />
         </div>
 
         <div className="mx-auto max-w-6xl px-4 pt-16 pb-20">
-          <h1
-            className={`${headingClass} text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]`}
-          >
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
-          {/* Countdown — toned down brightness */}
+          {/* Countdown */}
           <div className="mt-8">
             <div className="text-xs uppercase tracking-[0.2em] text-amber-200/65">
               Next burn in
             </div>
-            <div className="mt-2 text-[40px] sm:text-[52px] md:text-[64px] leading-none font-semibold text-amber-100/80 drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]">
+            <div className="mt-2 text-[52px] md:text-[64px] font-semibold text-amber-100/80 drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]">
               {fmtClock(timeToNext)}
             </div>
           </div>
@@ -240,68 +189,28 @@ export default function Page() {
           <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
             <Stat label="Initial Supply" value="1,000,000,000" />
             <Stat label="Burned (demo)" value={fmtInt(displayBurned)} accent />
-            <Stat label="Current Supply" value={fmtInt(1_000_000_000 - displayBurned)} />
+            <Stat
+              label="Current Supply"
+              value={fmtInt(1_000_000_000 - displayBurned)}
+            />
           </div>
-
-          {/* Removed the extra Copy CA under stats per request */}
         </div>
       </section>
 
-      {/* --- Live Burns --- */}
+      {/* LIVE BURNS */}
       <section id="burns" className="mx-auto max-w-6xl px-4 py-16">
-        <h2 className={`${headingClass} text-3xl sm:text-4xl font-semibold`}>
-          Live Burn Log
-        </h2>
-        <p className="mt-2 text-sm text-amber-200/70">
-          Demo data — TX links open explorer.
-        </p>
-
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-5">
-          {burns.slice(0, 12).map((b) => (
+        <h2 className="text-4xl font-semibold mb-6">Live Burn Log</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {burns.map((b) => (
             <BurnCard key={b.id} burn={b} now={now} />
           ))}
         </div>
       </section>
-
-      {/* --- How it works --- */}
-      <section id="how" className="mx-auto max-w-6xl px-4 pb-24">
-        <h2 className={`${headingClass} text-3xl sm:text-4xl font-semibold`}>
-          How it works
-        </h2>
-
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <InfoCard title="80% → Buy & Burn">
-            Creator fees auto-buy {TOKEN_SYMBOL} and burn them live — the campfire never
-            sleeps.
-          </InfoCard>
-          <InfoCard title="20% → Team + Marketing">
-            Fuels growth, creators, memes, and keeping the vibes bright.
-          </InfoCard>
-          <InfoCard title="Transparent">
-            Every burn is posted with TX link & timestamp. Public wallets, public camp.
-          </InfoCard>
-        </div>
-
-        <p className="mt-8 text-sm text-amber-200/80 leading-relaxed max-w-3xl">
-          Once upon a bear market, one dapper bear decided to fight the winter the only
-          way he knew how, with fire. 🔥 Now every transaction adds more logs to the
-          blaze. No fake hype. Just steady, satisfying burns.
-        </p>
-      </section>
-
-      {/* --- Footer --- */}
-      <footer className="border-t border-emerald-900/30 bg-[#0b1712]/80">
-        <div className="mx-auto max-w-6xl px-4 py-10 text-center text-sm text-amber-200/75">
-          © {new Date().getFullYear()} The Burning Bear — The Classiest Arsonist in Crypto
-          • {TOKEN_SYMBOL} is a meme token with no intrinsic value or expectation of
-          financial return. Entertainment only. Always DYOR.
-        </div>
-      </footer>
     </main>
   );
 }
 
-// ---------- UI Bits ----------
+// ---------- UI COMPONENTS ----------
 function Stat({
   label,
   value,
@@ -314,20 +223,15 @@ function Stat({
   return (
     <div
       className={`p-5 rounded-2xl border ${
-        accent ? 'border-amber-500/20 bg-amber-500/5' : 'border-emerald-900/40 bg-emerald-900/20'
+        accent
+          ? 'border-amber-500/20 bg-amber-500/5'
+          : 'border-emerald-900/40 bg-emerald-900/20'
       }`}
     >
-      <div className="text-[11px] uppercase tracking-[0.2em] opacity-70">{label}</div>
+      <div className="text-[11px] uppercase tracking-[0.2em] opacity-70">
+        {label}
+      </div>
       <div className="mt-2 text-2xl sm:text-3xl font-semibold">{value}</div>
-    </div>
-  );
-}
-
-function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="p-5 rounded-2xl bg-emerald-900/15 border border-emerald-900/40">
-      <div className="font-semibold text-amber-100">{title}</div>
-      <div className="text-sm mt-2 opacity-85">{children}</div>
     </div>
   );
 }
@@ -336,13 +240,11 @@ function BurnCard({ burn, now }: { burn: Burn; now: number }) {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-emerald-900/40 bg-emerald-950/60">
       <div className="p-5 flex items-start gap-4">
-        <div className="shrink-0">
-          <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/20">
-            <span className="text-2xl">🔥</span>
-          </span>
-        </div>
+        <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/20">
+          <span className="text-2xl">🔥</span>
+        </span>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between">
             <div className="text-amber-100 text-lg font-semibold truncate">
               Burn • {fmtInt(burn.amount)} BEAR
             </div>
@@ -355,17 +257,15 @@ function BurnCard({ burn, now }: { burn: Burn; now: number }) {
               TX
             </a>
           </div>
-
-          {/* precise timestamp + recency tint */}
           <div className={`mt-1 text-sm ${timeTintClass(burn.timestamp, now)}`}>
             {preciseTime(burn.timestamp)}
           </div>
-
-          {/* progress bar (decorative) */}
           <div className="mt-4 h-3 rounded-full bg-emerald-900/50 overflow-hidden ring-1 ring-emerald-900/40">
             <div
               className="h-full bg-gradient-to-r from-amber-600 to-emerald-600"
-              style={{ width: `${30 + ((burn.amount % 70_000) / 70_000) * 60}%` }}
+              style={{
+                width: `${30 + ((burn.amount % 70_000) / 70_000) * 60}%`,
+              }}
             />
           </div>
         </div>
