@@ -72,16 +72,16 @@ function fmtAgo(now: number, ts: number) {
 ========================= */
 export default function Page() {
   const [now, setNow] = useState<number>(Date.now());
+  const [ready, setReady] = useState(false);
   const ticking = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
+    setReady(true);
     ticking.current && clearInterval(ticking.current);
     ticking.current = setInterval(() => setNow(Date.now()), 1000);
     return () => {
-      if (ticking.current) {
-        clearInterval(ticking.current);
-        ticking.current = null;
-      }
+      ticking.current && clearInterval(ticking.current);
+      ticking.current = null;
     };
   }, []);
 
@@ -116,7 +116,6 @@ export default function Page() {
             <a href="#community" className="hover:text-amber-300">Community</a>
           </nav>
 
-          {/* Keep ONLY this Copy CA (header). */}
           <div className="flex items-center gap-2">
             <span className="hidden rounded-full bg-emerald-900/40 px-3 py-1 text-xs text-emerald-300 md:inline">
               {TOKEN_ADDRESS}
@@ -154,7 +153,7 @@ export default function Page() {
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
-          {/* Countdown (slightly toned down) */}
+          {/* Countdown toned down */}
           <div className="mt-2 text-sm uppercase tracking-[0.25em] text-white/55">Next burn in</div>
           <div className="text-4xl font-extrabold text-white/85 sm:text-5xl">
             {mins}m {secs}s
@@ -166,8 +165,6 @@ export default function Page() {
             <Stat label="Burned (demo)" value={fmtInt(BURNED_DEMO)} />
             <Stat label="Current Supply" value={fmtInt(CURRENT_SUPPLY)} />
           </div>
-
-          {/* NOTE: Removed old extra Copy CA that was here previously. */}
         </div>
       </section>
 
@@ -193,7 +190,7 @@ export default function Page() {
         </ul>
       </section>
 
-      {/* Footer */}
+      {/* Footer restored */}
       <footer id="community" className="border-t border-white/10 bg-[#0d1a14]">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-6 sm:flex-row">
           <div className="text-sm text-white/50">
@@ -220,7 +217,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function BurnCard({ burn, now }: { burn: Burn; now: number; index: number }) {
+function BurnCard({ burn, now, index }: { burn: Burn; now: number; index: number }) {
   const ageMs = Math.max(0, now - burn.timestamp);
   const ageMin = ageMs / 60_000;
   const brightness = Math.max(0.65, 1 - ageMin / 180); // fades over ~3h
