@@ -76,15 +76,11 @@ function seedBurns(): Burn[] {
 export default function Page() {
   const [burns, setBurns] = useState<Burn[]>(() => seedBurns());
   const [now, setNow] = useState(Date.now());
-  const ticking = useRef<NodeJS.Timeout | null>(null);
-
   // tick every second
-  useEffect(() => {
-    ticking.current && clearInterval(ticking.current);
-    ticking.current = setInterval(() => setNow(Date.now()), 1000);
-    return () => ticking.current && clearInterval(ticking.current);
-  }, []);
-
+useEffect(() => {
+  const id = setInterval(() => setNow(Date.now()), 1000);
+  return () => clearInterval(id);
+}, []);
   // demo burns
   useEffect(() => {
     const id = setInterval(() => {
