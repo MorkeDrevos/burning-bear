@@ -1,9 +1,19 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+import './globals.css'
+import type { Metadata } from 'next'
 
-html, body {
-  background-color: #0b1712;
-  color: #f7efe2;
-  font-family: system-ui, sans-serif;
+export const metadata: Metadata = {
+  title: 'Burning Bear',
+  description: 'Meet The Burning Bear — the classiest arsonist in crypto.',
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body className="bg-[#0b1712] text-[#f7e6c2] font-sans">{children}</body>
+    </html>
+  )
 }
