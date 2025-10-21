@@ -1,328 +1,375 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 
-// ---- CONFIG ----
-const TOKEN_SYMBOL = 'BEAR';
-const TOKEN_NAME = 'The Burning Bear';
-const TOKEN_ADDRESS = 'So1ana111111111111111111111111111111111111111'; // put real CA here
-const INITIAL_SUPPLY = 1_000_000_000; // 1B
-const BURN_INTERVAL_MS = 600_000; // 10 minutes
+// ---------- CONFIG ----------
+const TOKEN_SYMBOL = '$BEAR';
+const TOKEN_NAME = 'Burning Bear';
+const TOKEN_ADDRESS = 'Solana…111111'; // put real CA here
+const BURN_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 
-// ---- helpers ----
-const rr = (min: number, max: number) => Math.floor(min + Math.random() * (max - min + 1));
-const fmt = (n: number) => n.toLocaleString();
-const fakeTx = () => {
-  const c = '0123456789abcdef';
-  let s = '0x';
-  for (let i = 0; i < 64; i++) s += c[(Math.random() * c.length) | 0];
-  return s;
+// ---------- DEMO DATA (replace with real feed later) ----------
+type Burn = {
+  id: string;
+  amount: number;
+  timestamp: number; // ms epoch
+  tx: string;
 };
 
-type Burn = { id: string; ts: number; amount: number; tx: string };
+function rnd(min: number, max: number) {
+  return Math.floor(min + Math.random() * (max - min + 1));
+}
+function fakeTx(): string {
+  const c = '0123456789abcdef';
+  let s = 'https://explorer.solana.com/tx/0x';
+  for (let i = 0; i < 64; i++) s += c[Math.floor(Math.random() * c.length)];
+  return s;
+}
 
+// ---------- FONTS (system fallbacks) ----------
+const headingClass = 'font-serif';
+const bodyClass = 'font-sans';
+
+// Format helpers
+const fmtInt = (n: number) =>
+  n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+
+const fmtClock = (ms: number) => {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const m = Math.floor(total / 60)
+    .toString()
+    .padStart(2, '0');
+  const s = Math.floor(total % 60)
+    .toString()
+    .padStart(2, '0');
+  return `${m}m ${s}s`;
+};
+
+const preciseTime = (t: number) =>
+  new Date(t).toLocaleString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    day: '2-digit',
+    month: 'short',
+  });
+
+// recency tint for burn time label
+function timeTintClass(ts: number, now: number) {
+  const ageSec = (now - ts) / 1000;
+  if (ageSec < 120) return 'text-amber-200'; // <2m fresh
+  if (ageSec < 600) return 'text-amber-300'; // <10m
+  if (ageSec < 3600) return 'text-amber-400/90'; // <1h
+  return 'text-amber-400/70'; // older
+}
+
+// ---------- PAGE ----------
 export default function Page() {
-  // hydration guard
+  // hydrate guard avoids SSR/CSR time mismatches
   const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
+  if (!ready) return null;
 
-  // countdown
-  const [now, setNow] = useState(0);
-  const [nextAt, setNextAt] = useState<number>(0);
-  // ✅ CORRECT typing for browser timers:
+  // now / ticking
+  const [now, setNow] = useState(Date.now());
   const ticking = useRef<ReturnType<typeof setInterval> | null>(null);
-  const burning = useRef(false);
-
-  // demo burn state
-  const [burns, setBurns] = useState<Burn[]>([]);
-  const [totalBurned, setTotalBurned] = useState(0);
-  const [displayBurned, setDisplayBurned] = useState(0);
-
-  // copy UX
-  const [copied, setCopied] = useState(false);
-
-  // init
   useEffect(() => {
-    setReady(true);
-    const t = Date.now();
-    setNow(t);
-    setNextAt(t + BURN_INTERVAL_MS);
-
-    const seed: Burn[] = [
-      { id: 'seed_1', ts: t - 2 * 3600_000, amount: 3_100_000, tx: fakeTx() },
-      { id: 'seed_2', ts: t - 1 * 3600_000, amount: 2_450_000, tx: fakeTx() },
-    ];
-    setBurns(seed);
-    const seeded = seed.reduce((s, b) => s + b.amount, 0);
-    setTotalBurned(seeded);
-    setDisplayBurned(seeded);
+    ticking.current && clearInterval(ticking.current);
+    ticking.current = setInterval(() => setNow(Date.now()), 1000);
+    return () => ticking.current && clearInterval(ticking.current);
   }, []);
 
-  // 1s clock
+  // demo burns
+  const [burns, setBurns] = useState<Burn[]>([]);
+  const [displayBurned, setDisplayBurned] = useState(5_550_000); // demo counter
+  const [copied, setCopied] = useState(false);
+
+  // seed some demo burns on mount (stable timestamps)
   useEffect(() => {
-    if (!ready) return;
-    if (ticking.current !== null) clearInterval(ticking.current);
-    ticking.current = setInterval(() => setNow(Date.now()), 1000);
-    return () => {
-      if (ticking.current !== null) clearInterval(ticking.current);
-      ticking.current = null;
-    };
-  }, [ready]);
-
-  // smooth number animation
-  useEffect(() => {
-    if (!ready) return;
-    let raf = 0;
-    const step = () => {
-      setDisplayBurned((cur) => {
-        if (cur === totalBurned) return cur;
-        const diff = totalBurned - cur;
-        const delta = Math.max(1, Math.round(diff * 0.16));
-        return cur + Math.min(diff, delta);
-      });
-      raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [ready, totalBurned]);
-
-  // auto burn at 0 (demo)
-  useEffect(() => {
-    if (!ready || !nextAt) return;
-    if (!burning.current && now >= nextAt) doBurn(false);
-  }, [ready, now, nextAt]);
-
-  const doBurn = (manual: boolean) => {
-    if (burning.current && !manual) return;
-    burning.current = true;
-
-    const n = {
-      id: `b_${Date.now()}`,
-      ts: Date.now(),
-      amount: rr(900_000, 4_800_000),
+    const base = Date.now();
+    const demo: Burn[] = Array.from({ length: 12 }).map((_, i) => ({
+      id: `b${i}`,
+      amount: rnd(700_000, 4_600_000),
+      timestamp: base - (i + 1) * rnd(60_000, 15 * 60_000),
       tx: fakeTx(),
-    };
-    setBurns((p) => [n, ...p].slice(0, 18));
-    setTotalBurned((t) => t + n.amount);
-    setNextAt(Date.now() + BURN_INTERVAL_MS);
+    }));
+    setBurns(demo.sort((a, b) => b.timestamp - a.timestamp));
+  }, []);
 
-    setTimeout(() => (burning.current = false), 60);
-  };
+  // next burn target (aligned every 10 minutes)
+  const nextBurnAt = useMemo(() => {
+    const mod = now % BURN_INTERVAL_MS;
+    return now + (BURN_INTERVAL_MS - mod);
+  }, [now]);
 
-  const countdown = useMemo(() => {
-    const target = nextAt || Date.now() + BURN_INTERVAL_MS;
-    const diff = Math.max(0, target - now);
-    const m = Math.floor(diff / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    return { m, s };
-  }, [nextAt, now]);
+  const timeToNext = Math.max(0, nextBurnAt - now);
 
-  const timeAgo = (ts: number) => {
-    const d = Math.floor((Date.now() - ts) / 1000);
-    if (d < 60) return `${d}s ago`;
-    if (d < 3600) return `${Math.floor(d / 60)}m ago`;
-    if (d < 86400) return `${Math.floor(d / 3600)}h ago`;
-    return `${Math.floor(d / 86400)}d ago`;
-  };
+  // simulate burn when the window flips (demo)
+  const prevBucket = useRef<number>(-1);
+  useEffect(() => {
+    const bucket = Math.floor(now / BURN_INTERVAL_MS);
+    if (prevBucket.current === -1) {
+      prevBucket.current = bucket;
+      return;
+    }
+    if (bucket !== prevBucket.current) {
+      prevBucket.current = bucket;
+      // "perform" a demo burn
+      const amt = rnd(800_000, 4_800_000);
+      const burn: Burn = {
+        id: `b${now}`,
+        amount: amt,
+        timestamp: now,
+        tx: fakeTx(),
+      };
+      setBurns((b) => [burn, ...b].slice(0, 24));
+      setDisplayBurned((x) => x + amt);
+    }
+  }, [now]);
 
+  // header copy
   const copyCA = async () => {
-    await navigator.clipboard.writeText(TOKEN_ADDRESS);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1200);
+    try {
+      await navigator.clipboard.writeText(TOKEN_ADDRESS);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1400);
+    } catch {}
   };
 
-  if (!ready) return <div style={{ height: '100vh', background: '#0b1712' }} />;
-
-  const currentSupplyExact = Math.max(0, INITIAL_SUPPLY - totalBurned);
-  const currentSupplyDisplay = Math.max(0, INITIAL_SUPPLY - displayBurned);
+  // smooth scroll
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  const goTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
-    <main className="min-h-screen bg-[#0b1712] text-[#f7efe2]">
-      {/* HEADER */}
-      <header className="sticky top-0 z-50 backdrop-blur bg-[#0b1712]/70 border-b border-[#1c3a2e]">
-        <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
-          <a href="#" className="flex items-center gap-3 hover:opacity-90 transition">
-            <div className="h-12 w-12 rounded-full overflow-hidden ring-2 ring-[#ffcc7a] bg-[#2a5a43]">
-              <img src="/img/coin-logo.png" alt="Burning Bear coin" className="w-full h-full object-cover" />
+    <main className={`${bodyClass} min-h-screen bg-[#0b1712] text-[#f7e6c2]`}>
+      {/* --- Header (sticky) --- */}
+      <header className="sticky top-0 z-40 backdrop-blur bg-[#0b1712]/70 border-b border-emerald-900/30">
+        <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
+          <button
+            onClick={scrollToTop}
+            className="flex items-center gap-3 group"
+            aria-label="Back to top"
+          >
+            <img
+              src="/img/coin-logo.png"
+              alt="Burning Bear"
+              className="h-9 w-9 rounded-full ring-1 ring-emerald-900/40 group-hover:ring-amber-400/60 transition"
+            />
+            <div className="text-left">
+              <div className="text-sm leading-none opacity-80">{TOKEN_NAME}</div>
+              <div className="text-[11px] leading-none opacity-60">
+                {TOKEN_SYMBOL} • Live Burn Camp
+              </div>
             </div>
-            <div className="leading-tight">
-              <div className="text-xl md:text-2xl font-semibold">{TOKEN_NAME}</div>
-              <div className="text-xs text-[#cbd8cf]">${TOKEN_SYMBOL} • Live Burn Camp</div>
-            </div>
-          </a>
+          </button>
 
-          <nav className="hidden md:flex items-center gap-8">
-            <a href="#live" className="text-[#ffcc7a] hover:drop-shadow-[0_0_6px_rgba(255,204,122,.6)]">Live Burns</a>
-            <a href="#how" className="text-[#ffcc7a] hover:drop-shadow-[0_0_6px_rgba(255,204,122,.6)]">How It Works</a>
+          <nav className="hidden md:flex items-center gap-8 text-amber-200/90">
+            <button onClick={() => goTo('burns')} className="hover:text-amber-200">
+              Live Burns
+            </button>
+            <button onClick={() => goTo('how')} className="hover:text-amber-200">
+              How It Works
+            </button>
             <a
               href="https://x.com/MorkeDrevos"
               target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#ffcc7a] hover:drop-shadow-[0_0_6px_rgba(255,204,122,.6)]"
+              rel="noreferrer"
+              className="hover:text-amber-200"
             >
               Community
             </a>
           </nav>
 
-          <div className="hidden sm:flex items-center gap-2 rounded-full bg-[#11281e] border border-[#2b4a39] px-4 py-2">
-            <code className="text-xs md:text-sm text-[#ffe5bd] tracking-wide">
+          <div className="flex items-center gap-3">
+            <span className="hidden sm:inline text-xs px-3 py-1 rounded-full bg-emerald-900/40 ring-1 ring-emerald-800/50">
               {TOKEN_ADDRESS.slice(0, 6)}…{TOKEN_ADDRESS.slice(-6)}
-            </code>
+            </span>
             <button
               onClick={copyCA}
-              className="px-3 py-1.5 rounded-full bg-[#ffcc7a] text-[#0b1712] text-xs md:text-sm font-bold"
+              className="rounded-full px-4 py-2 text-sm bg-amber-300 text-[#0b1712] hover:bg-amber-200 transition"
             >
               {copied ? 'Copied!' : 'Copy CA'}
             </button>
           </div>
         </div>
-        <div className="h-1 bg-[linear-gradient(90deg,#214e3c,#3e7a5f)]" />
       </header>
 
-      {/* HERO (lowercase video path + solid fallback) */}
-      <section className="relative overflow-hidden bg-[#0b1712]">
-        <img
-          src="/img/burning-bear-frame.jpg"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover opacity-60"
-          aria-hidden
-        />
-        <video
-          src="/img/burning-bear.mp4"
-          poster="/img/burning-bear-frame.jpg"
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover brightness-[0.55]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0b1712]/40 via-[#0b1712]/60 to-[#0b1712]/85" />
+      {/* --- Hero --- */}
+      <section
+        id="hero"
+        className="relative isolate overflow-hidden"
+        aria-label="Hero"
+      >
+        {/* background video / image */}
+        <div className="absolute inset-0 -z-10">
+          <video
+            className="h-full w-full object-cover"
+            autoPlay
+            muted
+            loop
+            playsInline
+            poster="/img/burning-bear-frame.jpg"
+          >
+            <source src="/img/burning-bear.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0b1712]/40 via-[#0b1712]/45 to-[#0b1712]"></div>
+        </div>
 
-        <div className="relative z-10 flex items-center justify-center min-h-[700px] text-center px-6">
-          <div className="w-full max-w-6xl mx-auto backdrop-blur-[1.2px] bg-[#0b1712]/35 p-6 md:p-8 rounded-3xl">
-            <h1 className="text-[34px] md:text-[56px] leading-[1.15] text-[#FFE7B0] font-semibold drop-shadow-[0_4px_18px_rgba(255,172,70,.35)]">
-              Meet <span className="text-[#FFD27F]">The Burning Bear</span> —{' '}
-              <span className="text-[#EFC97E]/90">the classiest arsonist in crypto.</span>
-            </h1>
+        <div className="mx-auto max-w-6xl px-4 pt-16 pb-20">
+          <h1
+            className={`${headingClass} text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]`}
+          >
+            Meet The Burning Bear — the classiest arsonist in crypto.
+          </h1>
 
-            <div className="mt-6 flex flex-col items-center gap-1">
-              <span className="text-xs md:text-sm tracking-widest uppercase text-white/85">Next burn in</span>
-              <div className="text-[42px] md:text-[66px] leading-none text-white font-bold"
-                   style={{ textShadow: '0 0 18px rgba(255,255,255,.35)' }}>
-                {String(countdown.m).padStart(2, '0')}m {String(countdown.s).padStart(2, '0')}s
-              </div>
+          {/* Countdown — toned down brightness */}
+          <div className="mt-8">
+            <div className="text-xs uppercase tracking-[0.2em] text-amber-200/65">
+              Next burn in
             </div>
-
-            <div className="mt-7 grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
-              <Stat label="Initial Supply" value={INITIAL_SUPPLY} />
-              <Stat label="Burned (demo)" value={displayBurned} accent />
-              <Stat label="Current Supply" value={currentSupplyDisplay} />
-            </div>
-
-            <div className="mt-6">
-              <button
-                onClick={copyCA}
-                className="rounded-full bg-[#ffcc7a] hover:bg-[#ffc35f] text-[#0b1712] font-bold px-6 py-3"
-                style={{ boxShadow: '0 18px 60px rgba(255,176,96,0.18)' }}
-              >
-                {copied ? 'Copied!' : 'Copy CA'}
-              </button>
+            <div className="mt-2 text-[40px] sm:text-[52px] md:text-[64px] leading-none font-semibold text-amber-100/80 drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]">
+              {fmtClock(timeToNext)}
             </div>
           </div>
+
+          {/* Stats */}
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Stat label="Initial Supply" value="1,000,000,000" />
+            <Stat label="Burned (demo)" value={fmtInt(displayBurned)} accent />
+            <Stat label="Current Supply" value={fmtInt(1_000_000_000 - displayBurned)} />
+          </div>
+
+          {/* Removed the extra Copy CA under stats per request */}
         </div>
       </section>
 
-      {/* LIVE BURN LOG */}
-      <section id="live" className="mx-auto max-w-7xl px-4 py-10 pb-24">
-        <div className="flex items-center justify-between">
-          <h3 className="text-3xl md:text-4xl font-semibold">Live Burn Log</h3>
-          <button
-            onClick={() => doBurn(true)}
-            className="text-xs md:text-sm px-3 py-2 rounded-lg bg-[#214e3c] border border-[#2b6a52] text-[#ffe0a6]"
-          >
-            Simulate Burn
-          </button>
-        </div>
-        <p className="mt-2 text-sm text-[#cfe3d8]">Demo data — TX links open explorer.</p>
+      {/* --- Live Burns --- */}
+      <section id="burns" className="mx-auto max-w-6xl px-4 py-16">
+        <h2 className={`${headingClass} text-3xl sm:text-4xl font-semibold`}>
+          Live Burn Log
+        </h2>
+        <p className="mt-2 text-sm text-amber-200/70">
+          Demo data — TX links open explorer.
+        </p>
 
-        <div className="mt-6 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {burns.map((b) => (
-            <article key={b.id} className="bg-[#091711]/80 rounded-2xl p-4 border border-[#21422f]"
-                     style={{ boxShadow: '0 18px 60px rgba(255,176,96,0.18)' }}>
-              <div className="flex items-start gap-3">
-                <div className="h-12 w-12 rounded-full bg-[radial-gradient(circle,#ffcc7a,#ff7a4b)] grid place-items-center text-[#0b1712] font-extrabold">
-                  🔥
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm text-[#ffcc7a] font-semibold">
-                    Burn • {fmt(b.amount)} {TOKEN_SYMBOL}
-                  </div>
-                  <div className="mt-1 text-xs text-[#cfe3d8]">{timeAgo(b.ts)}</div>
-                </div>
-                <a
-                  href={`https://explorer.solana.com/tx/${b.tx}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-xs text-[#ffcc7a] underline"
-                >
-                  TX
-                </a>
-              </div>
-              <div className="mt-3 h-2 rounded-full bg-[#0c2219] overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-[#ffb36b] to-[#ff7a4b] animate-[pulse_1.8s_ease-in-out_infinite]"
-                  style={{ width: `${Math.min(100, Math.round((b.amount / 4_800_000) * 100))}%` }}
-                />
-              </div>
-            </article>
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-5">
+          {burns.slice(0, 12).map((b) => (
+            <BurnCard key={b.id} burn={b} now={now} />
           ))}
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section id="how" className="mx-auto max-w-7xl px-4 pb-16 pt-2">
-        <h3 className="text-3xl md:text-4xl font-semibold">How it works</h3>
-        <div className="mt-4 grid md:grid-cols-3 gap-4 text-[#e9f3ec]">
-          <InfoCard title="80% → Buy & Burn">Creator fees auto-buy $BEAR and burn them live — the campfire never sleeps.</InfoCard>
-          <InfoCard title="20% → Team + Marketing">Fuels growth, creators, memes, and keeping the vibes bright.</InfoCard>
-          <InfoCard title="Transparent">Every burn is posted with TX link & timestamp. Public wallets, public camp.</InfoCard>
+      {/* --- How it works --- */}
+      <section id="how" className="mx-auto max-w-6xl px-4 pb-24">
+        <h2 className={`${headingClass} text-3xl sm:text-4xl font-semibold`}>
+          How it works
+        </h2>
+
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <InfoCard title="80% → Buy & Burn">
+            Creator fees auto-buy {TOKEN_SYMBOL} and burn them live — the campfire never
+            sleeps.
+          </InfoCard>
+          <InfoCard title="20% → Team + Marketing">
+            Fuels growth, creators, memes, and keeping the vibes bright.
+          </InfoCard>
+          <InfoCard title="Transparent">
+            Every burn is posted with TX link & timestamp. Public wallets, public camp.
+          </InfoCard>
         </div>
+
+        <p className="mt-8 text-sm text-amber-200/80 leading-relaxed max-w-3xl">
+          Once upon a bear market, one dapper bear decided to fight the winter the only
+          way he knew how, with fire. 🔥 Now every transaction adds more logs to the
+          blaze. No fake hype. Just steady, satisfying burns.
+        </p>
       </section>
 
-      {/* FOOTER */}
-      <footer className="border-t border-[#183228] bg-[#0b1712] text-center">
-        <div className="mx-auto max-w-3xl px-4 py-10 text-sm text-[#cbd8cf] space-y-4 leading-relaxed">
-          <p className="italic text-[#e9cfa2]">
-            Once upon a bear market, one dapper bear decided to fight the winter the only way he knew how, with fire. 🔥
-            Now every transaction adds more logs to the blaze. No fake hype. Just steady, satisfying burns.
-            <br/><br/>
-            ${TOKEN_SYMBOL} is a meme token with no intrinsic value or expectation of financial return.
-            Entertainment only. Always DYOR.
-          </p>
-          <div className="text-xs mt-6 opacity-75">
-            © {new Date().getFullYear()} {TOKEN_NAME} — The Classiest Arsonist in Crypto
-          </div>
+      {/* --- Footer --- */}
+      <footer className="border-t border-emerald-900/30 bg-[#0b1712]/80">
+        <div className="mx-auto max-w-6xl px-4 py-10 text-center text-sm text-amber-200/75">
+          © {new Date().getFullYear()} The Burning Bear — The Classiest Arsonist in Crypto
+          • {TOKEN_SYMBOL} is a meme token with no intrinsic value or expectation of
+          financial return. Entertainment only. Always DYOR.
         </div>
       </footer>
     </main>
   );
 }
 
-function Stat({ label, value, accent = false }: { label: string; value: number; accent?: boolean }) {
+// ---------- UI Bits ----------
+function Stat({
+  label,
+  value,
+  accent = false,
+}: {
+  label: string;
+  value: string | number;
+  accent?: boolean;
+}) {
   return (
-    <div className={`p-4 rounded-2xl border ${accent ? 'bg-[#120d05]/80 border-[#3d2a12]' : 'bg-[#091711]/80 border-[#21422f]'}`}>
-      <div className="text-[11px] uppercase tracking-widest text-[#e9cfa2]/80">{label}</div>
-      <div className={`mt-1 ${accent ? 'text-[#ffd79a]' : 'text-[#ffe0a6]'} text-[22px] md:text-[26px] font-semibold`}>
-        {fmt(value)}
-      </div>
+    <div
+      className={`p-5 rounded-2xl border ${
+        accent ? 'border-amber-500/20 bg-amber-500/5' : 'border-emerald-900/40 bg-emerald-900/20'
+      }`}
+    >
+      <div className="text-[11px] uppercase tracking-[0.2em] opacity-70">{label}</div>
+      <div className="mt-2 text-2xl sm:text-3xl font-semibold">{value}</div>
     </div>
   );
 }
 
 function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="p-5 rounded-xl bg-[#081f16] border border-[#183228]">
-      <div className="font-semibold">{title}</div>
-      <div className="text-sm mt-2">{children}</div>
+    <div className="p-5 rounded-2xl bg-emerald-900/15 border border-emerald-900/40">
+      <div className="font-semibold text-amber-100">{title}</div>
+      <div className="text-sm mt-2 opacity-85">{children}</div>
+    </div>
+  );
+}
+
+function BurnCard({ burn, now }: { burn: Burn; now: number }) {
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-emerald-900/40 bg-emerald-950/60">
+      <div className="p-5 flex items-start gap-4">
+        <div className="shrink-0">
+          <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/20">
+            <span className="text-2xl">🔥</span>
+          </span>
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-3">
+            <div className="text-amber-100 text-lg font-semibold truncate">
+              Burn • {fmtInt(burn.amount)} BEAR
+            </div>
+            <a
+              href={burn.tx}
+              target="_blank"
+              rel="noreferrer"
+              className="text-amber-200/90 underline underline-offset-4 hover:text-amber-200"
+            >
+              TX
+            </a>
+          </div>
+
+          {/* precise timestamp + recency tint */}
+          <div className={`mt-1 text-sm ${timeTintClass(burn.timestamp, now)}`}>
+            {preciseTime(burn.timestamp)}
+          </div>
+
+          {/* progress bar (decorative) */}
+          <div className="mt-4 h-3 rounded-full bg-emerald-900/50 overflow-hidden ring-1 ring-emerald-900/40">
+            <div
+              className="h-full bg-gradient-to-r from-amber-600 to-emerald-600"
+              style={{ width: `${30 + ((burn.amount % 70_000) / 70_000) * 60}%` }}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
