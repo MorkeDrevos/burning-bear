@@ -178,51 +178,51 @@ export default function Page() {
         <div className="h-1 bg-[linear-gradient(90deg,#214e3c,#3e7a5f)]" />
       </header>
 
-      {/* HERO */}
-      <section className="relative overflow-hidden">
-        <video
-          src="/img/burning-bear.MP4"
-          poster="/img/burning-bear-frame.jpg"
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-[680px] object-cover brightness-[0.55]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0b1712]/40 via-[#0b1712]/55 to-[#0b1712]/80" />
+{/* HERO */}
+<section className="relative overflow-hidden bg-[#0b1712]">
+  <video
+    src="/img/burning-bear.mp4"  // 👈 rename file in GitHub to lowercase .mp4
+    poster="/img/burning-bear-frame.jpg"
+    autoPlay
+    muted
+    loop
+    playsInline
+    className="absolute inset-0 w-full h-full object-cover brightness-[0.55]"
+  />
+  <div className="absolute inset-0 bg-gradient-to-b from-[#0b1712]/40 via-[#0b1712]/60 to-[#0b1712]/85" />
 
-        <div className="absolute inset-0 flex items-center justify-center text-center px-6">
-          <div className="w-full max-w-6xl mx-auto backdrop-blur-[1.2px] bg-[#0b1712]/35 p-6 md:p-8 rounded-3xl">
-            <h1 className="text-[34px] md:text-[56px] leading-[1.15] text-[#FFE7B0] font-semibold drop-shadow-[0_4px_18px_rgba(255,172,70,.35)]">
-              Meet <span className="text-[#FFD27F]">The Burning Bear</span> —{' '}
-              <span className="text-[#EFC97E]/90">the classiest arsonist in crypto.</span>
-            </h1>
+  <div className="relative z-10 flex items-center justify-center min-h-[700px] text-center px-6">
+    <div className="w-full max-w-6xl mx-auto backdrop-blur-[1.2px] bg-[#0b1712]/35 p-6 md:p-8 rounded-3xl">
+      <h1 className="text-[34px] md:text-[56px] leading-[1.15] text-[#FFE7B0] font-semibold drop-shadow-[0_4px_18px_rgba(255,172,70,.35)]">
+        Meet <span className="text-[#FFD27F]">The Burning Bear</span> —{' '}
+        <span className="text-[#EFC97E]/90">the classiest arsonist in crypto.</span>
+      </h1>
 
-            {/* Countdown (whiter & bigger) */}
-            <div className="mt-6 flex flex-col items-center gap-1">
-              <span className="text-xs md:text-sm tracking-widest uppercase text-white/85">Next burn in</span>
-              <div className="text-ember text-[42px] md:text-[66px] leading-none text-white font-bold">
-                {String(countdown.m).padStart(2, '0')}m {String(countdown.s).padStart(2, '0')}s
-              </div>
-            </div>
-
-            <div className="mt-7 grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
-              <Stat label="Initial Supply" value={INITIAL_SUPPLY} />
-              <Stat label="Burned (demo)" value={displayBurned} accent />
-              <Stat label="Current Supply" value={currentSupplyDisplay} />
-            </div>
-
-            <div className="mt-6">
-              <button
-                onClick={copyCA}
-                className="rounded-full bg-[#ffcc7a] hover:bg-[#ffc35f] text-[#0b1712] font-bold px-6 py-3 shadow-ember"
-              >
-                {copied ? 'Copied!' : 'Copy CA'}
-              </button>
-            </div>
-          </div>
+      {/* Countdown (whiter & bigger) */}
+      <div className="mt-6 flex flex-col items-center gap-1">
+        <span className="text-xs md:text-sm tracking-widest uppercase text-white/85">Next burn in</span>
+        <div className="text-ember text-[42px] md:text-[66px] leading-none text-white font-bold">
+          {String(countdown.m).padStart(2, '0')}m {String(countdown.s).padStart(2, '0')}s
         </div>
-      </section>
+      </div>
+
+      <div className="mt-7 grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
+        <Stat label="Initial Supply" value={INITIAL_SUPPLY} />
+        <Stat label="Burned (demo)" value={displayBurned} accent />
+        <Stat label="Current Supply" value={currentSupplyDisplay} />
+      </div>
+
+      <div className="mt-6">
+        <button
+          onClick={copyCA}
+          className="rounded-full bg-[#ffcc7a] hover:bg-[#ffc35f] text-[#0b1712] font-bold px-6 py-3 shadow-ember"
+        >
+          {copied ? 'Copied!' : 'Copy CA'}
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* LIVE BURN LOG */}
       <section id="live" className="mx-auto max-w-7xl px-4 py-10 pb-24">
