@@ -2,15 +2,11 @@
 import './globals.css'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = {
+export const metadata = {
   title: 'Burning Bear',
   description: 'Meet The Burning Bear — the classiest arsonist in crypto.',
-  icons: {
-    icon: '/img/coin-logo.png',        // use PNG directly
-    apple: '/img/coin-logo.png',       // iOS home screen
-    shortcut: '/img/coin-logo.png',    // fallback
-  },
-};
+  icons: { icon: '/favicon.ico' },
+} as const;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
