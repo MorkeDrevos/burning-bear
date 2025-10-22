@@ -18,26 +18,20 @@
     "lastBurnAt": 0,
     "lastBuybackAt": 0
   },
-  "ops": {
-    "lastClaimAt": 1730390400000,
-    "lastMarketingFundAt": 1730390700000,
-    "marketingWallet": "9zu7Z3K1n...kP9QwV",
-    "notes": "Manual cycle notes here"
-  },
   "burns": [
     {
       "id": "tx_104",
       "amount": 1250000,
-      "sol": 4.2375,
-      "timestamp": 1730312500000,
+      "sol": 2.2375,
+      "timestamp": 1730312400000,
       "tx": "https://explorer.solana.com/tx/0xTEST001"
     },
-       {
+    {
       "id": "tx_105",
       "amount": 11430000,
-      "sol": 2.2375,
-      "timestamp": 1730312500000,
-      "tx": "https://explorer.solana.com/tx/0xTEST001"
-    } 
+      "sol": 6.0000,
+      "timestamp": 1730312460000,
+      "tx": "https://explorer.solana.com/tx/0xTEST002"
+    }
   ]
 }
