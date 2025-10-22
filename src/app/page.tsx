@@ -116,14 +116,21 @@ export default function Page() {
     setTimeout(() => setCopied(false), 1400);
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <main>
       {/* ================= Header ================= */}
       <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/80 backdrop-blur">
         {/* Desktop / Tablet */}
         <div className="mx-auto hidden max-w-6xl items-center justify-between px-5 py-4 md:flex">
-          {/* Left */}
-          <div className="flex flex-1 items-center gap-3">
+          {/* Left (Logo + Title) */}
+          <div
+            className="flex flex-1 items-center gap-3 cursor-pointer hover:opacity-90 transition"
+            onClick={scrollToTop}
+          >
             <img
               src="/img/coin-logo.png"
               alt="Burning Bear"
@@ -161,9 +168,13 @@ export default function Page() {
           </div>
         </div>
 
-        {/* Mobile */}
+        {/* Mobile Header */}
         <div className="mx-auto flex items-center justify-between px-4 py-3 md:hidden">
-          <div className="flex items-center gap-3">
+          {/* Logo + Name clickable */}
+          <div
+            className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition"
+            onClick={scrollToTop}
+          >
             <img
               src="/img/coin-logo.png"
               alt="Burning Bear"
@@ -172,6 +183,7 @@ export default function Page() {
             <span className="text-[15px] font-extrabold">The Burning Bear</span>
           </div>
 
+          {/* Copy + Menu */}
           <div className="flex items-center gap-2">
             <button
               className={`rounded-full px-3 py-1 text-xs font-semibold transition
