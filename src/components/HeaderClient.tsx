@@ -1,12 +1,10 @@
 'use client';
 
-import Link from 'next/link';
-
 const FULL_TOKEN_ADDRESS =
-  'So1ana1111111111111111111111111111111111111111111111111'; // ← replace with your real CA
+  'So1ana1111111111111111111111111111111111111111111111111'; // replace with your CA
 
 export default function HeaderClient() {
-  const copyCA = async () => {
+  const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS);
     } catch {
@@ -27,7 +25,7 @@ export default function HeaderClient() {
     }
   };
 
-  const scrollTop = (e: React.MouseEvent) => {
+  const scrollToTop = (e: React.MouseEvent) => {
     e.preventDefault();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -35,8 +33,12 @@ export default function HeaderClient() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-[#0d1a14]/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        {/* Logo + Title (click → smooth scroll to top) */}
-        <a href="#top" onClick={scrollTop} className="flex items-center gap-3">
+        {/* Logo and Title */}
+        <a
+          href="#top"
+          onClick={scrollToTop}
+          className="flex items-center gap-3 cursor-pointer"
+        >
           <img
             src="/img/coin-logo.png"
             alt="Burning Bear"
@@ -50,8 +52,12 @@ export default function HeaderClient() {
 
         {/* Nav */}
         <nav className="hidden gap-8 text-sm md:flex">
-          <a href="#log" className="hover:text-amber-300">Live Burns</a>
-          <a href="#how" className="hover:text-amber-300">How It Works</a>
+          <a href="#log" className="hover:text-amber-300">
+            Live Burns
+          </a>
+          <a href="#how" className="hover:text-amber-300">
+            How It Works
+          </a>
         </nav>
 
         {/* CA + Copy */}
@@ -64,7 +70,7 @@ export default function HeaderClient() {
           </span>
           <button
             id="copy-ca"
-            onClick={copyCA}
+            onClick={handleCopy}
             className="rounded-full bg-[#ffedb3] px-3 py-1 text-sm font-semibold text-black hover:bg-[#ffe48d]"
           >
             Copy CA
