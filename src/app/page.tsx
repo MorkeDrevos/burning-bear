@@ -72,15 +72,14 @@ function fmtAgo(now: number, ts: number) {
 ========================= */
 export default function Page() {
   const [now, setNow] = useState<number>(Date.now());
-  const [ready, setReady] = useState(false);
-  const ticking = useRef<ReturnType<typeof setInterval> | null>(null);
+  const ticking = useRef<number | null>(null);
 
   useEffect(() => {
-    setReady(true);
-    ticking.current && clearInterval(ticking.current);
-    ticking.current = setInterval(() => setNow(Date.now()), 1000);
+    // tick once per second in the browser
+    ticking.current && window.clearInterval(ticking.current);
+    ticking.current = window.setInterval(() => setNow(Date.now()), 1000);
     return () => {
-      ticking.current && clearInterval(ticking.current);
+      if (ticking.current) window.clearInterval(ticking.current);
       ticking.current = null;
     };
   }, []);
@@ -120,11 +119,10 @@ export default function Page() {
             <span className="hidden rounded-full bg-emerald-900/40 px-3 py-1 text-xs text-emerald-300 md:inline">
               {TOKEN_ADDRESS}
             </span>
+            {/* Keep the ONLY Copy CA here */}
             <button
               className="rounded-full bg-[#ffedb3] px-3 py-1 text-sm font-semibold text-black hover:bg-[#ffe48d]"
-              onClick={() => {
-                navigator.clipboard.writeText(TOKEN_ADDRESS);
-              }}
+              onClick={() => navigator.clipboard.writeText(TOKEN_ADDRESS)}
             >
               Copy CA
             </button>
@@ -153,13 +151,13 @@ export default function Page() {
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
-          {/* Countdown toned down */}
+          {/* Countdown (softer/less white) */}
           <div className="mt-2 text-sm uppercase tracking-[0.25em] text-white/55">Next burn in</div>
           <div className="text-4xl font-extrabold text-white/85 sm:text-5xl">
             {mins}m {secs}s
           </div>
 
-          {/* Stats */}
+          {/* Stats (NOTE: Removed the extra Copy CA that used to be under these boxes) */}
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Stat label="Initial Supply" value={fmtInt(INITIAL_SUPPLY)} />
             <Stat label="Burned (demo)" value={fmtInt(BURNED_DEMO)} />
@@ -190,7 +188,7 @@ export default function Page() {
         </ul>
       </section>
 
-      {/* Footer restored */}
+      {/* Footer */}
       <footer id="community" className="border-t border-white/10 bg-[#0d1a14]">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-6 sm:flex-row">
           <div className="text-sm text-white/50">
@@ -236,6 +234,7 @@ function BurnCard({ burn, now, index }: { burn: Burn; now: number; index: number
           <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">🔥</span>
           <div>
             <div className="text-lg font-bold">Burn • {fmtInt(burn.amount)} BEAR</div>
+            {/* precise timestamp + relative */}
             <div className="text-sm text-white/60">
               {exact} <span className="text-white/35">({ago})</span>
             </div>
