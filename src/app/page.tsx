@@ -170,9 +170,9 @@ export default function Page() {
         <p className="mt-1 text-sm text-white/50">Demo data — TX links open explorer.</p>
 
         <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-          {DEMO_BURNS.map((b, i) => (
-            <BurnCard key={b.id} burn={b} now={now} index={i} />
-          ))}
+{DEMO_BURNS.map((b) => (
+  <BurnCard key={b.id} burn={b} now={now} />
+))}
         </div>
       </section>
 
