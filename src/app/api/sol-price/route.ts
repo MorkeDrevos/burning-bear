@@ -1,18 +1,19 @@
 // src/app/api/sol-price/route.ts
 import { NextResponse } from 'next/server';
 
-// Simple live price via CoinGecko; soft-fails to 0 so page can fallback to state.priceUsdPerSol.
+export const revalidate = 0; // always fresh
+
 export async function GET() {
   try {
     const r = await fetch(
       'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd',
-      { cache: 'no-store', next: { revalidate: 0 } }
+      { next: { revalidate: 0 }, headers: { 'x-cg-demo-api-key': '' } }
     );
-    if (!r.ok) throw new Error('bad status');
     const j = await r.json();
-    const usd = Number(j?.solana?.usd ?? 0);
-    return NextResponse.json({ usd: isFinite(usd) ? usd : 0 });
-  } catch {
-    return NextResponse.json({ usd: 0 });
-  }
+    const usd = j?.solana?.usd;
+    if (typeof usd === 'number' && isFinite(usd)) {
+      return NextResponse.json({ usd });
+    }
+  } catch {}
+  return NextResponse.json({ usd: null }, { status: 200 });
 }
