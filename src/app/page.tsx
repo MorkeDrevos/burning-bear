@@ -8,15 +8,12 @@ import Link from 'next/link';
 ========================= */
 const TOKEN_SYMBOL = '$BEAR';
 const TOKEN_NAME = 'Burning Bear';
-
-// 👇 Put your REAL full CA here (no ellipsis)
 const FULL_TOKEN_ADDRESS =
   'So1ana1111111111111111111111111111111111111111111111111';
-
-const BURN_INTERVAL_MS = 10 * 60 * 1000; // 10 min
+const BURN_INTERVAL_MS = 10 * 60 * 1000;
 
 /* =========================
-   Demo burn data (static)
+   Demo burn data
 ========================= */
 type Burn = {
   id: string;
@@ -47,7 +44,6 @@ const DEMO_BURNS: Burn[] = [
 function fmtInt(n: number) {
   return n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 }
-
 function fmtExact(ts: number) {
   const d = new Date(ts);
   const day = d.getDate().toString().padStart(2, '0');
@@ -58,7 +54,6 @@ function fmtExact(ts: number) {
   const ss = d.getSeconds().toString().padStart(2, '0');
   return `${hh}:${mm}:${ss} · ${day} ${mon} ${year}`;
 }
-
 function fmtAgo(now: number, ts: number) {
   const ms = Math.max(0, now - ts);
   const s = Math.floor(ms / 1000);
@@ -68,7 +63,6 @@ function fmtAgo(now: number, ts: number) {
   const h = Math.floor(m / 60);
   return `${h}h ago`;
 }
-
 function truncateMiddle(str: string, left = 6, right = 4) {
   if (!str || str.length <= left + right + 1) return str;
   return `${str.slice(0, left)}…${str.slice(-right)}`;
@@ -118,39 +112,39 @@ export default function Page() {
 
   return (
     <main>
-      {/* Header */}
-      <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-          {/* Left: logo + title */}
-          <div className="flex items-center gap-3">
+      {/* HEADER */}
+      <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-xl shadow-lg">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+          {/* Left — Logo + Title */}
+          <div className="flex items-center gap-4">
             <img
               src="/img/coin-logo.png"
               alt="Burning Bear"
-              className="h-9 w-9 rounded-full shadow-ember"
+              className="h-12 w-12 rounded-full shadow-lg"
             />
             <div className="leading-tight">
-              <div className="text-base font-extrabold">The Burning Bear</div>
-              <div className="text-[12px] text-white/55">{TOKEN_SYMBOL} • Live Burn Camp</div>
+              <div className="text-lg font-extrabold tracking-wide">The Burning Bear</div>
+              <div className="text-[13px] text-white/55">{TOKEN_SYMBOL} • Live Burn Camp</div>
             </div>
           </div>
 
-          {/* Center: nav */}
-          <nav className="hidden md:flex gap-8 text-base">
+          {/* Center — Nav */}
+          <nav className="hidden md:flex gap-10 text-lg font-semibold tracking-wide">
             <a href="#log" className="hover:text-amber-300">Live Burns</a>
             <a href="#how" className="hover:text-amber-300">How It Works</a>
             <a href="#community" className="hover:text-amber-300">Community</a>
           </nav>
 
-          {/* Right: CA + Copy */}
+          {/* Right — CA + Copy */}
           <div className="flex items-center gap-3">
             <span
-              className="hidden md:inline rounded-full bg-emerald-900/40 px-3 py-1.5 text-sm text-emerald-300"
+              className="hidden md:inline rounded-full bg-emerald-900/40 px-4 py-2 text-sm text-emerald-300"
               title={FULL_TOKEN_ADDRESS}
             >
               {truncateMiddle(FULL_TOKEN_ADDRESS)}
             </span>
             <button
-              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition
+              className={`rounded-full px-5 py-2 text-base font-semibold transition
                 ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
               onClick={handleCopyCA}
               aria-live="polite"
@@ -161,7 +155,7 @@ export default function Page() {
         </div>
       </header>
 
-      {/* Hero with video */}
+      {/* HERO */}
       <section className="relative">
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <video
@@ -178,12 +172,12 @@ export default function Page() {
         </div>
 
         <div className="mx-auto grid max-w-6xl gap-6 px-4 pb-16 pt-20 sm:pt-24">
-          <h1 className="max-w-3xl text-5xl font-extrabold leading-tight sm:text-6xl md:text-7xl">
+          <h1 className="max-w-3xl text-6xl font-extrabold leading-tight sm:text-7xl md:text-8xl">
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
-          <div className="mt-2 text-sm uppercase tracking-[0.25em] text-white/55">Next burn in</div>
-          <div className="text-4xl font-extrabold text-white/85 sm:text-5xl">
+          <div className="mt-3 text-sm uppercase tracking-[0.25em] text-white/55">Next burn in</div>
+          <div className="text-5xl font-extrabold text-white/85 sm:text-6xl">
             {mins}m {secs}s
           </div>
 
@@ -195,7 +189,7 @@ export default function Page() {
         </div>
       </section>
 
-      {/* Live Burn Log */}
+      {/* LIVE BURNS */}
       <section id="log" className="mx-auto max-w-6xl px-4 py-10">
         <h2 className="text-2xl font-bold">Live Burn Log</h2>
         <p className="mt-1 text-sm text-white/50">Demo data — TX links open explorer.</p>
@@ -209,7 +203,7 @@ export default function Page() {
         </div>
       </section>
 
-      {/* How it works */}
+      {/* HOW IT WORKS */}
       <section id="how" className="mx-auto max-w-6xl px-4 py-12">
         <h2 className="text-2xl font-bold">How it works</h2>
         <ul className="mt-4 space-y-2 text-white/80">
@@ -219,7 +213,7 @@ export default function Page() {
         </ul>
       </section>
 
-      {/* Footer */}
+      {/* FOOTER */}
       <footer id="community" className="border-t border-white/10 bg-[#0d1a14]">
         <div className="mx-auto max-w-6xl px-4 py-6 text-center text-sm text-white/50">
           Once upon a bear market, one dapper bear decided to fight the winter the only way he knew how, with fire. 🔥
