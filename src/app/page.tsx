@@ -8,7 +8,11 @@ import Link from 'next/link';
 ========================= */
 const TOKEN_SYMBOL = '$BEAR';
 const TOKEN_NAME = 'Burning Bear';
-const TOKEN_ADDRESS = 'Solana…11111'; // demo
+
+// 👇 Put your REAL full CA here (NO ellipsis). Copy uses this exact value.
+const FULL_TOKEN_ADDRESS =
+  'So1ana1111111111111111111111111111111111111111111111111';
+
 const BURN_INTERVAL_MS = 10 * 60 * 1000; // 10 min
 
 /* =========================
@@ -21,9 +25,6 @@ type Burn = {
   tx: string;
 };
 
-function rnd(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 function fakeTx() {
   const s = '0123456789abcdef';
   let h = 'https://explorer.solana.com/tx/0x';
@@ -48,13 +49,15 @@ function fmtInt(n: number) {
 }
 
 function fmtExact(ts: number) {
+  // -> 10:47:23 · 21 Oct 2025
   const d = new Date(ts);
   const day = d.getDate().toString().padStart(2, '0');
   const mon = d.toLocaleString('en-US', { month: 'short' });
+  const year = d.getFullYear();
   const hh = d.getHours().toString().padStart(2, '0');
   const mm = d.getMinutes().toString().padStart(2, '0');
   const ss = d.getSeconds().toString().padStart(2, '0');
-  return `${day} ${mon} ${hh}:${mm}:${ss}`;
+  return `${hh}:${mm}:${ss} · ${day} ${mon} ${year}`;
 }
 
 function fmtAgo(now: number, ts: number) {
@@ -67,20 +70,26 @@ function fmtAgo(now: number, ts: number) {
   return `${h}h ago`;
 }
 
+function truncateMiddle(str: string, left = 6, right = 4) {
+  if (!str || str.length <= left + right + 1) return str;
+  return `${str.slice(0, left)}…${str.slice(-right)}`;
+}
+
 /* =========================
    Page
 ========================= */
 export default function Page() {
   const [now, setNow] = useState<number>(Date.now());
   const [copied, setCopied] = useState(false);
-  const ticking = useRef<number | null>(null);
+  const intervalId = useRef<number | null>(null);
 
+  // tick every second (browser-safe typing)
   useEffect(() => {
-    ticking.current && window.clearInterval(ticking.current);
-    ticking.current = window.setInterval(() => setNow(Date.now()), 1000);
+    if (intervalId.current) window.clearInterval(intervalId.current);
+    intervalId.current = window.setInterval(() => setNow(Date.now()), 1000);
     return () => {
-      if (ticking.current) window.clearInterval(ticking.current);
-      ticking.current = null;
+      if (intervalId.current) window.clearInterval(intervalId.current);
+      intervalId.current = null;
     };
   }, []);
 
@@ -91,6 +100,25 @@ export default function Page() {
   const INITIAL_SUPPLY = 1_000_000_000;
   const BURNED_DEMO = 5_550_000;
   const CURRENT_SUPPLY = INITIAL_SUPPLY - BURNED_DEMO;
+
+  const handleCopyCA = async () => {
+    // Copy the FULL address (no truncation)
+    try {
+      await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS);
+    } catch {
+      // Fallback for older browsers
+      const ta = document.createElement('textarea');
+      ta.value = FULL_TOKEN_ADDRESS;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1400);
+  };
 
   return (
     <main>
@@ -110,7 +138,7 @@ export default function Page() {
             </div>
           </div>
 
-          {/* Center: nav (bigger font) */}
+          {/* Center: nav (bigger fonts) */}
           <nav className="hidden md:flex gap-8 text-base">
             <a href="#log" className="hover:text-amber-300">Live Burns</a>
             <a href="#how" className="hover:text-amber-300">How It Works</a>
@@ -119,29 +147,17 @@ export default function Page() {
 
           {/* Right: CA + Copy */}
           <div className="flex items-center gap-3">
-            <span className="hidden md:inline rounded-full bg-emerald-900/40 px-3 py-1.5 text-sm text-emerald-300">
-              {TOKEN_ADDRESS}
+            <span
+              className="hidden md:inline rounded-full bg-emerald-900/40 px-3 py-1.5 text-sm text-emerald-300"
+              title={FULL_TOKEN_ADDRESS}
+            >
+              {truncateMiddle(FULL_TOKEN_ADDRESS)}
             </span>
 
             <button
               className={`rounded-full px-4 py-1.5 text-sm font-semibold transition
                 ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
-              onClick={async () => {
-                try {
-                  await navigator.clipboard.writeText(TOKEN_ADDRESS);
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 1500);
-                } catch {
-                  const ta = document.createElement('textarea');
-                  ta.value = TOKEN_ADDRESS;
-                  document.body.appendChild(ta);
-                  ta.select();
-                  try { document.execCommand('copy'); } catch {}
-                  document.body.removeChild(ta);
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 1500);
-                }
-              }}
+              onClick={handleCopyCA}
               aria-live="polite"
             >
               {copied ? 'Copied!' : 'Copy CA'}
@@ -150,7 +166,7 @@ export default function Page() {
         </div>
       </header>
 
-      {/* Hero */}
+      {/* Hero with video */}
       <section className="relative">
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <video
@@ -171,11 +187,13 @@ export default function Page() {
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
+          {/* Countdown toned down */}
           <div className="mt-2 text-sm uppercase tracking-[0.25em] text-white/55">Next burn in</div>
           <div className="text-4xl font-extrabold text-white/85 sm:text-5xl">
             {mins}m {secs}s
           </div>
 
+          {/* Stats */}
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Stat label="Initial Supply" value={fmtInt(INITIAL_SUPPLY)} />
             <Stat label="Burned (demo)" value={fmtInt(BURNED_DEMO)} />
@@ -231,10 +249,10 @@ function Stat({ label, value }: { label: string; value: string }) {
 function BurnCard({ burn, now }: { burn: Burn; now: number }) {
   const ageMs = Math.max(0, now - burn.timestamp);
   const ageMin = ageMs / 60_000;
-  const brightness = Math.max(0.65, 1 - ageMin / 180);
+  const brightness = Math.max(0.65, 1 - ageMin / 180); // fades over ~3h
   const progress = Math.min(1, ageMin / 10);
 
-  const exact = fmtExact(burn.timestamp);
+  const exact = fmtExact(burn.timestamp); // precise time
   const ago = fmtAgo(now, burn.timestamp);
 
   return (
