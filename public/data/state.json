@@ -4,36 +4,37 @@
     "burned": 6754321,
     "currentSupply": 993245679,
     "buybackSol": 18.7342,
-    "priceSolPerBear": 0.00000019
+    "priceSolPerBear": 0.00000019,
+    "priceUsdPerSol": 160.25
   },
   "burns": [
     {
       "id": "tx_001",
       "amount": 1250000,
       "sol": 0.2375,
-      "timestamp": 1730066400000,
+      "timestamp": 1730606400000,
       "tx": "https://explorer.solana.com/tx/0xTEST001"
     },
     {
       "id": "tx_002",
       "amount": 950000,
       "sol": 0.1805,
-      "timestamp": 1730063100000,
+      "timestamp": 1730631000000,
       "tx": "https://explorer.solana.com/tx/0xTEST002"
     },
     {
       "id": "tx_003",
       "amount": 455321,
       "sol": 0.0865,
-      "timestamp": 1730060400000,
+      "timestamp": 1730660400000,
       "tx": "https://explorer.solana.com/tx/0xTEST003"
     },
     {
       "id": "tx_004",
       "amount": 455321,
       "sol": 0.0865,
-      "timestamp": 1730060400000,
-      "tx": "https://explorer.solana.com/tx/0xTEST003"
+      "timestamp": 1730670400000,
+      "tx": "https://explorer.solana.com/tx/0xTEST004"
     }
   ]
 }
