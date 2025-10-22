@@ -120,46 +120,46 @@ export default function Page() {
     <main>
       {/* Header */}
       <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-          {/* Left: logo + title */}
-          <div className="flex items-center gap-3">
-            <img
-              src="/img/coin-logo.png"
-              alt="Burning Bear"
-              className="h-9 w-9 rounded-full shadow-ember"
-            />
-            <div className="leading-tight">
-              <div className="text-base font-extrabold">The Burning Bear</div>
-              <div className="text-[12px] text-white/55">{TOKEN_SYMBOL} • Live Burn Camp</div>
-            </div>
-          </div>
+  <div className="flex w-full items-center justify-between px-10 py-4">
+    {/* Left: logo + title */}
+    <div className="flex flex-1 items-center gap-3">
+      <img
+        src="/img/coin-logo.png"
+        alt="Burning Bear"
+        className="h-9 w-9 rounded-full shadow-ember"
+      />
+      <div className="leading-tight">
+        <div className="text-base font-extrabold">The Burning Bear</div>
+        <div className="text-[12px] text-white/55">{TOKEN_SYMBOL} • Live Burn Camp</div>
+      </div>
+    </div>
 
-          {/* Center: nav */}
-          <nav className="hidden md:flex gap-8 text-base">
-            <a href="#log" className="hover:text-amber-300">Live Burns</a>
-            <a href="#how" className="hover:text-amber-300">How It Works</a>
-            <a href="#community" className="hover:text-amber-300">Community</a>
-          </nav>
+    {/* Center: nav */}
+    <nav className="flex flex-1 justify-center gap-12 text-base font-semibold">
+      <a href="#log" className="hover:text-amber-300 transition-colors">Live Burns</a>
+      <a href="#how" className="hover:text-amber-300 transition-colors">How It Works</a>
+      <a href="#community" className="hover:text-amber-300 transition-colors">Community</a>
+    </nav>
 
-          {/* Right: CA + Copy */}
-          <div className="flex items-center gap-3">
-            <span
-              className="hidden md:inline rounded-full bg-emerald-900/40 px-3 py-1.5 text-sm text-emerald-300"
-              title={FULL_TOKEN_ADDRESS}
-            >
-              {truncateMiddle(FULL_TOKEN_ADDRESS)}
-            </span>
-            <button
-              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition
-                ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
-              onClick={handleCopyCA}
-              aria-live="polite"
-            >
-              {copied ? 'Copied!' : 'Copy CA'}
-            </button>
-          </div>
-        </div>
-      </header>
+    {/* Right: CA + Copy */}
+    <div className="flex flex-1 items-center justify-end gap-3">
+      <span
+        className="hidden md:inline rounded-full bg-emerald-900/40 px-3 py-1.5 text-sm text-emerald-300"
+        title={FULL_TOKEN_ADDRESS}
+      >
+        {truncateMiddle(FULL_TOKEN_ADDRESS)}
+      </span>
+      <button
+        className={`rounded-full px-4 py-1.5 text-sm font-semibold transition
+          ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
+        onClick={handleCopyCA}
+        aria-live="polite"
+      >
+        {copied ? 'Copied!' : 'Copy CA'}
+      </button>
+    </div>
+  </div>
+</header>
 
       {/* Hero with video */}
       <section className="relative">
