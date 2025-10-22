@@ -8,38 +8,30 @@ import Link from 'next/link';
 ========================= */
 const TOKEN_SYMBOL = '$BEAR';
 const TOKEN_NAME = 'Burning Bear';
-
-// Your CA (full, no ellipsis)
 const FULL_TOKEN_ADDRESS =
-  'GQe8DCQTBkuX5E2sjvwuKDZsjGYhU8k3DN5dkSbQLfqJ';
+  'So1ana1111111111111111111111111111111111111111111111111';
 
-// JSON source (raw URL)
-const BURN_DATA_URL =
-  'https://raw.githubusercontent.com/MorkeDrevos/burning-bear/main/public/data/state.json';
-
-// UI cadence (purely visual timers)
-const BUYBACK_INTERVAL_MS = 5 * 60 * 1000;  // 5 min
-const BURN_INTERVAL_MS    = 10 * 60 * 1000; // 10 min
+const BURN_INTERVAL_MS = 10 * 60 * 1000; // 10 min
 
 /* =========================
-   Types
+   Types for JSON
 ========================= */
 type Burn = {
   id: string;
-  amount: number;     // BEAR
-  timestamp: number;  // ms epoch
+  amount: number;   // BEAR amount (optional if you only track SOL)
+  sol?: number;     // SOL spent for the burn/buyback
+  timestamp: number;
   tx: string;
-  sol?: number;       // optional SOL spent
 };
 
-type RemoteState = {
+type StateJSON = {
   stats?: {
     initialSupply?: number;
     burned?: number;
     currentSupply?: number;
-    buybackSol?: number;
-    priceSolPerBear?: number; // SOL/BEAR
-    priceUsdPerSol?: number;  // USD/SOL
+    buybackSol?: number;       // total SOL bought/burned
+    priceSolPerBear?: number;  // optional
+    priceUsdPerSol?: number;   // fallback USD price
   };
   burns?: Burn[];
 };
@@ -47,26 +39,11 @@ type RemoteState = {
 /* =========================
    Utils
 ========================= */
-function fmtInt(n?: number | null) {
-  if (n == null || Number.isNaN(n)) return '—';
-  return n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+function fmtInt(n: number | undefined | null) {
+  if (!Number.isFinite(n as number)) return '—';
+  return (n as number).toLocaleString('en-US', { maximumFractionDigits: 0 });
 }
-function fmtSol(n?: number | null) {
-  if (n == null || Number.isNaN(n)) return '—';
-  const s = n.toLocaleString('en-US', {
-    minimumFractionDigits: n < 1 ? 6 : 4,
-    maximumFractionDigits: n < 1 ? 6 : 4,
-  });
-  return s.replace(/\.?0+$/, '');
-}
-function fmtUsd(n?: number | null) {
-  if (n == null || Number.isNaN(n)) return '—';
-  return n.toLocaleString('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 2,
-  });
-}
+
 function fmtExact(ts: number) {
   const d = new Date(ts);
   const day = d.getDate().toString().padStart(2, '0');
@@ -77,14 +54,10 @@ function fmtExact(ts: number) {
   const ss = d.getSeconds().toString().padStart(2, '0');
   return `${hh}:${mm}:${ss} · ${day} ${mon} ${year}`;
 }
+
 function truncateMiddle(str: string, left = 6, right = 4) {
   if (!str || str.length <= left + right + 1) return str;
   return `${str.slice(0, left)}…${str.slice(-right)}`;
-}
-function mmss(msRemaining: number) {
-  const m = Math.floor(msRemaining / 60_000).toString().padStart(2, '0');
-  const s = Math.floor((msRemaining % 60_000) / 1000).toString().padStart(2, '0');
-  return `${m}m ${s}s`;
 }
 
 /* =========================
@@ -92,12 +65,20 @@ function mmss(msRemaining: number) {
 ========================= */
 export default function Page() {
   const [now, setNow] = useState<number>(Date.now());
+
+  // JSON state
+  const [data, setData] = useState<StateJSON | null>(null);
+  const [loadingState, setLoadingState] = useState<boolean>(true);
+
+  // Live SOL→USD
+  const [liveUsdPerSol, setLiveUsdPerSol] = useState<number | null>(null);
+
+  // Copy CA UX
   const [copied, setCopied] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [remote, setRemote] = useState<RemoteState | null>(null);
+
+  // tick every second for countdown
   const intervalId = useRef<number | null>(null);
 
-  // 1s ticker for countdowns
   useEffect(() => {
     if (intervalId.current) window.clearInterval(intervalId.current);
     intervalId.current = window.setInterval(() => setNow(Date.now()), 1000);
@@ -107,45 +88,61 @@ export default function Page() {
     };
   }, []);
 
-  // Pull JSON every 10s (no-store)
+  // load /public/data/state.json every 30s
   useEffect(() => {
-    let stop = false;
+    let cancelled = false;
 
-    async function load() {
+    async function loadState() {
       try {
-        const r = await fetch(`${BURN_DATA_URL}?t=${Date.now()}`, { cache: 'no-store' });
-        if (!r.ok) return;
-        const data: RemoteState = await r.json();
-        if (!stop) setRemote(data);
+        const r = await fetch('/data/state.json', { cache: 'no-store' });
+        const j: StateJSON = await r.json();
+        if (!cancelled) {
+          setData(j);
+          setLoadingState(false);
+        }
       } catch {
-        // Keep last good state; no demos.
+        if (!cancelled) setLoadingState(false);
       }
     }
-    load();
-    const id = setInterval(load, 10_000);
-    return () => { stop = true; clearInterval(id); };
+    loadState();
+    const id = setInterval(loadState, 30_000);
+    return () => { cancelled = true; clearInterval(id); };
   }, []);
 
-  // Timers
-  const nextBuybackIn = BUYBACK_INTERVAL_MS - (now % BUYBACK_INTERVAL_MS);
-  const nextBurnIn    = BURN_INTERVAL_MS    - (now % BURN_INTERVAL_MS);
+  // fetch live price every 60s
+  useEffect(() => {
+    let cancelled = false;
+    async function loadPrice() {
+      try {
+        const r = await fetch('/api/sol-price', { cache: 'no-store' });
+        const j = await r.json();
+        if (!cancelled && Number.isFinite(j?.usd)) setLiveUsdPerSol(j.usd);
+      } catch {
+        // ignore; will fall back to JSON
+      }
+    }
+    loadPrice();
+    const id = setInterval(loadPrice, 60_000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, []);
 
-  // Stats
-  const burns: Burn[] = (remote?.burns ?? []).slice().sort((a, b) => b.timestamp - a.timestamp);
-  const PRICE_SOL_PER_BEAR = remote?.stats?.priceSolPerBear;
-  const PRICE_USD_PER_SOL  = remote?.stats?.priceUsdPerSol;
+  // next burn countdown
+  const nextBurnIn = BURN_INTERVAL_MS - (now % BURN_INTERVAL_MS);
+  const mins = Math.floor(nextBurnIn / 60_000).toString().padStart(2, '0');
+  const secs = Math.floor((nextBurnIn % 60_000) / 1000).toString().padStart(2, '0');
 
-  const INITIAL_SUPPLY = remote?.stats?.initialSupply;
-  const BURNED         = remote?.stats?.burned ?? (burns.length ? burns.reduce((s, b) => s + (b.amount || 0), 0) : undefined);
-  const CURRENT_SUPPLY = remote?.stats?.currentSupply ?? (INITIAL_SUPPLY != null && BURNED != null ? INITIAL_SUPPLY - BURNED : undefined);
+  // from JSON
+  const INITIAL_SUPPLY = Number(data?.stats?.initialSupply) || 0;
+  const BURNED = Number(data?.stats?.burned) || 0;
+  const CURRENT_SUPPLY = Number(data?.stats?.currentSupply) || (INITIAL_SUPPLY - BURNED);
+  const TOTAL_SOL = Number(data?.stats?.buybackSol) || 0;
 
-  const totalSolFromBurns = burns.reduce((sum, b) => sum + (typeof b.sol === 'number'
-    ? b.sol
-    : (PRICE_SOL_PER_BEAR != null ? b.amount * PRICE_SOL_PER_BEAR : 0)
-  ), 0);
+  // price choice (prefer live)
+  const jsonUsdPerSol = Number(data?.stats?.priceUsdPerSol) || null;
+  const usdPerSol = liveUsdPerSol ?? jsonUsdPerSol ?? null;
+  const totalUsd = usdPerSol ? TOTAL_SOL * usdPerSol : null;
 
-  const TOTAL_SOL = remote?.stats?.buybackSol ?? totalSolFromBurns;
-
+  // UX: copy full CA
   const handleCopyCA = async () => {
     try {
       await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS);
@@ -163,43 +160,37 @@ export default function Page() {
     setTimeout(() => setCopied(false), 1400);
   };
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
     <main>
-      {/* ================= Header ================= */}
+      {/* Header */}
       <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/80 backdrop-blur">
-        {/* Desktop / Tablet */}
-        <div className="mx-auto hidden max-w-6xl items-center justify-between px-5 py-4 md:flex">
-          {/* Left (Logo + Title) */}
-          <div
-            className="flex flex-1 items-center gap-3 cursor-pointer hover:opacity-90 transition"
-            onClick={scrollToTop}
-          >
-            <img
-              src="/img/coin-logo.png"
-              alt="Burning Bear"
-              className="h-9 w-9 rounded-full shadow-ember"
-            />
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+          {/* Left: Logo + Title (logo is a back-to-top link) */}
+          <div className="flex items-center gap-3">
+            <a href="#top" onClick={(e)=>{ e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+              <img
+                src="/img/coin-logo.png"
+                alt="Burning Bear"
+                className="h-9 w-9 rounded-full shadow-ember cursor-pointer"
+              />
+            </a>
             <div className="leading-tight">
               <div className="text-base font-extrabold">The Burning Bear</div>
               <div className="text-[12px] text-white/55">{TOKEN_SYMBOL} • Live Burn Camp</div>
             </div>
           </div>
 
-          {/* Center Nav */}
-          <nav className="flex flex-1 justify-center gap-12 text-base font-semibold">
-            <a href="#log" className="hover:text-amber-300 transition-colors">Live Burns</a>
-            <a href="#how" className="hover:text-amber-300 transition-colors">How It Works</a>
-            <a href="#community" className="hover:text-amber-300 transition-colors">Community</a>
+          {/* Center: nav */}
+          <nav className="hidden md:flex gap-8 text-base">
+            <a href="#log" className="hover:text-amber-300">Live Burns</a>
+            <a href="#how" className="hover:text-amber-300">How It Works</a>
+            <a href="#community" className="hover:text-amber-300">Community</a>
           </nav>
 
-          {/* Right */}
-          <div className="flex flex-1 items-center justify-end gap-3">
+          {/* Right: CA + Copy */}
+          <div className="flex items-center gap-3">
             <span
-              className="hidden lg:inline rounded-full bg-emerald-900/40 px-3 py-1.5 text-sm text-emerald-300"
+              className="hidden md:inline rounded-full bg-emerald-900/40 px-3 py-1.5 text-sm text-emerald-300"
               title={FULL_TOKEN_ADDRESS}
             >
               {truncateMiddle(FULL_TOKEN_ADDRESS)}
@@ -214,64 +205,12 @@ export default function Page() {
             </button>
           </div>
         </div>
-
-        {/* Mobile Header */}
-        <div className="mx-auto flex items-center justify-between px-4 py-3 md:hidden">
-          {/* Logo + Name clickable */}
-          <div
-            className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition"
-            onClick={scrollToTop}
-          >
-            <img
-              src="/img/coin-logo.png"
-              alt="Burning Bear"
-              className="h-8 w-8 rounded-full shadow-ember"
-            />
-            <span className="text-[15px] font-extrabold">The Burning Bear</span>
-          </div>
-
-          {/* Copy + Menu */}
-          <div className="flex items-center gap-2">
-            <button
-              className={`rounded-full px-3 py-1 text-xs font-semibold transition
-                ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
-              onClick={handleCopyCA}
-              aria-live="polite"
-            >
-              {copied ? 'Copied!' : 'Copy CA'}
-            </button>
-
-            <button
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/10 bg-white/5"
-              onClick={() => setMobileOpen(v => !v)}
-              aria-label="Open Menu"
-              aria-expanded={mobileOpen}
-            >
-              <div className="space-y-1.5">
-                <span className="block h-0.5 w-5 bg-white/90"></span>
-                <span className="block h-0.5 w-5 bg-white/90"></span>
-                <span className="block h-0.5 w-5 bg-white/90"></span>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile dropdown */}
-        {mobileOpen && (
-          <div className="md:hidden">
-            <nav className="mx-3 mb-3 rounded-xl border border-white/10 bg-[#0f1f19]/95 px-4 py-3">
-              <a href="#log" onClick={() => setMobileOpen(false)} className="block rounded-lg px-2 py-2 text-base hover:bg-white/5">Live Burns</a>
-              <a href="#how" onClick={() => setMobileOpen(false)} className="block rounded-lg px-2 py-2 text-base hover:bg-white/5">How It Works</a>
-              <a href="#community" onClick={() => setMobileOpen(false)} className="block rounded-lg px-2 py-2 text-base hover:bg-white/5">Community</a>
-              <div className="mt-2 border-t border-white/10 pt-2 text-xs text-emerald-300/80">
-                {truncateMiddle(FULL_TOKEN_ADDRESS)}
-              </div>
-            </nav>
-          </div>
-        )}
       </header>
 
-      {/* ================= Hero ================= */}
+      {/* Anchor for logo click */}
+      <span id="top" />
+
+      {/* Hero with video */}
       <section className="relative">
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <video
@@ -292,75 +231,72 @@ export default function Page() {
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
-          {/* Timers */}
-          <div className="grid max-w-xl grid-cols-1 gap-3 sm:grid-cols-2">
-            <div>
-              <div className="mt-2 text-xs uppercase tracking-[0.25em] text-white/55">Next buyback in</div>
-              <div className="text-3xl font-extrabold text-white/85 sm:text-4xl">
-                {mmss(nextBuybackIn)}
-              </div>
-            </div>
-            <div>
-              <div className="mt-2 text-xs uppercase tracking-[0.25em] text-white/55">Next burn in</div>
-              <div className="text-3xl font-extrabold text-white/85 sm:text-4xl">
-                {mmss(nextBurnIn)}
-              </div>
-            </div>
+          <div className="mt-2 text-sm uppercase tracking-[0.25em] text-white/55">Next burn in</div>
+          <div className="text-4xl font-extrabold text-white/85 sm:text-5xl">
+            {mins}m {secs}s
           </div>
 
           {/* Stats */}
-          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-4">
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Stat label="Initial Supply" value={fmtInt(INITIAL_SUPPLY)} />
             <Stat label="Burned" value={fmtInt(BURNED)} />
             <Stat label="Current Supply" value={fmtInt(CURRENT_SUPPLY)} />
-            <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 backdrop-blur">
-              <div className="text-[11px] uppercase tracking-wider text-white/55">Buyback Spent (SOL)</div>
-              <div className="mt-1 text-2xl font-extrabold">{fmtSol(TOTAL_SOL)} {TOTAL_SOL != null ? 'SOL' : ''}</div>
-              <div className="mt-1 text-xs text-white/45">
-                {PRICE_USD_PER_SOL != null && TOTAL_SOL != null
-                  ? <>≈ {fmtUsd(TOTAL_SOL * PRICE_USD_PER_SOL)}</>
-                  : '—'}
-              </div>
+          </div>
+
+          {/* Buyback totals */}
+          <div className="mt-2 text-white/80">
+            <div className="text-sm">
+              Buyback Spent (SOL): <span className="font-semibold">{TOTAL_SOL.toFixed(4)}</span>
+              {usdPerSol && (
+                <>
+                  {' '}• <span className="font-semibold">
+                    ≈ ${ (totalUsd!).toLocaleString('en-US', { maximumFractionDigits: 2 }) }
+                  </span>
+                </>
+              )}
             </div>
+            {!usdPerSol && (
+              <div className="text-xs text-white/40">
+                (Waiting for live SOL price… will fall back to state.json if provided)
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* ================= Live Burn Log ================= */}
+      {/* Live Burn Log */}
       <section id="log" className="mx-auto max-w-6xl px-4 py-10">
         <h2 className="text-2xl font-bold">Live Burn Log</h2>
+        <p className="mt-1 text-sm text-white/50">TX links open explorer.</p>
 
-        {burns.length === 0 ? (
-          <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-white/70">
-            No burns posted yet.
-          </div>
-        ) : (
-          <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-            {burns.map((b) => (
-              <BurnCard
-                key={b.id}
-                burn={b}
-                priceSolPerBear={PRICE_SOL_PER_BEAR}
-                priceUsdPerSol={PRICE_USD_PER_SOL}
-              />
+        <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
+          {!loadingState && (data?.burns?.length ?? 0) === 0 && (
+            <div className="text-white/60">No burns posted yet.</div>
+          )}
+
+          {(data?.burns ?? [])
+            .slice()
+            .sort((a, b) => b.timestamp - a.timestamp)
+            .map((b) => (
+              <BurnCard key={b.id} burn={b} usdPerSol={usdPerSol} priceSolPerBear={data?.stats?.priceSolPerBear} />
             ))}
-          </div>
-        )}
+        </div>
       </section>
 
-      {/* ================= How it Works ================= */}
+      {/* How it works */}
       <section id="how" className="mx-auto max-w-6xl px-4 py-12">
         <h2 className="text-2xl font-bold">How it works</h2>
         <ul className="mt-4 space-y-2 text-white/80">
-          <li>Buybacks run on a cadence, followed by periodic burns.</li>
-          <li>Every burn is posted with TX link & timestamp (including SOL & USD values when available).</li>
+          <li>80% → Buy & Burn — creator fees auto-buy {TOKEN_SYMBOL} and burn them live.</li>
+          <li>20% → Team + Marketing — keeps the vibes bright.</li>
+          <li>Transparent — every burn is posted with TX link & timestamp.</li>
         </ul>
       </section>
 
-      {/* ================= Footer ================= */}
+      {/* Footer */}
       <footer id="community" className="border-t border-white/10 bg-[#0d1a14]">
         <div className="mx-auto max-w-6xl px-4 py-6 text-center text-sm text-white/50">
-          Once upon a bear market, one dapper bear decided to fight the winter the only way he knew how — with fire. 🔥
+          Once upon a bear market, one dapper bear decided to fight the winter the only way he knew how, with fire. 🔥
         </div>
       </footer>
     </main>
@@ -381,43 +317,41 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 function BurnCard({
   burn,
+  usdPerSol,
   priceSolPerBear,
-  priceUsdPerSol,
 }: {
   burn: Burn;
+  usdPerSol: number | null;
   priceSolPerBear?: number;
-  priceUsdPerSol?: number;
 }) {
-  // Fade old cards slightly
-  const ageMin = Math.max(0, (Date.now() - burn.timestamp) / 60_000);
-  const brightness = Math.max(0.65, 1 - ageMin / 180);
-  const progress = Math.min(1, ageMin / 10);
+  const sol =
+    (Number.isFinite(burn.sol as number) && (burn.sol as number) > 0
+      ? (burn.sol as number)
+      : ((Number(priceSolPerBear) > 0 && Number(burn.amount) > 0)
+          ? Number(burn.amount) * Number(priceSolPerBear)
+          : 0));
 
-  const exact = fmtExact(burn.timestamp);
-  const solSpent = typeof burn.sol === 'number'
-    ? burn.sol
-    : (priceSolPerBear != null ? burn.amount * priceSolPerBear : undefined);
-  const usdSpent = solSpent != null && priceUsdPerSol != null
-    ? solSpent * priceUsdPerSol
-    : undefined;
+  const usd = usdPerSol ? sol * usdPerSol : null;
 
   return (
-    <div
-      className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 shadow-lg ring-emerald-500/0 transition hover:ring-2"
-      style={{ filter: `brightness(${brightness})` }}
-    >
+    <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 shadow-lg ring-emerald-500/0 transition hover:ring-2">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">🔥</span>
           <div>
             <div className="text-lg font-bold">Burn • {fmtInt(burn.amount)} BEAR</div>
-            <div className="text-sm text-white/60">{exact}</div>
-            <div className="mt-1 text-sm text-amber-300/90">
-              {solSpent != null ? <>≈ {fmtSol(solSpent)} SOL</> : '—'}
-              {usdSpent != null ? <> · {fmtUsd(usdSpent)}</> : ''}
+
+            {/* Exact timestamp — NO "hours ago" */}
+            <div className="text-sm text-white/60">{fmtExact(burn.timestamp)}</div>
+
+            {/* SOL + USD */}
+            <div className="text-sm text-white/60 mt-1">
+              {sol ? <>≈ {sol.toFixed(4)} SOL</> : '—'}
+              {usd ? <> • ≈ ${usd.toFixed(2)}</> : null}
             </div>
           </div>
         </div>
+
         <Link
           href={burn.tx}
           target="_blank"
@@ -430,7 +364,7 @@ function BurnCard({
       <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/5">
         <div
           className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
-          style={{ width: `${Math.floor(progress * 100)}%` }}
+          style={{ width: '100%' }}
         />
       </div>
     </div>
