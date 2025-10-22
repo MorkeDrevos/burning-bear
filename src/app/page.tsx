@@ -8,15 +8,13 @@ import Link from 'next/link';
 ========================= */
 const TOKEN_SYMBOL = '$BEAR';
 const TOKEN_NAME = 'Burning Bear';
-
-// 👇 Put your REAL full CA here (no ellipsis)
 const FULL_TOKEN_ADDRESS =
   'So1ana1111111111111111111111111111111111111111111111111';
 
 const BURN_INTERVAL_MS = 10 * 60 * 1000; // 10 min
 
 /* =========================
-   Demo burn data (static)
+   Demo burn data
 ========================= */
 type Burn = {
   id: string;
@@ -31,6 +29,7 @@ function fakeTx() {
   for (let i = 0; i < 64; i++) h += s[Math.floor(Math.random() * s.length)];
   return h;
 }
+
 function agoMinutes(minsAgo: number) {
   return Date.now() - minsAgo * 60_000;
 }
@@ -80,6 +79,7 @@ function truncateMiddle(str: string, left = 6, right = 4) {
 export default function Page() {
   const [now, setNow] = useState<number>(Date.now());
   const [copied, setCopied] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const intervalId = useRef<number | null>(null);
 
   useEffect(() => {
@@ -118,103 +118,101 @@ export default function Page() {
 
   return (
     <main>
-      {/* Header */}
+      {/* ================= Header ================= */}
       <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/80 backdrop-blur">
-  {/* Desktop / Tablet */}
-  <div className="mx-auto hidden max-w-6xl items-center justify-between px-5 py-4 md:flex">
-    {/* Left: logo + title */}
-    <div className="flex flex-1 items-center gap-3">
-      <img
-        src="/img/coin-logo.png"
-        alt="Burning Bear"
-        className="h-9 w-9 rounded-full shadow-ember"
-      />
-      <div className="leading-tight">
-        <div className="text-base font-extrabold">The Burning Bear</div>
-        <div className="text-[12px] text-white/55">{TOKEN_SYMBOL} • Live Burn Camp</div>
-      </div>
-    </div>
+        {/* Desktop / Tablet */}
+        <div className="mx-auto hidden max-w-6xl items-center justify-between px-5 py-4 md:flex">
+          {/* Left */}
+          <div className="flex flex-1 items-center gap-3">
+            <img
+              src="/img/coin-logo.png"
+              alt="Burning Bear"
+              className="h-9 w-9 rounded-full shadow-ember"
+            />
+            <div className="leading-tight">
+              <div className="text-base font-extrabold">The Burning Bear</div>
+              <div className="text-[12px] text-white/55">{TOKEN_SYMBOL} • Live Burn Camp</div>
+            </div>
+          </div>
 
-    {/* Center: nav (stays centered by flex-1 on both sides) */}
-    <nav className="flex flex-1 justify-center gap-12 text-base font-semibold">
-      <a href="#log" className="hover:text-amber-300 transition-colors">Live Burns</a>
-      <a href="#how" className="hover:text-amber-300 transition-colors">How It Works</a>
-      <a href="#community" className="hover:text-amber-300 transition-colors">Community</a>
-    </nav>
+          {/* Center Nav */}
+          <nav className="flex flex-1 justify-center gap-12 text-base font-semibold">
+            <a href="#log" className="hover:text-amber-300 transition-colors">Live Burns</a>
+            <a href="#how" className="hover:text-amber-300 transition-colors">How It Works</a>
+            <a href="#community" className="hover:text-amber-300 transition-colors">Community</a>
+          </nav>
 
-    {/* Right: CA + Copy */}
-    <div className="flex flex-1 items-center justify-end gap-3">
-      <span
-        className="hidden lg:inline rounded-full bg-emerald-900/40 px-3 py-1.5 text-sm text-emerald-300"
-        title={FULL_TOKEN_ADDRESS}
-      >
-        {truncateMiddle(FULL_TOKEN_ADDRESS)}
-      </span>
-      <button
-        className={`rounded-full px-4 py-1.5 text-sm font-semibold transition
-          ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
-        onClick={handleCopyCA}
-        aria-live="polite"
-      >
-        {copied ? 'Copied!' : 'Copy CA'}
-      </button>
-    </div>
-  </div>
-
-  {/* Mobile */}
-  <div className="mx-auto flex items-center justify-between px-4 py-3 md:hidden">
-    {/* Left: logo + name */}
-    <div className="flex items-center gap-3">
-      <img
-        src="/img/coin-logo.png"
-        alt="Burning Bear"
-        className="h-8 w-8 rounded-full shadow-ember"
-      />
-      <span className="text-[15px] font-extrabold">The Burning Bear</span>
-    </div>
-
-    {/* Right: Copy CA + Hamburger */}
-    <div className="flex items-center gap-2">
-      <button
-        className={`rounded-full px-3 py-1 text-xs font-semibold transition
-          ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
-        onClick={handleCopyCA}
-        aria-live="polite"
-      >
-        {copied ? 'Copied!' : 'Copy CA'}
-      </button>
-
-      <button
-        className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/10 bg-white/5"
-        onClick={() => setMobileOpen(v => !v)}
-        aria-label="Open Menu"
-        aria-expanded={mobileOpen}
-      >
-        <div className="space-y-1.5">
-          <span className="block h-0.5 w-5 bg-white/90"></span>
-          <span className="block h-0.5 w-5 bg-white/90"></span>
-          <span className="block h-0.5 w-5 bg-white/90"></span>
+          {/* Right */}
+          <div className="flex flex-1 items-center justify-end gap-3">
+            <span
+              className="hidden lg:inline rounded-full bg-emerald-900/40 px-3 py-1.5 text-sm text-emerald-300"
+              title={FULL_TOKEN_ADDRESS}
+            >
+              {truncateMiddle(FULL_TOKEN_ADDRESS)}
+            </span>
+            <button
+              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition
+                ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
+              onClick={handleCopyCA}
+              aria-live="polite"
+            >
+              {copied ? 'Copied!' : 'Copy CA'}
+            </button>
+          </div>
         </div>
-      </button>
-    </div>
-  </div>
 
-  {/* Mobile dropdown */}
-  {mobileOpen && (
-    <div className="md:hidden">
-      <nav className="mx-3 mb-3 rounded-xl border border-white/10 bg-[#0f1f19]/95 px-4 py-3">
-        <a href="#log" className="block rounded-lg px-2 py-2 text-base hover:bg-white/5">Live Burns</a>
-        <a href="#how" className="block rounded-lg px-2 py-2 text-base hover:bg-white/5">How It Works</a>
-        <a href="#community" className="block rounded-lg px-2 py-2 text-base hover:bg-white/5">Community</a>
-        <div className="mt-2 border-t border-white/10 pt-2 text-xs text-emerald-300/80">
-          {truncateMiddle(FULL_TOKEN_ADDRESS)}
+        {/* Mobile */}
+        <div className="mx-auto flex items-center justify-between px-4 py-3 md:hidden">
+          <div className="flex items-center gap-3">
+            <img
+              src="/img/coin-logo.png"
+              alt="Burning Bear"
+              className="h-8 w-8 rounded-full shadow-ember"
+            />
+            <span className="text-[15px] font-extrabold">The Burning Bear</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              className={`rounded-full px-3 py-1 text-xs font-semibold transition
+                ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
+              onClick={handleCopyCA}
+              aria-live="polite"
+            >
+              {copied ? 'Copied!' : 'Copy CA'}
+            </button>
+
+            <button
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/10 bg-white/5"
+              onClick={() => setMobileOpen(v => !v)}
+              aria-label="Open Menu"
+              aria-expanded={mobileOpen}
+            >
+              <div className="space-y-1.5">
+                <span className="block h-0.5 w-5 bg-white/90"></span>
+                <span className="block h-0.5 w-5 bg-white/90"></span>
+                <span className="block h-0.5 w-5 bg-white/90"></span>
+              </div>
+            </button>
+          </div>
         </div>
-      </nav>
-    </div>
-  )}
-</header>
 
-      {/* Hero with video */}
+        {/* Mobile dropdown */}
+        {mobileOpen && (
+          <div className="md:hidden">
+            <nav className="mx-3 mb-3 rounded-xl border border-white/10 bg-[#0f1f19]/95 px-4 py-3">
+              <a href="#log" onClick={() => setMobileOpen(false)} className="block rounded-lg px-2 py-2 text-base hover:bg-white/5">Live Burns</a>
+              <a href="#how" onClick={() => setMobileOpen(false)} className="block rounded-lg px-2 py-2 text-base hover:bg-white/5">How It Works</a>
+              <a href="#community" onClick={() => setMobileOpen(false)} className="block rounded-lg px-2 py-2 text-base hover:bg-white/5">Community</a>
+              <div className="mt-2 border-t border-white/10 pt-2 text-xs text-emerald-300/80">
+                {truncateMiddle(FULL_TOKEN_ADDRESS)}
+              </div>
+            </nav>
+          </div>
+        )}
+      </header>
+
+      {/* ================= Hero ================= */}
       <section className="relative">
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <video
@@ -248,7 +246,7 @@ export default function Page() {
         </div>
       </section>
 
-      {/* Live Burn Log */}
+      {/* ================= Live Burn Log ================= */}
       <section id="log" className="mx-auto max-w-6xl px-4 py-10">
         <h2 className="text-2xl font-bold">Live Burn Log</h2>
         <p className="mt-1 text-sm text-white/50">Demo data — TX links open explorer.</p>
@@ -262,7 +260,7 @@ export default function Page() {
         </div>
       </section>
 
-      {/* How it works */}
+      {/* ================= How it Works ================= */}
       <section id="how" className="mx-auto max-w-6xl px-4 py-12">
         <h2 className="text-2xl font-bold">How it works</h2>
         <ul className="mt-4 space-y-2 text-white/80">
@@ -272,10 +270,10 @@ export default function Page() {
         </ul>
       </section>
 
-      {/* Footer */}
+      {/* ================= Footer ================= */}
       <footer id="community" className="border-t border-white/10 bg-[#0d1a14]">
         <div className="mx-auto max-w-6xl px-4 py-6 text-center text-sm text-white/50">
-          Once upon a bear market, one dapper bear decided to fight the winter the only way he knew how, with fire. 🔥
+          Once upon a bear market, one dapper bear decided to fight the winter the only way he knew how — with fire. 🔥
         </div>
       </footer>
     </main>
@@ -299,7 +297,6 @@ function BurnCard({ burn, now }: { burn: Burn; now: number }) {
   const ageMin = ageMs / 60_000;
   const brightness = Math.max(0.65, 1 - ageMin / 180);
   const progress = Math.min(1, ageMin / 10);
-
   const exact = fmtExact(burn.timestamp);
   const ago = fmtAgo(now, burn.timestamp);
 
