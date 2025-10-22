@@ -1,31 +1,43 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
 /* =========================
    Config
 ========================= */
 const TOKEN_SYMBOL = '$BEAR';
-const TOKEN_NAME = 'Burning Bear';
-
-// Put your real, full CA (no ellipsis) — this is what “Copy CA” copies.
 const FULL_TOKEN_ADDRESS =
   'So1ana1111111111111111111111111111111111111111111111111';
 
-// How often to refetch your JSON and SOL price (ms)
-const STATE_POLL_MS = 10_000;
-const SOL_PRICE_POLL_MS = 60_000;
+const STATE_POLL_MS = 10_000;   // poll your JSON every 10s
+const SOL_PRICE_POLL_MS = 60_000; // refresh SOL price every 60s
 
 /* =========================
-   Types
+   Types (matches state.json)
 ========================= */
 type Burn = {
   id: string;
-  amount: number;     // BEAR burned/bought back (raw token amount)
-  sol?: number;       // SOL spent for this burn (optional; we can compute USD via price)
+  amount: number;     // BEAR amount
+  sol?: number;       // SOL used (optional)
   timestamp: number;  // ms epoch
   tx: string;
+};
+
+type Schedule = {
+  burnIntervalMs?: number;
+  buybackIntervalMs?: number;
+  nextBurnAt?: number;
+  nextBuybackAt?: number;
+  lastBurnAt?: number;
+  lastBuybackAt?: number;
+};
+
+type Ops = {
+  lastClaimAt?: number;           // ms epoch when you last claimed creator rewards
+  lastMarketingFundAt?: number;   // ms epoch when you last sent 20% to marketing wallet
+  marketingWallet?: string;       // display only, e.g. your SPL wallet
+  notes?: string;                 // free text to show in dashboard
 };
 
 type StateJson = {
@@ -33,25 +45,16 @@ type StateJson = {
     initialSupply: number;
     burned: number;
     currentSupply: number;
-    buybackSol?: number;        // total SOL spent so far
-    priceUsdPerSol?: number;    // fallback if API fails
+    buybackSol?: number;        // total SOL used so far (manual or sum)
+    priceUsdPerSol?: number;    // fallback price if CG down
   };
+  schedule?: Schedule;
+  ops?: Ops;
   burns: Burn[];
-  schedule?: {
-    // You control countdowns with either next*At or last*At + intervalMs
-    burnIntervalMs?: number;
-    buybackIntervalMs?: number;
-
-    nextBurnAt?: number;    // ms epoch in the future
-    nextBuybackAt?: number; // ms epoch in the future
-
-    lastBurnAt?: number;    // ms epoch (used with burnIntervalMs)
-    lastBuybackAt?: number; // ms epoch (used with buybackIntervalMs)
-  };
 };
 
 /* =========================
-   Helpers: time + numbers
+   Utils (formatting)
 ========================= */
 const nf0 = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 const nf2 = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -61,17 +64,24 @@ function fmt2(n: number)  { return nf2.format(n); }
 
 function clamp(n: number, a: number, b: number) { return Math.max(a, Math.min(b, n)); }
 
+function msToMinSec(ms: number) {
+  const m = Math.floor(ms / 60_000);
+  const s = Math.floor((ms % 60_000) / 1000);
+  return `${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+}
+
+// Human-friendly for cards: “Just now”, “23m ago”, “Today at 09:42”, etc.
 function friendlyDate(ts: number, now: number) {
   const d = new Date(ts);
-  const dayName = d.toLocaleDateString('en-US', { weekday: 'short' }); // Mon, Tue…
-  const date = d.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }); // 22 Oct 2025
-  const time = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }); // 09:42
+  const date = d.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+  const time = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 
   const diffSec = Math.floor((now - ts) / 1000);
   if (diffSec < 5) return 'Just now';
   if (diffSec < 60) return `${diffSec}s ago`;
 
   const diffMin = Math.floor(diffSec / 60);
+
   const midnight = (x: number) => new Date(new Date(x).toDateString()).getTime();
   const isToday = midnight(ts) === midnight(now);
   const isYesterday = midnight(ts) === midnight(now - 86_400_000);
@@ -79,19 +89,26 @@ function friendlyDate(ts: number, now: number) {
   if (diffMin < 60 && isToday) return `${diffMin}m ago, Today at ${time}`;
   if (isToday) return `Today at ${time}`;
   if (isYesterday) return `Yesterday at ${time}`;
+
+  const dayName = d.toLocaleDateString('en-US', { weekday: 'short' }); // Mon, Tue
   return `${dayName} ${time}, ${date}`;
 }
 
-function msToMinSec(ms: number) {
-  const m = Math.floor(ms / 60_000);
-  const s = Math.floor((ms % 60_000) / 1000);
-  return `${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+// Short “ago” for dashboard badges: 2m, 14m, 3h, 2d
+function shortAgo(ts?: number, now?: number) {
+  if (!ts || !now) return '—';
+  const diff = Math.max(0, now - ts);
+  const s = Math.floor(diff / 1000);
+  if (s < 60) return `${s}s`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 48) return `${h}h`;
+  const d = Math.floor(h / 24);
+  return `${d}d`;
 }
 
-/* =========================
-   Countdown resolver
-========================= */
-function resolveNextAt(now: number, kind: 'burn'|'buyback', s?: StateJson['schedule']) {
+function resolveNextAt(now: number, kind: 'burn'|'buyback', s?: Schedule) {
   const interval = kind === 'burn' ? s?.burnIntervalMs : s?.buybackIntervalMs;
   const nextAt   = kind === 'burn' ? s?.nextBurnAt     : s?.nextBuybackAt;
   const lastAt   = kind === 'burn' ? s?.lastBurnAt     : s?.lastBuybackAt;
@@ -99,10 +116,16 @@ function resolveNextAt(now: number, kind: 'burn'|'buyback', s?: StateJson['sched
   if (nextAt && nextAt > now) return nextAt;
   if (interval && lastAt)     return lastAt + interval;
 
-  // Fallback: rolling modulo timer using interval if present, otherwise 10m default
+  // fallback rolling cadence (10m default)
   const roll = interval ?? 10 * 60 * 1000;
   const rem  = roll - (now % roll);
   return now + rem;
+}
+
+function truncateMiddle(str?: string, left = 6, right = 4) {
+  if (!str) return '—';
+  if (str.length <= left + right + 1) return str;
+  return `${str.slice(0, left)}…${str.slice(-right)}`;
 }
 
 /* =========================
@@ -125,7 +148,7 @@ export default function Page() {
     let stop = false;
     const load = async () => {
       try {
-        const r = await fetch('/data/state.json', { cache: 'no-store' });
+        const r = await fetch(`/data/state.json?ts=${Date.now()}`, { cache: 'no-store' });
         if (!r.ok) throw new Error('state JSON failed');
         const j: StateJson = await r.json();
         if (!stop) setState(j);
@@ -143,13 +166,11 @@ export default function Page() {
     let stop = false;
     const load = async () => {
       try {
-        const r = await fetch('/api/sol-price', { cache: 'no-store' });
-        if (!r.ok) throw new Error('price api failed');
+        const r = await fetch(`/api/sol-price?ts=${Date.now()}`, { cache: 'no-store' });
         const j = await r.json();
-        if (typeof j.priceUsdPerSol === 'number' && !stop) setSolUsd(j.priceUsdPerSol);
-      } catch (e) {
-        // fall back: we’ll read from JSON when rendering
-        console.warn('SOL price API failed, using JSON fallback if available.');
+        if (!stop && typeof j.priceUsdPerSol === 'number') setSolUsd(j.priceUsdPerSol);
+      } catch {
+        // ignore; UI will fallback to JSON price if present
       }
     };
     load();
@@ -157,31 +178,25 @@ export default function Page() {
     return () => { stop = true; clearInterval(t); };
   }, []);
 
-  const priceUsdPerSol = useMemo(() => {
-    return solUsd ?? state?.stats?.priceUsdPerSol ?? null;
-  }, [solUsd, state]);
+  // Derived
+  const schedule = state?.schedule;
+  const burns = (state?.burns ?? []).slice().sort((a, b) => b.timestamp - a.timestamp);
 
-  // Next timers
-  const nextBurnAt = useMemo(
-    () => resolveNextAt(now, 'burn', state?.schedule),
-    [now, state?.schedule]
-  );
-  const nextBuybackAt = useMemo(
-    () => resolveNextAt(now, 'buyback', state?.schedule),
-    [now, state?.schedule]
-  );
-  const burnRemaining = Math.max(0, nextBurnAt - now);
-  const buyRemaining  = Math.max(0, nextBuybackAt - now);
-
-  // Totals / stats (guard if JSON missing)
   const initial = state?.stats?.initialSupply ?? 0;
   const burned  = state?.stats?.burned ?? 0;
   const current = state?.stats?.currentSupply ?? Math.max(0, initial - burned);
-  const totalSol = state?.stats?.buybackSol ?? 0;
-  const totalUsd = priceUsdPerSol ? totalSol * priceUsdPerSol : null;
 
-  const burns = (state?.burns ?? []).slice().sort((a, b) => b.timestamp - a.timestamp);
+  const priceUsdPerSol = solUsd ?? state?.stats?.priceUsdPerSol ?? null;
+  const totalBuybackSol =
+    typeof state?.stats?.buybackSol === 'number' ? state!.stats!.buybackSol! : 0;
+  const totalBuybackUsd = priceUsdPerSol ? totalBuybackSol * priceUsdPerSol : null;
 
+  const nextBurnAt    = resolveNextAt(now, 'burn', schedule);
+  const nextBuybackAt = resolveNextAt(now, 'buyback', schedule);
+  const nextBurnInMs  = Math.max(0, nextBurnAt - now);
+  const nextBuyInMs   = Math.max(0, nextBuybackAt - now);
+
+  // Copy CA
   const handleCopyCA = async () => {
     try {
       await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS);
@@ -201,7 +216,7 @@ export default function Page() {
       {/* Header */}
       <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-6">
-          {/* Left: logo + title (logo scrolls to top) */}
+          {/* Left: logo + title */}
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="flex items-center gap-3"
@@ -222,7 +237,7 @@ export default function Page() {
           <nav className="hidden items-center gap-6 text-sm md:flex">
             <a href="#log" className="hover:text-amber-300">Live Burns</a>
             <a href="#how" className="hover:text-amber-300">How It Works</a>
-            <a href="#community" className="hover:text-amber-300">Community</a>
+            <a href="#ops" className="hover:text-amber-300">Ops Dashboard</a>
           </nav>
 
           {/* Right: CA + Copy */}
@@ -271,13 +286,13 @@ export default function Page() {
             <div>
               <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">Next burn in</div>
               <div className="text-3xl font-extrabold text-white/90 sm:text-4xl">
-                {msToMinSec(burnRemaining)}
+                {msToMinSec(nextBurnInMs)}
               </div>
             </div>
             <div>
               <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">Next buyback in</div>
               <div className="text-3xl font-extrabold text-white/90 sm:text-4xl">
-                {msToMinSec(buyRemaining)}
+                {msToMinSec(nextBuyInMs)}
               </div>
             </div>
           </div>
@@ -291,8 +306,8 @@ export default function Page() {
 
           {/* Totals */}
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Stat label="Buyback Spent" value={`${fmt2(totalSol)} SOL`} />
-            <Stat label="Buyback Value (USD)" value={totalUsd != null ? `$${fmt2(totalUsd)}` : '—'} />
+            <Stat label="Buyback Spent" value={`${fmt2(totalBuybackSol)} SOL`} />
+            <Stat label="Buyback Value (USD)" value={totalBuybackUsd != null ? `$${fmt2(totalBuybackUsd)}` : '—'} />
           </div>
         </div>
       </section>
@@ -308,20 +323,103 @@ export default function Page() {
               <div className="text-white/60">No burns posted yet.</div>
             </div>
           )}
-          {burns.map((b) => (
-            <BurnCard key={b.id} burn={b} now={now} priceUsdPerSol={priceUsdPerSol} />
-          ))}
+          {burns.map((b) => {
+            const ageMin = Math.max(0, (now - b.timestamp) / 60_000);
+            const brightness = clamp(1 - ageMin / 180, 0.65, 1);
+            const progress = clamp(ageMin / 10, 0, 1);
+            const friendly = friendlyDate(b.timestamp, now);
+
+            const solStr = b.sol != null ? `${fmt2(b.sol)} SOL` : null;
+            const usdStr = b.sol != null && priceUsdPerSol ? `$${fmt2(b.sol * priceUsdPerSol)}` : null;
+
+            return (
+              <div
+                key={b.id}
+                className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 shadow-lg ring-emerald-500/0 transition hover:ring-2"
+                style={{ filter: `brightness(${brightness})` }}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">🔥</span>
+                    <div>
+                      <div className="text-lg font-bold">Burn • {fmtInt(b.amount)} BEAR</div>
+                      <div className="text-sm text-white/60">{friendly}</div>
+                      {(solStr || usdStr) && (
+                        <div className="mt-1 text-sm text-white/70">
+                          {solStr}{solStr && usdStr ? ' • ' : ''}{usdStr ?? ''}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <Link
+                    href={b.tx}
+                    target="_blank"
+                    className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline"
+                  >
+                    TX
+                  </Link>
+                </div>
+
+                <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/5">
+                  <div
+                    className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
+                    style={{ width: `${Math.floor(progress * 100)}%` }}
+                  />
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
-      {/* How it works */}
-      <section id="how" className="mx-auto max-w-6xl px-4 py-12 md:px-6">
-        <h2 className="text-2xl font-bold">How it works</h2>
-        <ul className="mt-4 space-y-2 text-white/80">
-          <li>80% → Buy &amp; Burn — creator fees auto-buy {TOKEN_SYMBOL} and burn them live.</li>
-          <li>20% → Team + Marketing — keeps the vibes bright.</li>
-          <li>Transparent — every burn is posted with TX link &amp; timestamp.</li>
-        </ul>
+      {/* Manual Cycle Dashboard */}
+      <section id="ops" className="mx-auto max-w-6xl px-4 pb-14 md:px-6">
+        <h2 className="text-2xl font-bold">Manual Cycle Dashboard</h2>
+        <p className="mt-1 text-sm text-white/50">
+          For the live show: claim → fund marketing (20%) → buybacks (80%) → burn → update JSON.
+        </p>
+
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Last Claim */}
+          <DashCard
+            title="Last Reward Claim"
+            value={shortAgo(state?.ops?.lastClaimAt, now)}
+            sub={state?.ops?.lastClaimAt ? friendlyDate(state!.ops!.lastClaimAt!, now) : '—'}
+          />
+
+          {/* Marketing Wallet */}
+          <DashCard
+            title="Marketing Wallet"
+            value={truncateMiddle(state?.ops?.marketingWallet, 8, 6)}
+            sub={
+              state?.ops?.lastMarketingFundAt
+                ? `Funded ${shortAgo(state?.ops?.lastMarketingFundAt, now)} ago`
+                : 'Funding not recorded'
+            }
+          />
+
+          {/* Last Buyback */}
+          <DashCard
+            title="Last Buyback"
+            value={shortAgo(state?.schedule?.lastBuybackAt, now)}
+            sub={state?.schedule?.lastBuybackAt ? friendlyDate(state!.schedule!.lastBuybackAt!, now) : '—'}
+          />
+
+          {/* Last Burn */}
+          <DashCard
+            title="Last Burn"
+            value={shortAgo(state?.schedule?.lastBurnAt, now)}
+            sub={state?.schedule?.lastBurnAt ? friendlyDate(state!.schedule!.lastBurnAt!, now) : '—'}
+          />
+        </div>
+
+        {/* Notes */}
+        {state?.ops?.notes && (
+          <div className="mt-4 rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-4 text-sm text-white/80">
+            <div className="text-[11px] uppercase tracking-wider text-white/55 mb-1">Operator Notes</div>
+            {state.ops.notes}
+          </div>
+        )}
       </section>
 
       {/* Footer */}
@@ -335,7 +433,7 @@ export default function Page() {
 }
 
 /* =========================
-   Components
+   Small components
 ========================= */
 function Stat({ label, value }: { label: string; value: string }) {
   return (
@@ -346,49 +444,12 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function BurnCard({ burn, now, priceUsdPerSol }: { burn: Burn; now: number; priceUsdPerSol: number | null }) {
-  const ageMin = Math.max(0, (now - burn.timestamp) / 60_000);
-  const brightness = clamp(1 - ageMin / 180, 0.65, 1);
-  const progress = clamp(ageMin / 10, 0, 1); // fills over ~10 minutes
-
-  const friendly = friendlyDate(burn.timestamp, now);
-
-  const solStr = burn.sol != null ? `${fmt2(burn.sol)} SOL` : null;
-  const usdStr = burn.sol != null && priceUsdPerSol ? `$${fmt2(burn.sol * priceUsdPerSol)}` : null;
-
+function DashCard({ title, value, sub }: { title: string; value: string; sub?: string }) {
   return (
-    <div
-      className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 shadow-lg ring-emerald-500/0 transition hover:ring-2"
-      style={{ filter: `brightness(${brightness})` }}
-    >
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">🔥</span>
-          <div>
-            <div className="text-lg font-bold">Burn • {fmtInt(burn.amount)} BEAR</div>
-            <div className="text-sm text-white/60">{friendly}</div>
-            {(solStr || usdStr) && (
-              <div className="mt-1 text-sm text-white/70">
-                {solStr}{solStr && usdStr ? ' • ' : ''}{usdStr ?? ''}
-              </div>
-            )}
-          </div>
-        </div>
-        <Link
-          href={burn.tx}
-          target="_blank"
-          className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline"
-        >
-          TX
-        </Link>
-      </div>
-
-      <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/5">
-        <div
-          className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
-          style={{ width: `${Math.floor(progress * 100)}%` }}
-        />
-      </div>
+    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5">
+      <div className="text-[11px] uppercase tracking-wider text-white/55">{title}</div>
+      <div className="mt-1 text-xl font-extrabold">{value}</div>
+      {sub && <div className="mt-1 text-xs text-white/50">{sub}</div>}
     </div>
   );
 }
