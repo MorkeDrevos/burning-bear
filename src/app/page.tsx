@@ -8,8 +8,7 @@ import Link from 'next/link';
 ========================= */
 const TOKEN_SYMBOL = '$BEAR';
 const TOKEN_NAME = 'Burning Bear';
-const FULL_TOKEN_ADDRESS =
-  'So1ana1111111111111111111111111111111111111111111111111';
+const FULL_TOKEN_ADDRESS = 'GQe8DCQTBkuX5E2sjvwuKDZsjGYhU8k3DN5dkSbQLfqJ';
 
 const BURN_INTERVAL_MS = 10 * 60 * 1000; // 10 min
 
