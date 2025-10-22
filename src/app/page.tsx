@@ -14,7 +14,7 @@ const FULL_TOKEN_ADDRESS =
   'So1ana1111111111111111111111111111111111111111111111111';
 
 const BURN_INTERVAL_MS = 10 * 60 * 1000; // 10 min
-const [mobileOpen, setMobileOpen] = useState(false);
+
 /* =========================
    Demo burn data (static)
 ========================= */
