@@ -3,20 +3,26 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Jua, Karla, Playfair_Display, Jura } from 'next/font/google';
 
+// ------------------------------
 // Fonts
+// ------------------------------
 const jua = Jua({ weight: '400', subsets: ['latin'] });
 const karla = Karla({ weight: ['400', '600', '700'], subsets: ['latin'] });
 const playfair = Playfair_Display({ weight: ['700', '900'], subsets: ['latin'] });
 const jura = Jura({ weight: ['600', '700'], subsets: ['latin'] });
 
+// ------------------------------
 // Config
+// ------------------------------
 const TOKEN_SYMBOL = 'BEAR';
 const TOKEN_NAME = 'Burning Bear';
 const TOKEN_ADDRESS = 'So1ana111111111111111111111111111111111111111'; // replace with real CA
 const BURN_INTERVAL_MS = 600_000; // 10 minutes
 const INITIAL_SUPPLY = 1_000_000_000; // 1B
 
+// ------------------------------
 // Helpers
+// ------------------------------
 const rr = (min: number, max: number) => Math.floor(min + Math.random() * (max - min + 1));
 const fmt = (n: number) => n.toLocaleString();
 const fakeTx = () => {
@@ -26,15 +32,16 @@ const fakeTx = () => {
   return s;
 };
 
+// ------------------------------
+// Page Component
+// ------------------------------
 export default function Page() {
   const [hydrated, setHydrated] = useState(false);
   const [now, setNow] = useState(Date.now());
   const [copied, setCopied] = useState(false);
-
   const [burns, setBurns] = useState<{ id: string; ts: number; amount: number; tx: string }[]>([]);
   const [totalBurned, setTotalBurned] = useState(0);
   const [displayBurned, setDisplayBurned] = useState(0);
-
   const [nextBurnAt, setNextBurnAt] = useState<number>(() => Date.now() + BURN_INTERVAL_MS);
 
   const clockRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -42,7 +49,9 @@ export default function Page() {
 
   useEffect(() => setHydrated(true), []);
 
+  // ------------------------------
   // Seed demo burns
+  // ------------------------------
   useEffect(() => {
     if (!hydrated || burns.length) return;
     const seed = [
@@ -55,7 +64,9 @@ export default function Page() {
     setDisplayBurned(t);
   }, [hydrated, burns.length]);
 
-  // 1s clock
+  // ------------------------------
+  // Clock tick every second
+  // ------------------------------
   useEffect(() => {
     if (!hydrated) return;
     if (clockRef.current) clearInterval(clockRef.current);
@@ -66,7 +77,9 @@ export default function Page() {
     };
   }, [hydrated]);
 
-  // Smooth total counter animation
+  // ------------------------------
+  // Animate total burned counter
+  // ------------------------------
   useEffect(() => {
     if (!hydrated) return;
     let raf = 0;
@@ -83,7 +96,9 @@ export default function Page() {
     return () => cancelAnimationFrame(raf);
   }, [hydrated, totalBurned]);
 
-  // Simulated burn
+  // ------------------------------
+  // Simulated burns
+  // ------------------------------
   const doBurn = (manual = false) => {
     if (burningRef.current && !manual) return;
     burningRef.current = true;
@@ -98,7 +113,7 @@ export default function Page() {
     setTimeout(() => (burningRef.current = false), 50);
   };
 
-  // Auto burn when countdown hits zero
+  // Auto burn when timer hits zero
   useEffect(() => {
     if (!hydrated) return;
     if (!burningRef.current && now >= nextBurnAt) {
@@ -130,7 +145,9 @@ export default function Page() {
 
   const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Supply math
+  // ------------------------------
+  // Supply calculations (auto-updating)
+  // ------------------------------
   const currentSupplyExact = useMemo(
     () => Math.max(0, INITIAL_SUPPLY - totalBurned),
     [totalBurned]
@@ -142,12 +159,14 @@ export default function Page() {
 
   if (!hydrated) return <div style={{ background: '#0b1712', height: '100vh' }} />;
 
+  // ------------------------------
+  // Page Render
+  // ------------------------------
   return (
     <main className={`${karla.className} min-h-screen bg-[#0b1712] text-[#f7efe2]`}>
       {/* HEADER */}
       <header className="sticky top-0 z-50 backdrop-blur bg-[#0b1712]/70 border-b border-[#1c3a2e]">
         <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
-          {/* Logo/title */}
           <div onClick={scrollTop} className="flex items-center gap-4 cursor-pointer hover:opacity-90 transition">
             <div className="h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ring-2 ring-[#ffcc7a] bg-[#2a5a43]">
               <img src="/img/coin-logo.png" alt="Burning Bear coin" className="w-full h-full object-cover" />
@@ -158,38 +177,29 @@ export default function Page() {
             </div>
           </div>
 
-          {/* Nav */}
-          <nav className={`${jua.className} hidden md:flex gap-8 text-base`}>
-            <a href="#tokenomics" className="text-[#ffcc7a] hover:drop-shadow-[0_0_6px_rgba(255,204,122,.6)]">Tokenomics</a>
-            <a href="#live" className="text-[#ffcc7a] hover:drop-shadow-[0_0_6px_rgba(255,204,122,.6)]">Live Burns</a>
-            <a href="#how" className="text-[#ffcc7a] hover:drop-shadow-[0_0_6px_rgba(255,204,122,.6)]">How It Works</a>
-            <a
-              href="https://x.com/MorkeDrevos"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#ffcc7a] hover:drop-shadow-[0_0_6px_rgba(255,204,122,.6)]"
-            >
+          {/* NAV */}
+          <nav className={`${jua.className} hidden md:flex gap-8 text-lg`}>
+            <a href="#tokenomics" className="text-[#ffcc7a] hover:drop-shadow-[0_0_8px_rgba(255,204,122,.6)]">Tokenomics</a>
+            <a href="#live" className="text-[#ffcc7a] hover:drop-shadow-[0_0_8px_rgba(255,204,122,.6)]">Live Burns</a>
+            <a href="#how" className="text-[#ffcc7a] hover:drop-shadow-[0_0_8px_rgba(255,204,122,.6)]">How It Works</a>
+            <a href="https://x.com/MorkeDrevos" target="_blank" rel="noopener noreferrer" className="text-[#ffcc7a] hover:drop-shadow-[0_0_8px_rgba(255,204,122,.6)]">
               Community
             </a>
           </nav>
 
-          {/* Copy CA pill */}
+          {/* Copy CA */}
           <div className="hidden sm:flex items-center gap-2 rounded-full bg-[#11281e] border border-[#2b4a39] px-4 py-2">
             <code className="text-xs md:text-sm text-[#ffe5bd] tracking-wide">
               {TOKEN_ADDRESS.slice(0, 6)}…{TOKEN_ADDRESS.slice(-6)}
             </code>
-            <button
-              onClick={copyCA}
-              className="px-3 py-1.5 rounded-full bg-[#ffcc7a] text-[#0b1712] text-xs md:text-sm font-bold"
-            >
+            <button onClick={copyCA} className="px-3 py-1.5 rounded-full bg-[#ffcc7a] text-[#0b1712] text-xs md:text-sm font-bold">
               {copied ? 'Copied!' : 'Copy CA'}
             </button>
           </div>
         </div>
-        <div className="h-1 bg-[linear-gradient(90deg,#214e3c,#3e7a5f)]" />
       </header>
 
-      {/* HERO (wider overlay, smaller fonts, supply merged here) */}
+      {/* HERO */}
       <section className="relative overflow-hidden">
         <video
           src="/img/burning-bear.MP4"
@@ -198,64 +208,72 @@ export default function Page() {
           muted
           loop
           playsInline
-          className="w-full h-[680px] object-cover brightness-[0.55]"
+          className="w-full h-[700px] object-cover brightness-[0.55]"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#0b1712]/40 via-[#0b1712]/55 to-[#0b1712]/80" />
-
-        <div className="absolute inset-0 flex items-center justify-center text-center px-6">
-          <div className="w-full max-w-6xl mx-auto backdrop-blur-[1.5px] bg-[#0b1712]/35 p-6 md:p-8 rounded-3xl">
-            {/* Headline */}
-            <h1
-              className={`${playfair.className} text-[34px] md:text-[58px] leading-[1.1]
-                          text-[#FFE7B0] drop-shadow-[0_4px_16px_rgba(255,180,80,.45)]`}
-            >
-              Meet <span className="text-[#FFD27F]">Burning Bear</span> —
-              <span className="text-[#EFC97E]/90"> the classiest arsonist in crypto.</span>
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+          <div className="max-w-4xl backdrop-blur-[1px] bg-[#0b1712]/35 p-6 rounded-3xl">
+            <h1 className={`${playfair.className} text-[38px] md:text-[72px] leading-[1.08] text-[#FFE7B0] drop-shadow-[0_4px_16px_rgba(255,180,80,.45)]`}>
+              Meet <span className="text-[#FFD27F]">Burning Bear</span> —<br className="hidden md:block" />
+              <em className="not-italic text-[#EFC97E]/90">the classiest arsonist in crypto.</em>
             </h1>
 
-            {/* Burned total */}
-            <div className="mt-4 text-[13px] md:text-[14px] uppercase tracking-wide text-[#ffebb7]/80">
+            <div className="mt-5 text-sm md:text-base uppercase tracking-wide text-[#ffebb7]/80">
               Total Burned (demo)
             </div>
-            <div
-              className={`${jua.className} mt-1 text-[44px] md:text-[72px] leading-[1]
-                          text-[#ffe0a6] drop-shadow-[0_8px_28px_rgba(255,160,80,.30)]`}
-            >
-              {fmt(displayBurned)} {TOKEN_SYMBOL}
+
+            <div className={`${jua.className} mt-1 text-[60px] md:text-[100px] leading-[0.95] text-[#ffe0a6] drop-shadow-[0_10px_40px_rgba(255,160,80,.35)]`}>
+              {fmt(displayBurned)} BEAR
             </div>
 
-            {/* Timer */}
-            <div className="mt-4 flex flex-col items-center gap-1">
-              <span className="text-[12px] md:text-[13px] tracking-widest uppercase text-[#e9cfa2]/80">
+            <div className="mt-6 flex flex-col items-center gap-2">
+              <span className="text-xs md:text-sm tracking-widest uppercase text-[#e9cfa2]/80">
                 Next burn in
               </span>
-              <div
-                className={`${jura.className} text-[28px] md:text-[40px] text-[#FFD27F]/95
-                           drop-shadow-[0_0_10px_rgba(255,210,127,.5)]`}
-              >
-                {String(countdown.m).padStart(2, '0')}m {String(countdown.s).padStart(2, '0')}s
+              <div className={`${jura.className} text-[32px] md:text-[48px] text-[#FFD27F]/95 drop-shadow-[0_0_10px_rgba(255,210,127,.5)]`}>
+                {countdown.m.toString().padStart(2, '0')}m {countdown.s.toString().padStart(2, '0')}s
               </div>
-            </div>
-
-            {/* Supply row (merged) */}
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
-              <Stat label="Initial Supply" value={INITIAL_SUPPLY} />
-              <Stat label="Burned (demo)" value={displayBurned} accent />
-              <Stat label="Current Supply" value={currentSupplyDisplay} />
             </div>
           </div>
         </div>
       </section>
 
-      {/* TOKENOMICS (simplified—no repeated split cards) */}
+      {/* SUPPLY BOARD (new) */}
+      <section className="mx-auto max-w-7xl px-4 mt-6">
+        <div className="grid md:grid-cols-3 gap-4">
+          <SupplyCard label="Initial Supply" value={INITIAL_SUPPLY} />
+          <SupplyCard label="Burned (demo)" value={displayBurned} accent />
+          <SupplyCard label="Current Supply" value={currentSupplyDisplay} />
+        </div>
+      </section>
+
+      {/* TOKENOMICS */}
       <section id="tokenomics" className="mx-auto max-w-7xl px-4 py-10">
         <h3 className={`${jua.className} text-3xl md:text-4xl`}>Tokenomics</h3>
-        <p className="mt-2 text-sm text-[#cfe3d8]">
-          Total Supply: <span className="text-[#ffe0a6] font-semibold">{fmt(INITIAL_SUPPLY)}</span> •
-          &nbsp;Burn model: <span className="text-[#ffe0a6] font-semibold">80% Buybacks + Burns</span> /{' '}
-          <span className="text-[#ffe0a6] font-semibold">20% Team + Marketing</span> •
-          &nbsp;Taxes: <span className="text-[#ffe0a6] font-semibold">0%</span>
-        </p>
+        <p className="mt-2 text-sm text-[#cfe3d8]">Simple. Transparent. Built to burn.</p>
+
+        <div className="mt-6 grid md:grid-cols-5 gap-4">
+          <article className="p-5 rounded-2xl bg-[#091711]/85 border border-[#21422f]">
+            <div className="text-xs uppercase tracking-widest text-[#e9cfa2]/80">Supply</div>
+            <div className="text-2xl mt-2 text-[#ffe0a6]">{fmt(INITIAL_SUPPLY)}</div>
+          </article>
+          <article className="p-5 rounded-2xl bg-[#091711]/85 border border-[#21422f]">
+            <div className="text-xs uppercase tracking-widest text-[#e9cfa2]/80">Current</div>
+            <div className="text-2xl mt-2 text-[#ffe0a6]">{fmt(currentSupplyExact)}</div>
+          </article>
+          <article className="p-5 rounded-2xl bg-[#091711]/85 border border-[#21422f]">
+            <div className="text-xs uppercase tracking-widest text-[#e9cfa2]/80">Buybacks + Burns</div>
+            <div className="text-2xl mt-2 text-[#ffe0a6]">80%</div>
+          </article>
+          <article className="p-5 rounded-2xl bg-[#091711]/85 border border-[#21422f]">
+            <div className="text-xs uppercase tracking-widest text-[#e9cfa2]/80">Team + Marketing</div>
+            <div className="text-2xl mt-2 text-[#ffe0a6]">20%</div>
+          </article>
+          <article className="p-5 rounded-2xl bg-[#091711]/85 border border-[#21422f]">
+            <div className="text-xs uppercase tracking-widest text-[#e9cfa2]/80">Taxes</div>
+            <div className="text-2xl mt-2 text-[#ffe0a6]">0% — pure meme energy</div>
+          </article>
+        </div>
       </section>
 
       {/* LIVE BURN LOG */}
@@ -304,8 +322,8 @@ export default function Page() {
         </div>
       </section>
 
-      {/* HOW IT WORKS (extra space already from pb-24 above) */}
-      <section id="how" className="mx-auto max-w-7xl px-4 pb-14 pt-2">
+      {/* HOW IT WORKS (extra top space already via pb-24 above) */}
+      <section id="how" className="mx-auto max-w-7xl px-4 pb-12 pt-2">
         <h3 className={`${jua.className} text-3xl md:text-4xl`}>How it works</h3>
         <div className="mt-4 grid md:grid-cols-3 gap-4 text-[#e9f3ec]">
           <div className="p-5 rounded-xl bg-[#081f16] border border-[#183228]">
@@ -349,14 +367,14 @@ export default function Page() {
   );
 }
 
-// Small stat tile used inside the hero overlay
-function Stat({ label, value, accent = false }: { label: string; value: number; accent?: boolean }) {
+// ------------------------------
+// Small Supply card component
+// ------------------------------
+function SupplyCard({ label, value, accent = false }: { label: string; value: number; accent?: boolean }) {
   return (
-    <div className={`p-4 rounded-2xl border ${accent ? 'bg-[#120d05]/80 border-[#3d2a12]' : 'bg-[#091711]/80 border-[#21422f]'}`}>
-      <div className="text-[11px] uppercase tracking-widest text-[#e9cfa2]/80">{label}</div>
-      <div className={`mt-1 ${accent ? 'text-[#ffd79a]' : 'text-[#ffe0a6]'} text-[22px] md:text-[26px] font-semibold`}>
-        {fmt(value)}
-      </div>
-    </div>
+    <article className={`p-5 rounded-2xl border ${accent ? 'bg-[#120d05] border-[#3d2a12]' : 'bg-[#091711]/85 border-[#21422f]'}`}>
+      <div className="text-xs uppercase tracking-widest text-[#e9cfa2]/80">{label}</div>
+      <div className={`mt-2 ${accent ? 'text-[#ffd79a]' : 'text-[#ffe0a6]'} text-2xl`}>{fmt(value)}</div>
+    </article>
   );
 }
