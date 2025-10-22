@@ -9,31 +9,27 @@ import Link from 'next/link';
 const TOKEN_SYMBOL = '$BEAR';
 const TOKEN_NAME = 'Burning Bear';
 
-// Your test CA
+// Your CA (full, no ellipsis)
 const FULL_TOKEN_ADDRESS =
   'GQe8DCQTBkuX5E2sjvwuKDZsjGYhU8k3DN5dkSbQLfqJ';
 
-// JSON source on GitHub (raw URL)
+// JSON source (raw URL)
 const BURN_DATA_URL =
   'https://raw.githubusercontent.com/MorkeDrevos/burning-bear/main/public/data/state.json';
 
-// Demo cadences (UI only). Adjust freely.
+// UI cadence (purely visual timers)
 const BUYBACK_INTERVAL_MS = 5 * 60 * 1000;  // 5 min
 const BURN_INTERVAL_MS    = 10 * 60 * 1000; // 10 min
-
-// Fallback prices (used ONLY if JSON doesn’t provide them)
-const FALLBACK_PRICE_SOL_PER_BEAR = 0.0000002; // SOL per BEAR
-const FALLBACK_PRICE_USD_PER_SOL  = 150;       // USD per SOL
 
 /* =========================
    Types
 ========================= */
 type Burn = {
   id: string;
-  amount: number;     // BEAR burned
+  amount: number;     // BEAR
   timestamp: number;  // ms epoch
   tx: string;
-  sol?: number;       // SOL spent (optional)
+  sol?: number;       // optional SOL spent
 };
 
 type RemoteState = {
@@ -49,38 +45,22 @@ type RemoteState = {
 };
 
 /* =========================
-   Demo fallback data
-========================= */
-function fakeTx() {
-  const s = '0123456789abcdef';
-  let h = 'https://explorer.solana.com/tx/0x';
-  for (let i = 0; i < 64; i++) h += s[Math.floor(Math.random() * s.length)];
-  return h;
-}
-function agoMinutes(minsAgo: number) {
-  return Date.now() - minsAgo * 60_000;
-}
-
-const DEMO_BURNS: Burn[] = [
-  { id: 'a', amount: 2_450_000, timestamp: agoMinutes(60),  tx: fakeTx() },
-  { id: 'b', amount: 3,100,000, timestamp: agoMinutes(120), tx: fakeTx() },
-  { id: 'c', amount: 1_076_983, timestamp: agoMinutes(9),   tx: fakeTx() },
-];
-
-/* =========================
    Utils
 ========================= */
-function fmtInt(n: number) {
+function fmtInt(n?: number | null) {
+  if (n == null || Number.isNaN(n)) return '—';
   return n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 }
-function fmtSol(n: number) {
+function fmtSol(n?: number | null) {
+  if (n == null || Number.isNaN(n)) return '—';
   const s = n.toLocaleString('en-US', {
     minimumFractionDigits: n < 1 ? 6 : 4,
     maximumFractionDigits: n < 1 ? 6 : 4,
   });
   return s.replace(/\.?0+$/, '');
 }
-function fmtUsd(n: number) {
+function fmtUsd(n?: number | null) {
+  if (n == null || Number.isNaN(n)) return '—';
   return n.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -101,6 +81,11 @@ function truncateMiddle(str: string, left = 6, right = 4) {
   if (!str || str.length <= left + right + 1) return str;
   return `${str.slice(0, left)}…${str.slice(-right)}`;
 }
+function mmss(msRemaining: number) {
+  const m = Math.floor(msRemaining / 60_000).toString().padStart(2, '0');
+  const s = Math.floor((msRemaining % 60_000) / 1000).toString().padStart(2, '0');
+  return `${m}m ${s}s`;
+}
 
 /* =========================
    Page
@@ -112,7 +97,7 @@ export default function Page() {
   const [remote, setRemote] = useState<RemoteState | null>(null);
   const intervalId = useRef<number | null>(null);
 
-  // 1s ticker (countdown)
+  // 1s ticker for countdowns
   useEffect(() => {
     if (intervalId.current) window.clearInterval(intervalId.current);
     intervalId.current = window.setInterval(() => setNow(Date.now()), 1000);
@@ -122,7 +107,7 @@ export default function Page() {
     };
   }, []);
 
-  // JSON fetch every ~10s (no-store)
+  // Pull JSON every 10s (no-store)
   useEffect(() => {
     let stop = false;
 
@@ -133,7 +118,7 @@ export default function Page() {
         const data: RemoteState = await r.json();
         if (!stop) setRemote(data);
       } catch {
-        // ignore; keep demo fallbacks
+        // Keep last good state; no demos.
       }
     }
     load();
@@ -141,37 +126,25 @@ export default function Page() {
     return () => { stop = true; clearInterval(id); };
   }, []);
 
-  // Countdown helpers
-  function mmss(msRemaining: number) {
-    const m = Math.floor(msRemaining / 60_000).toString().padStart(2, '0');
-    const s = Math.floor((msRemaining % 60_000) / 1000).toString().padStart(2, '0');
-    return `${m}m ${s}s`;
-  }
-
+  // Timers
   const nextBuybackIn = BUYBACK_INTERVAL_MS - (now % BUYBACK_INTERVAL_MS);
   const nextBurnIn    = BURN_INTERVAL_MS    - (now % BURN_INTERVAL_MS);
 
-  // Stats (prefer remote; fallback to demo)
-  const INITIAL_SUPPLY = remote?.stats?.initialSupply ?? 1_000_000_000;
-  const BURNED = remote?.stats?.burned ?? 5_550_000;
-  const CURRENT_SUPPLY =
-    remote?.stats?.currentSupply ?? (INITIAL_SUPPLY - BURNED);
+  // Stats
+  const burns: Burn[] = (remote?.burns ?? []).slice().sort((a, b) => b.timestamp - a.timestamp);
+  const PRICE_SOL_PER_BEAR = remote?.stats?.priceSolPerBear;
+  const PRICE_USD_PER_SOL  = remote?.stats?.priceUsdPerSol;
 
-  // Prices
-  const PRICE_SOL_PER_BEAR =
-    remote?.stats?.priceSolPerBear ?? FALLBACK_PRICE_SOL_PER_BEAR;
-  const PRICE_USD_PER_SOL =
-    remote?.stats?.priceUsdPerSol ?? FALLBACK_PRICE_USD_PER_SOL;
+  const INITIAL_SUPPLY = remote?.stats?.initialSupply;
+  const BURNED         = remote?.stats?.burned ?? (burns.length ? burns.reduce((s, b) => s + (b.amount || 0), 0) : undefined);
+  const CURRENT_SUPPLY = remote?.stats?.currentSupply ?? (INITIAL_SUPPLY != null && BURNED != null ? INITIAL_SUPPLY - BURNED : undefined);
 
-  // Burns list (prefer remote; fallback to demo)
-  const burnsToShow: Burn[] = (remote?.burns?.length ? remote.burns : DEMO_BURNS)
-    .slice()
-    .sort((a, b) => b.timestamp - a.timestamp);
+  const totalSolFromBurns = burns.reduce((sum, b) => sum + (typeof b.sol === 'number'
+    ? b.sol
+    : (PRICE_SOL_PER_BEAR != null ? b.amount * PRICE_SOL_PER_BEAR : 0)
+  ), 0);
 
-  // Total SOL (prefer remote stats if present; else sum burns)
-  const TOTAL_SOL =
-    remote?.stats?.buybackSol ??
-    burnsToShow.reduce((sum, b) => sum + (b.sol ?? b.amount * PRICE_SOL_PER_BEAR), 0);
+  const TOTAL_SOL = remote?.stats?.buybackSol ?? totalSolFromBurns;
 
   const handleCopyCA = async () => {
     try {
@@ -342,8 +315,12 @@ export default function Page() {
             <Stat label="Current Supply" value={fmtInt(CURRENT_SUPPLY)} />
             <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 backdrop-blur">
               <div className="text-[11px] uppercase tracking-wider text-white/55">Buyback Spent (SOL)</div>
-              <div className="mt-1 text-2xl font-extrabold">{fmtSol(TOTAL_SOL)} SOL</div>
-              <div className="mt-1 text-xs text-white/45">≈ {fmtUsd(TOTAL_SOL * PRICE_USD_PER_SOL)}</div>
+              <div className="mt-1 text-2xl font-extrabold">{fmtSol(TOTAL_SOL)} {TOTAL_SOL != null ? 'SOL' : ''}</div>
+              <div className="mt-1 text-xs text-white/45">
+                {PRICE_USD_PER_SOL != null && TOTAL_SOL != null
+                  ? <>≈ {fmtUsd(TOTAL_SOL * PRICE_USD_PER_SOL)}</>
+                  : '—'}
+              </div>
             </div>
           </div>
         </div>
@@ -352,28 +329,31 @@ export default function Page() {
       {/* ================= Live Burn Log ================= */}
       <section id="log" className="mx-auto max-w-6xl px-4 py-10">
         <h2 className="text-2xl font-bold">Live Burn Log</h2>
-        <p className="mt-1 text-sm text-white/50">Data refreshes from GitHub JSON.</p>
 
-        <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-          {burnsToShow.map((b) => (
-            <BurnCard
-              key={b.id}
-              burn={b}
-              now={now}
-              priceSolPerBear={PRICE_SOL_PER_BEAR}
-              priceUsdPerSol={PRICE_USD_PER_SOL}
-            />
-          ))}
-        </div>
+        {burns.length === 0 ? (
+          <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-white/70">
+            No burns posted yet.
+          </div>
+        ) : (
+          <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
+            {burns.map((b) => (
+              <BurnCard
+                key={b.id}
+                burn={b}
+                priceSolPerBear={PRICE_SOL_PER_BEAR}
+                priceUsdPerSol={PRICE_USD_PER_SOL}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* ================= How it Works ================= */}
       <section id="how" className="mx-auto max-w-6xl px-4 py-12">
         <h2 className="text-2xl font-bold">How it works</h2>
         <ul className="mt-4 space-y-2 text-white/80">
-          <li>Buybacks run on a cadence (demo: every 5 min), followed by periodic burns (demo: every 10 min).</li>
-          <li>80% → Buy & Burn — creator fees auto-buy {TOKEN_SYMBOL} and burn them live.</li>
-          <li>Transparent — every burn is posted with TX link & timestamp (incl. SOL & USD).</li>
+          <li>Buybacks run on a cadence, followed by periodic burns.</li>
+          <li>Every burn is posted with TX link & timestamp (including SOL & USD values when available).</li>
         </ul>
       </section>
 
@@ -401,23 +381,25 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 function BurnCard({
   burn,
-  now,
   priceSolPerBear,
   priceUsdPerSol,
 }: {
   burn: Burn;
-  now: number;
-  priceSolPerBear: number;
-  priceUsdPerSol: number;
+  priceSolPerBear?: number;
+  priceUsdPerSol?: number;
 }) {
-  const ageMs = Math.max(0, now - burn.timestamp);
-  const ageMin = ageMs / 60_000;
+  // Fade old cards slightly
+  const ageMin = Math.max(0, (Date.now() - burn.timestamp) / 60_000);
   const brightness = Math.max(0.65, 1 - ageMin / 180);
   const progress = Math.min(1, ageMin / 10);
 
   const exact = fmtExact(burn.timestamp);
-  const solSpent = burn.sol ?? burn.amount * priceSolPerBear;
-  const usdSpent = solSpent * priceUsdPerSol;
+  const solSpent = typeof burn.sol === 'number'
+    ? burn.sol
+    : (priceSolPerBear != null ? burn.amount * priceSolPerBear : undefined);
+  const usdSpent = solSpent != null && priceUsdPerSol != null
+    ? solSpent * priceUsdPerSol
+    : undefined;
 
   return (
     <div
@@ -431,7 +413,8 @@ function BurnCard({
             <div className="text-lg font-bold">Burn • {fmtInt(burn.amount)} BEAR</div>
             <div className="text-sm text-white/60">{exact}</div>
             <div className="mt-1 text-sm text-amber-300/90">
-              ≈ {fmtSol(solSpent)} SOL · {fmtUsd(usdSpent)}
+              {solSpent != null ? <>≈ {fmtSol(solSpent)} SOL</> : '—'}
+              {usdSpent != null ? <> · {fmtUsd(usdSpent)}</> : ''}
             </div>
           </div>
         </div>
