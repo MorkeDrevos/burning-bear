@@ -72,6 +72,7 @@ function fmtAgo(now: number, ts: number) {
 ========================= */
 export default function Page() {
   const [now, setNow] = useState<number>(Date.now());
+  const [copied, setCopied] = useState(false);
   const ticking = useRef<number | null>(null);
 
   useEffect(() => {
@@ -95,40 +96,61 @@ export default function Page() {
     <main>
       {/* Header */}
       <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+          {/* Left: logo + title */}
           <div className="flex items-center gap-3">
             <img
               src="/img/coin-logo.png"
               alt="Burning Bear"
-              className="h-8 w-8 rounded-full shadow-ember"
+              className="h-9 w-9 rounded-full shadow-ember"
             />
             <div className="leading-tight">
-              <div className="text-sm font-bold">The Burning Bear</div>
-              <div className="text-[11px] text-white/55">{TOKEN_SYMBOL} • Live Burn Camp</div>
+              <div className="text-base font-extrabold">The Burning Bear</div>
+              <div className="text-[12px] text-white/55">{TOKEN_SYMBOL} • Live Burn Camp</div>
             </div>
           </div>
 
-          <nav className="hidden gap-6 text-sm md:flex">
+          {/* Center: nav (bigger font) */}
+          <nav className="hidden md:flex gap-8 text-base">
             <a href="#log" className="hover:text-amber-300">Live Burns</a>
             <a href="#how" className="hover:text-amber-300">How It Works</a>
             <a href="#community" className="hover:text-amber-300">Community</a>
           </nav>
 
-          <div className="flex items-center gap-2">
-            <span className="hidden rounded-full bg-emerald-900/40 px-3 py-1 text-xs text-emerald-300 md:inline">
+          {/* Right: CA + Copy */}
+          <div className="flex items-center gap-3">
+            <span className="hidden md:inline rounded-full bg-emerald-900/40 px-3 py-1.5 text-sm text-emerald-300">
               {TOKEN_ADDRESS}
             </span>
+
             <button
-              className="rounded-full bg-[#ffedb3] px-3 py-1 text-sm font-semibold text-black hover:bg-[#ffe48d]"
-              onClick={() => navigator.clipboard.writeText(TOKEN_ADDRESS)}
+              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition
+                ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(TOKEN_ADDRESS);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1500);
+                } catch {
+                  const ta = document.createElement('textarea');
+                  ta.value = TOKEN_ADDRESS;
+                  document.body.appendChild(ta);
+                  ta.select();
+                  try { document.execCommand('copy'); } catch {}
+                  document.body.removeChild(ta);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1500);
+                }
+              }}
+              aria-live="polite"
             >
-              Copy CA
+              {copied ? 'Copied!' : 'Copy CA'}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Hero with video */}
+      {/* Hero */}
       <section className="relative">
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <video
@@ -145,17 +167,15 @@ export default function Page() {
         </div>
 
         <div className="mx-auto grid max-w-6xl gap-6 px-4 pb-16 pt-20 sm:pt-24">
-          <h1 className="max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl md:text-6xl">
+          <h1 className="max-w-3xl text-5xl font-extrabold leading-tight sm:text-6xl md:text-7xl">
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
-          {/* Countdown */}
           <div className="mt-2 text-sm uppercase tracking-[0.25em] text-white/55">Next burn in</div>
           <div className="text-4xl font-extrabold text-white/85 sm:text-5xl">
             {mins}m {secs}s
           </div>
 
-          {/* Stats */}
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Stat label="Initial Supply" value={fmtInt(INITIAL_SUPPLY)} />
             <Stat label="Burned (demo)" value={fmtInt(BURNED_DEMO)} />
@@ -170,9 +190,9 @@ export default function Page() {
         <p className="mt-1 text-sm text-white/50">Demo data — TX links open explorer.</p>
 
         <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-{DEMO_BURNS.map((b) => (
-  <BurnCard key={b.id} burn={b} now={now} />
-))}
+          {DEMO_BURNS.map((b) => (
+            <BurnCard key={b.id} burn={b} now={now} />
+          ))}
         </div>
       </section>
 
@@ -186,7 +206,7 @@ export default function Page() {
         </ul>
       </section>
 
-      {/* Original poetic footer */}
+      {/* Footer */}
       <footer id="community" className="border-t border-white/10 bg-[#0d1a14]">
         <div className="mx-auto max-w-6xl px-4 py-6 text-center text-sm text-white/50">
           Once upon a bear market, one dapper bear decided to fight the winter the only way he knew how, with fire. 🔥
