@@ -11,11 +11,14 @@ const TOKEN_SYMBOL = '$BEAR';
 const TOKEN_NAME = 'The Burning Bear';
 const FULL_TOKEN_ADDRESS = 'So1ana1111111111111111111111111111111111111111111111111';
 
+// Put your X link here
+const X_URL = 'https://x.com/your-handle-or-community'; // ← replace with your real X URL
+
 type Burn = {
   id: string;
-  amount: number;   // BEAR (integer)
-  sol?: number;     // optional, SOL spent for this burn
-  timestamp: number; // ms since epoch
+  amount: number;
+  sol?: number;
+  timestamp: number;
   tx: string;
 };
 
@@ -24,17 +27,17 @@ type StateJson = {
     initialSupply: number;
     burned: number;
     currentSupply: number;
-    buybackSol?: number;     // total SOL spent
-    priceUsdPerSol?: number; // optional fallback if API is down
+    buybackSol?: number;
+    priceUsdPerSol?: number;
   };
   schedule?: {
     burnIntervalMs?: number;
     buybackIntervalMs?: number;
-    nextBurnSpec?: string;      // "in 45m" or "21:30"
-    nextBuybackSpec?: string;   // "in 12m" or "21:10"
-    nextBurnAt?: number;        // absolute ms
-    nextBuybackAt?: number;     // absolute ms
-    lastBurnAt?: number;        // last event time
+    nextBurnSpec?: string;
+    nextBuybackSpec?: string;
+    nextBurnAt?: number;
+    nextBuybackAt?: number;
+    lastBurnAt?: number;
     lastBuybackAt?: number;
   };
   burns?: Burn[];
@@ -44,7 +47,6 @@ function truncateMiddle(str: string, left = 6, right = 4) {
   if (!str || str.length <= left + right + 1) return str;
   return `${str.slice(0, left)}…${str.slice(-right)}`;
 }
-
 function fmtInt(n: number) {
   return n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 }
@@ -54,7 +56,6 @@ function fmtMoney(n: number | undefined) {
 }
 function fmtWhen(ts: number) {
   const d = new Date(ts);
-  // Wed, Oct 30, 2024 • 07:21 PM
   return d.toLocaleString('en-US', {
     weekday: 'short',
     month: 'short',
@@ -71,14 +72,11 @@ function fmtCountdown(ms: number) {
   const s = total % 60;
   return `${m}m ${s.toString().padStart(2, '0')}s`;
 }
-
-/** parse "in 12m" or "21:30" (local time today, or tomorrow if already passed) */
+// parse "in 12m" or "21:30"
 function parseSpecToMsNow(spec?: string): number | undefined {
   if (!spec) return undefined;
   const now = Date.now();
   const s = spec.trim().toLowerCase();
-
-  // "in 12m", "in 1h", "in 1h 30m"
   if (s.startsWith('in')) {
     let mins = 0;
     const m = s.match(/(\d+)\s*m/);
@@ -88,8 +86,6 @@ function parseSpecToMsNow(spec?: string): number | undefined {
     if (mins > 0) return now + mins * 60_000;
     return undefined;
   }
-
-  // "21:30"
   const hm = s.match(/^(\d{1,2}):(\d{2})$/);
   if (hm) {
     const H = parseInt(hm[1], 10);
@@ -110,13 +106,11 @@ export default function Page() {
   const copyTimer = useRef<number | null>(null);
   const [copied, setCopied] = useState(false);
 
-  // tick every second for countdowns
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  // fetch state.json (manual source of truth)
   useEffect(() => {
     let alive = true;
     fetch('/data/state.json', { cache: 'no-store' })
@@ -126,7 +120,6 @@ export default function Page() {
     return () => { alive = false; };
   }, []);
 
-  // fetch live SOL price (falls back to json if absent)
   useEffect(() => {
     let alive = true;
     const getPrice = () =>
@@ -134,9 +127,7 @@ export default function Page() {
         .then(r => r.json())
         .then(o => {
           if (!alive) return;
-          if (o && typeof o.usd === 'number' && o.usd > 0) {
-            setSolUsd(o.usd);
-          }
+          if (o && typeof o.usd === 'number' && o.usd > 0) setSolUsd(o.usd);
         })
         .catch(() => {});
     getPrice();
@@ -145,43 +136,28 @@ export default function Page() {
   }, []);
 
   const priceUsdPerSol = solUsd ?? data?.stats?.priceUsdPerSol ?? null;
-  const burnsSorted = useMemo(() => {
-    return (data?.burns ?? []).slice().sort((a, b) => b.timestamp - a.timestamp);
-  }, [data]);
+  const burnsSorted = useMemo(() => (data?.burns ?? []).slice().sort((a, b) => b.timestamp - a.timestamp), [data]);
 
-  // countdown targets (buyback & burn)
   const targets = useMemo(() => {
     const s = data?.schedule ?? {};
     const nb = parseSpecToMsNow(s.nextBuybackSpec);
     const nbu = typeof s.nextBuybackAt === 'number' ? s.nextBuybackAt : undefined;
     const nbs = nb ?? nbu;
-
     const b = parseSpecToMsNow(s.nextBurnSpec);
     const bu = typeof s.nextBurnAt === 'number' ? s.nextBurnAt : undefined;
     const bs = b ?? bu;
-
     let buybackAt = nbs;
     let burnAt = bs;
-
-    // interval fallbacks if nothing set
-    if (!buybackAt && s.lastBuybackAt && s.buybackIntervalMs) {
-      buybackAt = s.lastBuybackAt + s.buybackIntervalMs;
-    }
-    if (!burnAt && s.lastBurnAt && s.burnIntervalMs) {
-      burnAt = s.lastBurnAt + s.burnIntervalMs;
-    }
-
+    if (!buybackAt && s.lastBuybackAt && s.buybackIntervalMs) buybackAt = s.lastBuybackAt + s.buybackIntervalMs;
+    if (!burnAt && s.lastBurnAt && s.burnIntervalMs) burnAt = s.lastBurnAt + s.burnIntervalMs;
     return { buybackAt, burnAt };
   }, [data]);
 
   const nextBuybackMs = targets.buybackAt ? targets.buybackAt - now : 0;
   const nextBurnMs = targets.burnAt ? targets.burnAt - now : 0;
 
-  const totalSolSpent = useMemo(() => data?.stats?.buybackSol ?? 0, [data]);
-  const totalUsd = useMemo(
-    () => (priceUsdPerSol ? totalSolSpent * priceUsdPerSol : undefined),
-    [totalSolSpent, priceUsdPerSol]
-  );
+  const totalSolSpent = data?.stats?.buybackSol ?? 0;
+  const totalUsd = priceUsdPerSol ? totalSolSpent * priceUsdPerSol : undefined;
 
   const INITIAL = data?.stats?.initialSupply ?? 0;
   const BURNED = data?.stats?.burned ?? 0;
@@ -207,35 +183,48 @@ export default function Page() {
 
   return (
     <main id="top">
-      {/* Header */}
+      {/* BIG Sticky Header */}
       <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          {/* left: logo + title */}
-          <Link href="#top" className="flex items-center gap-3">
-            <img src="/img/coin-logo.png" alt="Burning Bear" className="h-8 w-8 rounded-full shadow-md" />
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
+          {/* left: larger logo + type; logo clickable to #top */}
+          <Link href="#top" className="flex items-center gap-3 md:gap-4">
+            <img
+              src="/img/coin-logo.png"
+              alt={TOKEN_NAME}
+              className="h-10 w-10 md:h-12 md:w-12 rounded-full shadow-md"
+            />
             <div className="leading-tight">
-              <div className="text-sm font-bold">The Burning Bear</div>
-              <div className="text-[11px] text-white/55">{TOKEN_SYMBOL} • Live Burn Camp</div>
+              <div className="text-base md:text-xl font-extrabold">{TOKEN_NAME}</div>
+              <div className="text-[12px] md:text-sm text-white/55">{TOKEN_SYMBOL} • Live Burn Camp</div>
             </div>
           </Link>
 
-          {/* center: nav */}
-          <nav className="hidden gap-6 text-sm md:flex">
+          {/* center: nav (bigger) */}
+          <nav className="hidden items-center gap-6 md:flex md:gap-8 text-sm md:text-base">
             <a href="#log" className="hover:text-amber-300">Live Burns</a>
             <a href="#how" className="hover:text-amber-300">How It Works</a>
+            <a
+              href={X_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 hover:text-amber-300"
+            >
+              <XIcon className="h-4 w-4 md:h-5 md:w-5" />
+              X
+            </a>
           </nav>
 
-          {/* right: CA bubble + copy */}
-          <div className="flex items-center gap-2">
+          {/* right: CA bubble + bigger Copy button */}
+          <div className="flex items-center gap-2 md:gap-3">
             <span
-              className="hidden rounded-full bg-emerald-900/40 px-3 py-1 text-xs text-emerald-300 md:inline"
+              className="hidden md:inline rounded-full bg-emerald-900/40 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-emerald-300"
               title={FULL_TOKEN_ADDRESS}
             >
-              {truncateMiddle(FULL_TOKEN_ADDRESS)}
+              {truncateMiddle(FULL_TOKEN_ADDRESS, 6, 6)}
             </span>
             <button
               onClick={handleCopy}
-              className={`rounded-full px-3 py-1 text-sm font-semibold transition
+              className={`rounded-full px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base font-semibold transition
                 ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
               aria-live="polite"
             >
@@ -250,29 +239,29 @@ export default function Page() {
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <img
             src="/img/burning-bear-frame.jpg"
-            className="h-[60vh] w-full object-cover opacity-30"
+            className="h-[62vh] w-full object-cover opacity-35"
             alt=""
             aria-hidden="true"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-[#0b1712]/30 to-[#0b1712]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-[#0b1712]/35 to-[#0b1712]" />
         </div>
 
         <div className="mx-auto grid max-w-6xl gap-6 px-4 pb-12 pt-16 sm:pt-24">
-          <h1 className="max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl md:text-6xl">
+          <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
-          {/* Countdowns (time-left only) */}
+          {/* Countdowns */}
           <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
               <div className="text-xs uppercase tracking-[0.25em] text-white/55">Next buyback in</div>
-              <div className="text-3xl font-extrabold text-white/85 sm:text-4xl">
+              <div className="text-3xl md:text-4xl font-extrabold text-white/85">
                 {targets.buybackAt ? fmtCountdown(nextBuybackMs) : '—'}
               </div>
             </div>
             <div>
               <div className="text-xs uppercase tracking-[0.25em] text-white/55">Next burn in</div>
-              <div className="text-3xl font-extrabold text-white/85 sm:text-4xl">
+              <div className="text-3xl md:text-4xl font-extrabold text-white/85">
                 {targets.burnAt ? fmtCountdown(nextBurnMs) : '—'}
               </div>
             </div>
@@ -280,14 +269,14 @@ export default function Page() {
 
           {/* Stats */}
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-4">
-            <Stat label="Initial Supply" value={fmtInt(INITIAL)} />
-            <Stat label="Burned" value={fmtInt(BURNED)} />
-            <Stat label="Current Supply" value={fmtInt(CURRENT)} />
-            <Stat label="Buyback Spent" value={`${(totalSolSpent || 0).toFixed(2)} SOL`} />
+            <Stat label="Initial Supply" value={fmtInt(data?.stats?.initialSupply ?? 0)} />
+            <Stat label="Burned" value={fmtInt(data?.stats?.burned ?? 0)} />
+            <Stat label="Current Supply" value={fmtInt(data?.stats?.currentSupply ?? Math.max(0, (data?.stats?.initialSupply ?? 0) - (data?.stats?.burned ?? 0)))} />
+            <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
           </div>
 
           <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-4">
-            <Stat label="Buyback Value (USD)" value={fmtMoney(totalUsd)} />
+            <Stat label="Buyback Value (USD)" value={fmtMoney(priceUsdPerSol ? (data?.stats?.buybackSol ?? 0) * priceUsdPerSol : undefined)} />
           </div>
         </div>
       </section>
@@ -315,10 +304,7 @@ export default function Page() {
         <div className="mt-4 grid grid-cols-1 gap-4 text-white/85 md:grid-cols-3">
           <HowCard title="80% → Buy & Burn" body="Creator fees auto-buy $BEAR and burn them live — the campfire never sleeps." />
           <HowCard title="20% → Team + Marketing" body="Fuels growth, creators, memes, and keeping the vibes bright." />
-          <HowCard
-            title="Transparent"
-            body="Every buyback & burn is posted with TX link & timestamp. Public wallets, public camp."
-          />
+          <HowCard title="Transparent" body="Every buyback & burn is posted with TX link & timestamp. Public wallets, public camp." />
         </div>
       </section>
 
@@ -393,5 +379,14 @@ function BurnCard({ burn, price }: { burn: Burn; price: number }) {
         />
       </div>
     </div>
+  );
+}
+
+/** Simple X (Twitter) glyph */
+function XIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="currentColor">
+      <path d="M18.244 2H21L13.98 10.06 22 22h-6.373l-4.958-6.77L4.96 22H2l7.42-8.45L2 2h6.49l4.38 6.04L18.244 2z" />
+    </svg>
   );
 }
