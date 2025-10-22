@@ -10,21 +10,17 @@
     "burnIntervalMs": 3600000,
     "buybackIntervalMs": 1200000,
 
-    /* OPTION A: say “in X minutes” (easiest) */
-    "nextBurnInMin": 45,
-    "nextBuybackInMin": 12,
+    "nextBurnSpec": "in 45m",
+    "nextBuybackSpec": "in 12m",
 
-    /* OPTION B: exact wall-clock time (ms since epoch) */
     "nextBurnAt": 0,
     "nextBuybackAt": 0,
-
-    /* Optional history (used if nothing above is set) */
     "lastBurnAt": 0,
     "lastBuybackAt": 0
   },
   "ops": {
-    "lastClaimAt": 1730309400000,
-    "lastMarketingFundAt": 1730309700000,
+    "lastClaimAt": 1730390400000,
+    "lastMarketingFundAt": 1730390700000,
     "marketingWallet": "9zu7Z3K1n...kP9QwV",
     "notes": "Manual cycle notes here"
   },
