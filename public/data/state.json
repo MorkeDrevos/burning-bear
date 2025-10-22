@@ -4,7 +4,7 @@
     "burned": 6754321,
     "currentSupply": 993245679,
     "buybackSol": 21.42,
-    "priceUsdPerSol": 156.80
+    "priceUsdPerSol": 176.80
   },
   "schedule": {
     "burnIntervalMs": 3600000,
