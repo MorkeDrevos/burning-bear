@@ -1,50 +1,21 @@
 // src/app/api/sol-price/route.ts
 import { NextResponse } from 'next/server';
 
-const COINGECKO = 'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd';
-const BINANCE  = 'https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT';
-const COINBASE = 'https://api.coinbase.com/v2/exchange-rates?currency=SOL';
-
-async function fetchJSON(url: string, timeoutMs = 5000) {
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, { signal: ctrl.signal, headers: { 'cache-control': 'no-cache' } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
-  } finally {
-    clearTimeout(t);
-  }
-}
+export const revalidate = 0; // always fresh
 
 export async function GET() {
-  // 1) CoinGecko
   try {
-    const j = await fetchJSON(COINGECKO, 5000);
-    const usd = Number(j?.solana?.usd);
-    if (Number.isFinite(usd) && usd > 0) {
-      return NextResponse.json({ usd, source: 'coingecko' }, { headers: { 'Cache-Control': 'public, max-age=30' } });
+    const r = await fetch(
+      'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd',
+      { next: { revalidate: 0 }, cache: 'no-store' }
+    );
+    const j = await r.json();
+    const usd = j?.solana?.usd;
+    if (typeof usd === 'number') {
+      return NextResponse.json({ usd });
     }
-  } catch {}
-
-  // 2) Binance
-  try {
-    const j = await fetchJSON(BINANCE, 5000);
-    const usd = Number(j?.price);
-    if (Number.isFinite(usd) && usd > 0) {
-      return NextResponse.json({ usd, source: 'binance' }, { headers: { 'Cache-Control': 'public, max-age=30' } });
-    }
-  } catch {}
-
-  // 3) Coinbase
-  try {
-    const j = await fetchJSON(COINBASE, 5000);
-    const usd = Number(j?.data?.rates?.USD);
-    if (Number.isFinite(usd) && usd > 0) {
-      return NextResponse.json({ usd, source: 'coinbase' }, { headers: { 'Cache-Control': 'public, max-age=30' } });
-    }
-  } catch {}
-
-  // Fallback (no live price)
-  return NextResponse.json({ usd: null, source: null }, { headers: { 'Cache-Control': 'no-store' } });
+  } catch {
+    // ignore, we'll fall back on the client
+  }
+  return NextResponse.json({ usd: null }, { status: 200 });
 }
