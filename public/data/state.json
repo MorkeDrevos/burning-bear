@@ -1,43 +1,36 @@
 {
   "stats": {
     "initialSupply": 1000000000,
-    "burned": 6754321,
-    "currentSupply": 993245679,
-    "buybackSol": 21.4200,
-    "priceUsdPerSol": 156.80
+    "burned": 0,
+    "currentSupply": 1000000000,
+    "buybackSol": 0,
+    "priceUsdPerSol": 0
   },
   "schedule": {
     "burnIntervalMs": 3600000,
-    "buybackIntervalMs": 900000,
+    "buybackIntervalMs": 1200000,
 
-    "lastBurnAt": 1730470800000,
-    "lastBuybackAt": 1730469900000
+    "lastBurnAt": 0,
+    "lastBuybackAt": 0,
 
-    /* Or set exact next times:
-    "nextBurnAt": 1730474400000,
-    "nextBuybackAt": 1730470800000
-    */
+    "nextBurnAt": 0,
+    "nextBuybackAt": 0
   },
   "ops": {
-    "lastClaimAt": 1730469300000,
-    "lastMarketingFundAt": 1730469420000,
-    "marketingWallet": "9zuT2J3k1n...kF9QwV8a",
-    "notes": "Tonight: frequent buybacks (10–15m), one big burn on the hour. Tweet gif on each burn."
+    "lastClaimAt": 0,
+    "lastMarketingFundAt": 0,
+    "marketingWallet": "",
+    "notes": ""
   },
   "burns": [
+    /* Example:
     {
-      "id": "tx_101",
+      "id": "tx_001",
       "amount": 1250000,
       "sol": 0.2375,
-      "timestamp": 1730469600000,
-      "tx": "https://explorer.solana.com/tx/0xABC101"
-    },
-    {
-      "id": "tx_100",
-      "amount": 950000,
-      "sol": 0.1805,
-      "timestamp": 1730468700000,
-      "tx": "https://explorer.solana.com/tx/0xABC100"
+      "timestamp": 1730664000000,
+      "tx": "https://explorer.solana.com/tx/EXAMPLE"
     }
+    */
   ]
 }
