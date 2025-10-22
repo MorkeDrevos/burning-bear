@@ -17,8 +17,9 @@ const FULL_TOKEN_ADDRESS =
 const BURN_DATA_URL =
   'https://raw.githubusercontent.com/MorkeDrevos/burning-bear/main/public/data/state.json';
 
-// 10 min countdown between burns (UI only)
-const BURN_INTERVAL_MS = 10 * 60 * 1000;
+// Demo cadences (UI only). Adjust freely.
+const BUYBACK_INTERVAL_MS = 5 * 60 * 1000; // 5 min
+const BURN_INTERVAL_MS    = 10 * 60 * 1000; // 10 min
 
 // Fallback price used ONLY if a burn has no `sol` and JSON has no `priceSolPerBear`
 const FALLBACK_PRICE_SOL_PER_BEAR = 0.0000002;
@@ -140,10 +141,15 @@ export default function Page() {
     return () => { stop = true; clearInterval(id); };
   }, []);
 
-  // Countdown
-  const nextBurnIn = BURN_INTERVAL_MS - (now % BURN_INTERVAL_MS);
-  const mins = Math.floor(nextBurnIn / 60_000).toString().padStart(2, '0');
-  const secs = Math.floor((nextBurnIn % 60_000) / 1000).toString().padStart(2, '0');
+  // Countdown helpers
+  function mmss(msRemaining: number) {
+    const m = Math.floor(msRemaining / 60_000).toString().padStart(2, '0');
+    const s = Math.floor((msRemaining % 60_000) / 1000).toString().padStart(2, '0');
+    return `${m}m ${s}s`;
+  }
+
+  const nextBuybackIn = BUYBACK_INTERVAL_MS - (now % BUYBACK_INTERVAL_MS);
+  const nextBurnIn    = BURN_INTERVAL_MS    - (now % BURN_INTERVAL_MS);
 
   // Stats (prefer remote; fallback to demo)
   const INITIAL_SUPPLY = remote?.stats?.initialSupply ?? 1_000_000_000;
@@ -309,9 +315,20 @@ export default function Page() {
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
-          <div className="mt-2 text-sm uppercase tracking-[0.25em] text-white/55">Next burn in</div>
-          <div className="text-4xl font-extrabold text-white/85 sm:text-5xl">
-            {mins}m {secs}s
+          {/* Timers */}
+          <div className="grid max-w-xl grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <div className="mt-2 text-xs uppercase tracking-[0.25em] text-white/55">Next buyback in</div>
+              <div className="text-3xl font-extrabold text-white/85 sm:text-4xl">
+                {mmss(nextBuybackIn)}
+              </div>
+            </div>
+            <div>
+              <div className="mt-2 text-xs uppercase tracking-[0.25em] text-white/55">Next burn in</div>
+              <div className="text-3xl font-extrabold text-white/85 sm:text-4xl">
+                {mmss(nextBurnIn)}
+              </div>
+            </div>
           </div>
 
           {/* Stats */}
@@ -340,6 +357,7 @@ export default function Page() {
       <section id="how" className="mx-auto max-w-6xl px-4 py-12">
         <h2 className="text-2xl font-bold">How it works</h2>
         <ul className="mt-4 space-y-2 text-white/80">
+          <li>Buybacks run on a cadence (demo: every 5 min), followed by periodic burns (demo: every 10 min).</li>
           <li>80% → Buy & Burn — creator fees auto-buy {TOKEN_SYMBOL} and burn them live.</li>
           <li>20% → Team + Marketing — keeps the vibes bright.</li>
           <li>Transparent — every burn is posted with TX link & timestamp (incl. SOL spent).</li>
