@@ -1,24 +1,32 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 /* =========================
    Config
 ========================= */
 const TOKEN_SYMBOL = '$BEAR';
+const TOKEN_NAME = 'Burning Bear';
+
+// 👇 Put your REAL full CA here (no ellipsis)
 const FULL_TOKEN_ADDRESS =
-  '4NGbC4RRrUjS78ooSN53Up7gSg4dGrj6F6dxpMWHbonk'; // <-- put your real one
-const BURN_INTERVAL_MS = 10 * 60 * 1000; // next buyback/burn cadence (10m)
+  'So1ana1111111111111111111111111111111111111111111111111';
+
+// Buyback cadence (countdown target)
+const BURN_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
+
+// Polling
+const POLL_JSON_MS = 10_000; // check state.json every 10s
+const POLL_SOL_MS = 60_000;  // refresh SOL price every 60s
 
 /* =========================
-   Types
+   Types (matches /public/data/state.json)
 ========================= */
 type Burn = {
   id: string;
-  amount: number;      // BEAR amount (integer)
-  sol?: number;        // optional SOL spent for this burn/buyback
+  amount: number;      // BEAR amount
+  sol?: number;        // optional exact SOL spent for this burn
   timestamp: number;   // ms epoch
   tx: string;          // explorer link
 };
@@ -28,61 +36,76 @@ type StateJson = {
     initialSupply: number;
     burned: number;
     currentSupply: number;
-    buybackSol?: number;     // total SOL spent (optional)
-    priceSolPerBear?: number;// optional: SOL per BEAR if you prefer to pass it
-    priceUsdPerSol?: number; // optional: USD per SOL (fallback only)
+    buybackSol?: number;       // optional running total in SOL (manual)
+    priceSolPerBear?: number;  // optional BEAR→SOL (manual)
+    priceUsdPerSol?: number;   // optional SOL→USD (manual fallback)
   };
   burns: Burn[];
 };
 
 /* =========================
-   Helpers
+   Utils
 ========================= */
 function fmtInt(n: number) {
   return n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 }
-
-function fmtUsd(n: number) {
-  return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
+function fmt2(n: number) {
+  return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
-
-function pad2(n: number) {
-  return n.toString().padStart(2, '0');
-}
-
-// Friendly time: Today 09:31 / Yesterday 14:07 / 09:03 · 22 Oct 2025
-function fmtFriendly(ts: number, now: number) {
-  const d = new Date(ts);
-  const dn = new Date(now);
-
-  const hh = pad2(d.getHours());
-  const mm = pad2(d.getMinutes());
-
-  const isSameDay =
-    d.getFullYear() === dn.getFullYear() &&
-    d.getMonth() === dn.getMonth() &&
-    d.getDate() === dn.getDate();
-
-  // Yesterday?
-  const y = new Date(dn);
-  y.setDate(dn.getDate() - 1);
-  const isYesterday =
-    d.getFullYear() === y.getFullYear() &&
-    d.getMonth() === y.getMonth() &&
-    d.getDate() === y.getDate();
-
-  if (isSameDay) return `Today ${hh}:${mm}`;
-  if (isYesterday) return `Yesterday ${hh}:${mm}`;
-
-  const day = pad2(d.getDate());
-  const mon = d.toLocaleString('en-US', { month: 'short' });
-  const year = d.getFullYear();
-  return `${hh}:${mm} · ${day} ${mon} ${year}`;
-}
-
 function truncateMiddle(str: string, left = 6, right = 4) {
   if (!str || str.length <= left + right + 1) return str;
   return `${str.slice(0, left)}…${str.slice(-right)}`;
+}
+
+// Friendly time (no “hours ago” line shown separately)
+function fmtFriendly(ts: number, now: number) {
+  const diffMs = now - ts;
+  const diffMin = Math.floor(diffMs / 60_000);
+  const diffHr = Math.floor(diffMs / 3_600_000);
+
+  if (diffMin < 1) return 'Just now';
+  if (diffMin < 60) return `${diffMin}m ago`;
+
+  const dNow = new Date(now);
+  const d = new Date(ts);
+
+  const isSameDay = d.toDateString() === dNow.toDateString();
+  if (diffHr < 24 && isSameDay) {
+    const hh = d.getHours().toString().padStart(2, '0');
+    const mm = d.getMinutes().toString().padStart(2, '0');
+    return `Today at ${hh}:${mm}`;
+  }
+
+  const yest = new Date(dNow);
+  yest.setDate(dNow.getDate() - 1);
+  const isYesterday = d.toDateString() === yest.toDateString();
+  if (isYesterday) {
+    const hh = d.getHours().toString().padStart(2, '0');
+    const mm = d.getMinutes().toString().padStart(2, '0');
+    return `Yesterday at ${hh}:${mm}`;
+  }
+
+  const daysDiff = Math.floor(diffMs / 86_400_000);
+  if (daysDiff < 7) {
+    const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+    const hh = d.getHours().toString().padStart(2, '0');
+    const mm = d.getMinutes().toString().padStart(2, '0');
+    return `${dayName} ${hh}:${mm}`;
+  }
+
+  const day = d.getDate().toString().padStart(2, '0');
+  const mon = d.toLocaleString('en-US', { month: 'short' });
+  const year = d.getFullYear();
+  const hh = d.getHours().toString().padStart(2, '0');
+  const mm = d.getMinutes().toString().padStart(2, '0');
+  return `${day} ${mon} ${year}, ${hh}:${mm}`;
+}
+
+// Estimate SOL spent for a burn if not provided
+function estimateSolForBurn(b: Burn, priceSolPerBear?: number) {
+  if (typeof b.sol === 'number') return b.sol;
+  if (priceSolPerBear && b.amount) return b.amount * priceSolPerBear;
+  return 0;
 }
 
 /* =========================
@@ -90,14 +113,117 @@ function truncateMiddle(str: string, left = 6, right = 4) {
 ========================= */
 export default function Page() {
   const [now, setNow] = useState<number>(Date.now());
-  const [copied, setCopied] = useState(false);
-  const [data, setData] = useState<StateJson | null>(null);
+  const [json, setJson] = useState<StateJson | null>(null);
   const [solUsd, setSolUsd] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
 
-  const tickId = useRef<number | null>(null);
-  const refreshId = useRef<number | null>(null);
+  // tick
+  useEffect(() => {
+    const t = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(t);
+  }, []);
 
-  // Copy CA
+  // fetch /data/state.json
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      try {
+        const r = await fetch('/data/state.json', { cache: 'no-store' });
+        if (!r.ok) throw new Error('state.json not found');
+        const j = (await r.json()) as StateJson;
+        if (active) setJson(j);
+      } catch {
+        // leave as-is on error
+      }
+    };
+    load();
+    const id = window.setInterval(load, POLL_JSON_MS);
+    return () => {
+      active = false;
+      window.clearInterval(id);
+    };
+  }, []);
+
+  // fetch live SOL price (USD)
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      try {
+        const r = await fetch('/api/sol-price', { cache: 'no-store' });
+        const j = (await r.json()) as { usd: number | null };
+        if (active) setSolUsd(j?.usd ?? null);
+      } catch {
+        // ignore
+      }
+    };
+    load();
+    const id = window.setInterval(load, POLL_SOL_MS);
+    return () => {
+      active = false;
+      window.clearInterval(id);
+    };
+  }, []);
+
+  // derived data
+  const {
+    initialSupply,
+    burned,
+    currentSupply,
+    priceSolPerBear,
+    buybackSolManual,
+    lastBurnTs,
+    burnsSorted,
+  } = useMemo(() => {
+    const stats = json?.stats;
+    const burns = json?.burns ?? [];
+    const sorted = [...burns].sort((a, b) => b.timestamp - a.timestamp);
+
+    return {
+      initialSupply: stats?.initialSupply ?? 0,
+      burned: stats?.burned ?? 0,
+      currentSupply: stats?.currentSupply ?? 0,
+      priceSolPerBear: stats?.priceSolPerBear,
+      buybackSolManual: stats?.buybackSol,
+      lastBurnTs: sorted[0]?.timestamp ?? null,
+      burnsSorted: sorted,
+    };
+  }, [json]);
+
+  // total buyback SOL (prefer exact per-burn → else manual running total → else 0)
+  const totalBuybackSol = useMemo(() => {
+    if (!json) return 0;
+    const haveAnyExact = (json.burns || []).some(b => typeof b.sol === 'number');
+    if (haveAnyExact) {
+      return (json.burns || []).reduce((acc, b) => acc + estimateSolForBurn(b, json.stats.priceSolPerBear), 0);
+    }
+    if (typeof buybackSolManual === 'number') return buybackSolManual;
+    return 0;
+  }, [json, buybackSolManual]);
+
+  const totalBuybackUsd = useMemo(() => {
+    const price = solUsd ?? json?.stats.priceUsdPerSol ?? null;
+    if (!price) return null;
+    return totalBuybackSol * price;
+  }, [totalBuybackSol, solUsd, json?.stats.priceUsdPerSol]);
+
+  // Next buyback countdown — anchor to latest burn if present, else rolling cadence
+  const nextBuybackIn = useMemo(() => {
+    if (!lastBurnTs) {
+      const ms = BURN_INTERVAL_MS - (now % BURN_INTERVAL_MS);
+      return Math.max(0, ms);
+    }
+    const target = lastBurnTs + BURN_INTERVAL_MS;
+    return Math.max(0, target - now);
+  }, [lastBurnTs, now]);
+
+  const nbM = Math.floor(nextBuybackIn / 60_000)
+    .toString()
+    .padStart(2, '0');
+  const nbS = Math.floor((nextBuybackIn % 60_000) / 1000)
+    .toString()
+    .padStart(2, '0');
+
+  // copy CA
   const handleCopyCA = async () => {
     try {
       await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS);
@@ -115,76 +241,27 @@ export default function Page() {
     setTimeout(() => setCopied(false), 1200);
   };
 
-  // Live ticking clock + periodic refresh
-  useEffect(() => {
-    if (tickId.current) window.clearInterval(tickId.current);
-    tickId.current = window.setInterval(() => setNow(Date.now()), 1_000);
-
-    const fetchAll = async () => {
-      // bust cache on state.json
-      const res = await fetch(`/data/state.json?ts=${Date.now()}`, { cache: 'no-store' });
-      const j: StateJson = await res.json();
-      setData(j);
-
-      // live SOL price via API route (falls back to JSON if it fails)
-      try {
-        const p = await fetch(`/api/sol-price?ts=${Date.now()}`, { cache: 'no-store' });
-        const pj = await p.json();
-        if (pj && typeof pj.usd === 'number') setSolUsd(pj.usd);
-        else if (j?.stats?.priceUsdPerSol) setSolUsd(j.stats.priceUsdPerSol);
-      } catch {
-        if (j?.stats?.priceUsdPerSol) setSolUsd(j.stats.priceUsdPerSol);
-      }
-    };
-
-    fetchAll();
-
-    if (refreshId.current) window.clearInterval(refreshId.current);
-    refreshId.current = window.setInterval(fetchAll, 60_000); // refresh every 60s
-
-    return () => {
-      if (tickId.current) window.clearInterval(tickId.current);
-      if (refreshId.current) window.clearInterval(refreshId.current);
-      tickId.current = null;
-      refreshId.current = null;
-    };
-  }, []);
-
-  // Next burn timer
-  const nextBurnIn = BURN_INTERVAL_MS - (now % BURN_INTERVAL_MS);
-  const mins = pad2(Math.floor(nextBurnIn / 60_000));
-  const secs = pad2(Math.floor((nextBurnIn % 60_000) / 1000));
-
-  // Stats
-  const initial = data?.stats?.initialSupply ?? 0;
-  const burned = data?.stats?.burned ?? 0;
-  const current = data?.stats?.currentSupply ?? Math.max(0, initial - burned);
-
   return (
     <main>
       {/* Header */}
       <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-          {/* Left: Logo + title (logo is a link-to-top) */}
+          {/* Left: logo + title (logo clickable to top) */}
           <div className="flex items-center gap-3">
-            <a href="#top" aria-label="Scroll to top" className="inline-flex">
-              <Image
+            <a href="#top" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+              <img
                 src="/img/coin-logo.png"
                 alt="Burning Bear"
-                width={40}
-                height={40}
-                className="rounded-full shadow-ember"
+                className="h-9 w-9 rounded-full shadow-ember cursor-pointer"
               />
             </a>
             <div className="leading-tight">
-              <div className="text-base font-extrabold">
-                <a href="#top" className="hover:text-amber-300">The Burning Bear</a>
-              </div>
+              <div className="text-base font-extrabold">The Burning Bear</div>
               <div className="text-[12px] text-white/55">{TOKEN_SYMBOL} • Live Burn Camp</div>
             </div>
           </div>
 
-          {/* Center nav */}
+          {/* Center: nav */}
           <nav className="hidden md:flex gap-8 text-base">
             <a href="#log" className="hover:text-amber-300">Live Burns</a>
             <a href="#how" className="hover:text-amber-300">How It Works</a>
@@ -211,10 +288,8 @@ export default function Page() {
         </div>
       </header>
 
-      <div id="top" />
-
       {/* Hero with video */}
-      <section className="relative">
+      <section id="top" className="relative">
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <video
             className="h-[70vh] w-full object-cover"
@@ -234,15 +309,23 @@ export default function Page() {
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
-          <div className="mt-2 text-sm uppercase tracking-[0.25em] text-white/55">Next burn in</div>
+          {/* Countdown toned down */}
+          <div className="mt-2 text-sm uppercase tracking-[0.25em] text-white/55">Next buyback in</div>
           <div className="text-4xl font-extrabold text-white/85 sm:text-5xl">
-            {mins}m {secs}s
+            {nbM}m {nbS}s
           </div>
 
+          {/* Top stats */}
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <Stat label="Initial Supply" value={fmtInt(initial)} />
+            <Stat label="Initial Supply" value={fmtInt(initialSupply)} />
             <Stat label="Burned" value={fmtInt(burned)} />
-            <Stat label="Current Supply" value={fmtInt(current)} />
+            <Stat label="Current Supply" value={fmtInt(currentSupply)} />
+          </div>
+
+          {/* Buyback spent (SOL / USD) */}
+          <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Stat label="Buyback Spent" value={`${fmt2(totalBuybackSol)} SOL`} />
+            <Stat label="Buyback Value (USD)" value={totalBuybackUsd != null ? `$${fmt2(totalBuybackUsd)}` : '—'} />
           </div>
         </div>
       </section>
@@ -250,24 +333,24 @@ export default function Page() {
       {/* Live Burn Log */}
       <section id="log" className="mx-auto max-w-6xl px-4 py-10">
         <h2 className="text-2xl font-bold">Live Burn Log</h2>
-        <p className="mt-1 text-sm text-white/50">TX links open the chain explorer.</p>
+        <p className="mt-1 text-sm text-white/50">TX links open the explorer.</p>
 
         <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-          {(data?.burns ?? [])
-            .slice() // avoid mutating original
-            .sort((a, b) => b.timestamp - a.timestamp)
-            .map((b) => (
+          {(burnsSorted || []).map((b) => {
+            const solForThis = estimateSolForBurn(b, priceSolPerBear);
+            const usd = (solUsd ?? json?.stats.priceUsdPerSol) ? solForThis * (solUsd ?? json?.stats.priceUsdPerSol!) : null;
+            return (
               <BurnCard
                 key={b.id}
                 burn={b}
-                friendlyTime={fmtFriendly(b.timestamp, now)}
-                solUsd={solUsd ?? data?.stats?.priceUsdPerSol ?? null}
+                now={now}
+                solForThis={solForThis}
+                usdForThis={usd}
               />
-            ))}
-          {(!data || (data.burns ?? []).length === 0) && (
-            <div className="rounded-xl border border-white/10 bg-[#0f1f19]/60 p-5 text-white/60">
-              No burns posted yet.
-            </div>
+            );
+          })}
+          {(!burnsSorted || burnsSorted.length === 0) && (
+            <div className="text-white/50">No burns posted yet.</div>
           )}
         </div>
       </section>
@@ -276,8 +359,8 @@ export default function Page() {
       <section id="how" className="mx-auto max-w-6xl px-4 py-12">
         <h2 className="text-2xl font-bold">How it works</h2>
         <ul className="mt-4 space-y-2 text-white/80">
-          <li>80% → Buy & Burn — creator fees auto-buy {TOKEN_SYMBOL} and burn live.</li>
-          <li>20% → Team + Marketing — fuels growth, creators, and community.</li>
+          <li>80% → Buy & Burn — creator fees auto-buy {TOKEN_SYMBOL} and burn them live.</li>
+          <li>20% → Team + Marketing — keeps the vibes bright.</li>
           <li>Transparent — every burn is posted with TX link & timestamp.</li>
         </ul>
       </section>
@@ -306,30 +389,34 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 function BurnCard({
   burn,
-  friendlyTime,
-  solUsd,
+  now,
+  solForThis,
+  usdForThis,
 }: {
   burn: Burn;
-  friendlyTime: string;
-  solUsd: number | null;
+  now: number;
+  solForThis: number;
+  usdForThis: number | null;
 }) {
-  // If per-burn SOL is present, great; otherwise compute SOL estimate only if you have priceSolPerBear in state.json
-  const solLine = typeof burn.sol === 'number' ? burn.sol : null;
-  const usdLine = solLine && solUsd ? solLine * solUsd : null;
+  const ageMs = Math.max(0, now - burn.timestamp);
+  const ageMin = ageMs / 60_000;
+  const brightness = Math.max(0.65, 1 - ageMin / 180);
+  const progress = Math.min(1, ageMin / 10);
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 shadow-lg ring-emerald-500/0 transition hover:ring-2">
+    <div
+      className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 shadow-lg ring-emerald-500/0 transition hover:ring-2"
+      style={{ filter: `brightness(${brightness})` }}
+    >
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">🔥</span>
           <div>
             <div className="text-lg font-bold">Burn • {fmtInt(burn.amount)} BEAR</div>
-            <div className="text-sm text-white/60">{friendlyTime}</div>
-            {solLine !== null && (
-              <div className="mt-1 text-sm text-white/70">
-                ≈ {solLine.toFixed(4)} SOL{usdLine ? ` • ${fmtUsd(usdLine)}` : ''}
-              </div>
-            )}
+            <div className="text-sm text-white/60">{fmtFriendly(burn.timestamp, now)}</div>
+            <div className="mt-1 text-sm text-white/70">
+              ≈ {fmt2(solForThis)} SOL{usdForThis != null ? ` • $${fmt2(usdForThis)}` : ''}
+            </div>
           </div>
         </div>
         <Link
@@ -344,7 +431,7 @@ function BurnCard({
       <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/5">
         <div
           className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
-          style={{ width: '100%' }}
+          style={{ width: `${Math.floor(progress * 100)}%` }}
         />
       </div>
     </div>
