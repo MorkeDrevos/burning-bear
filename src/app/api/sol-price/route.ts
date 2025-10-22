@@ -5,7 +5,6 @@ const COINGECKO = 'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_c
 const BINANCE  = 'https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT';
 const COINBASE = 'https://api.coinbase.com/v2/exchange-rates?currency=SOL';
 
-// tiny fetch with timeout + graceful failure
 async function fetchJSON(url: string, timeoutMs = 5000) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
@@ -19,7 +18,7 @@ async function fetchJSON(url: string, timeoutMs = 5000) {
 }
 
 export async function GET() {
-  // 1) Try CoinGecko
+  // 1) CoinGecko
   try {
     const j = await fetchJSON(COINGECKO, 5000);
     const usd = Number(j?.solana?.usd);
@@ -28,7 +27,7 @@ export async function GET() {
     }
   } catch {}
 
-  // 2) Try Binance
+  // 2) Binance
   try {
     const j = await fetchJSON(BINANCE, 5000);
     const usd = Number(j?.price);
@@ -37,7 +36,7 @@ export async function GET() {
     }
   } catch {}
 
-  // 3) Try Coinbase
+  // 3) Coinbase
   try {
     const j = await fetchJSON(COINBASE, 5000);
     const usd = Number(j?.data?.rates?.USD);
@@ -46,6 +45,6 @@ export async function GET() {
     }
   } catch {}
 
-  // Fallback: tell client no live price
+  // Fallback (no live price)
   return NextResponse.json({ usd: null, source: null }, { headers: { 'Cache-Control': 'no-store' } });
 }
