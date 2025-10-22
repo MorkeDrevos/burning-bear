@@ -31,7 +31,7 @@
     },
     {
       "id": "tx_004",
-      "amount": 455321,
+      "amount": 345455321,
       "sol": 0.0865,
       "timestamp": 1730670400000,
       "tx": "https://explorer.solana.com/tx/0xTEST004"
