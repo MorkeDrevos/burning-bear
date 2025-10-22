@@ -8,24 +8,46 @@ import Link from 'next/link';
 ========================= */
 const TOKEN_SYMBOL = '$BEAR';
 const TOKEN_NAME = 'Burning Bear';
-const FULL_TOKEN_ADDRESS = 'GQe8DCQTBkuX5E2sjvwuKDZsjGYhU8k3DN5dkSbQLfqJ';
 
-const BURN_INTERVAL_MS = 10 * 60 * 1000; // 10 min
+// Your test CA
+const FULL_TOKEN_ADDRESS =
+  'GQe8DCQTBkuX5E2sjvwuKDZsjGYhU8k3DN5dkSbQLfqJ';
 
-// 👇 DEMO price for display ONLY. When live, store `sol` per burn.
-const PRICE_SOL_PER_BEAR = 0.0000002; // demo: 0.0000002 SOL per BEAR
+// JSON source on GitHub (raw URL)
+const BURN_DATA_URL =
+  'https://raw.githubusercontent.com/MorkeDrevos/burning-bear/main/public/data/state.json';
+
+// 10 min countdown between burns (UI only)
+const BURN_INTERVAL_MS = 10 * 60 * 1000;
+
+// Fallback price used ONLY if a burn has no `sol` and JSON has no `priceSolPerBear`
+const FALLBACK_PRICE_SOL_PER_BEAR = 0.0000002;
 
 /* =========================
-   Demo burn data (static)
+   Types
 ========================= */
 type Burn = {
   id: string;
   amount: number;     // BEAR burned
   timestamp: number;  // ms epoch
   tx: string;
-  sol?: number;       // SOL spent (set in live mode; derived for demo)
+  sol?: number;       // SOL spent (optional)
 };
 
+type RemoteState = {
+  stats?: {
+    initialSupply?: number;
+    burned?: number;
+    currentSupply?: number;
+    buybackSol?: number;
+    priceSolPerBear?: number;
+  };
+  burns?: Burn[];
+};
+
+/* =========================
+   Demo fallback data
+========================= */
 function fakeTx() {
   const s = '0123456789abcdef';
   let h = 'https://explorer.solana.com/tx/0x';
@@ -49,14 +71,12 @@ function fmtInt(n: number) {
   return n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 }
 function fmtSol(n: number) {
-  // show 4–6 decimals depending on size, always trim trailing zeros
   const s = n.toLocaleString('en-US', {
     minimumFractionDigits: n < 1 ? 6 : 4,
     maximumFractionDigits: n < 1 ? 6 : 4,
   });
   return s.replace(/\.?0+$/, '');
 }
-
 function fmtExact(ts: number) {
   const d = new Date(ts);
   const day = d.getDate().toString().padStart(2, '0');
@@ -67,7 +87,6 @@ function fmtExact(ts: number) {
   const ss = d.getSeconds().toString().padStart(2, '0');
   return `${hh}:${mm}:${ss} · ${day} ${mon} ${year}`;
 }
-
 function fmtAgo(now: number, ts: number) {
   const ms = Math.max(0, now - ts);
   const s = Math.floor(ms / 1000);
@@ -77,7 +96,6 @@ function fmtAgo(now: number, ts: number) {
   const h = Math.floor(m / 60);
   return `${h}h ago`;
 }
-
 function truncateMiddle(str: string, left = 6, right = 4) {
   if (!str || str.length <= left + right + 1) return str;
   return `${str.slice(0, left)}…${str.slice(-right)}`;
@@ -90,8 +108,10 @@ export default function Page() {
   const [now, setNow] = useState<number>(Date.now());
   const [copied, setCopied] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [remote, setRemote] = useState<RemoteState | null>(null);
   const intervalId = useRef<number | null>(null);
 
+  // 1s ticker (countdown + "x ago")
   useEffect(() => {
     if (intervalId.current) window.clearInterval(intervalId.current);
     intervalId.current = window.setInterval(() => setNow(Date.now()), 1000);
@@ -101,20 +121,47 @@ export default function Page() {
     };
   }, []);
 
+  // JSON fetch every ~10s (no-store)
+  useEffect(() => {
+    let stop = false;
+
+    async function load() {
+      try {
+        const r = await fetch(`${BURN_DATA_URL}?t=${Date.now()}`, { cache: 'no-store' });
+        if (!r.ok) return;
+        const data: RemoteState = await r.json();
+        if (!stop) setRemote(data);
+      } catch {
+        // swallow errors; keep demo fallbacks
+      }
+    }
+    load();
+    const id = setInterval(load, 10_000);
+    return () => { stop = true; clearInterval(id); };
+  }, []);
+
+  // Countdown
   const nextBurnIn = BURN_INTERVAL_MS - (now % BURN_INTERVAL_MS);
   const mins = Math.floor(nextBurnIn / 60_000).toString().padStart(2, '0');
   const secs = Math.floor((nextBurnIn % 60_000) / 1000).toString().padStart(2, '0');
 
-  const INITIAL_SUPPLY = 1_000_000_000;
-  const BURNED_DEMO = 5_550_000;
-  const CURRENT_SUPPLY = INITIAL_SUPPLY - BURNED_DEMO;
+  // Stats (prefer remote; fallback to demo)
+  const INITIAL_SUPPLY = remote?.stats?.initialSupply ?? 1_000_000_000;
+  const BURNED = remote?.stats?.burned ?? 5_550_000;
+  const CURRENT_SUPPLY =
+    remote?.stats?.currentSupply ?? (INITIAL_SUPPLY - BURNED);
+  const PRICE_SOL_PER_BEAR =
+    remote?.stats?.priceSolPerBear ?? FALLBACK_PRICE_SOL_PER_BEAR;
 
-  // derive demo SOL totals using the constant
-  const demoBurnsWithSol = DEMO_BURNS.map((b) => ({
-    ...b,
-    sol: b.sol ?? b.amount * PRICE_SOL_PER_BEAR,
-  }));
-  const TOTAL_SOL_DEMO = demoBurnsWithSol.reduce((sum, b) => sum + (b.sol || 0), 0);
+  // Burns list (prefer remote; fallback to demo)
+  const burnsToShow: Burn[] = (remote?.burns?.length ? remote.burns : DEMO_BURNS)
+    .slice()
+    .sort((a, b) => b.timestamp - a.timestamp);
+
+  // Total SOL (prefer remote stats if present; else sum burns)
+  const TOTAL_SOL =
+    remote?.stats?.buybackSol ??
+    burnsToShow.reduce((sum, b) => sum + (b.sol ?? b.amount * PRICE_SOL_PER_BEAR), 0);
 
   const handleCopyCA = async () => {
     try {
@@ -270,9 +317,9 @@ export default function Page() {
           {/* Stats */}
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-4">
             <Stat label="Initial Supply" value={fmtInt(INITIAL_SUPPLY)} />
-            <Stat label="Burned (demo)" value={fmtInt(BURNED_DEMO)} />
+            <Stat label="Burned" value={fmtInt(BURNED)} />
             <Stat label="Current Supply" value={fmtInt(CURRENT_SUPPLY)} />
-            <Stat label="Buyback Spent (SOL, demo)" value={`${fmtSol(TOTAL_SOL_DEMO)} SOL`} />
+            <Stat label="Buyback Spent (SOL)" value={`${fmtSol(TOTAL_SOL)} SOL`} />
           </div>
         </div>
       </section>
@@ -280,14 +327,12 @@ export default function Page() {
       {/* ================= Live Burn Log ================= */}
       <section id="log" className="mx-auto max-w-6xl px-4 py-10">
         <h2 className="text-2xl font-bold">Live Burn Log</h2>
-        <p className="mt-1 text-sm text-white/50">Demo data — TX links open explorer.</p>
+        <p className="mt-1 text-sm text-white/50">Data refreshes from GitHub JSON.</p>
 
         <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-          {[...demoBurnsWithSol]
-            .sort((a, b) => b.timestamp - a.timestamp)
-            .map((b) => (
-              <BurnCard key={b.id} burn={b} now={now} />
-            ))}
+          {burnsToShow.map((b) => (
+            <BurnCard key={b.id} burn={b} now={now} priceSolPerBear={PRICE_SOL_PER_BEAR} />
+          ))}
         </div>
       </section>
 
@@ -323,7 +368,15 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function BurnCard({ burn, now }: { burn: Burn; now: number }) {
+function BurnCard({
+  burn,
+  now,
+  priceSolPerBear,
+}: {
+  burn: Burn;
+  now: number;
+  priceSolPerBear: number;
+}) {
   const ageMs = Math.max(0, now - burn.timestamp);
   const ageMin = ageMs / 60_000;
   const brightness = Math.max(0.65, 1 - ageMin / 180);
@@ -332,8 +385,7 @@ function BurnCard({ burn, now }: { burn: Burn; now: number }) {
   const exact = fmtExact(burn.timestamp);
   const ago = fmtAgo(now, burn.timestamp);
 
-  // derive SOL spent if not given (demo)
-  const solSpent = burn.sol ?? burn.amount * PRICE_SOL_PER_BEAR;
+  const solSpent = burn.sol ?? burn.amount * priceSolPerBear;
 
   return (
     <div
@@ -344,15 +396,11 @@ function BurnCard({ burn, now }: { burn: Burn; now: number }) {
         <div className="flex items-center gap-3">
           <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">🔥</span>
           <div>
-            <div className="text-lg font-bold">
-              Burn • {fmtInt(burn.amount)} BEAR
-            </div>
+            <div className="text-lg font-bold">Burn • {fmtInt(burn.amount)} BEAR</div>
             <div className="text-sm text-white/60">
               {exact} <span className="text-white/35">({ago})</span>
             </div>
-            <div className="mt-1 text-sm text-amber-300/90">
-              ≈ {fmtSol(solSpent)} SOL
-            </div>
+            <div className="mt-1 text-sm text-amber-300/90">≈ {fmtSol(solSpent)} SOL</div>
           </div>
         </div>
         <Link
