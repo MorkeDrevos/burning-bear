@@ -13,14 +13,18 @@ const FULL_TOKEN_ADDRESS =
 
 const BURN_INTERVAL_MS = 10 * 60 * 1000; // 10 min
 
+// 👇 DEMO price for display ONLY. When live, store `sol` per burn.
+const PRICE_SOL_PER_BEAR = 0.0000002; // demo: 0.0000002 SOL per BEAR
+
 /* =========================
-   Demo burn data
+   Demo burn data (static)
 ========================= */
 type Burn = {
   id: string;
-  amount: number;
-  timestamp: number;
+  amount: number;     // BEAR burned
+  timestamp: number;  // ms epoch
   tx: string;
+  sol?: number;       // SOL spent (set in live mode; derived for demo)
 };
 
 function fakeTx() {
@@ -29,7 +33,6 @@ function fakeTx() {
   for (let i = 0; i < 64; i++) h += s[Math.floor(Math.random() * s.length)];
   return h;
 }
-
 function agoMinutes(minsAgo: number) {
   return Date.now() - minsAgo * 60_000;
 }
@@ -37,7 +40,7 @@ function agoMinutes(minsAgo: number) {
 const DEMO_BURNS: Burn[] = [
   { id: 'a', amount: 2_450_000, timestamp: agoMinutes(60), tx: fakeTx() },
   { id: 'b', amount: 3_100_000, timestamp: agoMinutes(120), tx: fakeTx() },
-  { id: 'c', amount: 1_076_983, timestamp: agoMinutes(9), tx: fakeTx() },
+  { id: 'c', amount: 1_076_983, timestamp: agoMinutes(9),  tx: fakeTx() },
 ];
 
 /* =========================
@@ -45,6 +48,14 @@ const DEMO_BURNS: Burn[] = [
 ========================= */
 function fmtInt(n: number) {
   return n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+}
+function fmtSol(n: number) {
+  // show 4–6 decimals depending on size, always trim trailing zeros
+  const s = n.toLocaleString('en-US', {
+    minimumFractionDigits: n < 1 ? 6 : 4,
+    maximumFractionDigits: n < 1 ? 6 : 4,
+  });
+  return s.replace(/\.?0+$/, '');
 }
 
 function fmtExact(ts: number) {
@@ -98,6 +109,13 @@ export default function Page() {
   const INITIAL_SUPPLY = 1_000_000_000;
   const BURNED_DEMO = 5_550_000;
   const CURRENT_SUPPLY = INITIAL_SUPPLY - BURNED_DEMO;
+
+  // derive demo SOL totals using the constant
+  const demoBurnsWithSol = DEMO_BURNS.map((b) => ({
+    ...b,
+    sol: b.sol ?? b.amount * PRICE_SOL_PER_BEAR,
+  }));
+  const TOTAL_SOL_DEMO = demoBurnsWithSol.reduce((sum, b) => sum + (b.sol || 0), 0);
 
   const handleCopyCA = async () => {
     try {
@@ -250,10 +268,12 @@ export default function Page() {
             {mins}m {secs}s
           </div>
 
-          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {/* Stats */}
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-4">
             <Stat label="Initial Supply" value={fmtInt(INITIAL_SUPPLY)} />
             <Stat label="Burned (demo)" value={fmtInt(BURNED_DEMO)} />
             <Stat label="Current Supply" value={fmtInt(CURRENT_SUPPLY)} />
+            <Stat label="Buyback Spent (SOL, demo)" value={`${fmtSol(TOTAL_SOL_DEMO)} SOL`} />
           </div>
         </div>
       </section>
@@ -264,7 +284,7 @@ export default function Page() {
         <p className="mt-1 text-sm text-white/50">Demo data — TX links open explorer.</p>
 
         <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-          {[...DEMO_BURNS]
+          {[...demoBurnsWithSol]
             .sort((a, b) => b.timestamp - a.timestamp)
             .map((b) => (
               <BurnCard key={b.id} burn={b} now={now} />
@@ -278,7 +298,7 @@ export default function Page() {
         <ul className="mt-4 space-y-2 text-white/80">
           <li>80% → Buy & Burn — creator fees auto-buy {TOKEN_SYMBOL} and burn them live.</li>
           <li>20% → Team + Marketing — keeps the vibes bright.</li>
-          <li>Transparent — every burn is posted with TX link & timestamp.</li>
+          <li>Transparent — every burn is posted with TX link & timestamp (incl. SOL spent).</li>
         </ul>
       </section>
 
@@ -309,8 +329,12 @@ function BurnCard({ burn, now }: { burn: Burn; now: number }) {
   const ageMin = ageMs / 60_000;
   const brightness = Math.max(0.65, 1 - ageMin / 180);
   const progress = Math.min(1, ageMin / 10);
+
   const exact = fmtExact(burn.timestamp);
   const ago = fmtAgo(now, burn.timestamp);
+
+  // derive SOL spent if not given (demo)
+  const solSpent = burn.sol ?? burn.amount * PRICE_SOL_PER_BEAR;
 
   return (
     <div
@@ -321,9 +345,14 @@ function BurnCard({ burn, now }: { burn: Burn; now: number }) {
         <div className="flex items-center gap-3">
           <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">🔥</span>
           <div>
-            <div className="text-lg font-bold">Burn • {fmtInt(burn.amount)} BEAR</div>
+            <div className="text-lg font-bold">
+              Burn • {fmtInt(burn.amount)} BEAR
+            </div>
             <div className="text-sm text-white/60">
               {exact} <span className="text-white/35">({ago})</span>
+            </div>
+            <div className="mt-1 text-sm text-amber-300/90">
+              ≈ {fmtSol(solSpent)} SOL
             </div>
           </div>
         </div>
