@@ -75,7 +75,6 @@ export default function Page() {
   const ticking = useRef<number | null>(null);
 
   useEffect(() => {
-    // tick once per second in the browser
     ticking.current && window.clearInterval(ticking.current);
     ticking.current = window.setInterval(() => setNow(Date.now()), 1000);
     return () => {
@@ -119,7 +118,6 @@ export default function Page() {
             <span className="hidden rounded-full bg-emerald-900/40 px-3 py-1 text-xs text-emerald-300 md:inline">
               {TOKEN_ADDRESS}
             </span>
-            {/* Keep the ONLY Copy CA here */}
             <button
               className="rounded-full bg-[#ffedb3] px-3 py-1 text-sm font-semibold text-black hover:bg-[#ffe48d]"
               onClick={() => navigator.clipboard.writeText(TOKEN_ADDRESS)}
@@ -151,13 +149,13 @@ export default function Page() {
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
-          {/* Countdown (softer/less white) */}
+          {/* Countdown */}
           <div className="mt-2 text-sm uppercase tracking-[0.25em] text-white/55">Next burn in</div>
           <div className="text-4xl font-extrabold text-white/85 sm:text-5xl">
             {mins}m {secs}s
           </div>
 
-          {/* Stats (NOTE: Removed the extra Copy CA that used to be under these boxes) */}
+          {/* Stats */}
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Stat label="Initial Supply" value={fmtInt(INITIAL_SUPPLY)} />
             <Stat label="Burned (demo)" value={fmtInt(BURNED_DEMO)} />
@@ -188,15 +186,10 @@ export default function Page() {
         </ul>
       </section>
 
-      {/* Footer */}
+      {/* Original poetic footer */}
       <footer id="community" className="border-t border-white/10 bg-[#0d1a14]">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-6 sm:flex-row">
-          <div className="text-sm text-white/50">
-            © {new Date().getFullYear()} The Burning Bear — The Classiest Arsonist in Crypto
-          </div>
-          <div className="text-xs text-white/40">
-            {TOKEN_SYMBOL} is a meme token with no intrinsic value or expectation of financial return. Entertainment only. Always DYOR.
-          </div>
+        <div className="mx-auto max-w-6xl px-4 py-6 text-center text-sm text-white/50">
+          Once upon a bear market, one dapper bear decided to fight the winter the only way he knew how, with fire. 🔥
         </div>
       </footer>
     </main>
@@ -215,10 +208,10 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function BurnCard({ burn, now, index }: { burn: Burn; now: number; index: number }) {
+function BurnCard({ burn, now }: { burn: Burn; now: number }) {
   const ageMs = Math.max(0, now - burn.timestamp);
   const ageMin = ageMs / 60_000;
-  const brightness = Math.max(0.65, 1 - ageMin / 180); // fades over ~3h
+  const brightness = Math.max(0.65, 1 - ageMin / 180);
   const progress = Math.min(1, ageMin / 10);
 
   const exact = fmtExact(burn.timestamp);
@@ -234,7 +227,6 @@ function BurnCard({ burn, now, index }: { burn: Burn; now: number; index: number
           <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">🔥</span>
           <div>
             <div className="text-lg font-bold">Burn • {fmtInt(burn.amount)} BEAR</div>
-            {/* precise timestamp + relative */}
             <div className="text-sm text-white/60">
               {exact} <span className="text-white/35">({ago})</span>
             </div>
