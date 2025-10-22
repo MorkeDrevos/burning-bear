@@ -1,21 +1,25 @@
-// src/app/api/sol-price/route.ts
-import { NextResponse } from 'next/server';
+// Simple server-side SOL price proxy (CoinGecko)
+// Avoids CORS on the client and keeps keys out of the browser.
 
-export const revalidate = 0; // always fresh
+export const revalidate = 60; // cache for up to 60s on Vercel
 
 export async function GET() {
   try {
     const r = await fetch(
-      'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd',
-      { next: { revalidate: 0 }, cache: 'no-store' }
+      "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd",
+      { next: { revalidate } }
     );
-    const j = await r.json();
-    const usd = j?.solana?.usd;
-    if (typeof usd === 'number') {
-      return NextResponse.json({ usd });
-    }
-  } catch {
-    // ignore, we'll fall back on the client
+    if (!r.ok) throw new Error(`Upstream ${r.status}`);
+    const j = (await r.json()) as { solana?: { usd?: number } };
+    const usd = j?.solana?.usd ?? null;
+    return new Response(JSON.stringify({ usd }), {
+      headers: { "content-type": "application/json" },
+      status: 200,
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ usd: null }), {
+      headers: { "content-type": "application/json" },
+      status: 200,
+    });
   }
-  return NextResponse.json({ usd: null }, { status: 200 });
 }
