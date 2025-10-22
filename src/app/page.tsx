@@ -9,7 +9,7 @@ import Link from 'next/link';
 const TOKEN_SYMBOL = '$BEAR';
 const TOKEN_NAME = 'Burning Bear';
 
-// 👇 Put your REAL full CA here (NO ellipsis). Copy uses this exact value.
+// 👇 Put your REAL full CA here (no ellipsis)
 const FULL_TOKEN_ADDRESS =
   'So1ana1111111111111111111111111111111111111111111111111';
 
@@ -21,7 +21,7 @@ const BURN_INTERVAL_MS = 10 * 60 * 1000; // 10 min
 type Burn = {
   id: string;
   amount: number;
-  timestamp: number; // ms epoch
+  timestamp: number;
   tx: string;
 };
 
@@ -49,7 +49,6 @@ function fmtInt(n: number) {
 }
 
 function fmtExact(ts: number) {
-  // -> 10:47:23 · 21 Oct 2025
   const d = new Date(ts);
   const day = d.getDate().toString().padStart(2, '0');
   const mon = d.toLocaleString('en-US', { month: 'short' });
@@ -83,7 +82,6 @@ export default function Page() {
   const [copied, setCopied] = useState(false);
   const intervalId = useRef<number | null>(null);
 
-  // tick every second (browser-safe typing)
   useEffect(() => {
     if (intervalId.current) window.clearInterval(intervalId.current);
     intervalId.current = window.setInterval(() => setNow(Date.now()), 1000);
@@ -102,11 +100,9 @@ export default function Page() {
   const CURRENT_SUPPLY = INITIAL_SUPPLY - BURNED_DEMO;
 
   const handleCopyCA = async () => {
-    // Copy the FULL address (no truncation)
     try {
       await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS);
     } catch {
-      // Fallback for older browsers
       const ta = document.createElement('textarea');
       ta.value = FULL_TOKEN_ADDRESS;
       ta.style.position = 'fixed';
@@ -138,7 +134,7 @@ export default function Page() {
             </div>
           </div>
 
-          {/* Center: nav (bigger fonts) */}
+          {/* Center: nav */}
           <nav className="hidden md:flex gap-8 text-base">
             <a href="#log" className="hover:text-amber-300">Live Burns</a>
             <a href="#how" className="hover:text-amber-300">How It Works</a>
@@ -153,7 +149,6 @@ export default function Page() {
             >
               {truncateMiddle(FULL_TOKEN_ADDRESS)}
             </span>
-
             <button
               className={`rounded-full px-4 py-1.5 text-sm font-semibold transition
                 ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
@@ -187,13 +182,11 @@ export default function Page() {
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
-          {/* Countdown toned down */}
           <div className="mt-2 text-sm uppercase tracking-[0.25em] text-white/55">Next burn in</div>
           <div className="text-4xl font-extrabold text-white/85 sm:text-5xl">
             {mins}m {secs}s
           </div>
 
-          {/* Stats */}
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Stat label="Initial Supply" value={fmtInt(INITIAL_SUPPLY)} />
             <Stat label="Burned (demo)" value={fmtInt(BURNED_DEMO)} />
@@ -208,9 +201,11 @@ export default function Page() {
         <p className="mt-1 text-sm text-white/50">Demo data — TX links open explorer.</p>
 
         <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-          {DEMO_BURNS.map((b) => (
-            <BurnCard key={b.id} burn={b} now={now} />
-          ))}
+          {[...DEMO_BURNS]
+            .sort((a, b) => b.timestamp - a.timestamp)
+            .map((b) => (
+              <BurnCard key={b.id} burn={b} now={now} />
+            ))}
         </div>
       </section>
 
@@ -249,10 +244,10 @@ function Stat({ label, value }: { label: string; value: string }) {
 function BurnCard({ burn, now }: { burn: Burn; now: number }) {
   const ageMs = Math.max(0, now - burn.timestamp);
   const ageMin = ageMs / 60_000;
-  const brightness = Math.max(0.65, 1 - ageMin / 180); // fades over ~3h
+  const brightness = Math.max(0.65, 1 - ageMin / 180);
   const progress = Math.min(1, ageMin / 10);
 
-  const exact = fmtExact(burn.timestamp); // precise time
+  const exact = fmtExact(burn.timestamp);
   const ago = fmtAgo(now, burn.timestamp);
 
   return (
