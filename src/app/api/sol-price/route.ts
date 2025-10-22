@@ -5,7 +5,6 @@ export const revalidate = 0; // always fresh
 
 export async function GET() {
   try {
-    // Public, no key needed. If CG errors, we throw and the client will fallback.
     const r = await fetch(
       'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd',
       { next: { revalidate: 0 }, cache: 'no-store' }
