@@ -318,43 +318,57 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== Live Burn Log — glassy boxes + auto-scroll + glowing bars (no edge shadow) ===== */}
-<section id="log" className="relative w-full px-4 sm:px-6 lg:px-8 mt-6 overflow-hidden">
+      {/* ===== Live Burn Log — slow auto-scroll, pause on hover ===== */}
+<section id="log" className="w-full px-4 sm:px-6 lg:px-8 mt-6">
   <div className="flex items-baseline justify-between max-w-7xl mx-auto">
     <h2 className="text-2xl font-bold">Live Burn Log</h2>
     <p className="text-sm text-white/50">TX links open explorer.</p>
   </div>
 
-  <div className="relative mt-6 group">
-    {/* Removed side fades for clean edge-to-edge look */}
-
+  {/* Viewport */}
+  <div
+    className="group relative mt-6 overflow-hidden select-none"
+    // mobile "touch" pause hint
+    onTouchStart={(e) => { (e.currentTarget as HTMLElement).style.setProperty('--play', 'paused'); }}
+    onTouchEnd={(e) => { (e.currentTarget as HTMLElement).style.setProperty('--play', 'running'); }}
+  >
+    {/* Track (auto-scrolls left) */}
     <div
-      className="flex gap-6 animate-scroll-x will-change-transform group-hover:[animation-play-state:paused]"
-      style={{ width: 'max-content', animation: 'scrollLeft 35s linear infinite' }}
+      className="
+        flex w-max items-stretch gap-6
+        animate-burn-marquee
+        [animation-play-state:var(--play,run)]
+        group-hover:[animation-play-state:paused]
+      "
+      style={{
+        // tune speed by changing duration vars (CSS below uses these)
+        // longer = slower
+        // small screens:
+        ['--marquee-duration-sm' as any]: '70s',
+        // large screens:
+        ['--marquee-duration-lg' as any]: '90s',
+      }}
     >
-      {[...burnsSorted.slice(0, 6), ...burnsSorted.slice(0, 6)].map((b, i) => (
-        <div key={b.id + i} className="flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]">
-          <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-md p-5 md:p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_25px_#ffb74d30] hover:border-amber-300/30">
+      {[...burnsSorted, ...burnsSorted.slice(0, 4)].slice(0, 8).map((b) => (
+        <div key={`marq_${b.id}`} className="min-w-[640px] max-w-[880px]">
+          {/* Your existing card look, but more transparent bg */}
+          <div className="rounded-3xl border border-white/10 bg-black/25 backdrop-blur-sm p-5 md:p-6 shadow-lg transition
+                          hover:border-amber-300/30 hover:shadow-[0_6px_20px_rgba(255,200,120,0.15)]">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">🔥</span>
                 <div>
                   <div className="text-lg font-bold">Burn • {b.amount.toLocaleString()} BEAR</div>
                   <div className="text-sm text-white/60">
-                    {new Date(b.timestamp).toLocaleString('en-US', {
-                      weekday: 'short',
-                      month: 'short',
-                      day: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: true,
+                    {new Date(b.timestamp as number).toLocaleString('en-US', {
+                      weekday: 'short', month: 'short', day: '2-digit', year: 'numeric',
+                      hour: '2-digit', minute: '2-digit', hour12: true,
                     })}
                   </div>
                   {b.sol !== undefined && (
                     <div className="text-sm text-white/70">
                       ≈ {b.sol.toFixed(4)} SOL (
-                      {(b.sol * priceUsdPerSol).toLocaleString('en-US', { style: 'currency', currency: 'USD' })})
+                      {(b.sol * (priceUsdPerSol || 0)).toLocaleString('en-US', { style: 'currency', currency: 'USD' })})
                     </div>
                   )}
                 </div>
@@ -368,41 +382,43 @@ export default function Page() {
               </Link>
             </div>
 
-            {/* Progress bar with moving sheen */}
-            <div className="relative mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
-              <div className="h-full w-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500" />
-              <div className="pointer-events-none absolute inset-0">
-                <div className="absolute inset-y-0 -left-1/3 w-1/3 animate-sheen bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-              </div>
+            <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/5">
+              <div className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 w-[100%]" />
             </div>
           </div>
         </div>
       ))}
     </div>
+
+    {/* Fade edges for nicer look */}
+    <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#0b1712] to-transparent" />
+    <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#0b1712] to-transparent" />
   </div>
 
-  {/* Animations */}
-  <style jsx>{`
-    @keyframes scrollLeft {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+  {/* Marquee keyframes */}
+  <style jsx global>{`
+    @keyframes burn-marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); } /* half track because we duplicated start items */
     }
-    @keyframes sheen {
-      0%   { transform: translateX(0); opacity: 0.0; }
-      10%  { opacity: 0.5; }
-      50%  { opacity: 0.35; }
-      100% { transform: translateX(350%); opacity: 0.0; }
+    .animate-burn-marquee {
+      animation-name: burn-marquee;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      /* duration responsive via CSS variables set inline */
+      animation-duration: var(--marquee-duration-sm, 70s);
     }
-    .animate-sheen {
-      animation: sheen 2.8s ease-in-out infinite;
-      filter: blur(1px);
+    @media (min-width: 1024px) {
+      .animate-burn-marquee {
+        animation-duration: var(--marquee-duration-lg, 90s);
+      }
     }
   `}</style>
 </section>
 
       {/* ===== The 50/30/20 Campfire Split ===== */}
       <section id="how" className="mx-auto max-w-6xl px-4 pt-14">
-        <h3 className="text-xl font-bold tracking-tight">The 50/30/20 Campfire Split</h3>
+        <h3 className="text-xl font-bold tracking-tight">How It Works</h3>
         <div className="mt-4 grid grid-cols-1 gap-5 md:grid-cols-3">
           <HowCard
             title="50% → Auto-Buy & Burn"
