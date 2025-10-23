@@ -22,9 +22,9 @@ const EXPLORER = 'https://explorer.solana.com';
 ========================= */
 type Burn = {
   id: string;
-  amount: number;
-  sol?: number;
-  timestamp: number | string;
+  amount: number;            // BEAR
+  sol?: number;              // SOL spent for this burn
+  timestamp: number | string; // ms since epoch OR ISO string
   tx: string;
 };
 
@@ -33,8 +33,8 @@ type StateJson = {
     initialSupply: number;
     burned: number;
     currentSupply: number;
-    buybackSol?: number;
-    priceUsdPerSol?: number;
+    buybackSol?: number;       // total SOL spent on buybacks
+    priceUsdPerSol?: number;   // fallback price used if API unavailable
   };
   schedule?: {
     burnIntervalMs?: number;
@@ -54,6 +54,7 @@ const truncateMiddle = (str: string, left = 6, right = 6) =>
   !str || str.length <= left + right + 1 ? str : `${str.slice(0, left)}…${str.slice(-right)}`;
 
 const fmtInt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+
 const fmtMoney = (n?: number) =>
   n == null || !isFinite(n) ? '$0.00' : n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
@@ -89,7 +90,7 @@ export default function Page() {
   const [copied, setCopied] = useState(false);
   const copyTimer = useRef<number | null>(null);
 
-  // tick each second
+  // tick each second (drives countdowns)
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
@@ -135,7 +136,7 @@ export default function Page() {
     return arr.slice().sort((a, b) => b.timestamp - a.timestamp);
   }, [data]);
 
-  // Next targets (absolute times so everyone sees the same countdown)
+  // Shared, absolute countdown targets (everyone sees same time)
   const targets = useMemo(() => {
     const s = data?.schedule ?? {};
     const bb =
@@ -162,7 +163,7 @@ export default function Page() {
       const { buybackIntervalMs = 0, burnIntervalMs = 0 } = prev.schedule;
       let { nextBuybackAt, nextBurnAt } = prev.schedule;
 
-      const advance = (t?: number, i?: number) => {
+      const jumpForward = (t?: number, i?: number) => {
         if (!t || !i || i <= 0) return t;
         while (t <= Date.now()) t += i;
         return t;
@@ -170,15 +171,14 @@ export default function Page() {
 
       const bbDue = nextBuybackAt && nextBuybackAt - Date.now() <= 0;
       const burnDue = nextBurnAt && nextBurnAt - Date.now() <= 0;
-
       if (!bbDue && !burnDue) return prev;
 
       return {
         ...prev,
         schedule: {
           ...prev.schedule,
-          nextBuybackAt: bbDue ? advance(nextBuybackAt, buybackIntervalMs) : nextBuybackAt,
-          nextBurnAt: burnDue ? advance(nextBurnAt, burnIntervalMs) : nextBurnAt,
+          nextBuybackAt: bbDue ? jumpForward(nextBuybackAt, buybackIntervalMs) : nextBuybackAt,
+          nextBurnAt: burnDue ? jumpForward(nextBurnAt, burnIntervalMs) : nextBurnAt,
         },
       };
     });
@@ -191,12 +191,13 @@ export default function Page() {
   const totalSolSpent = data?.stats?.buybackSol ?? 0;
   const totalUsd = totalSolSpent * priceUsdPerSol;
 
-  // “Today” and “This Week” derived stats
+  // Today + This week stats
   const todayStart = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
     return d.getTime();
   }, []);
+
   const weekStart = now - 7 * 24 * 60 * 60 * 1000;
 
   const todayBurnsCount = useMemo(
@@ -208,7 +209,7 @@ export default function Page() {
     const lastWeek = burnsSorted.filter((b) => (b.timestamp as number) >= weekStart);
     const count = lastWeek.length;
     const sol = lastWeek.reduce((acc, b) => acc + (b.sol ?? 0), 0);
-    const usd = priceUsdPerSol ? sol * priceUsdPerSol : 0;
+    const usd = sol * priceUsdPerSol;
     const largest = lastWeek.reduce((m, b) => (b.amount > m ? b.amount : m), 0);
     const avgSol = count > 0 ? sol / count : 0;
     return { count, sol, usd, largest, avgSol };
@@ -248,14 +249,6 @@ export default function Page() {
             <a href="#how" className="text-[#ffe48d] hover:text-amber-300 transition">How It Works</a>
             <a href="#log" className="text-[#ffe48d] hover:text-amber-300 transition">Live Burns</a>
             <a href="#wallets" className="text-[#ffe48d] hover:text-amber-300 transition">Campfire Wallets</a>
-            <a
-              href="https://x.com/i/communities/1980944446871966021"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#ffe48d] hover:text-amber-300 transition"
-            >
-              X Community
-            </a>
           </nav>
 
           {/* Right: Copy CA + Mobile Menu */}
@@ -280,37 +273,38 @@ export default function Page() {
         </div>
       </header>
 
-      {/* ===== Content Wrapper: global vertical rhythm ===== */}
-      <div className="space-y-14 md:space-y-20">
-        {/* ===== Hero with video ===== */}
-        <section className="relative">
-          <div className="absolute inset-0 -z-10 overflow-hidden">
-            <video
-              className="h-[66vh] w-full object-cover"
-              playsInline
-              autoPlay
-              muted
-              loop
-              poster="/img/burning-bear-frame.jpg"
-            >
-              <source src="/img/burning-bear.mp4" type="video/mp4" />
-            </video>
-            <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
-          </div>
+      {/* ===== HERO with video (lighter, translucent text panel) ===== */}
+      <section className="relative">
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <video
+            className="h-[66vh] w-full object-cover"
+            playsInline
+            autoPlay
+            muted
+            loop
+            poster="/img/burning-bear-frame.jpg"
+          >
+            <source src="/img/burning-bear.mp4" type="video/mp4" />
+          </video>
+          {/* overall darken + slight green tint */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
+        </div>
 
-          <div className="mx-auto grid max-w-6xl gap-5 md:gap-6 px-4 pb-10 pt-14 sm:pt-20">
-            <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight tracking-tight mb-1">
+        {/* translucent backdrop for the hero text block */}
+        <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
+          <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6">
+            <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
               Meet The Burning Bear — the classiest arsonist in crypto.
             </h1>
 
             {/* Countdowns */}
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
               <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />
               <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} />
             </div>
 
             {/* Stats row */}
-            <div className="grid grid-cols-1 gap-4 md:gap-5 sm:grid-cols-4">
+            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-4">
               <Stat label="Burned So Far" value={fmtInt(BURNED)} />
               <Stat label="Current Supply" value={fmtInt(CURRENT)} />
               <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
@@ -318,33 +312,17 @@ export default function Page() {
             </div>
 
             {/* Pills */}
-            <div className="flex flex-wrap gap-2.5 md:gap-3">
+            <div className="mt-3 flex flex-wrap gap-3">
               <Pill>Today: {todayBurnsCount} burns</Pill>
               <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
               <Pill>Live SOL: {fmtMoney(priceUsdPerSol)}</Pill>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ===== The 50/30/20 Campfire Split ===== */}
-        <section id="how" className="mx-auto max-w-6xl px-4">
-          <h3 className="text-xl font-bold tracking-tight">The 50/30/20 Campfire Split</h3>
-          <div className="mt-4 grid grid-cols-1 gap-4 md:gap-5 md:grid-cols-3">
-            <HowCard
-              title="50% → Auto-Buy & Burn"
-              body="Every fee fuels the fire — half of all activity automatically buys $BEAR and sends it to the burn wallet. The campfire never sleeps."
-            />
-            <HowCard
-              title="30% → Treasury & Buybacks"
-              body="Funds managed transparently for future burns, community events and buybacks that support long-term price health."
-            />
-            <HowCard
-              title="20% → Team & Marketing"
-              body="For growth, creators, and spreading the $BEAR legend across crypto — keeping the fire visible across Solana."
-            />
-          </div>
-        </section>
-
+      {/* ===== MAIN CONTENT: consistent vertical rhythm ===== */}
+      <div className="space-y-16 md:space-y-24">
         {/* ===== This Week at the Campfire ===== */}
         <section className="mx-auto max-w-6xl px-4" id="log">
           <h3 className="text-xl font-bold tracking-tight">This Week at the Campfire</h3>
@@ -352,7 +330,7 @@ export default function Page() {
             Activity in the last 7 days. Auto-updated from the live logs.
           </p>
 
-          <div className="mt-5 grid grid-cols-1 gap-4 md:gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             <StatBig label="Burns" value={fmtInt(weekStats.count)} />
             <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
             <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
@@ -376,6 +354,25 @@ export default function Page() {
           </div>
         </section>
 
+        {/* ===== The 50/30/20 Campfire Split ===== */}
+        <section id="how" className="mx-auto max-w-6xl px-4">
+          <h3 className="text-xl font-bold tracking-tight">The 50/30/20 Campfire Split</h3>
+          <div className="mt-4 grid grid-cols-1 gap-5 md:grid-cols-3">
+            <HowCard
+              title="50% → Auto-Buy & Burn"
+              body="Every fee fuels the fire — half of all activity automatically buys $BEAR and sends it to the burn wallet. The campfire never sleeps."
+            />
+            <HowCard
+              title="30% → Treasury & Buybacks"
+              body="Funds managed transparently for future burns, community events and buybacks that support long-term price health."
+            />
+            <HowCard
+              title="20% → Team & Marketing"
+              body="For growth, creators, and spreading the $BEAR legend across crypto — keeping the fire visible across Solana."
+            />
+          </div>
+        </section>
+
         {/* ===== Campfire Wallets ===== */}
         <section id="wallets" className="mx-auto max-w-6xl px-4">
           <h3 className="text-xl font-bold tracking-tight">Campfire Wallets</h3>
@@ -383,38 +380,26 @@ export default function Page() {
             The campfire burns in full view. Every wallet can be verified on Solana Explorer.
           </p>
 
-          <div className="mt-5 grid grid-cols-1 gap-4 md:gap-5 md:grid-cols-3">
-            <WalletCard
-              title="Burn Wallet"
-              address={BURN_WALLET}
-              note="Destroyed supply lives here forever."
-            />
-            <WalletCard
-              title="Treasury & Buybacks"
-              address={TREASURY_WALLET}
-              note="Funds for buybacks and operations."
-            />
-            <WalletCard
-              title="Team & Marketing"
-              address={MARKETING_WALLET}
-              note="Growth, creators, promos."
-            />
+          <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-3">
+            <WalletCard title="Burn Wallet" address={BURN_WALLET} note="Destroyed supply lives here forever." />
+            <WalletCard title="Treasury & Buybacks" address={TREASURY_WALLET} note="Funds for buybacks and operations." />
+            <WalletCard title="Team & Marketing" address={MARKETING_WALLET} note="Growth, creators, promos." />
           </div>
         </section>
       </div>
 
       {/* ===== Footer ===== */}
-      <footer className="border-t border-white/10 bg-[#0d1a14] relative">
+      <footer className="mt-16 border-t border-white/10 bg-[#0d1a14] relative">
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
-        <div className="mx-auto max-w-6xl px-4 py-10 md:py-12 text-center text-sm text-white/60 space-y-4 md:space-y-5">
+        <div className="mx-auto max-w-6xl px-4 py-10 text-center text-sm text-white/60 space-y-4">
 
           <p className="text-white/80 text-base font-medium">
             🔥 The Burning Bear isn’t just a meme — it’s a movement. <br />
             Built on the <span className="text-[#ffe48d] font-semibold">50/30/20 Campfire Split</span> — transparent, alive and always feeding the flames.
           </p>
 
-          {/* Socials (labeled so they work even without icon fonts) */}
-          <div className="flex flex-wrap justify-center gap-6 text-white/70 text-sm">
+          <div className="flex justify-center gap-6 text-white/60 text-lg">
+            {/* X Community */}
             <a
               href="https://x.com/i/communities/1980944446871966021"
               target="_blank"
@@ -422,8 +407,9 @@ export default function Page() {
               className="hover:text-amber-300 transition"
               title="Join the X Community"
             >
-              🕊 X Community
+              <i className="fa-brands fa-x-twitter"></i>
             </a>
+            {/* CoinGecko */}
             <a
               href="https://www.coingecko.com/"
               target="_blank"
@@ -431,8 +417,9 @@ export default function Page() {
               className="hover:text-amber-300 transition"
               title="View on CoinGecko"
             >
-              🦎 CoinGecko
+              <i className="fa-solid fa-chart-line"></i>
             </a>
+            {/* DexScreener */}
             <a
               href="https://dexscreener.com"
               target="_blank"
@@ -440,11 +427,11 @@ export default function Page() {
               className="hover:text-amber-300 transition"
               title="View on DexScreener"
             >
-              🔥 DexScreener
+              <i className="fa-solid fa-fire"></i>
             </a>
           </div>
 
-          <div className="text-xs text-white/40 pt-2">
+          <div className="text-xs text-white/40 pt-4">
             <p>© {new Date().getFullYear()} The Burning Bear · Built for fun, not financial advice.</p>
             <p>Stay warm, stay transparent, and keep the fire burning. 🔥</p>
           </div>
@@ -468,7 +455,7 @@ function Countdown({ label, value }: { label: string; value: string }) {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur-sm">
+    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
       <div className="text-[11px] uppercase tracking-wider text-white/55">{label}</div>
       <div className="mt-1 text-2xl font-extrabold">{value}</div>
     </div>
@@ -477,7 +464,7 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 function StatBig({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur-sm">
+    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-6 md:p-7 backdrop-blur">
       <div className="text-xs uppercase tracking-wider text-white/55">{label}</div>
       <div className="mt-1 text-3xl font-extrabold">{value}</div>
     </div>
@@ -494,7 +481,7 @@ function Pill({ children }: { children: React.ReactNode }) {
 
 function HowCard({ title, body }: { title: string; body: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur-sm">
+    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
       <div className="text-lg font-semibold">{title}</div>
       <div className="mt-2 text-sm text-white/75">{body}</div>
     </div>
@@ -504,12 +491,12 @@ function HowCard({ title, body }: { title: string; body: string }) {
 function BurnCard({ burn, price }: { burn: Burn & { timestamp: number }; price: number }) {
   const usd = burn.sol && price ? burn.sol * price : undefined;
   const ageMin = Math.max(0, (Date.now() - burn.timestamp) / 60_000);
-  const brightness = Math.max(0.65, 1 - ageMin / 180);
+  const brightness = Math.max(0.68, 1 - ageMin / 180);
   const progress = Math.min(1, ageMin / 10);
 
   return (
     <div
-      className="rounded-3xl border border-white/10 bg-[#0f1f19] p-4 md:p-5 shadow-lg ring-emerald-500/0 transition hover:ring-2"
+      className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 md:p-6 shadow-lg ring-emerald-500/0 transition hover:ring-2"
       style={{ filter: `brightness(${brightness})` }}
     >
       <div className="flex items-start justify-between">
@@ -556,7 +543,7 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
   };
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur-sm">
+    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
       <div className="text-sm font-semibold">{title}</div>
       {note && <div className="mt-0.5 text-xs text-white/55">{note}</div>}
       <div className="mt-3 flex items-center justify-between gap-2">
@@ -588,7 +575,7 @@ function MobileMenu() {
   return (
     <div className="md:hidden">
       <button
-        onClick={() => setOpen(v => !v)}
+        onClick={() => setOpen((v) => !v)}
         aria-label="Menu"
         className="ml-1 rounded-full border border-white/15 bg-white/5 px-3 py-2 text-white/80"
       >
@@ -600,15 +587,6 @@ function MobileMenu() {
             <a href="#how" className="py-2 text-[#ffe48d]" onClick={() => setOpen(false)}>How It Works</a>
             <a href="#log" className="py-2 text-[#ffe48d]" onClick={() => setOpen(false)}>Live Burns</a>
             <a href="#wallets" className="py-2 text-[#ffe48d]" onClick={() => setOpen(false)}>Campfire Wallets</a>
-            <a
-              href="https://x.com/i/communities/1980944446871966021"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="py-2 text-[#ffe48d]"
-              onClick={() => setOpen(false)}
-            >
-              X Community
-            </a>
           </div>
         </div>
       )}
