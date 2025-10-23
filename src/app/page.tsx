@@ -318,15 +318,74 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== Live Burn Log — full-width horizontal carousel ===== */}
-      <section id="log" className="mx-auto max-w-6xl px-4 pt-6">
-        <div className="flex items-baseline justify-between">
-          <h2 className="text-2xl font-bold">Live Burn Log</h2>
-          <p className="text-sm text-white/50">TX links open explorer.</p>
-        </div>
+      {/* ===== Live Burn Log — full width, responsive grid ===== */}
+<section id="log" className="w-full px-4 sm:px-6 lg:px-8 mt-6">
+  <div className="flex items-baseline justify-between max-w-7xl mx-auto">
+    <h2 className="text-2xl font-bold">Live Burn Log</h2>
+    <p className="text-sm text-white/50">TX links open explorer.</p>
+  </div>
 
-        <BurnCarousel burns={burnsSorted} price={priceUsdPerSol} />
-      </section>
+  <div className="mt-6 overflow-x-auto">
+    <div className="flex flex-wrap gap-6 min-w-full justify-center lg:justify-start">
+      {burnsSorted.slice(0, 4).map((b) => (
+        <div
+          key={b.id}
+          className="flex-grow min-w-[300px] max-w-[420px] flex-1 basis-[calc(25%-1.5rem)]"
+        >
+          <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 md:p-6 shadow-lg flex flex-col justify-between">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">
+                  🔥
+                </span>
+                <div>
+                  <div className="text-lg font-bold">
+                    Burn • {b.amount.toLocaleString()} BEAR
+                  </div>
+                  <div className="text-sm text-white/60">
+                    {new Date(b.timestamp).toLocaleString("en-US", {
+                      weekday: "short",
+                      month: "short",
+                      day: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
+                  </div>
+                  {b.sol !== undefined && (
+                    <div className="text-sm text-white/70">
+                      ≈ {b.sol.toFixed(4)} SOL (
+                      {(b.sol * priceUsdPerSol).toLocaleString("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      })}
+                      )
+                    </div>
+                  )}
+                </div>
+              </div>
+              <Link
+                href={b.tx}
+                target="_blank"
+                className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline"
+              >
+                TX
+              </Link>
+            </div>
+
+            <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/5">
+              <div
+                className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
+                style={{ width: "100%" }}
+              />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* ===== The 50/30/20 Campfire Split ===== */}
       <section id="how" className="mx-auto max-w-6xl px-4 pt-14">
