@@ -323,6 +323,18 @@ export default function Page() {
 
       {/* ===== MAIN CONTENT: consistent vertical rhythm ===== */}
       <div className="space-y-16 md:space-y-24">
+{/* Live log cards */}
+          <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
+            {burnsSorted.length === 0 && (
+              <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 text-white/60">
+                No burns posted yet.
+              </div>
+            )}
+            {burnsSorted.map((b) => (
+              <BurnCard key={b.id} burn={b as Burn & { timestamp: number }} price={priceUsdPerSol} />
+            ))}
+          </div>
+        
         {/* ===== This Week at the Campfire ===== */}
         <section className="mx-auto max-w-6xl px-4" id="log">
           <h3 className="text-xl font-bold tracking-tight">This Week at the Campfire</h3>
@@ -341,17 +353,7 @@ export default function Page() {
             <Pill>Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}</Pill>
           </div>
 
-          {/* Live log cards */}
-          <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-            {burnsSorted.length === 0 && (
-              <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 text-white/60">
-                No burns posted yet.
-              </div>
-            )}
-            {burnsSorted.map((b) => (
-              <BurnCard key={b.id} burn={b as Burn & { timestamp: number }} price={priceUsdPerSol} />
-            ))}
-          </div>
+          
         </section>
 
         {/* ===== The 50/30/20 Campfire Split ===== */}
