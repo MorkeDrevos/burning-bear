@@ -333,13 +333,12 @@ export default function Page() {
             </div>
           </div>
 
-          {/* Stats row */}
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-4">
-            <Stat label="Initial Supply" value={fmtInt(INITIAL)} />
-            <Stat label="Burned" value={fmtInt(BURNED)} />
-            <Stat label="Current Supply" value={fmtInt(CURRENT)} />
-            <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
-          </div>
+{/* Pill row under stats */}
+<div className="mt-3 flex flex-wrap gap-3">
+  <Pill>Today: {todayBurnsCount} burns</Pill>
+  <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
+  <Pill>Live SOL: {priceUsdPerSol ? fmtMoney(priceUsdPerSol) : '—'}</Pill>
+</div>
 
           {/* Pill row under stats */}
           <div className="mt-3 flex flex-wrap gap-3">
