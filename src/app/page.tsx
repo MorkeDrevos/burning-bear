@@ -234,7 +234,7 @@ export default function Page() {
           {/* Center: Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8 text-[15px] font-semibold">
             <a href="#log" className="text-[#ffe48d] hover:text-amber-300 transition">Live Burns</a>
-            <a href="#wallets" className="text-[#ffe48d] hover:text-amber-300 transition">Wallets</a>
+            <a href="#wallets" className="text-[#ffe48d] hover:text-amber-300 transition">Campfire Wallets</a>
             <a href="#how" className="text-[#ffe48d] hover:text-amber-300 transition">How It Works</a>
           </nav>
 
@@ -323,23 +323,9 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== Transparent Wallets ===== */}
-      <section id="wallets" className="mx-auto max-w-6xl px-4 py-10">
-        <h3 className="text-xl font-bold">Transparent Wallets</h3>
-        <p className="mt-1 text-sm text-white/55">
-          Verify everything on Solana Explorer — all wallets are public and view-only.
-        </p>
-
-        <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <WalletCard title="Burn Wallet" address={BURN_WALLET} note="Destroyed supply lives here forever." />
-          <WalletCard title="Treasury / Buybacks" address={TREASURY_WALLET} note="Funds for buybacks and operations." />
-          <WalletCard title="Marketing" address={MARKETING_WALLET} note="Growth, creators, promos." />
-        </div>
-      </section>
-
-      {/* ===== How it works ===== */}
-<section id="how" className="mx-auto max-w-6xl px-4 pb-16">
-  <h3 className="text-xl font-bold">How It Works — The 50/30/20 Campfire Split</h3>
+      {/* ===== How It Works (moved up) ===== */}
+<section id="how" className="mx-auto max-w-6xl px-4 pb-10">
+  <h3 className="text-xl font-bold">The 50/30/20 Campfire Split</h3>
   <div className="mt-4 grid grid-cols-1 gap-4 text-white/85 md:grid-cols-3">
     <HowCard
       title="50% → Auto-Buy & Burn"
@@ -352,6 +338,32 @@ export default function Page() {
     <HowCard
       title="20% → Team & Marketing"
       body="For growth, creators, and spreading the $BEAR legend across crypto — keeping the fire visible across Solana."
+    />
+  </div>
+</section>
+
+{/* ===== Wallets (moved below) ===== */}
+<section id="wallets" className="mx-auto max-w-6xl px-4 py-10">
+  <h3 className="text-xl font-bold">Campfire Wallets</h3>
+  <p className="mt-1 text-sm text-white/55">
+    Verify everything on Solana Explorer — all wallets are public and view-only.
+  </p>
+
+  <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-3">
+    <WalletCard
+      title="Burn Wallet"
+      address={BURN_WALLET}
+      note="Destroyed supply lives here forever."
+    />
+    <WalletCard
+      title="Treasury / Buybacks"
+      address={TREASURY_WALLET}
+      note="Funds for buybacks and operations."
+    />
+    <WalletCard
+      title="Marketing"
+      address={MARKETING_WALLET}
+      note="Growth, creators, promos."
     />
   </div>
 </section>
