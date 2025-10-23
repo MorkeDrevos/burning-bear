@@ -325,9 +325,11 @@ export default function Page() {
       </section>
 
       {/* ===== Live Burn Log ===== */}
-      <section id="log" className="mx-auto max-w-6xl px-4 pb-12">
-        <h2 className="text-2xl font-bold">Live Burn Log</h2>
-        <p className="mt-1 text-sm text-white/50">TX links open explorer.</p>
+      <section id="log" className="mx-auto max-w-6xl px-4 pt-12 pb-12">
+  <div className="flex items-baseline justify-between">
+    <h2 className="text-2xl font-bold">Live Burn Log</h2>
+    <p className="text-sm text-white/50">TX links open explorer.</p>
+  </div>
 
         <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
           {burnsSorted.length === 0 && (
