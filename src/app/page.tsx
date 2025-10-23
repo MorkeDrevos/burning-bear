@@ -285,11 +285,22 @@ export default function Page() {
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
-          {/* countdown duo */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <CountdownTile label="Next buyback in" value={targets.bb ? fmtCountdown(nextBuybackMs) : '—'} />
-            <CountdownTile label="Next burn in" value={targets.burn ? fmtCountdown(nextBurnMs) : '—'} />
-          </div>
+{/* Countdowns only (no date echo) */}
+<div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
+   
+  <div>
+    <div className="text-xs uppercase tracking-[0.25em] text-white/55">Next buyback in</div>
+    <div className="text-3xl md:text-4xl font-extrabold text-white/85">
+      {targets.bb ? fmtCountdown(nextBuybackMs) : '—'}
+    </div>
+  </div>
+  <div>
+    <div className="text-xs uppercase tracking-[0.25em] text-white/55">Next burn in</div>
+    <div className="text-3xl md:text-4xl font-extrabold text-white/85">
+      {targets.burn ? fmtCountdown(nextBurnMs) : '—'}
+    </div>
+  </div>
+</div>
 
           {/* compact metric strip */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
