@@ -335,43 +335,43 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== This Week at the Campfire ===== */}
-      <section className="mx-auto max-w-6xl px-4 pb-14">
-        <h3 className="text-xl font-bold">This Week at the Campfire</h3>
-        <p className="mt-1 text-sm text-white/55">
-          Activity in the last 7 days. Auto-updated from the live logs.
-        </p>
+      {/* ===== The 50/30/20 Campfire Split (moved up) ===== */}
+<section id="how" className="mx-auto max-w-6xl px-4 pb-10">
+  <h3 className="text-xl font-bold">The 50/30/20 Campfire Split</h3>
+  <div className="mt-4 grid grid-cols-1 gap-4 text-white/85 md:grid-cols-3">
+    <HowCard
+      title="50% → Auto-Buy & Burn"
+      body="Every fee fuels the fire — half of all activity automatically buys $BEAR and sends it to the burn wallet. The campfire never sleeps."
+    />
+    <HowCard
+      title="30% → Treasury & Buybacks"
+      body="Funds managed transparently for future burns, community events and buybacks that support long-term price health."
+    />
+    <HowCard
+      title="20% → Team & Marketing"
+      body="For growth, creators, and spreading the $BEAR legend across crypto — keeping the fire visible across Solana."
+    />
+  </div>
+</section>
 
-        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatBig label="Burns" value={fmtInt(weekStats.count)} />
-          <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
-          <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
-          <StatBig label="Largest Burn (BEAR)" value={fmtInt(weekStats.largest)} />
-        </div>
+{/* ===== This Week at the Campfire (now comes after Split) ===== */}
+<section className="mx-auto max-w-6xl px-4 pb-14">
+  <h3 className="text-xl font-bold">This Week at the Campfire</h3>
+  <p className="mt-1 text-sm text-white/55">
+    Activity in the last 7 days. Auto-updated from the live logs.
+  </p>
 
-        <div className="mt-3">
-          <Pill>Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}</Pill>
-        </div>
-      </section>
+  <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <StatBig label="Burns" value={fmtInt(weekStats.count)} />
+    <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
+    <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
+    <StatBig label="Largest Burn (BEAR)" value={fmtInt(weekStats.largest)} />
+  </div>
 
-      {/* ===== How It Works ===== */}
-      <section id="how" className="mx-auto max-w-6xl px-4 pb-10">
-        <h3 className="text-xl font-bold">The 50/30/20 Campfire Split</h3>
-        <div className="mt-4 grid grid-cols-1 gap-4 text-white/85 md:grid-cols-3">
-          <HowCard
-            title="50% → Auto-Buy & Burn"
-            body="Every fee fuels the fire — half of all activity automatically buys $BEAR and sends it to the burn wallet. The campfire never sleeps."
-          />
-          <HowCard
-            title="30% → Treasury & Buybacks"
-            body="Funds managed transparently for future burns, community events and buybacks that support long-term price health."
-          />
-          <HowCard
-            title="20% → Team & Marketing"
-            body="For growth, creators, and spreading the $BEAR legend across crypto — keeping the fire visible across Solana."
-          />
-        </div>
-      </section>
+  <div className="mt-3">
+    <Pill>Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}</Pill>
+  </div>
+</section>
 
       {/* ===== Campfire Wallets ===== */}
       <section id="wallets" className="mx-auto max-w-6xl px-4 py-10">
@@ -409,40 +409,37 @@ export default function Page() {
             Built on the <span className="text-[#ffe48d] font-semibold">50/30/20 Campfire Split</span> — transparent, alive and always feeding the flames.
           </p>
 
-          <div className="flex justify-center gap-6 text-white/60 text-lg">
-            {/* X Community */}
-            <a
-              href="https://x.com/i/communities/1980944446871966021"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-amber-300 transition"
-              title="Join the X Community"
-            >
-              <i className="fa-brands fa-x-twitter"></i>
-            </a>
+          <div className="flex flex-wrap justify-center gap-6 text-white/70 text-sm">
+  <a
+    href="https://x.com/i/communities/1980944446871966021"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="hover:text-amber-300 transition"
+    title="Join the X Community"
+  >
+    🕊 X Community
+  </a>
 
-            {/* CoinGecko */}
-            <a
-              href="https://www.coingecko.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-amber-300 transition"
-              title="View on CoinGecko"
-            >
-              <i className="fa-solid fa-chart-line"></i>
-            </a>
+  <a
+    href="https://www.coingecko.com/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="hover:text-amber-300 transition"
+    title="View on CoinGecko"
+  >
+    🦎 CoinGecko
+  </a>
 
-            {/* DexScreener */}
-            <a
-              href="https://dexscreener.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-amber-300 transition"
-              title="View on DexScreener"
-            >
-              <i className="fa-solid fa-fire"></i>
-            </a>
-          </div>
+  <a
+    href="https://dexscreener.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="hover:text-amber-300 transition"
+    title="View on DexScreener"
+  >
+    🔥 DexScreener
+  </a>
+</div>
 
           <div className="text-xs text-white/40 pt-4">
             <p>
