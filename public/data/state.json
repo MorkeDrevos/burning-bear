@@ -10,8 +10,8 @@
     "burnIntervalMs": 3600000,
     "buybackIntervalMs": 1200000,
 
-    "nextBurnSpec": "in 45m",
-    "nextBuybackSpec": "in 12m",
+    "nextBurnSpec": "in 59m",
+    "nextBuybackSpec": "in 20m",
 
     "nextBurnAt": 0,
     "nextBuybackAt": 0,
