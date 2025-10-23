@@ -80,6 +80,50 @@ const fmtCountdown = (ms: number) => {
 
 const toMs = (ts: number | string) => (typeof ts === 'number' ? ts : Date.parse(ts));
 
+/* Reveal helper (fade-up animation) */
+function Reveal({
+  children,
+  delay = 0,
+  className = '',
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const ref = React.useRef<HTMLDivElement | null>(null);
+  const [shown, setShown] = React.useState(false);
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={
+        `transform transition-all duration-700 ease-out will-change-transform ` +
+        `${shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'} ` +
+        className
+      }
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+}
+
 /* =========================
    Page
 ========================= */
@@ -389,70 +433,36 @@ export default function Page() {
 </section>
 
       {/* ===== The 50/30/20 Campfire Split ===== */}
-      <section id="how" className="mx-auto max-w-6xl px-4 pt-14 relative">
-  {/* Section title with animated ember line */}
-  <div className="relative inline-block mb-4">
-    <h3 className="text-xl font-bold tracking-tight relative z-10">How It Works</h3>
-    <span className="absolute left-0 bottom-0 w-full h-[3px] overflow-hidden rounded-full bg-gradient-to-r from-amber-500/0 via-amber-400/90 to-amber-500/0">
-      <span className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-300 to-transparent animate-ember" />
-    </span>
-  </div>
-
-  {/* Core explanation */}
-  <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px] mb-8">
-    Every spark — whether it’s a trade, a creator reward, or a network fee — 
-    feeds the <span className="text-[#ffe48d] font-semibold">$BEAR</span> fire. 
-    These flames merge into the 
-    <span className="text-[#ffe48d] font-semibold transition duration-300 hover:text-amber-300 hover:drop-shadow-[0_0_6px_#ffb74d]"> Campfire Fund</span>, 
-    driving constant buybacks, burns, and creator support. 
-    The more the ecosystem moves, the hotter it burns.{" "}
-    <span className="inline-block animate-flame text-[18px]">🔥</span>
+<section id="how" className="mx-auto max-w-6xl px-4 pt-14">
+  <h3 className="text-xl font-bold tracking-tight">How It Works</h3>
+  <p className="mt-2 text-sm text-white/70 max-w-3xl">
+    Every spark — whether it’s a trade, a creator reward, or a network fee — feeds the <span className="text-[#ffe48d] font-semibold">$BEAR</span> fire.  
+    These flames merge into the <span className="text-[#ffe48d] font-semibold">Campfire Fund</span>, driving constant buybacks, burns, and creator support.  
+    The more the ecosystem moves, the hotter it burns. 🔥
   </p>
 
-  {/* Cards */}
-  <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-    <div className="transition-all duration-300 hover:-translate-y-1 hover:border-amber-300/30 hover:shadow-[0_0_25px_#ffb74d20] rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
-      <div className="text-lg font-semibold">50% → Auto-Buy & Burn</div>
-      <div className="mt-2 text-sm text-white/75">
-        Half of every fee automatically buys $BEAR and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps.
-      </div>
-    </div>
+  <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-3">
+    <Reveal delay={0}>
+      <HowCard
+        title="50% → Auto-Buy & Burn"
+        body="Half of every fee automatically buys $BEAR and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps."
+      />
+    </Reveal>
 
-    <div className="transition-all duration-300 hover:-translate-y-1 hover:border-amber-300/30 hover:shadow-[0_0_25px_#ffb74d20] rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
-      <div className="text-lg font-semibold">30% → Treasury & Buybacks</div>
-      <div className="mt-2 text-sm text-white/75">
-        Reserved transparently for strategic buybacks, ecosystem stability, and community-driven events that keep $BEAR’s fire burning long-term.
-      </div>
-    </div>
+    <Reveal delay={150}>
+      <HowCard
+        title="30% → Treasury & Buybacks"
+        body="Reserved transparently for strategic buybacks, ecosystem stability, and community-driven events that keep $BEAR’s fire burning long-term."
+      />
+    </Reveal>
 
-    <div className="transition-all duration-300 hover:-translate-y-1 hover:border-amber-300/30 hover:shadow-[0_0_25px_#ffb74d20] rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
-      <div className="text-lg font-semibold">20% → Team, Creators & Growth</div>
-      <div className="mt-2 text-sm text-white/75">
-        Rewards creators, partners, and community builders — spreading the legend of $BEAR across Solana while fueling future innovation.
-      </div>
-    </div>
+    <Reveal delay={300}>
+      <HowCard
+        title="20% → Team, Creators & Growth"
+        body="Rewards creators, partners, and community builders — spreading the legend of $BEAR while fueling future innovation."
+      />
+    </Reveal>
   </div>
-
-  {/* Animations */}
-  <style jsx>{`
-    @keyframes ember {
-      0% { transform: translateX(-100%); opacity: 0.3; }
-      30% { opacity: 1; }
-      70% { opacity: 1; }
-      100% { transform: translateX(100%); opacity: 0.3; }
-    }
-    .animate-ember {
-      animation: ember 4.5s linear infinite;
-    }
-
-    @keyframes flame {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px #ffb74d80); }
-      50% { transform: scale(1.15); filter: drop-shadow(0 0 10px #ffb74dcc); }
-    }
-    .animate-flame {
-      animation: flame 1.6s ease-in-out infinite;
-    }
-  `}</style>
 </section>
 
       {/* ===== Campfire Wallets ===== */}
