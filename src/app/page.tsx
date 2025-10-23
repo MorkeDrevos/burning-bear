@@ -318,21 +318,22 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== Live Burn Log — full width, wider boxes ===== */}
+      {/* ===== Live Burn Log — single horizontal scroll line ===== */}
 <section id="log" className="w-full px-4 sm:px-6 lg:px-8 mt-6">
   <div className="flex items-baseline justify-between max-w-7xl mx-auto">
     <h2 className="text-2xl font-bold">Live Burn Log</h2>
     <p className="text-sm text-white/50">TX links open explorer.</p>
   </div>
 
-  <div className="mt-6 overflow-x-auto">
-    <div className="flex flex-wrap gap-8 min-w-full justify-center lg:justify-start">
-      {burnsSorted.slice(0, 4).map((b) => (
+  {/* Horizontal scroll container */}
+  <div className="mt-6 overflow-x-auto pb-4">
+    <div className="flex gap-6 min-w-full px-1">
+      {burnsSorted.slice(0, 6).map((b) => (
         <div
           key={b.id}
-          className="flex-grow min-w-[460px] max-w-[640px] flex-1 basis-[calc(37.5%-1.5rem)]"
+          className="flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]"
         >
-          <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-6 md:p-7 shadow-lg flex flex-col justify-between hover:ring-2 ring-amber-400/30 transition">
+          <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 md:p-6 shadow-lg flex flex-col justify-between hover:ring-2 ring-amber-400/30 transition">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">
