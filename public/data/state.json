@@ -18,35 +18,35 @@
     "lastBurnAt": 0,
     "lastBuybackAt": 0
   },
+
   "burns": [
     {
       "id": "tx_104",
       "amount": 1250000,
       "sol": 0.2375,
-      "timestamp": 1734955440000,
+      "timestamp": 1761171600000,
       "tx": "https://explorer.solana.com/tx/0xTEST001"
     },
     {
       "id": "tx_105",
       "amount": 11430000,
       "sol": 6.0000,
-      "timestamp": 1730312460000,
+      "timestamp": 1761182400000,
       "tx": "https://explorer.solana.com/tx/0xTEST002"
     },
     {
       "id": "tx_106",
       "amount": 432430000,
       "sol": 6.0000,
-      "timestamp": 1734962640000,
-      "tx": "https://explorer.solana.com/tx/0xTEST002"
+      "timestamp": 1761200400000,
+      "tx": "https://explorer.solana.com/tx/0xTEST003"
     },
     {
       "id": "tx_107",
       "amount": 1000000,
       "sol": 14.0000,
-      "timestamp": 1734962640000,
-      "tx": "https://explorer.solana.com/tx/0xTEST002"
+      "timestamp": 1761221400000,
+      "tx": "https://explorer.solana.com/tx/0xTEST004"
     }
-
   ]
 }
