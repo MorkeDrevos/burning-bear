@@ -324,10 +324,15 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== Live Burn Log ===== */}
-      <section id="log" className="mx-auto max-w-6xl px-4 pb-12">
-        <h2 className="text-2xl font-bold">Live Burn Log</h2>
-        <p className="mt-1 text-sm text-white/50">TX links open explorer.</p>
+<section id="log" className="mx-auto max-w-6xl px-4 pt-20 pb-14">
+  <div className="mb-6">
+    <h2 className="text-[32px] font-extrabold leading-tight text-white/95">
+      Live Burn Log
+    </h2>
+    <p className="mt-1 text-[14px] text-white/45 tracking-wide">
+      TX links open explorer
+    </p>
+  </div>
 
         <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
           {burnsSorted.length === 0 && (
