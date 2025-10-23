@@ -11,35 +11,38 @@ const TOKEN_NAME = 'The Burning Bear';
 const FULL_TOKEN_ADDRESS =
   'So1ana1111111111111111111111111111111111111111111111111';
 
-// X (Twitter) link
-const X_URL = 'https://x.com/your-handle-or-community'; // ← replace
-
 /* =========================
-   Types (matches /public/data/state.json)
+   Types matching /public/data/state.json
 ========================= */
 type Burn = {
   id: string;
   amount: number;
-  sol?: number;
-  timestamp: number; // ms epoch
-  tx: string;
+  sol?: number;          // optional SOL cost for this burn
+  timestamp: number;     // ms since epoch
+  tx: string;            // explorer URL
 };
 
 type StateJson = {
   stats: {
     initialSupply: number;
     burned: number;
-    currentSupply: number;
-    buybackSol?: number;
-    priceUsdPerSol?: number;
+    currentSupply?: number; // optional; UI will compute (initial - burned) if missing
+    buybackSol?: number;    // total SOL spent
+    priceUsdPerSol?: number; // fallback price if API is down
   };
   schedule?: {
     burnIntervalMs?: number;
     buybackIntervalMs?: number;
-    nextBurnSpec?: string;     // "in 45m" | "21:30"
-    nextBuybackSpec?: string;  // "in 12m" | "21:10"
-    nextBurnAt?: number;       // ms epoch
-    nextBuybackAt?: number;    // ms epoch
+
+    // Human-friendly overrides (either "in 12m" or "21:30")
+    nextBurnSpec?: string;
+    nextBuybackSpec?: string;
+
+    // Exact schedule (epoch ms)
+    nextBurnAt?: number;
+    nextBuybackAt?: number;
+
+    // Fallback cadence (last + interval)
     lastBurnAt?: number;
     lastBuybackAt?: number;
   };
@@ -47,7 +50,7 @@ type StateJson = {
 };
 
 /* =========================
-   Utils
+   Small helpers
 ========================= */
 function truncateMiddle(str: string, left = 6, right = 6) {
   if (!str || str.length <= left + right + 1) return str;
@@ -77,10 +80,13 @@ function fmtCountdown(ms: number) {
   const h = Math.floor(t / 3600);
   const m = Math.floor((t % 3600) / 60);
   const s = t % 60;
-  if (h > 0) return `${h}h ${m.toString().padStart(2, '0')}m`;
+  if (h > 0) return `${h}h ${m.toString().padStart(2, '0')}m ${s
+    .toString()
+    .padStart(2, '0')}s`;
   return `${m}m ${s.toString().padStart(2, '0')}s`;
 }
-// parse "in 12m" or "21:30" → returns ms epoch (now + … or next wallclock time)
+
+// parse "in 12m" or "21:30" (local time today/tomorrow)
 function parseSpecToMsNow(spec?: string): number | undefined {
   if (!spec) return undefined;
   const now = Date.now();
@@ -107,12 +113,6 @@ function parseSpecToMsNow(spec?: string): number | undefined {
   }
   return undefined;
 }
-function isSameUTCDate(a: number, b: number) {
-  const A = new Date(a), B = new Date(b);
-  return A.getUTCFullYear() === B.getUTCFullYear() &&
-         A.getUTCMonth() === B.getUTCMonth() &&
-         A.getUTCDate() === B.getUTCDate();
-}
 
 /* =========================
    Page
@@ -124,77 +124,78 @@ export default function Page() {
   const [copied, setCopied] = useState(false);
   const copyTimer = useRef<number | null>(null);
 
-  // ticking clock for countdowns
+  // tick
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  // fetch JSON state
+  // state.json
   useEffect(() => {
     let alive = true;
     fetch('/data/state.json', { cache: 'no-store' })
-      .then(r => r.json())
+      .then((r) => r.json())
       .then((j: StateJson) => alive && setData(j))
       .catch(() => {});
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, []);
 
   // live SOL price (falls back to stats.priceUsdPerSol)
   useEffect(() => {
     let alive = true;
-    const fetchPrice = () =>
+    const load = () =>
       fetch('/api/sol-price', { cache: 'no-store' })
-        .then(r => r.json())
-        .then(o => { if (alive && o && typeof o.usd === 'number' && o.usd > 0) setSolUsd(o.usd); })
+        .then((r) => r.json())
+        .then((o) => {
+          if (!alive) return;
+          if (o && typeof o.usd === 'number' && o.usd > 0) setSolUsd(o.usd);
+        })
         .catch(() => {});
-    fetchPrice();
-    const id = window.setInterval(fetchPrice, 60_000);
-    return () => { alive = false; clearInterval(id); };
+    load();
+    const id = window.setInterval(load, 60_000);
+    return () => {
+      alive = false;
+      clearInterval(id);
+    };
   }, []);
 
   const priceUsdPerSol = solUsd ?? data?.stats?.priceUsdPerSol ?? null;
+  const burnsSorted = useMemo(
+    () => (data?.burns ?? []).slice().sort((a, b) => b.timestamp - a.timestamp),
+    [data],
+  );
 
-  // derived: sorted burns + "today" quick totals
-  const { burnsTodayCount, burnsTodayAmount, burnsSorted } = useMemo(() => {
-    const burns = (data?.burns ?? []).slice().sort((a, b) => b.timestamp - a.timestamp);
-    const today = Date.now();
-    const todays = burns.filter(b => isSameUTCDate(b.timestamp, today));
-    return {
-      burnsSorted: burns,
-      burnsTodayCount: todays.length,
-      burnsTodayAmount: todays.reduce((acc, b) => acc + b.amount, 0),
-    };
-  }, [data]);
-
-  // next targets (buyback / burn)
+  // compute next targets
   const targets = useMemo(() => {
     const s = data?.schedule ?? {};
-    const bbSpec = parseSpecToMsNow(s.nextBuybackSpec) ?? s.nextBuybackAt;
-    const burnSpec = parseSpecToMsNow(s.nextBurnSpec) ?? s.nextBurnAt;
-
-    const bb = bbSpec ?? (s.lastBuybackAt && s.buybackIntervalMs
-      ? s.lastBuybackAt + s.buybackIntervalMs
-      : undefined);
-
-    const burn = burnSpec ?? (s.lastBurnAt && s.burnIntervalMs
-      ? s.lastBurnAt + s.burnIntervalMs
-      : undefined);
-
-    return { bb, burn };
+    const nb = parseSpecToMsNow(s.nextBuybackSpec) ?? s.nextBuybackAt;
+    const buyback =
+      nb ??
+      (s.lastBuybackAt && s.buybackIntervalMs
+        ? s.lastBuybackAt + s.buybackIntervalMs
+        : undefined);
+    const nburn = parseSpecToMsNow(s.nextBurnSpec) ?? s.nextBurnAt;
+    const burn =
+      nburn ??
+      (s.lastBurnAt && s.burnIntervalMs
+        ? s.lastBurnAt + s.burnIntervalMs
+        : undefined);
+    return { buyback, burn };
   }, [data]);
 
-  const nextBuybackMs = targets.bb ? targets.bb - now : 0;
+  const nextBuybackMs = targets.buyback ? targets.buyback - now : 0;
   const nextBurnMs = targets.burn ? targets.burn - now : 0;
 
-  // base stats
+  // stats
   const INITIAL = data?.stats?.initialSupply ?? 0;
-  const BURNED  = data?.stats?.burned ?? 0;
-  const CURRENT = data?.stats?.currentSupply ?? Math.max(0, INITIAL - BURNED);
+  const BURNED = data?.stats?.burned ?? 0;
+  const CURRENT =
+    data?.stats?.currentSupply ?? Math.max(0, INITIAL - BURNED);
   const totalSolSpent = data?.stats?.buybackSol ?? 0;
   const totalUsd = priceUsdPerSol ? totalSolSpent * priceUsdPerSol : undefined;
 
-  // copy CA
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS);
@@ -214,10 +215,11 @@ export default function Page() {
   };
 
   return (
-    <main id="top">
-      {/* ===== Sticky Header ===== */}
+    <main id="top" className="list-none">
+      {/* ===== Sticky Header (bigger, no Twitter link) ===== */}
       <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
+          {/* left: logo/name (click → top) */}
           <Link href="#top" className="flex items-center gap-3 md:gap-4">
             <img
               src="/img/coin-logo.png"
@@ -225,26 +227,26 @@ export default function Page() {
               className="h-10 w-10 md:h-12 md:w-12 rounded-full shadow-md"
             />
             <div className="leading-tight">
-              <div className="text-base md:text-xl font-extrabold">{TOKEN_NAME}</div>
-              <div className="text-[12px] md:text-sm text-white/55">{TOKEN_SYMBOL} • Live Burn Camp</div>
+              <div className="text-base md:text-xl font-extrabold">
+                {TOKEN_NAME}
+              </div>
+              <div className="text-[12px] md:text-sm text-white/55">
+                {TOKEN_SYMBOL} • Live Burn Camp
+              </div>
             </div>
           </Link>
 
-          <nav className="hidden items-center gap-6 md:flex md:gap-8 text-sm md:text-base">
-            <a href="#log" className="hover:text-amber-300">Live Burns</a>
-            <a href="#how" className="hover:text-amber-300">How It Works</a>
-            <a
-              href={X_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 hover:text-amber-300"
-              aria-label="Open on X"
-            >
-              <XIcon className="h-4 w-4 md:h-5 md:w-5" />
-              <span className="hidden sm:inline">X</span>
+          {/* center nav (without X) */}
+          <nav className="hidden items-center gap-8 text-sm md:flex md:text-base">
+            <a href="#log" className="hover:text-amber-300">
+              Live Burns
+            </a>
+            <a href="#how" className="hover:text-amber-300">
+              How It Works
             </a>
           </nav>
 
+          {/* right: CA bubble + copy */}
           <div className="flex items-center gap-2 md:gap-3">
             <span
               className="hidden md:inline rounded-full bg-emerald-900/40 px-4 py-2 text-sm text-emerald-300"
@@ -255,8 +257,13 @@ export default function Page() {
             <button
               onClick={handleCopy}
               className={`rounded-full px-4 py-2 text-sm md:text-base font-semibold transition
-                ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
+                ${
+                  copied
+                    ? 'bg-emerald-400 text-black'
+                    : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'
+                }`}
               aria-live="polite"
+              id="copy-ca"
             >
               {copied ? 'Copied!' : 'Copy CA'}
             </button>
@@ -264,7 +271,7 @@ export default function Page() {
         </div>
       </header>
 
-      {/* ===== Hero with VIDEO & overlay ===== */}
+      {/* ===== Hero with video ===== */}
       <section className="relative">
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <video
@@ -277,87 +284,119 @@ export default function Page() {
           >
             <source src="/img/burning-bear.mp4" type="video/mp4" />
           </video>
+          {/* overlay + soft top glow */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-amber-500/10 to-transparent blur-2xl" />
         </div>
 
-        <div className="mx-auto grid max-w-6xl gap-8 px-4 pb-10 pt-16 sm:pt-24">
-          <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
+        <div className="mx-auto grid max-w-6xl gap-6 px-4 pb-10 pt-16 sm:pt-24">
+          {/* title with subtle glow */}
+          <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight drop-shadow-[0_6px_20px_rgba(255,180,60,0.25)]">
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
-{/* Countdowns only (no date echo) */}
-<div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
-   
-  <div>
-    <div className="text-xs uppercase tracking-[0.25em] text-white/55">Next buyback in</div>
-    <div className="text-3xl md:text-4xl font-extrabold text-white/85">
-      {targets.bb ? fmtCountdown(nextBuybackMs) : '—'}
-    </div>
-  </div>
-  <div>
-    <div className="text-xs uppercase tracking-[0.25em] text-white/55">Next burn in</div>
-    <div className="text-3xl md:text-4xl font-extrabold text-white/85">
-      {targets.burn ? fmtCountdown(nextBurnMs) : '—'}
-    </div>
-  </div>
-</div>
-
-          {/* compact metric strip */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-            <Metric label="Initial Supply" value={fmtInt(INITIAL)} />
-            <Metric label="Burned" value={fmtInt(BURNED)} />
-            <Metric label="Current Supply" value={fmtInt(CURRENT)} />
-            <Metric label="Buyback Spent" value={`${(totalSolSpent).toFixed(2)} SOL`} />
-          </div>
-
-          {/* chips row */}
-          <div className="flex flex-wrap gap-2">
-            <Chip>Today: {burnsTodayCount} burn{burnsTodayCount !== 1 ? 's' : ''}</Chip>
-            <Chip>Total Buyback Value: {fmtMoney(totalUsd)}</Chip>
-            {priceUsdPerSol ? <Chip>Live SOL: {fmtMoney(priceUsdPerSol)}</Chip> : <Chip>Live SOL: —</Chip>}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== Live Burn Log (timeline style) ===== */}
-      <section id="log" className="mx-auto max-w-6xl px-4 pb-14">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Live Burn Log</h2>
-          <span className="text-sm text-white/50">TX links open explorer</span>
-        </div>
-
-        <div className="relative mt-6">
-          {/* timeline spine (desktop) */}
-          <div className="pointer-events-none absolute left-4 top-0 hidden h-full w-[2px] bg-white/10 md:block" />
-          <div className="space-y-4">
-            {burnsSorted.length === 0 && (
-              <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-6 text-white/60">
-                No burns posted yet.
+          {/* BIG countdowns (no boxes) */}
+          <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <div className="text-sm uppercase tracking-[0.25em] text-white/60">
+                Next buyback in
               </div>
-            )}
-            {burnsSorted.map((b, i) => (
-              <TimelineBurn key={b.id} burn={b} price={priceUsdPerSol ?? 0} index={i} />
-            ))}
+              <div className="mt-1 text-6xl sm:text-7xl md:text-8xl font-extrabold text-amber-300 drop-shadow-sm animate-[flicker_2.2s_ease-in-out_infinite]">
+                {targets.buyback ? fmtCountdown(nextBuybackMs) : '—'}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm uppercase tracking-[0.25em] text-white/60">
+                Next burn in
+              </div>
+              <div className="mt-1 text-6xl sm:text-7xl md:text-8xl font-extrabold text-orange-400 drop-shadow-sm animate-[flicker_2.8s_ease-in-out_infinite]">
+                {targets.burn ? fmtCountdown(nextBurnMs) : '—'}
+              </div>
+            </div>
+          </div>
+
+          {/* stats row */}
+          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-4">
+            <Stat label="Initial Supply" value={fmtInt(INITIAL)} />
+            <Stat label="Burned" value={fmtInt(BURNED)} />
+            <Stat label="Current Supply" value={fmtInt(CURRENT)} />
+            <Stat
+              label="Buyback Spent"
+              value={`${(totalSolSpent ?? 0).toFixed(2)} SOL`}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
+            <Stat label="Buyback Value (USD)" value={fmtMoney(totalUsd)} />
           </div>
         </div>
       </section>
 
-      {/* ===== How it Works ===== */}
+      {/* ===== Live Burn Log ===== */}
+      <section id="log" className="mx-auto max-w-6xl px-4 pb-12">
+        <h2 className="text-2xl font-bold">Live Burn Log</h2>
+        <p className="mt-1 text-sm text-white/50">TX links open explorer.</p>
+
+        <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
+          {burnsSorted.length === 0 && (
+            <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-6 text-white/60">
+              No burns posted yet.
+            </div>
+          )}
+          {burnsSorted.map((b) => (
+            <BurnCard key={b.id} burn={b} price={priceUsdPerSol ?? 0} />
+          ))}
+        </div>
+      </section>
+
+      {/* ===== How it works ===== */}
       <section id="how" className="mx-auto max-w-6xl px-4 pb-16">
         <h2 className="text-2xl font-bold">How It Works</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 text-white/85 md:grid-cols-3">
-          <HowCard title="80% → Buy & Burn" body="Creator fees auto-buy $BEAR and burn them live — the campfire never sleeps." />
-          <HowCard title="20% → Team + Marketing" body="Fuels growth, creators, memes, and keeps the vibes bright." />
-          <HowCard title="Transparent" body="Every buyback & burn is posted with TX link & timestamp. Public wallets, public camp." />
+          <HowCard
+            title="80% → Buy & Burn"
+            body="Creator fees auto-buy $BEAR and burn them live — the campfire never sleeps."
+          />
+          <HowCard
+            title="20% → Team + Marketing"
+            body="Fuels growth, creators, memes, and keeping the vibes bright."
+          />
+          <HowCard
+            title="Transparent"
+            body="Every buyback & burn is posted with TX link & timestamp. Public wallets, public camp."
+          />
         </div>
       </section>
 
       {/* ===== Footer ===== */}
       <footer className="border-t border-white/10 bg-[#0d1a14]">
         <div className="mx-auto max-w-6xl px-4 py-6 text-center text-sm text-white/50">
-          Once upon a bear market, one dapper bear decided to fight the winter the only way he knew how, with fire. 🔥
+          Once upon a bear market, one dapper bear decided to fight the winter
+          the only way he knew how, with fire. 🔥
         </div>
       </footer>
+
+      {/* countdown flicker keyframes */}
+      <style jsx global>{`
+        @keyframes flicker {
+          0%,
+          19%,
+          22%,
+          63%,
+          64%,
+          100% {
+            opacity: 1;
+            text-shadow: 0 0 24px rgba(255, 171, 64, 0.25);
+          }
+          20%,
+          21%,
+          62%,
+          63% {
+            opacity: 0.95;
+            text-shadow: 0 0 10px rgba(255, 171, 64, 0.15);
+          }
+        }
+      `}</style>
     </main>
   );
 }
@@ -365,29 +404,14 @@ export default function Page() {
 /* =========================
    Components
 ========================= */
-function CountdownTile({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 px-5 py-4 backdrop-blur">
-      <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">{label}</div>
-      <div className="mt-1 text-3xl font-extrabold text-white/90">{value}</div>
-    </div>
-  );
-}
-
-function Metric({ label, value }: { label: string; value: string }) {
+function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 backdrop-blur">
-      <div className="text-[11px] uppercase tracking-wider text-white/55">{label}</div>
+      <div className="text-[11px] uppercase tracking-wider text-white/55">
+        {label}
+      </div>
       <div className="mt-1 text-2xl font-extrabold">{value}</div>
     </div>
-  );
-}
-
-function Chip({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm text-white/70">
-      {children}
-    </span>
   );
 }
 
@@ -400,24 +424,27 @@ function HowCard({ title, body }: { title: string; body: string }) {
   );
 }
 
-function TimelineBurn({ burn, price, index }: { burn: Burn; price: number; index: number }) {
+function BurnCard({ burn, price }: { burn: Burn; price: number }) {
   const usd = burn.sol && price ? burn.sol * price : undefined;
   const ageMin = Math.max(0, (Date.now() - burn.timestamp) / 60_000);
-  const brightness = Math.max(0.7, 1 - ageMin / 180);
+  const brightness = Math.max(0.65, 1 - ageMin / 180);
   const progress = Math.min(1, ageMin / 10);
 
   return (
     <div
-      className="relative rounded-3xl border border-white/10 bg-[#0f1f19] p-5 shadow-lg ring-emerald-500/0 transition hover:ring-2 md:pl-12"
+      className="list-none rounded-3xl border border-white/10 bg-[#0f1f19] p-5 shadow-lg ring-emerald-500/0 transition hover:ring-2"
       style={{ filter: `brightness(${brightness})` }}
     >
-      {/* timeline dot (desktop) */}
-      <div className="absolute -left-[11px] top-6 hidden h-4 w-4 rounded-full bg-gradient-to-br from-amber-300 to-orange-500 md:block" />
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">🔥</span>
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          {/* flame badge */}
+          <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">
+            🔥
+          </span>
           <div>
-            <div className="text-lg font-bold">Burn • {fmtInt(burn.amount)} BEAR</div>
+            <div className="text-lg font-bold">
+              Burn • {fmtInt(burn.amount)} BEAR
+            </div>
             <div className="text-sm text-white/60">{fmtWhen(burn.timestamp)}</div>
             {burn.sol !== undefined && (
               <div className="text-sm text-white/70">
@@ -442,14 +469,5 @@ function TimelineBurn({ burn, price, index }: { burn: Burn; price: number; index
         />
       </div>
     </div>
-  );
-}
-
-/** Minimal X (Twitter) icon */
-function XIcon({ className = '' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="currentColor">
-      <path d="M18.244 2H21L13.98 10.06 22 22h-6.373l-4.958-6.77L4.96 22H2l7.42-8.45L2 2h6.49l4.38 6.04L18.244 2z" />
-    </svg>
   );
 }
