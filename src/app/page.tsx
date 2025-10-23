@@ -41,8 +41,6 @@ type StateJson = {
   schedule?: {
     burnIntervalMs?: number;
     buybackIntervalMs?: number;
-    nextBurnSpec?: string;     // "in 45m" or "21:30"
-    nextBuybackSpec?: string;  // "in 12m" or "21:10"
     nextBurnAt?: number;
     nextBuybackAt?: number;
     lastBurnAt?: number;
@@ -173,17 +171,23 @@ export default function Page() {
     return arr.slice().sort((a, b) => a.timestamp - b.timestamp).reverse();
   }, [data]);
 
-  // Next targets
-  const targets = useMemo(() => {
-    const s = data?.schedule ?? {};
-    const nb = parseSpecToMsNow(s.nextBuybackSpec) ?? s.nextBuybackAt;
-    const bb = nb ?? (s.lastBuybackAt && s.buybackIntervalMs
-      ? s.lastBuybackAt + s.buybackIntervalMs : undefined);
-    const nburn = parseSpecToMsNow(s.nextBurnSpec) ?? s.nextBurnAt;
-    const burn = nburn ?? (s.lastBurnAt && s.burnIntervalMs
-      ? s.lastBurnAt + s.burnIntervalMs : undefined);
-    return { bb, burn };
-  }, [data]);
+// Next targets (use absolute times so everyone sees the same countdown)
+const targets = useMemo(() => {
+  const s = data?.schedule ?? {};
+  const bb =
+    s.nextBuybackAt ??
+    (s.lastBuybackAt && s.buybackIntervalMs
+      ? s.lastBuybackAt + s.buybackIntervalMs
+      : undefined);
+
+  const burn =
+    s.nextBurnAt ??
+    (s.lastBurnAt && s.burnIntervalMs
+      ? s.lastBurnAt + s.burnIntervalMs
+      : undefined);
+
+  return { bb, burn };
+}, [data]);
 
   const nextBuybackMs = targets.bb ? targets.bb - now : 0;
   const nextBurnMs = targets.burn ? targets.burn - now : 0;
