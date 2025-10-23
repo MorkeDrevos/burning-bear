@@ -354,7 +354,7 @@ export default function Page() {
 
     <p className="text-white/80 text-base font-medium">
       🔥 The Burning Bear isn’t just a meme — it’s a movement. <br />
-      Built on the <span className="text-amber-300 font-semibold">50/30/20 Campfire Split</span> — transparent, alive, and always feeding the flames.
+      Built on the <span className="text-[#ffe48d] font-semibold">50/30/20 Campfire Split</span> — transparent, alive, and always feeding the flames.
     </p>
 
     <div className="flex justify-center gap-6 text-white/60 text-lg">
