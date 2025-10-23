@@ -65,7 +65,7 @@ function fmtMoney(n?: number) {
   if (!n || !isFinite(n)) return '$0.00';
   return n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 }
-function fmtWhen(ts: number) {
+function fmtWhen(ts: number | string) {
   const d = new Date(ts);
   return d.toLocaleString('en-US', {
     weekday: 'short',
