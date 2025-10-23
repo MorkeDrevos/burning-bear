@@ -389,35 +389,61 @@ export default function Page() {
 </section>
 
       {/* ===== The 50/30/20 Campfire Split ===== */}
-      <section id="how" className="mx-auto max-w-6xl px-4 pt-14">
-  {/* Section title */}
-  <h3 className="text-xl font-bold tracking-tight mb-4">How It Works</h3>
+      <section id="how" className="mx-auto max-w-6xl px-4 pt-14 relative">
+  {/* Section title with ember underline */}
+  <div className="relative inline-block mb-4">
+    <h3 className="text-xl font-bold tracking-tight relative z-10">How It Works</h3>
+    <span className="absolute left-0 bottom-0 w-full h-[3px] bg-gradient-to-r from-amber-400/0 via-amber-400/80 to-amber-400/0 animate-flicker" />
+  </div>
 
   {/* Core explanation */}
   <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px] mb-8">
     Every spark — whether it’s a trade, a creator reward, or a network fee — 
     feeds the <span className="text-[#ffe48d] font-semibold">$BEAR</span> fire. 
     These flames merge into the 
-    <span className="text-[#ffe48d] font-semibold"> Campfire Fund</span>, 
+    <span className="text-[#ffe48d] font-semibold transition duration-300 hover:text-amber-300 hover:drop-shadow-[0_0_6px_#ffb74d]"> Campfire Fund</span>, 
     driving constant buybacks, burns, and creator support. 
-    The more the ecosystem moves, the hotter it burns.
+    The more the ecosystem moves, the hotter it burns. 🔥
   </p>
 
   {/* Three cards */}
   <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-    <HowCard
-      title="50% → Auto-Buy & Burn"
-      body="Half of every fee automatically buys $BEAR and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps."
-    />
-    <HowCard
-      title="30% → Treasury & Buybacks"
-      body="Reserved transparently for strategic buybacks, ecosystem stability, and community-driven events that keep $BEAR’s fire burning long-term."
-    />
-    <HowCard
-      title="20% → Team, Creators & Growth"
-      body="Rewards creators, partners, and community builders — spreading the legend of $BEAR across Solana while fueling future innovation."
-    />
+    <div className="transition-all duration-300 hover:-translate-y-1 hover:border-amber-300/30 hover:shadow-[0_0_25px_#ffb74d20] rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
+      <div className="text-lg font-semibold">50% → Auto-Buy & Burn</div>
+      <div className="mt-2 text-sm text-white/75">
+        Half of every fee automatically buys $BEAR and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps.
+      </div>
+    </div>
+
+    <div className="transition-all duration-300 hover:-translate-y-1 hover:border-amber-300/30 hover:shadow-[0_0_25px_#ffb74d20] rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
+      <div className="text-lg font-semibold">30% → Treasury & Buybacks</div>
+      <div className="mt-2 text-sm text-white/75">
+        Reserved transparently for strategic buybacks, ecosystem stability, and community-driven events that keep $BEAR’s fire burning long-term.
+      </div>
+    </div>
+
+    <div className="transition-all duration-300 hover:-translate-y-1 hover:border-amber-300/30 hover:shadow-[0_0_25px_#ffb74d20] rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
+      <div className="text-lg font-semibold">20% → Team, Creators & Growth</div>
+      <div className="mt-2 text-sm text-white/75">
+        Rewards creators, partners, and community builders — spreading the legend of $BEAR across Solana while fueling future innovation.
+      </div>
+    </div>
   </div>
+
+  {/* Animation style */}
+  <style jsx>{`
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+      }
+      20%, 24%, 55% {
+        opacity: 0.45;
+      }
+    }
+    .animate-flicker {
+      animation: flicker 2.4s infinite;
+    }
+  `}</style>
 </section>
 
       {/* ===== Campfire Wallets ===== */}
