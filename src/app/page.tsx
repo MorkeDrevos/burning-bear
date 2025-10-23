@@ -9,12 +9,12 @@ import Link from 'next/link';
 const TOKEN_SYMBOL = '$BEAR';
 const TOKEN_NAME = 'The Burning Bear';
 const FULL_TOKEN_ADDRESS =
-  'So1ana1111111111111111111111111111111111111111111111111';
+  'CYbYmTLvVLp2xPQ5H4UqyMv9UptmzWDLnYExPsh3JRMA';
 
 // 🔓 Public, view-only wallet addresses (set yours here)
-const BURN_WALLET = 'AsH1VTFRkCdbaHNpRQMYvUvPkPqG5ndKsj2LNfF4m3Lh';
-const TREASURY_WALLET = 'E8HKxwByxn4R5TfMnQpVC93JxB1soXSjnCxPEHh88DsH';
-const MARKETING_WALLET = 'HLrwEbkDBDo9gDPa2ZH4sC2TowVLXuQa9NoZUMjD6rQP';
+const BURN_WALLET = 'CYbYmTLvVLp2xPQ5H4UqyMv9UptmzWDLnYExPsh3JRMA';
+const TREASURY_WALLET = 'FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE';
+const MARKETING_WALLET = '7k5rwpdSRyutEMek5tXuNuVVKQEQyubKC9VHEZ91SwZV';
 
 // Solana explorer base
 const EXPLORER = 'https://explorer.solana.com';
