@@ -294,26 +294,22 @@ export default function Page() {
           <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight drop-shadow-[0_6px_20px_rgba(255,180,60,0.25)]">
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
-
-          {/* BIG countdowns (no boxes) */}
-          <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
-              <div className="text-sm uppercase tracking-[0.25em] text-white/60">
-                Next buyback in
-              </div>
-              <div className="mt-1 text-6xl sm:text-7xl md:text-8xl font-extrabold text-amber-300 drop-shadow-sm animate-[flicker_2.2s_ease-in-out_infinite]">
-                {targets.buyback ? fmtCountdown(nextBuybackMs) : '—'}
-              </div>
-            </div>
-            <div>
-              <div className="text-sm uppercase tracking-[0.25em] text-white/60">
-                Next burn in
-              </div>
-              <div className="mt-1 text-6xl sm:text-7xl md:text-8xl font-extrabold text-orange-400 drop-shadow-sm animate-[flicker_2.8s_ease-in-out_infinite]">
-                {targets.burn ? fmtCountdown(nextBurnMs) : '—'}
-              </div>
-            </div>
-          </div>
+           
+{/* Countdowns (smaller) */}
+<div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
+  <div>
+    <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">Next buyback in</div>
+    <div className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white/85 leading-none">
+      {targets.bb ? fmtCountdown(nextBuybackMs) : '—'}
+    </div>
+  </div>
+  <div>
+    <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">Next burn in</div>
+    <div className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white/85 leading-none">
+      {targets.burn ? fmtCountdown(nextBurnMs) : '—'}
+    </div>
+  </div>
+</div>
 
           {/* stats row */}
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-4">
