@@ -346,7 +346,7 @@ export default function Page() {
 <section id="wallets" className="mx-auto max-w-6xl px-4 py-10">
   <h3 className="text-xl font-bold">Campfire Wallets</h3>
   <p className="mt-1 text-sm text-white/55">
-    Verify everything on Solana Explorer — all wallets are public and view-only.
+    The campfire burns in full view. Every wallet can be verified on Solana Explorer.
   </p>
 
   <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-3">
