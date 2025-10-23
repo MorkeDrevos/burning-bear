@@ -3,7 +3,7 @@
     "initialSupply": 1000000000,
     "burned": 6754321,
     "currentSupply": 993245679,
-    "buybackSol": 21.42,
+    "buybackSol": 26.000,
     "priceUsdPerSol": 176.80
   },
   "schedule": {
@@ -31,21 +31,21 @@
       "id": "tx_105",
       "amount": 11430000,
       "sol": 6.0000,
-      "timestamp": 1761182400000,
+      "timestamp": "2025-10-23T15:30:00Z",
       "tx": "https://explorer.solana.com/tx/0xTEST002"
     },
     {
       "id": "tx_106",
       "amount": 432430000,
       "sol": 6.0000,
-      "timestamp": 1761200400000,
+      "timestamp": "2025-10-23T15:30:00Z",
       "tx": "https://explorer.solana.com/tx/0xTEST003"
     },
     {
       "id": "tx_107",
       "amount": 1000000,
       "sol": 14.0000,
-      "timestamp": 1761221400000,
+      "timestamp": "2025-10-23T15:30:00Z",
       "tx": "https://explorer.solana.com/tx/0xTEST004"
     }
   ]
