@@ -1,4 +1,3 @@
-// src/app/page.tsx
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -9,28 +8,26 @@ import Link from 'next/link';
 ========================= */
 const TOKEN_SYMBOL = '$BEAR';
 const TOKEN_NAME = 'The Burning Bear';
-
-// Full CA (no ellipsis)
 const FULL_TOKEN_ADDRESS =
   'So1ana1111111111111111111111111111111111111111111111111';
 
-// Public wallets (edit as needed)
-const BURN_WALLET = 'AsH1VTFtR…NfF4m3Lh';
-const TREASURY_WALLET = 'E8HkxwBy…EhH88DSH';
-const MARKETING_WALLET = 'HLrvEbkD…UMjD6r0P';
+// 🔓 Public, view-only wallet addresses (set yours here)
+const BURN_WALLET = 'AsH1VTFRkCdbaHNpRQMYvUvPkPqG5ndKsj2LNfF4m3Lh';
+const TREASURY_WALLET = 'E8HKxwByxn4R5TfMnQpVC93JxB1soXSjnCxPEHh88DsH';
+const MARKETING_WALLET = 'HLrwEbkDBDo9gDPa2ZH4sC2TowVLXuQa9NoZUMjD6rQP';
 
-// Explorer base (Solana)
+// Solana explorer base
 const EXPLORER = 'https://explorer.solana.com';
 
 /* =========================
-   Types
+   Types matching /public/data/state.json
 ========================= */
 type Burn = {
   id: string;
-  amount: number; // BEAR (integer)
-  sol?: number;   // optional SOL value for the burn
-  timestamp: number; // ms since epoch (UTC)
-  tx: string;     // explorer link
+  amount: number;      // BEAR
+  sol?: number;        // optional, SOL spent for this burn
+  timestamp: number;   // ms since epoch
+  tx: string;
 };
 
 type StateJson = {
@@ -38,22 +35,16 @@ type StateJson = {
     initialSupply: number;
     burned: number;
     currentSupply: number;
-    buybackSol?: number;     // total SOL spent
-    priceUsdPerSol?: number; // fallback price if API down
+    buybackSol?: number;       // total SOL spent on buybacks
+    priceUsdPerSol?: number;   // fallback price used if API unavailable
   };
   schedule?: {
     burnIntervalMs?: number;
     buybackIntervalMs?: number;
-
-    // human “in 12m” | “21:30” (local wall clock)
-    nextBurnSpec?: string;
-    nextBuybackSpec?: string;
-
-    // exact wall-clock ms (if you prefer)
+    nextBurnSpec?: string;     // "in 45m" or "21:30"
+    nextBuybackSpec?: string;  // "in 12m" or "21:10"
     nextBurnAt?: number;
     nextBuybackAt?: number;
-
-    // fallbacks (last + interval)
     lastBurnAt?: number;
     lastBuybackAt?: number;
   };
@@ -71,7 +62,7 @@ function fmtInt(n: number) {
   return n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 }
 function fmtMoney(n?: number) {
-  if (n === undefined || !isFinite(n)) return '$0.00';
+  if (!n || !isFinite(n)) return '$0.00';
   return n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 }
 function fmtWhen(ts: number) {
@@ -88,11 +79,15 @@ function fmtWhen(ts: number) {
 }
 function fmtCountdown(ms: number) {
   const t = Math.max(0, Math.floor(ms / 1000));
-  const m = Math.floor(t / 60);
+  const h = Math.floor(t / 3600);
+  const m = Math.floor((t % 3600) / 60);
   const s = t % 60;
+  if (h > 0) return `${h}h ${m.toString().padStart(2, '0')}m ${s
+    .toString()
+    .padStart(2, '0')}s`;
   return `${m}m ${s.toString().padStart(2, '0')}s`;
 }
-// parse "in 12m" or "21:30" (local time)
+// parse "in 12m" or "21:30"
 function parseSpecToMsNow(spec?: string): number | undefined {
   if (!spec) return undefined;
   const now = Date.now();
@@ -106,7 +101,6 @@ function parseSpecToMsNow(spec?: string): number | undefined {
     if (m) mins += parseInt(m[1], 10);
     return mins > 0 ? now + mins * 60_000 : undefined;
   }
-
   const hm = s.match(/^(\d{1,2}):(\d{2})$/);
   if (hm) {
     const H = parseInt(hm[1], 10);
@@ -119,11 +113,6 @@ function parseSpecToMsNow(spec?: string): number | undefined {
   }
   return undefined;
 }
-const startOfLocalDay = (ts: number) => {
-  const d = new Date(ts);
-  d.setHours(0, 0, 0, 0);
-  return d.getTime();
-};
 
 /* =========================
    Page
@@ -135,17 +124,17 @@ export default function Page() {
   const [copied, setCopied] = useState(false);
   const copyTimer = useRef<number | null>(null);
 
-  // ticking clock
+  // tick each second
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  // load JSON state
+  // load JSON data
   useEffect(() => {
     let alive = true;
     fetch('/data/state.json', { cache: 'no-store' })
-      .then(r => r.json())
+      .then((r) => r.json())
       .then((j: StateJson) => alive && setData(j))
       .catch(() => {});
     return () => {
@@ -153,49 +142,55 @@ export default function Page() {
     };
   }, []);
 
-  // live SOL price (60s)
+  // live SOL price (falls back to stats.priceUsdPerSol)
   useEffect(() => {
     let alive = true;
-    const load = () =>
+    const fetchPrice = () =>
       fetch('/api/sol-price', { cache: 'no-store' })
-        .then(r => r.json())
-        .then(o => alive && typeof o?.usd === 'number' && o.usd > 0 && setSolUsd(o.usd))
+        .then((r) => r.json())
+        .then((o) => {
+          if (!alive) return;
+          if (o && typeof o.usd === 'number' && o.usd > 0) setSolUsd(o.usd);
+        })
         .catch(() => {});
-    load();
-    const id = window.setInterval(load, 60_000);
+    fetchPrice();
+    const id = window.setInterval(fetchPrice, 60_000);
     return () => {
       alive = false;
       clearInterval(id);
     };
   }, []);
 
-  // price priority: API -> fallback from JSON
   const priceUsdPerSol = solUsd ?? data?.stats?.priceUsdPerSol ?? null;
 
-  // burns sorted newest → oldest
   const burnsSorted = useMemo(
     () => (data?.burns ?? []).slice().sort((a, b) => b.timestamp - a.timestamp),
     [data]
   );
 
-  // schedule targets
+  // Next targets
   const targets = useMemo(() => {
     const s = data?.schedule ?? {};
     const nb = parseSpecToMsNow(s.nextBuybackSpec) ?? s.nextBuybackAt;
-    const buyback =
-      nb ?? (s.lastBuybackAt && s.buybackIntervalMs ? s.lastBuybackAt + s.buybackIntervalMs : undefined);
+    const bb =
+      nb ??
+      (s.lastBuybackAt && s.buybackIntervalMs
+        ? s.lastBuybackAt + s.buybackIntervalMs
+        : undefined);
 
     const nburn = parseSpecToMsNow(s.nextBurnSpec) ?? s.nextBurnAt;
     const burn =
-      nburn ?? (s.lastBurnAt && s.burnIntervalMs ? s.lastBurnAt + s.burnIntervalMs : undefined);
+      nburn ??
+      (s.lastBurnAt && s.burnIntervalMs
+        ? s.lastBurnAt + s.burnIntervalMs
+        : undefined);
 
-    return { buyback, burn };
+    return { bb, burn };
   }, [data]);
 
-  const nextBuybackMs = targets.buyback ? targets.buyback - now : 0;
+  const nextBuybackMs = targets.bb ? targets.bb - now : 0;
   const nextBurnMs = targets.burn ? targets.burn - now : 0;
 
-  // headline stats
   const INITIAL = data?.stats?.initialSupply ?? 0;
   const BURNED = data?.stats?.burned ?? 0;
   const CURRENT = data?.stats?.currentSupply ?? Math.max(0, INITIAL - BURNED);
@@ -203,33 +198,34 @@ export default function Page() {
   const totalSolSpent = data?.stats?.buybackSol ?? 0;
   const totalUsd = priceUsdPerSol ? totalSolSpent * priceUsdPerSol : undefined;
 
-  // Info chips below the stat cards
-  const todayBurns = useMemo(() => {
-    const list = burnsSorted;
-    if (!list.length) return 0;
-    const sod = startOfLocalDay(now);
-    return list.filter(b => b.timestamp >= sod).length;
-  }, [burnsSorted, now]);
+  // “Today” and “This Week” derived stats
+  const todayStart = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+  }, []);
+  const weekStart = now - 7 * 24 * 60 * 60 * 1000;
 
-  // week window (last 7 *local* days)
-  const week = useMemo(() => {
-    const end = now;
-    const start = startOfLocalDay(end) - 6 * 24 * 60 * 60 * 1000;
-    const list = burnsSorted.filter(b => b.timestamp >= start && b.timestamp <= end);
-    const sol = list.reduce((acc, b) => acc + (b.sol ?? 0), 0);
-    const usd = priceUsdPerSol ? sol * priceUsdPerSol : 0;
-    const largest = list.reduce((mx, b) => Math.max(mx, b.amount), 0);
-    return {
-      count: list.length,
-      sol,
-      usd,
-      largest,
-      avg: list.length ? sol / list.length : 0,
-    };
-  }, [burnsSorted, now, priceUsdPerSol]);
+  const todayBurnsCount = useMemo(
+    () => burnsSorted.filter((b) => b.timestamp >= todayStart).length,
+    [burnsSorted, todayStart]
+  );
 
-  // copy CA
-  const handleCopyCA = async () => {
+  const weekStats = useMemo(() => {
+    const lastWeek = burnsSorted.filter((b) => b.timestamp >= weekStart);
+    const count = lastWeek.length;
+    const sol =
+      lastWeek.reduce((acc, b) => acc + (b.sol ?? 0), 0);
+    const usd = priceUsdPerSol ? sol * priceUsdPerSol : undefined;
+    const largest = lastWeek.reduce(
+      (m, b) => (b.amount > m ? b.amount : m),
+      0
+    );
+    const avgSol = count > 0 ? sol / count : 0;
+    return { count, sol, usd, largest, avgSol };
+  }, [burnsSorted, weekStart, priceUsdPerSol]);
+
+  const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS);
     } catch {
@@ -252,40 +248,36 @@ export default function Page() {
       {/* ===== Sticky Header ===== */}
       <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
-          {/* Brand */}
           <Link href="#top" className="flex items-center gap-3 md:gap-4">
             <img
               src="/img/coin-logo.png"
               alt={TOKEN_NAME}
-              className="h-10 w-10 md:h-12 md:w-12 rounded-full shadow-md"
+              className="h-11 w-11 md:h-12 md:w-12 rounded-full shadow-md"
             />
             <div className="leading-tight">
               <div className="text-base md:text-xl font-extrabold">{TOKEN_NAME}</div>
-              <div className="text-[12px] md:text-sm text-white/55">{TOKEN_SYMBOL} • Live Burn Camp</div>
+              <div className="text-[12px] md:text-sm text-white/55">
+                {TOKEN_SYMBOL} • Live Burn Camp
+              </div>
             </div>
           </Link>
 
-          {/* Nav */}
-          <nav className="hidden items-center gap-8 md:flex text-sm md:text-base">
+          <nav className="hidden items-center gap-8 text-[15px] md:flex">
             <a href="#log" className="hover:text-amber-300">Live Burns</a>
             <a href="#how" className="hover:text-amber-300">How It Works</a>
           </nav>
 
-          {/* CA chip */}
           <div className="flex items-center gap-2 md:gap-3">
             <span
-              className="hidden lg:inline rounded-full bg-white/[0.06] px-4 py-2 text-sm text-white/75 ring-1 ring-white/10"
+              className="hidden md:inline rounded-full bg-emerald-900/40 px-4 py-2 text-sm text-emerald-300"
               title={FULL_TOKEN_ADDRESS}
             >
-              {truncateMiddle(FULL_TOKEN_ADDRESS, 8, 8)}
+              {truncateMiddle(FULL_TOKEN_ADDRESS)}
             </span>
             <button
-              onClick={handleCopyCA}
+              onClick={handleCopy}
               className={`rounded-full px-4 py-2 text-sm md:text-base font-semibold transition
-                ${copied
-                  ? 'bg-emerald-400 text-black'
-                  : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`
-              }
+                ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
               aria-live="polite"
             >
               {copied ? 'Copied!' : 'Copy CA'}
@@ -294,179 +286,143 @@ export default function Page() {
         </div>
       </header>
 
-      {/* === Page content stack === */}
-      <div className="space-y-16 md:space-y-20">
-        {/* ===== Hero with video ===== */}
-        <section className="relative">
-          <div className="absolute inset-0 -z-10 overflow-hidden">
-            <video
-              className="h-[66vh] w-full object-cover"
-              playsInline
-              autoPlay
-              muted
-              loop
-              poster="/img/burning-bear-frame.jpg"
-            >
-              <source src="/img/burning-bear.mp4" type="video/mp4" />
-            </video>
-            <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
-          </div>
+      {/* ===== Hero with video ===== */}
+      <section className="relative">
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <video
+            className="h-[66vh] w-full object-cover"
+            playsInline
+            autoPlay
+            muted
+            loop
+            poster="/img/burning-bear-frame.jpg"
+          >
+            <source src="/img/burning-bear.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
+        </div>
 
-          <div className="mx-auto grid max-w-6xl gap-6 px-4 pb-10 pt-16 sm:pt-24">
-            <h1 className="max-w-5xl text-5xl md:text-6xl font-extrabold leading-tight">
-              Meet The Burning Bear — the classiest arsonist in crypto.
-            </h1>
+        <div className="mx-auto grid max-w-6xl gap-6 px-4 pb-10 pt-16 sm:pt-24">
+          <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
+            Meet The Burning Bear — the classiest arsonist in crypto.
+          </h1>
 
-            {/* Countdowns (no frames; large, airy) */}
-            <div className="mt-2 grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <div>
-                <div className="text-xs uppercase tracking-[0.25em] text-white/60">Next buyback in</div>
-                <div className="text-4xl md:text-5xl font-extrabold text-white/85">
-                  {targets.buyback ? fmtCountdown(nextBuybackMs) : '—'}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs uppercase tracking-[0.25em] text-white/60">Next burn in</div>
-                <div className="text-4xl md:text-5xl font-extrabold text-white/85">
-                  {targets.burn ? fmtCountdown(nextBurnMs) : '—'}
-                </div>
+          {/* Countdowns */}
+          <div className="mt-2 grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <div className="text-xs uppercase tracking-[0.25em] text-white/55">Next buyback in</div>
+              <div className="text-4xl font-extrabold text-white/85 md:text-[44px]">
+                {targets.bb ? fmtCountdown(nextBuybackMs) : '—'}
               </div>
             </div>
-
-            {/* Stat cards */}
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-4">
-              <Stat label="Initial Supply" value={fmtInt(INITIAL)} />
-              <Stat label="Burned" value={fmtInt(BURNED)} />
-              <Stat label="Current Supply" value={fmtInt(CURRENT)} />
-              <Stat label="Buyback Spent" value={`${(totalSolSpent).toFixed(2)} SOL`} />
-            </div>
-
-            {/* Info chips */}
-            <div className="mt-3 flex flex-wrap gap-3">
-              <Pill>Today: {todayBurns} {todayBurns === 1 ? 'burn' : 'burns'}</Pill>
-              <Pill>Total Buyback Value: {fmtMoney(totalUsd)}</Pill>
-              <Pill>Live SOL: {fmtMoney(priceUsdPerSol ?? 0)}</Pill>
-            </div>
-          </div>
-        </section>
-
-        {/* ===== Live Burn Log ===== */}
-        <section id="log" className="mx-auto max-w-6xl px-4">
-          <div className="flex items-baseline justify-between">
-            <h2 className="text-2xl md:text-3xl font-bold">Live Burn Log</h2>
-            <p className="text-sm text-white/60">TX links open explorer.</p>
-          </div>
-
-          <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-            {burnsSorted.length === 0 && (
-              <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-6 text-white/60">
-                No burns posted yet.
-              </div>
-            )}
-            {burnsSorted.map((b) => (
-              <BurnCard key={b.id} burn={b} price={priceUsdPerSol ?? 0} />
-            ))}
-          </div>
-        </section>
-
-        {/* ===== Transparent Wallets ===== */}
-        <section className="mx-auto max-w-6xl px-4">
-          <h3 className="text-xl md:text-2xl font-semibold">Transparent Wallets</h3>
-          <p className="mt-1 text-sm text-white/60">
-            Verify everything on Solana Explorer — all wallets are public and view-only.
-          </p>
-
-          <div className="mt-5 grid gap-4 md:grid-cols-3">
-            <WalletCard
-              title="Burn Wallet"
-              note="Destroyed supply lives here forever."
-              address={BURN_WALLET}
-            />
-            <WalletCard
-              title="Treasury / Buybacks"
-              note="Funds for buybacks and operations."
-              address={TREASURY_WALLET}
-            />
-            <WalletCard
-              title="Marketing"
-              note="Growth, creators, promos."
-              address={MARKETING_WALLET}
-            />
-          </div>
-        </section>
-
-        {/* ===== This Week at the Campfire ===== */}
-        <section className="mx-auto max-w-6xl px-4">
-          <h3 className="text-xl md:text-2xl font-semibold">This Week at the Campfire</h3>
-          <p className="mt-1 text-sm text-white/60">
-            Activity in the last 7 days. Auto-updated from the live log.
-          </p>
-
-          <div className="mt-5 grid gap-4 md:grid-cols-4">
-            <WeekStat label="Burns" value={fmtInt(week.count)} />
-            <WeekStat label="SOL Spent" value={`${(week.sol || 0).toFixed(3)} SOL`} />
-            <WeekStat label="USD Value" value={fmtMoney(week.usd || 0)} />
-            <WeekStat label="Largest Burn (BEAR)" value={fmtInt(week.largest || 0)} />
-          </div>
-        </section>
-
-        {/* ===== How it Works ===== */}
-        <section id="how" className="mx-auto max-w-6xl px-4">
-          <h2 className="text-2xl font-bold">How It Works</h2>
-          <div className="mt-4 grid grid-cols-1 gap-4 text-white/85 md:grid-cols-3">
-            <HowCard title="80% → Buy & Burn" body="Creator fees auto-buy $BEAR and burn them live — the campfire never sleeps." />
-            <HowCard title="20% → Team + Marketing" body="Fuels growth, creators, memes, and keeping the vibes bright." />
-            <HowCard title="Transparent" body="Every buyback & burn is posted with TX link & timestamp. Public wallets, public camp." />
-          </div>
-        </section>
-
-        {/* ===== Footer ===== */}
-        <footer className="bg-[#0d1a14]">
-          <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-          <div className="mx-auto max-w-6xl px-4 py-10 grid gap-10 md:grid-cols-[1.6fr_1fr_1.2fr] items-start">
-            {/* Brand / tagline */}
-            <div className="flex items-start gap-4">
-              <img
-                src="/img/coin-logo.png"
-                alt="Burning Bear"
-                className="h-10 w-10 md:h-12 md:w-12 rounded-full shadow-md"
-              />
-              <div>
-                <div className="text-lg md:text-xl font-extrabold">The Burning Bear</div>
-                <p className="mt-1 text-sm text-white/60">
-                  We’re transparent. We’re active. And we’re alive. 🔥
-                </p>
+            <div>
+              <div className="text-xs uppercase tracking-[0.25em] text-white/55">Next burn in</div>
+              <div className="text-4xl font-extrabold text-white/85 md:text-[44px]">
+                {targets.burn ? fmtCountdown(nextBurnMs) : '—'}
               </div>
             </div>
-
-            {/* Quick links */}
-            <nav className="grid gap-2 text-sm">
-              <a href="#log" className="text-white/80 hover:text-amber-300 transition">Live Burns</a>
-              <a href="#how" className="text-white/80 hover:text-amber-300 transition">How It Works</a>
-              <a
-                href={EXPLORER}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white/80 hover:text-amber-300 transition"
-              >
-                Explorer
-              </a>
-            </nav>
-
-            {/* Contract chip */}
-            <ContractChip
-              label="Contract Address"
-              address={FULL_TOKEN_ADDRESS}
-              explorer={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
-            />
           </div>
-          <div className="border-t border-white/10">
-            <div className="mx-auto max-w-6xl px-4 py-4 text-center text-xs text-white/45">
-              © {new Date().getFullYear()} The Burning Bear — all burns on-chain.
+
+          {/* Stats row */}
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-4">
+            <Stat label="Initial Supply" value={fmtInt(INITIAL)} />
+            <Stat label="Burned" value={fmtInt(BURNED)} />
+            <Stat label="Current Supply" value={fmtInt(CURRENT)} />
+            <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
+          </div>
+
+          {/* Pill row under stats */}
+          <div className="mt-3 flex flex-wrap gap-3">
+            <Pill>Today: {todayBurnsCount} burns</Pill>
+            <Pill>
+              Total Buyback Value: {fmtMoney(totalUsd)}
+            </Pill>
+            <Pill>
+              Live SOL: {priceUsdPerSol ? fmtMoney(priceUsdPerSol) : '—'}
+            </Pill>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== Live Burn Log ===== */}
+      <section id="log" className="mx-auto max-w-6xl px-4 pt-2 pb-10">
+        <div className="flex items-baseline justify-between">
+          <h2 className="text-2xl font-bold">Live Burn Log</h2>
+          <p className="text-sm text-white/50">TX links open explorer.</p>
+        </div>
+
+        <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
+          {burnsSorted.length === 0 && (
+            <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-6 text-white/60">
+              No burns posted yet.
             </div>
-          </div>
-        </footer>
-      </div>
+          )}
+          {burnsSorted.map((b) => (
+            <BurnCard key={b.id} burn={b} price={priceUsdPerSol ?? 0} />
+          ))}
+        </div>
+      </section>
+
+      {/* ===== Transparent Wallets ===== */}
+      <section className="mx-auto max-w-6xl px-4 py-10">
+        <h3 className="text-xl font-bold">Transparent Wallets</h3>
+        <p className="mt-1 text-sm text-white/55">
+          Verify everything on Solana Explorer — all wallets are public and view-only.
+        </p>
+
+        <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <WalletCard
+            title="Burn Wallet"
+            address={BURN_WALLET}
+            note="Destroyed supply lives here forever."
+          />
+          <WalletCard
+            title="Treasury / Buybacks"
+            address={TREASURY_WALLET}
+            note="Funds for buybacks and operations."
+          />
+          <WalletCard
+            title="Marketing"
+            address={MARKETING_WALLET}
+            note="Growth, creators, promos."
+          />
+        </div>
+      </section>
+
+      {/* ===== This Week at the Campfire ===== */}
+      <section className="mx-auto max-w-6xl px-4 pb-14">
+        <h3 className="text-xl font-bold">This Week at the Campfire</h3>
+        <p className="mt-1 text-sm text-white/55">
+          Activity in the last 7 days. Auto-updated from the live log.
+        </p>
+
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatBig label="Burns" value={fmtInt(weekStats.count)} />
+          <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
+          <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
+          <StatBig label="Largest Burn (BEAR)" value={fmtInt(weekStats.largest)} />
+        </div>
+
+        <div className="mt-3">
+          <Pill>Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}</Pill>
+        </div>
+      </section>
+
+      {/* ===== How it works ===== */}
+      <section id="how" className="mx-auto max-w-6xl px-4 pb-16">
+        <h3 className="text-xl font-bold">How It Works</h3>
+        <div className="mt-4 grid grid-cols-1 gap-4 text-white/85 md:grid-cols-3">
+          <HowCard title="80% → Buy & Burn" body="Creator fees auto-buy $BEAR and burn them live — the campfire never sleeps." />
+          <HowCard title="20% → Team + Marketing" body="Fuels growth, creators, memes, and keeping the vibes bright." />
+          <HowCard title="Transparent" body="Every buyback & burn is posted with a TX link and timestamp." />
+        </div>
+      </section>
+
+      <footer className="border-t border-white/10 bg-[#0d1a14]">
+        <div className="mx-auto max-w-6xl px-4 py-6 text-center text-sm text-white/50">
+          Once upon a bear market, one dapper bear decided to fight the winter the only way he knew how, with fire. 🔥
+        </div>
+      </footer>
     </main>
   );
 }
@@ -474,15 +430,6 @@ export default function Page() {
 /* =========================
    Components
 ========================= */
-
-function Pill({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-sm text-white/85 backdrop-blur">
-      {children}
-    </div>
-  );
-}
-
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 backdrop-blur">
@@ -491,16 +438,21 @@ function Stat({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-
-function WeekStat({ label, value }: { label: string; value: string }) {
+function StatBig({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 backdrop-blur">
-      <div className="text-[11px] uppercase tracking-wider text-white/55">{label}</div>
-      <div className="mt-1 text-2xl font-extrabold">{value}</div>
+    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-6 backdrop-blur">
+      <div className="text-xs uppercase tracking-wider text-white/55">{label}</div>
+      <div className="mt-1 text-3xl font-extrabold">{value}</div>
     </div>
   );
 }
-
+function Pill({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/75 backdrop-blur">
+      {children}
+    </span>
+  );
+}
 function HowCard({ title, body }: { title: string; body: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 backdrop-blur">
@@ -509,92 +461,6 @@ function HowCard({ title, body }: { title: string; body: string }) {
     </div>
   );
 }
-
-function WalletCard({ title, note, address }: { title: string; note: string; address: string }) {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(address);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1000);
-    } catch {}
-  };
-  return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-4 backdrop-blur">
-      <div className="text-sm font-semibold">{title}</div>
-      <div className="mt-1 text-xs text-white/60">{note}</div>
-
-      <div className="mt-3 flex items-center gap-2">
-        <code className="truncate rounded-md bg-white/5 px-3 py-2 text-[13px] text-white/80">
-          {truncateMiddle(address, 8, 8)}
-        </code>
-        <a
-          href={`${EXPLORER}/address/${address}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="rounded-full border border-white/10 px-3 py-2 text-sm text-white/80 hover:text-amber-300 hover:border-amber-300 transition"
-        >
-          View
-        </a>
-        <button
-          onClick={handleCopy}
-          className={`rounded-full px-3 py-2 text-sm font-medium transition
-            ${copied ? 'bg-emerald-400 text-black' : 'border border-white/10 text-white/80 hover:text-amber-300 hover:border-amber-300'}`}
-        >
-          {copied ? 'Copied' : 'Copy'}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function ContractChip({
-  label,
-  address,
-  explorer,
-}: {
-  label: string;
-  address: string;
-  explorer: string;
-}) {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(address);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1200);
-    } catch {}
-  };
-  const short = truncateMiddle(address, 9, 7);
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur">
-      <div className="text-xs uppercase tracking-wider text-white/55">{label}</div>
-      <div className="mt-2 flex items-center justify-between gap-3">
-        <code className="truncate rounded-md bg-white/5 px-3 py-2 text-[13px] text-white/80">
-          {short}
-        </code>
-        <div className="flex items-center gap-2">
-          <a
-            href={explorer}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full border border-white/10 px-3 py-2 text-sm text-white/80 hover:text-amber-300 hover:border-amber-300 transition"
-          >
-            View
-          </a>
-          <button
-            onClick={handleCopy}
-            className={`rounded-full px-3 py-2 text-sm font-medium transition
-              ${copied ? 'bg-emerald-400 text-black' : 'border border-white/10 text-white/80 hover:text-amber-300 hover:border-amber-300'}`}
-          >
-            {copied ? 'Copied' : 'Copy'}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function BurnCard({ burn, price }: { burn: Burn; price: number }) {
   const usd = burn.sol && price ? burn.sol * price : undefined;
   const ageMin = Math.max(0, (Date.now() - burn.timestamp) / 60_000);
@@ -633,6 +499,67 @@ function BurnCard({ burn, price }: { burn: Burn; price: number }) {
           className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
           style={{ width: `${Math.floor(progress * 100)}%` }}
         />
+      </div>
+    </div>
+  );
+}
+
+function WalletCard({
+  title,
+  address,
+  note,
+}: {
+  title: string;
+  address: string;
+  note?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+  const timer = useRef<number | null>(null);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(address);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = address;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+    setCopied(true);
+    if (timer.current) window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setCopied(false), 1200);
+  };
+
+  return (
+    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 backdrop-blur">
+      <div className="text-sm font-semibold">{title}</div>
+      {note && <div className="mt-0.5 text-xs text-white/55">{note}</div>}
+
+      <div className="mt-3 flex items-center justify-between gap-2">
+        <code className="truncate rounded-md bg-white/5 px-2 py-1 text-[13px] text-white/80">
+          {truncateMiddle(address, 8, 8)}
+        </code>
+        <div className="flex items-center gap-2">
+          <a
+            href={`${EXPLORER}/address/${address}`}
+            target="_blank"
+            className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/80 hover:bg-white/10"
+          >
+            View
+          </a>
+          <button
+            onClick={handleCopy}
+            className={`rounded-full px-3 py-1 text-sm font-semibold transition ${
+              copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'
+            }`}
+          >
+            {copied ? 'Copied' : 'Copy'}
+          </button>
+        </div>
       </div>
     </div>
   );
