@@ -390,21 +390,26 @@ export default function Page() {
 
       {/* ===== The 50/30/20 Campfire Split ===== */}
       <section id="how" className="mx-auto max-w-6xl px-4 pt-14 relative">
-  {/* Section title with ember underline */}
+  {/* Section title with animated ember line */}
   <div className="relative inline-block mb-4">
     <h3 className="text-xl font-bold tracking-tight relative z-10">How It Works</h3>
-    <span className="absolute left-0 bottom-0 w-full h-[3px] bg-gradient-to-r from-amber-400/0 via-amber-400/80 to-amber-400/0 animate-flicker" />
+    <span className="absolute left-0 bottom-0 w-full h-[3px] overflow-hidden rounded-full bg-gradient-to-r from-amber-500/0 via-amber-400/90 to-amber-500/0">
+      <span className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-300 to-transparent animate-ember" />
+    </span>
   </div>
 
   {/* Core explanation */}
   <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px] mb-8">
-    Every spark — whether it’s a trade, a creator reward, or a network fee — feeds the <span className="text-[#ffe48d] font-semibold">$BEAR</span> fire. 
-    These flames merge into the <span className="text-[#ffe48d] font-semibold transition duration-300 hover:text-amber-300 hover:drop-shadow-[0_0_6px_#ffb74d]"> Campfire Fund</span>, 
+    Every spark — whether it’s a trade, a creator reward, or a network fee — 
+    feeds the <span className="text-[#ffe48d] font-semibold">$BEAR</span> fire. 
+    These flames merge into the 
+    <span className="text-[#ffe48d] font-semibold transition duration-300 hover:text-amber-300 hover:drop-shadow-[0_0_6px_#ffb74d]"> Campfire Fund</span>, 
     driving constant buybacks, burns, and creator support. 
-    The more the ecosystem moves, the hotter it burns. 🔥
+    The more the ecosystem moves, the hotter it burns.{" "}
+    <span className="inline-block animate-flame text-[18px]">🔥</span>
   </p>
 
-  {/* Three cards */}
+  {/* Cards */}
   <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
     <div className="transition-all duration-300 hover:-translate-y-1 hover:border-amber-300/30 hover:shadow-[0_0_25px_#ffb74d20] rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
       <div className="text-lg font-semibold">50% → Auto-Buy & Burn</div>
@@ -428,18 +433,24 @@ export default function Page() {
     </div>
   </div>
 
-  {/* Animation style */}
+  {/* Animations */}
   <style jsx>{`
-    @keyframes flicker {
-      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-        opacity: 1;
-      }
-      20%, 24%, 55% {
-        opacity: 0.45;
-      }
+    @keyframes ember {
+      0% { transform: translateX(-100%); opacity: 0.3; }
+      30% { opacity: 1; }
+      70% { opacity: 1; }
+      100% { transform: translateX(100%); opacity: 0.3; }
     }
-    .animate-flicker {
-      animation: flicker 2.4s infinite;
+    .animate-ember {
+      animation: ember 4.5s linear infinite;
+    }
+
+    @keyframes flame {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px #ffb74d80); }
+      50% { transform: scale(1.15); filter: drop-shadow(0 0 10px #ffb74dcc); }
+    }
+    .animate-flame {
+      animation: flame 1.6s ease-in-out infinite;
     }
   `}</style>
 </section>
