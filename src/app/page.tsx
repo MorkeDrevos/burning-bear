@@ -450,7 +450,7 @@ export default function Page() {
       <p>
         © {new Date().getFullYear()} The Burning Bear · Built for fun, not financial advice.  
       </p>
-      <p>Stay warm, stay transparent, and keep the fire burning. 🪵</p>
+      <p>Stay warm, stay transparent, and keep the fire burning. 🔥</p>
     </div>
   </div>
 </footer>
