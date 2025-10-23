@@ -390,7 +390,10 @@ export default function Page() {
 
       {/* ===== The 50/30/20 Campfire Split ===== */}
       <section id="how" className="mx-auto max-w-6xl px-4 pt-14">
-  {/* Intro paragraph — ecosystem explanation */}
+  {/* Section title */}
+  <h3 className="text-xl font-bold tracking-tight mb-4">How It Works</h3>
+
+  {/* Core explanation */}
   <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px] mb-8">
     Every spark — whether it’s a trade, a creator reward, or a network fee — 
     feeds the <span className="text-[#ffe48d] font-semibold">$BEAR</span> fire. 
@@ -399,9 +402,6 @@ export default function Page() {
     driving constant buybacks, burns, and creator support. 
     The more the ecosystem moves, the hotter it burns.
   </p>
-
-  {/* Section title */}
-  <h3 className="text-xl font-bold tracking-tight mb-4">How It Works</h3>
 
   {/* Three cards */}
   <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
