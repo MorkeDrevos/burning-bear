@@ -4,17 +4,13 @@
     "burned": 6754321,
     "currentSupply": 993245679,
     "buybackSol": 126.0,
-    "priceUsdPerSol": 176.80
+    "priceUsdPerSol": 176.8
   },
   "schedule": {
     "burnIntervalMs": 3600000,
     "buybackIntervalMs": 1200000,
-    "nextBurnSpec": "in 59m",
-    "nextBuybackSpec": "in 20m",
-    "nextBurnAt": 0,
-    "nextBuybackAt": 0,
-    "lastBurnAt": 0,
-    "lastBuybackAt": 0
+    "nextBurnAt": 1730064000000,
+    "nextBuybackAt": 1730060400000
   },
   "burns": [
     {
@@ -27,23 +23,9 @@
     {
       "id": "tx_105",
       "amount": 11430000,
-      "sol": 6.0000,
+      "sol": 6.0,
       "timestamp": "2025-10-23T04:00:00Z",
       "tx": "https://explorer.solana.com/tx/0xTEST002"
-    },
-    {
-      "id": "tx_106",
-      "amount": 432430000,
-      "sol": 6.0000,
-      "timestamp": "2025-10-23T09:00:00Z",
-      "tx": "https://explorer.solana.com/tx/0xTEST003"
-    },
-    {
-      "id": "tx_107",
-      "amount": 1000000,
-      "sol": 14.0000,
-      "timestamp": "2025-10-23T15:30:00Z",
-      "tx": "https://explorer.solana.com/tx/0xTEST004"
     }
   ]
 }
