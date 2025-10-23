@@ -202,6 +202,18 @@ export default function Page() {
     [burnsSorted, todayStart]
   );
 
+  // Week rollup (last 7 days)
+  const weekStart = now - 7 * 24 * 60 * 60 * 1000;
+  const weekStats = useMemo(() => {
+    const lastWeek = burnsSorted.filter((b) => (b.timestamp as number) >= weekStart);
+    const count = lastWeek.length;
+    const sol = lastWeek.reduce((acc, b) => acc + (b.sol ?? 0), 0);
+    const usd = priceUsdPerSol ? sol * priceUsdPerSol : undefined;
+    const largest = lastWeek.reduce((m, b) => (b.amount > m ? b.amount : m), 0);
+    const avgSol = count > 0 ? sol / count : 0;
+    return { count, sol, usd, largest, avgSol };
+  }, [burnsSorted, weekStart, priceUsdPerSol]);
+
   const handleCopy = async () => {
     try { await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS); } catch {}
     setCopied(true);
@@ -318,104 +330,128 @@ export default function Page() {
             </div>
           )}
           {burnsSorted.map((b) => (
-            <BurnCard key={b.id} burn={b as Burn & { timestamp: number }} price={priceUsdPerSol} />
+            <BurnCard key={b.id} burn={b as Burn & { timestamp: number }} price={priceUsdPerSol ?? 0} />
           ))}
         </div>
       </section>
 
-      {/* ===== How It Works (moved up) ===== */}
-<section id="how" className="mx-auto max-w-6xl px-4 pb-10">
-  <h3 className="text-xl font-bold">The 50/30/20 Campfire Split</h3>
-  <div className="mt-4 grid grid-cols-1 gap-4 text-white/85 md:grid-cols-3">
-    <HowCard
-      title="50% → Auto-Buy & Burn"
-      body="Every fee fuels the fire — half of all activity automatically buys $BEAR and sends it to the burn wallet. The campfire never sleeps."
-    />
-    <HowCard
-      title="30% → Treasury & Buybacks"
-      body="Funds managed transparently for future burns, community events, and buybacks that support long-term price health."
-    />
-    <HowCard
-      title="20% → Team & Marketing"
-      body="For growth, creators, and spreading the $BEAR legend across crypto — keeping the fire visible across Solana."
-    />
-  </div>
-</section>
+      {/* ===== This Week at the Campfire ===== */}
+      <section className="mx-auto max-w-6xl px-4 pb-14">
+        <h3 className="text-xl font-bold">This Week at the Campfire</h3>
+        <p className="mt-1 text-sm text-white/55">
+          Activity in the last 7 days. Auto-updated from the live logs.
+        </p>
 
-{/* ===== Wallets (moved below) ===== */}
-<section id="wallets" className="mx-auto max-w-6xl px-4 py-10">
-  <h3 className="text-xl font-bold">Campfire Wallets</h3>
-  <p className="mt-1 text-sm text-white/55">
-    The campfire burns in full view. Every wallet can be verified on Solana Explorer.
-  </p>
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatBig label="Burns" value={fmtInt(weekStats.count)} />
+          <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
+          <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
+          <StatBig label="Largest Burn (BEAR)" value={fmtInt(weekStats.largest)} />
+        </div>
 
-  <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-3">
-    <WalletCard
-      title="Burn Wallet"
-      address={BURN_WALLET}
-      note="Destroyed supply lives here forever."
-    />
-    <WalletCard
-      title="Treasury & Buybacks"
-      address={TREASURY_WALLET}
-      note="Funds for buybacks and operations."
-    />
-    <WalletCard
-      title="Team & Marketing"
-      address={MARKETING_WALLET}
-      note="Growth, creators, promos."
-    />
-  </div>
-</section>
+        <div className="mt-3">
+          <Pill>Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}</Pill>
+        </div>
+      </section>
+
+      {/* ===== How It Works ===== */}
+      <section id="how" className="mx-auto max-w-6xl px-4 pb-10">
+        <h3 className="text-xl font-bold">The 50/30/20 Campfire Split</h3>
+        <div className="mt-4 grid grid-cols-1 gap-4 text-white/85 md:grid-cols-3">
+          <HowCard
+            title="50% → Auto-Buy & Burn"
+            body="Every fee fuels the fire — half of all activity automatically buys $BEAR and sends it to the burn wallet. The campfire never sleeps."
+          />
+          <HowCard
+            title="30% → Treasury & Buybacks"
+            body="Funds managed transparently for future burns, community events and buybacks that support long-term price health."
+          />
+          <HowCard
+            title="20% → Team & Marketing"
+            body="For growth, creators, and spreading the $BEAR legend across crypto — keeping the fire visible across Solana."
+          />
+        </div>
+      </section>
+
+      {/* ===== Campfire Wallets ===== */}
+      <section id="wallets" className="mx-auto max-w-6xl px-4 py-10">
+        <h3 className="text-xl font-bold">Campfire Wallets</h3>
+        <p className="mt-1 text-sm text-white/55">
+          The campfire burns in full view. Every wallet can be verified on Solana Explorer.
+        </p>
+
+        <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <WalletCard
+            title="Burn Wallet"
+            address={BURN_WALLET}
+            note="Destroyed supply lives here forever."
+          />
+          <WalletCard
+            title="Treasury & Buybacks"
+            address={TREASURY_WALLET}
+            note="Funds for buybacks and operations."
+          />
+          <WalletCard
+            title="Team & Marketing"
+            address={MARKETING_WALLET}
+            note="Growth, creators, promos."
+          />
+        </div>
+      </section>
 
       {/* ===== Footer ===== */}
       <footer className="border-t border-white/10 bg-[#0d1a14] relative">
-  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
-  <div className="mx-auto max-w-6xl px-4 py-10 text-center text-sm text-white/60 space-y-4">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+        <div className="mx-auto max-w-6xl px-4 py-10 text-center text-sm text-white/60 space-y-4">
 
-    <p className="text-white/80 text-base font-medium">
-      🔥 The Burning Bear isn’t just a meme — it’s a movement. <br />
-      Built on the <span className="text-[#ffe48d] font-semibold">50/30/20 Campfire Split</span> — transparent, alive and always feeding the flames.
-    </p>
+          <p className="text-white/80 text-base font-medium">
+            🔥 The Burning Bear isn’t just a meme — it’s a movement. <br />
+            Built on the <span className="text-[#ffe48d] font-semibold">50/30/20 Campfire Split</span> — transparent, alive and always feeding the flames.
+          </p>
 
-    <div className="flex justify-center gap-6 text-white/60 text-lg">
-      <a
-        href="https://x.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:text-amber-300 transition"
-        title="Follow on X"
-      >
-        <i className="fa-brands fa-x-twitter"></i>
-      </a>
-      <a
-        href="https://t.me"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:text-amber-300 transition"
-        title="Join Telegram"
-      >
-        <i className="fa-brands fa-telegram"></i>
-      </a>
-      <a
-        href="https://dexscreener.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:text-amber-300 transition"
-        title="View on DexScreener"
-      >
-        <i className="fa-solid fa-fire"></i>
-      </a>
-    </div>
+          <div className="flex justify-center gap-6 text-white/60 text-lg">
+            {/* X Community */}
+            <a
+              href="https://x.com/i/communities/1980944446871966021"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-amber-300 transition"
+              title="Join the X Community"
+            >
+              <i className="fa-brands fa-x-twitter"></i>
+            </a>
 
-    <div className="text-xs text-white/40 pt-4">
-      <p>
-        © {new Date().getFullYear()} The Burning Bear · Built for fun, not financial advice.  
-      </p>
-      <p>Stay warm, stay transparent and keep the fire burning. 🔥</p>
-    </div>
-  </div>
-</footer>
+            {/* CoinGecko */}
+            <a
+              href="https://www.coingecko.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-amber-300 transition"
+              title="View on CoinGecko"
+            >
+              <i className="fa-solid fa-chart-line"></i>
+            </a>
+
+            {/* DexScreener */}
+            <a
+              href="https://dexscreener.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-amber-300 transition"
+              title="View on DexScreener"
+            >
+              <i className="fa-solid fa-fire"></i>
+            </a>
+          </div>
+
+          <div className="text-xs text-white/40 pt-4">
+            <p>
+              © {new Date().getFullYear()} The Burning Bear · Built for fun, not financial advice.
+            </p>
+            <p>Stay warm, stay transparent and keep the fire burning. 🔥</p>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
@@ -437,6 +473,15 @@ function Stat({ label, value }: { label: string; value: string }) {
     <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 backdrop-blur">
       <div className="text-[11px] uppercase tracking-wider text-white/55">{label}</div>
       <div className="mt-1 text-2xl font-extrabold">{value}</div>
+    </div>
+  );
+}
+
+function StatBig({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-6 backdrop-blur">
+      <div className="text-xs uppercase tracking-wider text-white/55">{label}</div>
+      <div className="mt-1 text-3xl font-extrabold">{value}</div>
     </div>
   );
 }
@@ -554,9 +599,9 @@ function MobileMenu() {
       {open && (
         <div className="absolute left-0 right-0 top-full z-40 border-b border-white/10 bg-[#0d1a14]/95 backdrop-blur">
           <div className="mx-auto max-w-6xl px-4 py-3 flex flex-col gap-2 text-[15px] font-semibold">
-            <a href="#log" className="py-2 text-[#ffe48d]" onClick={() => setOpen(false)}>Live Burns</a>
-            <a href="#wallets" className="py-2 text-[#ffe48d]" onClick={() => setOpen(false)}>Wallets</a>
             <a href="#how" className="py-2 text-[#ffe48d]" onClick={() => setOpen(false)}>How It Works</a>
+            <a href="#log" className="py-2 text-[#ffe48d]" onClick={() => setOpen(false)}>Live Burns</a>
+            <a href="#wallets" className="py-2 text-[#ffe48d]" onClick={() => setOpen(false)}>Campfire Wallets</a>
           </div>
         </div>
       )}
