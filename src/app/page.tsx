@@ -390,30 +390,35 @@ export default function Page() {
 
       {/* ===== The 50/30/20 Campfire Split ===== */}
       <section id="how" className="mx-auto max-w-6xl px-4 pt-14">
-        <p className="text-white/75 max-w-3xl mt-3 leading-relaxed">
-  Every trade, creator reward, and ecosystem fee helps fuel the 
-  <span className="text-[#ffe48d] font-semibold"> $BEAR</span> fire.  
-  Each transaction contributes directly to the 
-  <span className="text-[#ffe48d] font-semibold"> Campfire Fund</span> — the engine behind every buyback, burn, and 
-  community reward. This closed-loop system keeps the supply shrinking, 
-  creators rewarded, and the fire burning stronger with every interaction.
-</p>
-        <h3 className="text-xl font-bold tracking-tight">How It Works</h3>
-        <div className="mt-4 grid grid-cols-1 gap-5 md:grid-cols-3">
-          <HowCard
-            title="50% → Auto-Buy & Burn"
-            body="Every fee fuels the fire — half of all activity automatically buys $BEAR and sends it to the burn wallet. The campfire never sleeps."
-          />
-          <HowCard
-            title="30% → Treasury & Buybacks"
-            body="Funds managed transparently for future burns, community events and buybacks that support long-term price health."
-          />
-          <HowCard
-            title="20% → Team & Marketing"
-            body="For growth, creators, and spreading the $BEAR legend across crypto — keeping the fire visible across Solana."
-          />
-        </div>
-      </section>
+  {/* Intro paragraph — ecosystem explanation */}
+  <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px] mb-8">
+    Every spark — whether it’s a trade, a creator reward, or a network fee — 
+    feeds the <span className="text-[#ffe48d] font-semibold">$BEAR</span> fire. 
+    These flames merge into the 
+    <span className="text-[#ffe48d] font-semibold"> Campfire Fund</span>, 
+    driving constant buybacks, burns, and creator support. 
+    The more the ecosystem moves, the hotter it burns.
+  </p>
+
+  {/* Section title */}
+  <h3 className="text-xl font-bold tracking-tight mb-4">How It Works</h3>
+
+  {/* Three cards */}
+  <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+    <HowCard
+      title="50% → Auto-Buy & Burn"
+      body="Half of every fee automatically buys $BEAR and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps."
+    />
+    <HowCard
+      title="30% → Treasury & Buybacks"
+      body="Reserved transparently for strategic buybacks, ecosystem stability, and community-driven events that keep $BEAR’s fire burning long-term."
+    />
+    <HowCard
+      title="20% → Team, Creators & Growth"
+      body="Rewards creators, partners, and community builders — spreading the legend of $BEAR across Solana while fueling future innovation."
+    />
+  </div>
+</section>
 
       {/* ===== Campfire Wallets ===== */}
       <section id="wallets" className="mx-auto max-w-6xl px-4 pt-14 pb-16">
