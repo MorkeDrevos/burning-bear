@@ -438,6 +438,8 @@ export default function Page() {
         <h3 className="text-xl font-bold tracking-tight mb-3">How It Works</h3>
 
         <div className="flex flex-col md:flex-row items-center gap-5 mb-8">
+  <div className="relative flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-10">
+  {/* Left: Text */}
   <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px]">
     Every spark — whether it’s a trade, a creator reward, or a network fee — feeds the <span className="text-[#ffe48d] font-semibold">$BEAR</span> fire. 
     These flames merge into the <span className="text-[#ffe48d] font-semibold transition duration-300 hover:text-amber-300 hover:drop-shadow-[0_0_6px_#ffb74d]">Campfire Fund</span>, 
@@ -445,12 +447,14 @@ export default function Page() {
     The more the ecosystem moves, the hotter it burns. 🔥
   </p>
 
-  {/* Coin logo fade-in */}
-  <img
-    src="/img/coin-logo.png"
-    alt="$BEAR Coin"
-    className="w-20 h-20 md:w-24 md:h-24 opacity-0 animate-fadeInCoin"
-  />
+  {/* Right: Coin */}
+  <div className="flex-shrink-0 md:mt-[-10px]">
+    <img
+      src="/img/coin-logo.png"
+      alt="$BEAR Coin"
+      className="w-28 h-28 md:w-36 md:h-36 opacity-0 animate-fadeInCoin"
+    />
+  </div>
 </div>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3 items-stretch">
