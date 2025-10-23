@@ -344,7 +344,6 @@ type Burn = {
   amount: number;            // BEAR
   sol?: number;              // SOL spent for this burn
   timestamp: number | string; // ms since epoch OR ISO string
-  tx: string;
 };
 
 type StateJson = {
