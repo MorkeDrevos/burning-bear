@@ -434,61 +434,77 @@ export default function Page() {
       </section>
 
       {/* ===== How It Works ===== */}
-      <section id="how" className="mx-auto max-w-6xl px-4 pt-14">
-        <h3 className="text-xl font-bold tracking-tight mb-3">How It Works</h3>
+      {/* ===== How It Works ===== */}
+<section id="how" className="mx-auto max-w-6xl px-4 pt-14 relative">
+  {/* Section title */}
+  <h3 className="text-xl font-bold tracking-tight mb-5">How It Works</h3>
 
-        <div className="flex flex-col md:flex-row items-center gap-5 mb-8">
+  {/* Paragraph + Coin */}
   <div className="relative flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-10">
-  {/* Left: Text */}
-  <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px]">
-    Every spark — whether it’s a trade, a creator reward, or a network fee — feeds the <span className="text-[#ffe48d] font-semibold">$BEAR</span> fire. 
-    These flames merge into the <span className="text-[#ffe48d] font-semibold transition duration-300 hover:text-amber-300 hover:drop-shadow-[0_0_6px_#ffb74d]">Campfire Fund</span>, 
-    driving constant buybacks, burns, and creator support. 
-    The more the ecosystem moves, the hotter it burns. 🔥
-  </p>
+    {/* Left: Text */}
+    <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px]">
+      Every spark — whether it’s a trade, a creator reward, or a network fee — feeds the{" "}
+      <span className="text-[#ffe48d] font-semibold">$BEAR</span> fire. 
+      These flames merge into the{" "}
+      <span className="text-[#ffe48d] font-semibold transition duration-300 hover:text-amber-300 hover:drop-shadow-[0_0_6px_#ffb74d]">
+        Campfire Fund
+      </span>
+      , driving constant buybacks, burns, and creator support. 
+      The more the ecosystem moves, the hotter it burns. 🔥
+    </p>
 
-  {/* Right: Coin */}
-  <div className="flex-shrink-0 md:mt-[-10px]">
-    <img
-      src="/img/coin-logo.png"
-      alt="$BEAR Coin"
-      className="w-28 h-28 md:w-36 md:h-36 opacity-0 animate-fadeInCoin"
-    />
+    {/* Right: Coin */}
+    <div className="flex-shrink-0 md:mt-[-10px]">
+      <img
+        src="/img/coin-logo.png"
+        alt="$BEAR Coin"
+        className="w-28 h-28 md:w-36 md:h-36 opacity-0 animate-fadeInCoin"
+      />
+    </div>
   </div>
-</div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3 items-stretch">
-          <Reveal delay={0}>
-            <HowCard
-              title="50% → Auto-Buy & Burn"
-              body="Half of every fee automatically buys $BEAR and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps."
-            />
-          </Reveal>
+  {/* Three cards */}
+  <div className="grid grid-cols-1 gap-5 md:grid-cols-3 items-stretch">
+    <Reveal delay={0}>
+      <HowCard
+        title="50% → Auto-Buy & Burn"
+        body="Half of every fee automatically buys $BEAR and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps."
+      />
+    </Reveal>
 
-          <Reveal delay={120}>
-            <HowCard
-              title="30% → Treasury & Buybacks"
-              body="Reserved transparently for strategic buybacks, ecosystem stability and community-driven events that keep $BEAR’s fire burning long-term."
-            />
-          </Reveal>
+    <Reveal delay={120}>
+      <HowCard
+        title="30% → Treasury & Buybacks"
+        body="Reserved transparently for strategic buybacks, ecosystem stability, and community-driven events that keep $BEAR’s fire burning long-term."
+      />
+    </Reveal>
 
-          <Reveal delay={240}>
-            <HowCard
-              title="20% → Team, Creators & Growth"
-              body="Rewards creators, partners, and community builders — spreading the legend of $BEAR across Solana while fueling future innovation."
-            />
-          </Reveal>
-        </div>
-        <style jsx>{`
-  @keyframes fadeInCoin {
-    from { opacity: 0; transform: translateY(10px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  .animate-fadeInCoin {
-    animation: fadeInCoin 1.4s ease-out 0.4s forwards;
-  }
-`}</style>
-      </section>
+    <Reveal delay={240}>
+      <HowCard
+        title="20% → Team, Creators & Growth"
+        body="Rewards creators, partners, and community builders — spreading the legend of $BEAR across Solana while fueling future innovation."
+      />
+    </Reveal>
+  </div>
+
+  {/* Fade + Spin animations */}
+  <style jsx>{`
+    @keyframes fadeInCoin {
+      from { opacity: 0; transform: translateY(10px) scale(0.98) rotateY(0deg); }
+      to { opacity: 1; transform: translateY(0) scale(1) rotateY(0deg); }
+    }
+
+    @keyframes slowSpin {
+      from { transform: rotateY(0deg); }
+      to { transform: rotateY(360deg); }
+    }
+
+    .animate-fadeInCoin {
+      animation: fadeInCoin 1.4s ease-out 0.4s forwards, slowSpin 18s linear 1.8s infinite;
+      transform-style: preserve-3d;
+    }
+  `}</style>
+</section>
 
       {/* ===== Campfire Wallets ===== */}
       <section id="wallets" className="mx-auto max-w-6xl px-4 pt-14 pb-16">
