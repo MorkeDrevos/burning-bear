@@ -10,25 +10,20 @@ const TOKEN_SYMBOL = '$BEAR';
 const TOKEN_NAME = 'The Burning Bear';
 const FULL_TOKEN_ADDRESS = 'CYbYmTLvVLp2xPQ5H4UqyMv9UptmzWDLnYExPsh3JRMA';
 
-// 🔓 Public, view-only wallets
+// View-only wallets
 const BURN_WALLET = 'CYbYmTLvVLp2xPQ5H4UqyMv9UptmzWDLnYExPsh3JRMA';
 const TREASURY_WALLET = 'FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE';
 const MARKETING_WALLET = '7k5rwpdSRyutEMek5tXuNuVVKQEQyubKC9VHEZ91SwZV';
 
 const EXPLORER = 'https://explorer.solana.com';
 
-// Social links
-const X_COMMUNITY = 'https://x.com/i/communities/1980944446871966021';
-const COINGECKO = 'https://www.coingecko.com/';
-const DEXSCREENER = 'https://dexscreener.com';
-
 /* =========================
    Types
 ========================= */
 type Burn = {
   id: string;
-  amount: number;
-  sol?: number;
+  amount: number;            // BEAR
+  sol?: number;              // SOL spent
   timestamp: number | string;
   tx: string;
 };
@@ -58,7 +53,9 @@ type StateJson = {
 const truncateMiddle = (str: string, left = 6, right = 6) =>
   !str || str.length <= left + right + 1 ? str : `${str.slice(0, left)}…${str.slice(-right)}`;
 
-const fmtInt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+const fmtInt = (n: number) =>
+  n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+
 const fmtMoney = (n?: number) =>
   n == null || !isFinite(n) ? '$0.00' : n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
@@ -78,8 +75,9 @@ const fmtCountdown = (ms: number) => {
   const h = Math.floor(t / 3600);
   const m = Math.floor((t % 3600) / 60);
   const s = t % 60;
-  return h > 0 ? `${h}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`
-               : `${m}m ${s.toString().padStart(2, '0')}s`;
+  return h > 0
+    ? `${h}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`
+    : `${m}m ${s.toString().padStart(2, '0')}s`;
 };
 
 const toMs = (ts: number | string) => (typeof ts === 'number' ? ts : Date.parse(ts));
@@ -94,38 +92,35 @@ export default function Page() {
   const [copied, setCopied] = useState(false);
   const copyTimer = useRef<number | null>(null);
 
-  // tick each second (drives countdowns)
+  // 1s tick drives countdowns
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  // load JSON data (cache-busted) and normalize timestamps
+  // Load state.json
   useEffect(() => {
     let alive = true;
     fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
-      .then((r) => r.json())
+      .then(r => r.json())
       .then((j: StateJson) => {
         if (!alive) return;
         const burns = (j.burns ?? [])
-          .map((b) => ({ ...b, timestamp: toMs(b.timestamp) }))
-          .filter((b) => Number.isFinite(b.timestamp as number));
+          .map(b => ({ ...b, timestamp: toMs(b.timestamp) }))
+          .filter(b => Number.isFinite(b.timestamp as number));
         setData({ ...j, burns });
       })
       .catch(() => {});
     return () => { alive = false; };
   }, []);
 
-  // live SOL price (falls back to stats.priceUsdPerSol)
+  // SOL price (fallback to stats.priceUsdPerSol)
   useEffect(() => {
     let alive = true;
     const fetchPrice = () =>
       fetch('/api/sol-price', { cache: 'no-store' })
-        .then((r) => r.json())
-        .then((o) => {
-          if (!alive) return;
-          if (o && typeof o.usd === 'number' && o.usd > 0) setSolUsd(o.usd);
-        })
+        .then(r => r.json())
+        .then(o => { if (alive && typeof o?.usd === 'number' && o.usd > 0) setSolUsd(o.usd); })
         .catch(() => {});
     fetchPrice();
     const id = window.setInterval(fetchPrice, 60_000);
@@ -134,36 +129,32 @@ export default function Page() {
 
   const priceUsdPerSol = solUsd ?? data?.stats?.priceUsdPerSol ?? 0;
 
-  // sorted burns (new → old)
+  // Sorted burns (new → old)
   const burnsSorted = useMemo(() => {
     const arr = (data?.burns ?? []) as Array<Burn & { timestamp: number }>;
     return arr.slice().sort((a, b) => b.timestamp - a.timestamp);
   }, [data]);
 
-  // Shared, absolute countdown targets (everyone sees same time)
+  // Shared countdown targets (absolute)
   const targets = useMemo(() => {
     const s = data?.schedule ?? {};
-    const bb =
-      s.nextBuybackAt ??
-      (s.lastBuybackAt && s.buybackIntervalMs ? s.lastBuybackAt + s.buybackIntervalMs : undefined);
-    const burn =
-      s.nextBurnAt ??
-      (s.lastBurnAt && s.burnIntervalMs ? s.lastBurnAt + s.burnIntervalMs : undefined);
+    const bb = s.nextBuybackAt ?? (s.lastBuybackAt && s.buybackIntervalMs ? s.lastBuybackAt + s.buybackIntervalMs : undefined);
+    const burn = s.nextBurnAt ?? (s.lastBurnAt && s.burnIntervalMs ? s.lastBurnAt + s.burnIntervalMs : undefined);
     return { bb, burn };
   }, [data]);
 
   const nextBuybackMs = targets.bb ? targets.bb - now : 0;
   const nextBurnMs = targets.burn ? targets.burn - now : 0;
 
-  // Auto-advance (loop) when a countdown hits 0
+  // Auto-loop when timers hit 0
   useEffect(() => {
     if (!data?.schedule) return;
-    setData((prev) => {
+    setData(prev => {
       if (!prev?.schedule) return prev;
       const { buybackIntervalMs = 0, burnIntervalMs = 0 } = prev.schedule;
       let { nextBuybackAt, nextBurnAt } = prev.schedule;
 
-      const jumpForward = (t?: number, i?: number) => {
+      const advance = (t?: number, i?: number) => {
         if (!t || !i || i <= 0) return t;
         while (t <= Date.now()) t += i;
         return t;
@@ -177,8 +168,8 @@ export default function Page() {
         ...prev,
         schedule: {
           ...prev.schedule,
-          nextBuybackAt: bbDue ? jumpForward(nextBuybackAt, buybackIntervalMs) : nextBuybackAt,
-          nextBurnAt: burnDue ? jumpForward(nextBurnAt, burnIntervalMs) : nextBurnAt,
+          nextBuybackAt: bbDue ? advance(nextBuybackAt, buybackIntervalMs) : nextBuybackAt,
+          nextBurnAt: burnDue ? advance(nextBurnAt, burnIntervalMs) : nextBurnAt,
         },
       };
     });
@@ -191,22 +182,19 @@ export default function Page() {
   const totalSolSpent = data?.stats?.buybackSol ?? 0;
   const totalUsd = totalSolSpent * priceUsdPerSol;
 
-  // Today + This week stats
+  // Derived stats (today + week)
   const todayStart = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d.getTime();
+    const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime();
   }, []);
-
   const weekStart = now - 7 * 24 * 60 * 60 * 1000;
 
   const todayBurnsCount = useMemo(
-    () => burnsSorted.filter((b) => (b.timestamp as number) >= todayStart).length,
+    () => burnsSorted.filter(b => (b.timestamp as number) >= todayStart).length,
     [burnsSorted, todayStart]
   );
 
   const weekStats = useMemo(() => {
-    const lastWeek = burnsSorted.filter((b) => (b.timestamp as number) >= weekStart);
+    const lastWeek = burnsSorted.filter(b => (b.timestamp as number) >= weekStart);
     const count = lastWeek.length;
     const sol = lastWeek.reduce((acc, b) => acc + (b.sol ?? 0), 0);
     const usd = sol * priceUsdPerSol;
@@ -215,6 +203,7 @@ export default function Page() {
     return { count, sol, usd, largest, avgSol };
   }, [burnsSorted, weekStart, priceUsdPerSol]);
 
+  // Copy CA
   const handleCopy = async () => {
     try { await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS); } catch {}
     setCopied(true);
@@ -249,10 +238,6 @@ export default function Page() {
             <a href="#wallets" className="text-[#ffe48d] hover:text-amber-300 transition">Campfire Wallets</a>
           </nav>
 
-          <div className="hidden lg:flex items-center gap-4">
-            <SocialRow />
-          </div>
-
           <div className="flex items-center gap-2 md:gap-3">
             <span
               className="hidden lg:inline rounded-full bg-emerald-900/40 px-4 py-2 text-sm text-emerald-300 border border-emerald-500/20"
@@ -274,15 +259,12 @@ export default function Page() {
         </div>
       </header>
 
-      {/* ===== HERO with video (lighter, translucent text panel) ===== */}
+      {/* ===== Hero with video & translucent text panel ===== */}
       <section className="relative">
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <video
             className="h-[66vh] w-full object-cover"
-            playsInline
-            autoPlay
-            muted
-            loop
+            playsInline autoPlay muted loop
             poster="/img/burning-bear-frame.jpg"
           >
             <source src="/img/burning-bear.mp4" type="video/mp4" />
@@ -290,8 +272,8 @@ export default function Page() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
         </div>
 
-        <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
-          <div className="inline-block rounded-2xl bg-black/20 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6">
+        <div className="mx-auto max-w-6xl px-4 pb-10 pt-16 sm:pt-24">
+          <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6">
             <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
               Meet The Burning Bear — the classiest arsonist in crypto.
             </h1>
@@ -317,91 +299,106 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== MAIN CONTENT (order per your screenshot) ===== */}
-      <div className="space-y-14 md:space-y-18 lg:space-y-20">
-        {/* Live Burn Log */}
-        <section id="log" className="mx-auto max-w-6xl px-4">
-          <h3 className="text-xl font-bold tracking-tight">Live Burn Log</h3>
-          <p className="mt-1 text-sm text-white/55">TX links open explorer.</p>
+      {/* ===== Live Burn Log (two columns, wide) ===== */}
+      <section id="log" className="mx-auto max-w-6xl px-4">
+        <h3 className="text-xl font-bold tracking-tight">Live Burn Log</h3>
+        <p className="mt-1 text-sm text-white/55 leading-relaxed">TX links open explorer.</p>
 
-          <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-            {burnsSorted.length === 0 && (
-              <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-6 text-white/60">
-                No burns posted yet.
-              </div>
-            )}
-            {burnsSorted.map((b) => (
-              <BurnCard key={b.id} burn={b as Burn & { timestamp: number }} price={priceUsdPerSol} />
-            ))}
-          </div>
-        </section>
+        <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
+          {burnsSorted.length === 0 && (
+            <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 text-white/60">
+              No burns posted yet.
+            </div>
+          )}
+          {burnsSorted.map((b) => (
+            <BurnCard key={b.id} burn={b as Burn & { timestamp: number }} price={priceUsdPerSol} />
+          ))}
+        </div>
+      </section>
 
-        {/* 50/30/20 Campfire Split */}
-        <section id="how" className="mx-auto max-w-6xl px-4">
-          <h3 className="text-xl font-bold tracking-tight">The 50/30/20 Campfire Split</h3>
-          <div className="mt-4 grid grid-cols-1 gap-5 md:grid-cols-3">
-            <HowCard
-              title="50% → Auto-Buy & Burn"
-              body="Every fee fuels the fire — half of all activity automatically buys $BEAR and sends it to the burn wallet. The campfire never sleeps."
-            />
-            <HowCard
-              title="30% → Treasury & Buybacks"
-              body="Funds managed transparently for future burns, community events and buybacks that support long-term price health."
-            />
-            <HowCard
-              title="20% → Team & Marketing"
-              body="For growth, creators, and spreading the $BEAR legend across crypto — keeping the fire visible across Solana."
-            />
-          </div>
-        </section>
+      {/* ===== The 50/30/20 Campfire Split ===== */}
+      <section id="how" className="mx-auto max-w-6xl px-4 pt-10">
+        <h3 className="text-xl font-bold tracking-tight">The 50/30/20 Campfire Split</h3>
+        <div className="mt-4 grid grid-cols-1 gap-5 md:grid-cols-3">
+          <HowCard
+            title="50% → Auto-Buy & Burn"
+            body="Every fee fuels the fire — half of all activity automatically buys $BEAR and sends it to the burn wallet. The campfire never sleeps."
+          />
+          <HowCard
+            title="30% → Treasury & Buybacks"
+            body="Funds managed transparently for future burns, community events and buybacks that support long-term price health."
+          />
+          <HowCard
+            title="20% → Team & Marketing"
+            body="For growth, creators, and spreading the $BEAR legend across crypto — keeping the fire visible across Solana."
+          />
+        </div>
+      </section>
 
-        {/* This Week at the Campfire */}
-        <section className="mx-auto max-w-6xl px-4">
-          <h3 className="text-xl font-bold tracking-tight">This Week at the Campfire</h3>
-          <p className="mt-1 text-sm text-white/55">Activity in the last 7 days. Auto-updated from the live logs.</p>
+      {/* ===== This Week at the Campfire ===== */}
+      <section className="mx-auto max-w-6xl px-4 pt-10">
+        <h3 className="text-xl font-bold tracking-tight">This Week at the Campfire</h3>
+        <p className="mt-1 text-sm text-white/55">Activity in the last 7 days. Auto-updated from the live logs.</p>
 
-          <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            <StatBig label="Burns" value={fmtInt(weekStats.count)} />
-            <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
-            <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
-            <StatBig label="Largest Burn (BEAR)" value={fmtInt(weekStats.largest)} />
-          </div>
+        <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <StatBig label="Burns" value={fmtInt(weekStats.count)} />
+          <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
+          <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
+          <StatBig label="Largest Burn (BEAR)" value={fmtInt(weekStats.largest)} />
+        </div>
 
-          <div className="mt-3">
-            <Pill>Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}</Pill>
-          </div>
-        </section>
+        <div className="mt-3">
+          <Pill>Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}</Pill>
+        </div>
+      </section>
 
-        {/* Campfire Wallets */}
-        <section id="wallets" className="mx-auto max-w-6xl px-4 pb-2">
-          <h3 className="text-xl font-bold tracking-tight">Campfire Wallets</h3>
-          <p className="mt-1 text-sm text-white/55">
-            The campfire burns in full view. Every wallet can be verified on Solana Explorer.
-          </p>
+      {/* ===== Campfire Wallets ===== */}
+      <section id="wallets" className="mx-auto max-w-6xl px-4 pt-10">
+        <h3 className="text-xl font-bold tracking-tight">Campfire Wallets</h3>
+        <p className="mt-1 text-sm text-white/55 leading-relaxed">
+          The campfire burns in full view. Every wallet can be verified on Solana Explorer.
+        </p>
 
-          <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-3">
-            <WalletCard title="Burn Wallet" address={BURN_WALLET} note="Destroyed supply lives here forever." />
-            <WalletCard title="Treasury & Buybacks" address={TREASURY_WALLET} note="Funds for buybacks and operations." />
-            <WalletCard title="Team & Marketing" address={MARKETING_WALLET} note="Growth, creators, promos." />
-          </div>
-        </section>
-      </div>
+        <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-3">
+          <WalletCard title="Burn Wallet" address={BURN_WALLET} note="Destroyed supply lives here forever." />
+          <WalletCard title="Treasury & Buybacks" address={TREASURY_WALLET} note="Funds for buybacks and operations." />
+          <WalletCard title="Team & Marketing" address={MARKETING_WALLET} note="Growth, creators, promos." />
+        </div>
+      </section>
 
-      {/* ===== Footer ===== */}
-      <footer className="mt-16 border-t border-white/10 bg-[#0d1a14] relative">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
-        <div className="mx-auto max-w-6xl px-4 py-10 text-center text-sm text-white/60 space-y-4">
-
+      {/* ===== Footer (emoji-style socials row) ===== */}
+      <footer className="mt-16 border-t border-white/10 bg-[#0d1a14]">
+        <div className="mx-auto max-w-6xl px-4 py-12 text-center text-sm text-white/60 space-y-5">
           <p className="text-white/80 text-base font-medium">
             🔥 The Burning Bear isn’t just a meme — it’s a movement. <br />
             Built on the <span className="text-[#ffe48d] font-semibold">50/30/20 Campfire Split</span> — transparent, alive and always feeding the flames.
           </p>
 
-          <div className="flex justify-center gap-6 text-white/70">
-            <SocialRow />
+          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-base">
+            <a
+              href="https://x.com/i/communities/1980944446871966021"
+              target="_blank" rel="noopener noreferrer"
+              className="hover:text-amber-300 transition"
+            >
+              ✖️ X Community
+            </a>
+            <a
+              href="https://www.coingecko.com/"
+              target="_blank" rel="noopener noreferrer"
+              className="hover:text-amber-300 transition"
+            >
+              🦎 CoinGecko
+            </a>
+            <a
+              href="https://dexscreener.com"
+              target="_blank" rel="noopener noreferrer"
+              className="hover:text-amber-300 transition"
+            >
+              🔥 DexScreener
+            </a>
           </div>
 
-          <div className="text-xs text-white/40 pt-4">
+          <div className="text-xs text-white/40 pt-2">
             <p>© {new Date().getFullYear()} The Burning Bear · Built for fun, not financial advice.</p>
             <p>Stay warm, stay transparent, and keep the fire burning. 🔥</p>
           </div>
@@ -453,7 +450,7 @@ function HowCard({ title, body }: { title: string; body: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
       <div className="text-lg font-semibold">{title}</div>
-      <div className="mt-2 text-sm text-white/75 leading-relaxed">{body}</div>
+      <div className="mt-2 text-sm text-white/75">{body}</div>
     </div>
   );
 }
@@ -530,7 +527,9 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
           </a>
           <button
             onClick={handleCopy}
-            className={`rounded-full px-3 py-1 text-sm font-semibold transition ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
+            className={`rounded-full px-3 py-1 text-sm font-semibold transition ${
+              copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'
+            }`}
           >
             {copied ? 'Copied' : 'Copy'}
           </button>
@@ -540,57 +539,12 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
   );
 }
 
-/* Socials (inline SVG, no external icon font needed) */
-function SocialRow() {
-  return (
-    <>
-      {/* X */}
-      <a
-        href={X_COMMUNITY}
-        target="_blank"
-        rel="noopener noreferrer"
-        title="Join the X Community"
-        className="opacity-80 hover:opacity-100 transition"
-      >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path d="M18 3H21L13.5 12.5L21.5 21H15L10.5 15.5L5.5 21H2.5L10.5 11.5L3 3H9L13.5 8.5L18 3Z" fill="#ffe48d"/>
-        </svg>
-      </a>
-      {/* CoinGecko */}
-      <a
-        href={COINGECKO}
-        target="_blank"
-        rel="noopener noreferrer"
-        title="View on CoinGecko"
-        className="opacity-80 hover:opacity-100 transition"
-      >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path d="M3 12a9 9 0 1 0 18 0A9 9 0 0 0 3 12Zm9-7a7 7 0 1 1 0 14 7 7 0 0 1 0-14Z" fill="#ffe48d"/>
-          <path d="M7 14c2 1 5 1 7-1 1-1 2-3 3-3 1 0 1 1 2 2" stroke="#ffe48d" strokeWidth="1.5" strokeLinecap="round"/>
-        </svg>
-      </a>
-      {/* DexScreener (flame) */}
-      <a
-        href={DEXSCREENER}
-        target="_blank"
-        rel="noopener noreferrer"
-        title="View on DexScreener"
-        className="opacity-80 hover:opacity-100 transition"
-      >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path d="M12 3s5 3 5 8a5 5 0 1 1-10 0c0-3 2-5 5-8Z" fill="#ffe48d"/>
-        </svg>
-      </a>
-    </>
-  );
-}
-
 function MobileMenu() {
   const [open, setOpen] = React.useState(false);
   return (
     <div className="md:hidden">
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(v => !v)}
         aria-label="Menu"
         className="ml-1 rounded-full border border-white/15 bg-white/5 px-3 py-2 text-white/80"
       >
