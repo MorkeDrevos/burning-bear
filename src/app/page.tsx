@@ -10,11 +10,10 @@ const TOKEN_SYMBOL = '$BEAR';
 const TOKEN_NAME = 'The Burning Bear';
 const FULL_TOKEN_ADDRESS = 'CYbYmTLvVLp2xPQ5H4UqyMv9UptmzWDLnYExPsh3JRMA';
 
-// View-only wallets
+// 🔓 Public, view-only wallets
 const BURN_WALLET = 'CYbYmTLvVLp2xPQ5H4UqyMv9UptmzWDLnYExPsh3JRMA';
 const TREASURY_WALLET = 'FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE';
 const MARKETING_WALLET = '7k5rwpdSRyutEMek5tXuNuVVKQEQyubKC9VHEZ91SwZV';
-
 const EXPLORER = 'https://explorer.solana.com';
 
 /* =========================
@@ -23,8 +22,8 @@ const EXPLORER = 'https://explorer.solana.com';
 type Burn = {
   id: string;
   amount: number;            // BEAR
-  sol?: number;              // SOL spent
-  timestamp: number | string;
+  sol?: number;              // SOL spent for this burn
+  timestamp: number | string; // ms since epoch OR ISO string
   tx: string;
 };
 
@@ -75,9 +74,8 @@ const fmtCountdown = (ms: number) => {
   const h = Math.floor(t / 3600);
   const m = Math.floor((t % 3600) / 60);
   const s = t % 60;
-  return h > 0
-    ? `${h}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`
-    : `${m}m ${s.toString().padStart(2, '0')}s`;
+  return h > 0 ? `${h}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`
+               : `${m}m ${s.toString().padStart(2, '0')}s`;
 };
 
 const toMs = (ts: number | string) => (typeof ts === 'number' ? ts : Date.parse(ts));
@@ -92,35 +90,38 @@ export default function Page() {
   const [copied, setCopied] = useState(false);
   const copyTimer = useRef<number | null>(null);
 
-  // 1s tick drives countdowns
+  // tick each second (drives countdowns)
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  // Load state.json
+  // load JSON data (cache-busted) and normalize timestamps
   useEffect(() => {
     let alive = true;
     fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
-      .then(r => r.json())
+      .then((r) => r.json())
       .then((j: StateJson) => {
         if (!alive) return;
         const burns = (j.burns ?? [])
-          .map(b => ({ ...b, timestamp: toMs(b.timestamp) }))
-          .filter(b => Number.isFinite(b.timestamp as number));
+          .map((b) => ({ ...b, timestamp: toMs(b.timestamp) }))
+          .filter((b) => Number.isFinite(b.timestamp as number));
         setData({ ...j, burns });
       })
       .catch(() => {});
     return () => { alive = false; };
   }, []);
 
-  // SOL price (fallback to stats.priceUsdPerSol)
+  // live SOL price (falls back to stats.priceUsdPerSol)
   useEffect(() => {
     let alive = true;
     const fetchPrice = () =>
       fetch('/api/sol-price', { cache: 'no-store' })
-        .then(r => r.json())
-        .then(o => { if (alive && typeof o?.usd === 'number' && o.usd > 0) setSolUsd(o.usd); })
+        .then((r) => r.json())
+        .then((o) => {
+          if (!alive) return;
+          if (o && typeof o.usd === 'number' && o.usd > 0) setSolUsd(o.usd);
+        })
         .catch(() => {});
     fetchPrice();
     const id = window.setInterval(fetchPrice, 60_000);
@@ -129,32 +130,40 @@ export default function Page() {
 
   const priceUsdPerSol = solUsd ?? data?.stats?.priceUsdPerSol ?? 0;
 
-  // Sorted burns (new → old)
+  // sorted burns (new → old)
   const burnsSorted = useMemo(() => {
     const arr = (data?.burns ?? []) as Array<Burn & { timestamp: number }>;
     return arr.slice().sort((a, b) => b.timestamp - a.timestamp);
   }, [data]);
 
-  // Shared countdown targets (absolute)
+  // Shared, absolute countdown targets (everyone sees same time)
   const targets = useMemo(() => {
     const s = data?.schedule ?? {};
-    const bb = s.nextBuybackAt ?? (s.lastBuybackAt && s.buybackIntervalMs ? s.lastBuybackAt + s.buybackIntervalMs : undefined);
-    const burn = s.nextBurnAt ?? (s.lastBurnAt && s.burnIntervalMs ? s.lastBurnAt + s.burnIntervalMs : undefined);
+    const bb =
+      s.nextBuybackAt ??
+      (s.lastBuybackAt && s.buybackIntervalMs
+        ? s.lastBuybackAt + s.buybackIntervalMs
+        : undefined);
+    const burn =
+      s.nextBurnAt ??
+      (s.lastBurnAt && s.burnIntervalMs
+        ? s.lastBurnAt + s.burnIntervalMs
+        : undefined);
     return { bb, burn };
   }, [data]);
 
   const nextBuybackMs = targets.bb ? targets.bb - now : 0;
   const nextBurnMs = targets.burn ? targets.burn - now : 0;
 
-  // Auto-loop when timers hit 0
+  // Auto-advance (loop) when a countdown hits 0
   useEffect(() => {
     if (!data?.schedule) return;
-    setData(prev => {
+    setData((prev) => {
       if (!prev?.schedule) return prev;
       const { buybackIntervalMs = 0, burnIntervalMs = 0 } = prev.schedule;
       let { nextBuybackAt, nextBurnAt } = prev.schedule;
 
-      const advance = (t?: number, i?: number) => {
+      const jumpForward = (t?: number, i?: number) => {
         if (!t || !i || i <= 0) return t;
         while (t <= Date.now()) t += i;
         return t;
@@ -168,8 +177,8 @@ export default function Page() {
         ...prev,
         schedule: {
           ...prev.schedule,
-          nextBuybackAt: bbDue ? advance(nextBuybackAt, buybackIntervalMs) : nextBuybackAt,
-          nextBurnAt: burnDue ? advance(nextBurnAt, burnIntervalMs) : nextBurnAt,
+          nextBuybackAt: bbDue ? jumpForward(nextBuybackAt, buybackIntervalMs) : nextBuybackAt,
+          nextBurnAt: burnDue ? jumpForward(nextBurnAt, burnIntervalMs) : nextBurnAt,
         },
       };
     });
@@ -182,19 +191,21 @@ export default function Page() {
   const totalSolSpent = data?.stats?.buybackSol ?? 0;
   const totalUsd = totalSolSpent * priceUsdPerSol;
 
-  // Derived stats (today + week)
+  // Today + This week stats
   const todayStart = useMemo(() => {
-    const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime();
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
   }, []);
   const weekStart = now - 7 * 24 * 60 * 60 * 1000;
 
   const todayBurnsCount = useMemo(
-    () => burnsSorted.filter(b => (b.timestamp as number) >= todayStart).length,
+    () => burnsSorted.filter((b) => (b.timestamp as number) >= todayStart).length,
     [burnsSorted, todayStart]
   );
 
   const weekStats = useMemo(() => {
-    const lastWeek = burnsSorted.filter(b => (b.timestamp as number) >= weekStart);
+    const lastWeek = burnsSorted.filter((b) => (b.timestamp as number) >= weekStart);
     const count = lastWeek.length;
     const sol = lastWeek.reduce((acc, b) => acc + (b.sol ?? 0), 0);
     const usd = sol * priceUsdPerSol;
@@ -203,7 +214,6 @@ export default function Page() {
     return { count, sol, usd, largest, avgSol };
   }, [burnsSorted, weekStart, priceUsdPerSol]);
 
-  // Copy CA
   const handleCopy = async () => {
     try { await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS); } catch {}
     setCopied(true);
@@ -216,6 +226,7 @@ export default function Page() {
       {/* ===== Header ===== */}
       <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
+          {/* Left: Logo + Title */}
           <Link href="#top" className="flex items-center gap-3 md:gap-4 min-w-0">
             <img
               src="/img/coin-logo.png"
@@ -232,12 +243,14 @@ export default function Page() {
             </div>
           </Link>
 
+          {/* Center: Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8 text-[15px] font-semibold">
             <a href="#how" className="text-[#ffe48d] hover:text-amber-300 transition">How It Works</a>
             <a href="#log" className="text-[#ffe48d] hover:text-amber-300 transition">Live Burns</a>
             <a href="#wallets" className="text-[#ffe48d] hover:text-amber-300 transition">Campfire Wallets</a>
           </nav>
 
+          {/* Right: Copy CA + Mobile Menu */}
           <div className="flex items-center gap-2 md:gap-3">
             <span
               className="hidden lg:inline rounded-full bg-emerald-900/40 px-4 py-2 text-sm text-emerald-300 border border-emerald-500/20"
@@ -259,12 +272,15 @@ export default function Page() {
         </div>
       </header>
 
-      {/* ===== Hero with video & translucent text panel ===== */}
+      {/* ===== HERO with video + translucent text panel ===== */}
       <section className="relative">
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <video
             className="h-[66vh] w-full object-cover"
-            playsInline autoPlay muted loop
+            playsInline
+            autoPlay
+            muted
+            loop
             poster="/img/burning-bear-frame.jpg"
           >
             <source src="/img/burning-bear.mp4" type="video/mp4" />
@@ -272,17 +288,19 @@ export default function Page() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
         </div>
 
-        <div className="mx-auto max-w-6xl px-4 pb-10 pt-16 sm:pt-24">
+        <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
           <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6">
             <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
               Meet The Burning Bear — the classiest arsonist in crypto.
             </h1>
 
+            {/* Countdowns */}
             <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
               <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />
               <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} />
             </div>
 
+            {/* Stats */}
             <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-4">
               <Stat label="Burned So Far" value={fmtInt(BURNED)} />
               <Stat label="Current Supply" value={fmtInt(CURRENT)} />
@@ -290,6 +308,7 @@ export default function Page() {
               <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
             </div>
 
+            {/* Pills */}
             <div className="mt-3 flex flex-wrap gap-3">
               <Pill>Today: {todayBurnsCount} burns</Pill>
               <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
@@ -299,25 +318,18 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== Live Burn Log (two columns, wide) ===== */}
-      <section id="log" className="mx-auto max-w-6xl px-4">
-        <h3 className="text-xl font-bold tracking-tight">Live Burn Log</h3>
-        <p className="mt-1 text-sm text-white/55 leading-relaxed">TX links open explorer.</p>
-
-        <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
-          {burnsSorted.length === 0 && (
-            <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 text-white/60">
-              No burns posted yet.
-            </div>
-          )}
-          {burnsSorted.map((b) => (
-            <BurnCard key={b.id} burn={b as Burn & { timestamp: number }} price={priceUsdPerSol} />
-          ))}
+      {/* ===== Live Burn Log — full-width horizontal carousel ===== */}
+      <section id="log" className="mx-auto max-w-6xl px-4 pt-6">
+        <div className="flex items-baseline justify-between">
+          <h2 className="text-2xl font-bold">Live Burn Log</h2>
+          <p className="text-sm text-white/50">TX links open explorer.</p>
         </div>
+
+        <BurnCarousel burns={burnsSorted} price={priceUsdPerSol} />
       </section>
 
       {/* ===== The 50/30/20 Campfire Split ===== */}
-      <section id="how" className="mx-auto max-w-6xl px-4 pt-10">
+      <section id="how" className="mx-auto max-w-6xl px-4 pt-14">
         <h3 className="text-xl font-bold tracking-tight">The 50/30/20 Campfire Split</h3>
         <div className="mt-4 grid grid-cols-1 gap-5 md:grid-cols-3">
           <HowCard
@@ -335,29 +347,10 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== This Week at the Campfire ===== */}
-      <section className="mx-auto max-w-6xl px-4 pt-10">
-        <h3 className="text-xl font-bold tracking-tight">This Week at the Campfire</h3>
-        <p className="mt-1 text-sm text-white/55">Activity in the last 7 days. Auto-updated from the live logs.</p>
-
-        <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <StatBig label="Burns" value={fmtInt(weekStats.count)} />
-          <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
-          <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
-          <StatBig label="Largest Burn (BEAR)" value={fmtInt(weekStats.largest)} />
-        </div>
-
-        <div className="mt-3">
-          <Pill>Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}</Pill>
-        </div>
-      </section>
-
       {/* ===== Campfire Wallets ===== */}
-      <section id="wallets" className="mx-auto max-w-6xl px-4 pt-10">
+      <section id="wallets" className="mx-auto max-w-6xl px-4 pt-14 pb-16">
         <h3 className="text-xl font-bold tracking-tight">Campfire Wallets</h3>
-        <p className="mt-1 text-sm text-white/55 leading-relaxed">
-          The campfire burns in full view. Every wallet can be verified on Solana Explorer.
-        </p>
+        <p className="mt-1 text-sm text-white/55">The campfire burns in full view. Every wallet can be verified on Solana Explorer.</p>
 
         <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-3">
           <WalletCard title="Burn Wallet" address={BURN_WALLET} note="Destroyed supply lives here forever." />
@@ -366,35 +359,44 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== Footer (emoji-style socials row) ===== */}
-      <footer className="mt-16 border-t border-white/10 bg-[#0d1a14]">
-        <div className="mx-auto max-w-6xl px-4 py-12 text-center text-sm text-white/60 space-y-5">
+      {/* ===== Footer ===== */}
+      <footer className="border-t border-white/10 bg-[#0d1a14] relative">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+        <div className="mx-auto max-w-6xl px-4 py-10 text-center text-sm text-white/60 space-y-4">
+
           <p className="text-white/80 text-base font-medium">
             🔥 The Burning Bear isn’t just a meme — it’s a movement. <br />
             Built on the <span className="text-[#ffe48d] font-semibold">50/30/20 Campfire Split</span> — transparent, alive and always feeding the flames.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-base">
+          {/* Socials row (always visible) */}
+          <div className="flex justify-center gap-8 text-white/70 text-lg pt-2">
             <a
               href="https://x.com/i/communities/1980944446871966021"
-              target="_blank" rel="noopener noreferrer"
+              target="_blank"
+              rel="noopener noreferrer"
               className="hover:text-amber-300 transition"
+              title="Join the X Community"
             >
-              ✖️ X Community
+              🕊️ <span className="align-middle">X Community</span>
             </a>
             <a
               href="https://www.coingecko.com/"
-              target="_blank" rel="noopener noreferrer"
+              target="_blank"
+              rel="noopener noreferrer"
               className="hover:text-amber-300 transition"
+              title="View on CoinGecko"
             >
-              🦎 CoinGecko
+              🦎 <span className="align-middle">CoinGecko</span>
             </a>
             <a
               href="https://dexscreener.com"
-              target="_blank" rel="noopener noreferrer"
+              target="_blank"
+              rel="noopener noreferrer"
               className="hover:text-amber-300 transition"
+              title="View on DexScreener"
             >
-              🔥 DexScreener
+              🔥 <span className="align-middle">DexScreener</span>
             </a>
           </div>
 
@@ -405,6 +407,74 @@ export default function Page() {
         </div>
       </footer>
     </main>
+  );
+}
+
+/* =========================
+   Carousel (new)
+========================= */
+function BurnCarousel({
+  burns,
+  price,
+}: {
+  burns: Array<Burn & { timestamp: number }>;
+  price: number;
+}) {
+  // Use the latest 6 burns (or fewer), but ensure at least 3 for a nice loop
+  const slides = (burns ?? []).slice(0, 6);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const itemRefs = useRef<HTMLDivElement[]>([]);
+  const indexRef = useRef(0);
+  const hovering = useRef(false);
+
+  // auto-advance every 4.5s
+  useEffect(() => {
+    if (!containerRef.current || slides.length === 0) return;
+
+    const tick = () => {
+      if (hovering.current) return;
+      indexRef.current = (indexRef.current + 1) % slides.length;
+      const el = itemRefs.current[indexRef.current];
+      if (el) el.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+    };
+
+    const id = window.setInterval(tick, 4500);
+    return () => clearInterval(id);
+  }, [slides.length]);
+
+  return (
+    <div
+      className="relative mt-5"
+      onMouseEnter={() => { hovering.current = true; }}
+      onMouseLeave={() => { hovering.current = false; }}
+    >
+      {/* soft edge fades */}
+      <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-[#0d1a14] to-transparent" />
+      <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-[#0d1a14] to-transparent" />
+
+      <div
+        ref={containerRef}
+        className="flex snap-x snap-mandatory overflow-x-auto gap-6 scroll-smooth pb-2"
+        style={{ scrollbarWidth: 'none' } as any}
+      >
+        {slides.map((b, i) => (
+          <div
+            key={b.id}
+            ref={(el) => { if (el) itemRefs.current[i] = el; }}
+            className="snap-start shrink-0 w-full"
+          >
+            <BurnCard burn={b} price={price} />
+          </div>
+        ))}
+
+        {/* Duplicate first slide at end for a smoother last→first feel when swiping */}
+        {slides.length > 1 && (
+          <div className="snap-start shrink-0 w-full">
+            <BurnCard burn={slides[0]} price={price} />
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -527,9 +597,7 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
           </a>
           <button
             onClick={handleCopy}
-            className={`rounded-full px-3 py-1 text-sm font-semibold transition ${
-              copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'
-            }`}
+            className={`rounded-full px-3 py-1 text-sm font-semibold transition ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
           >
             {copied ? 'Copied' : 'Copy'}
           </button>
@@ -544,7 +612,7 @@ function MobileMenu() {
   return (
     <div className="md:hidden">
       <button
-        onClick={() => setOpen(v => !v)}
+        onClick={() => setOpen((v) => !v)}
         aria-label="Menu"
         className="ml-1 rounded-full border border-white/15 bg-white/5 px-3 py-2 text-white/80"
       >
