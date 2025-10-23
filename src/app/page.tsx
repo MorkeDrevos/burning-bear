@@ -20,13 +20,13 @@ const MARKETING_WALLET = 'HLrwEbkDBDo9gDPa2ZH4sC2TowVLXuQa9NoZUMjD6rQP';
 const EXPLORER = 'https://explorer.solana.com';
 
 /* =========================
-   Types matching /public/data/state.json
+   Types (timestamp can be number or string)
 ========================= */
 type Burn = {
   id: string;
-  amount: number;      // BEAR
-  sol?: number;        // optional, SOL spent for this burn
-  timestamp: number;   // ms since epoch
+  amount: number;            // BEAR
+  sol?: number;              // SOL spent for this burn
+  timestamp: number | string; // ms since epoch OR ISO string
   tx: string;
 };
 
@@ -65,8 +65,8 @@ function fmtMoney(n?: number) {
   if (!n || !isFinite(n)) return '$0.00';
   return n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 }
-function fmtWhen(ts: number | string) {
-  const d = new Date(ts);
+function fmtWhen(tsMs: number) {
+  const d = new Date(tsMs);
   return d.toLocaleString('en-US', {
     weekday: 'short',
     month: 'short',
@@ -82,9 +82,7 @@ function fmtCountdown(ms: number) {
   const h = Math.floor(t / 3600);
   const m = Math.floor((t % 3600) / 60);
   const s = t % 60;
-  if (h > 0) return `${h}h ${m.toString().padStart(2, '0')}m ${s
-    .toString()
-    .padStart(2, '0')}s`;
+  if (h > 0) return `${h}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`;
   return `${m}m ${s.toString().padStart(2, '0')}s`;
 }
 // parse "in 12m" or "21:30"
@@ -113,6 +111,10 @@ function parseSpecToMsNow(spec?: string): number | undefined {
   }
   return undefined;
 }
+// normalize timestamp (string ISO → ms, number → ms)
+function toMs(ts: number | string): number {
+  return typeof ts === 'number' ? ts : Date.parse(ts);
+}
 
 /* =========================
    Page
@@ -130,16 +132,21 @@ export default function Page() {
     return () => clearInterval(id);
   }, []);
 
-  // load JSON data
+  // load JSON data (cache-busted) and normalize timestamps
   useEffect(() => {
     let alive = true;
-    fetch('/data/state.json', { cache: 'no-store' })
+    fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
       .then((r) => r.json())
-      .then((j: StateJson) => alive && setData(j))
+      .then((j: StateJson) => {
+        if (!alive) return;
+        // normalize burns -> numeric timestamps & drop invalid
+        const burns = (j.burns ?? [])
+          .map((b) => ({ ...b, timestamp: toMs(b.timestamp) }))
+          .filter((b) => Number.isFinite(b.timestamp as number));
+        setData({ ...j, burns });
+      })
       .catch(() => {});
-    return () => {
-      alive = false;
-    };
+    return () => { alive = false; };
   }, []);
 
   // live SOL price (falls back to stats.priceUsdPerSol)
@@ -155,36 +162,26 @@ export default function Page() {
         .catch(() => {});
     fetchPrice();
     const id = window.setInterval(fetchPrice, 60_000);
-    return () => {
-      alive = false;
-      clearInterval(id);
-    };
+    return () => { alive = false; clearInterval(id); };
   }, []);
 
   const priceUsdPerSol = solUsd ?? data?.stats?.priceUsdPerSol ?? null;
 
-  const burnsSorted = useMemo(
-    () => (data?.burns ?? []).slice().sort((a, b) => b.timestamp - a.timestamp),
-    [data]
-  );
+  // sorted burns (new → old)
+  const burnsSorted = useMemo(() => {
+    const arr = (data?.burns ?? []) as Array<Burn & { timestamp: number }>;
+    return arr.slice().sort((a, b) => a.timestamp - b.timestamp).reverse();
+  }, [data]);
 
   // Next targets
   const targets = useMemo(() => {
     const s = data?.schedule ?? {};
     const nb = parseSpecToMsNow(s.nextBuybackSpec) ?? s.nextBuybackAt;
-    const bb =
-      nb ??
-      (s.lastBuybackAt && s.buybackIntervalMs
-        ? s.lastBuybackAt + s.buybackIntervalMs
-        : undefined);
-
+    const bb = nb ?? (s.lastBuybackAt && s.buybackIntervalMs
+      ? s.lastBuybackAt + s.buybackIntervalMs : undefined);
     const nburn = parseSpecToMsNow(s.nextBurnSpec) ?? s.nextBurnAt;
-    const burn =
-      nburn ??
-      (s.lastBurnAt && s.burnIntervalMs
-        ? s.lastBurnAt + s.burnIntervalMs
-        : undefined);
-
+    const burn = nburn ?? (s.lastBurnAt && s.burnIntervalMs
+      ? s.lastBurnAt + s.burnIntervalMs : undefined);
     return { bb, burn };
   }, [data]);
 
@@ -198,7 +195,7 @@ export default function Page() {
   const totalSolSpent = data?.stats?.buybackSol ?? 0;
   const totalUsd = priceUsdPerSol ? totalSolSpent * priceUsdPerSol : undefined;
 
-  // “Today” and “This Week” derived stats
+  // “Today” and “This Week” derived stats (local time)
   const todayStart = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -207,20 +204,16 @@ export default function Page() {
   const weekStart = now - 7 * 24 * 60 * 60 * 1000;
 
   const todayBurnsCount = useMemo(
-    () => burnsSorted.filter((b) => b.timestamp >= todayStart).length,
+    () => burnsSorted.filter((b) => (b.timestamp as number) >= todayStart).length,
     [burnsSorted, todayStart]
   );
 
   const weekStats = useMemo(() => {
-    const lastWeek = burnsSorted.filter((b) => b.timestamp >= weekStart);
+    const lastWeek = burnsSorted.filter((b) => (b.timestamp as number) >= weekStart);
     const count = lastWeek.length;
-    const sol =
-      lastWeek.reduce((acc, b) => acc + (b.sol ?? 0), 0);
+    const sol = lastWeek.reduce((acc, b) => acc + (b.sol ?? 0), 0);
     const usd = priceUsdPerSol ? sol * priceUsdPerSol : undefined;
-    const largest = lastWeek.reduce(
-      (m, b) => (b.amount > m ? b.amount : m),
-      0
-    );
+    const largest = lastWeek.reduce((m, b) => (b.amount > m ? b.amount : m), 0);
     const avgSol = count > 0 ? sol / count : 0;
     return { count, sol, usd, largest, avgSol };
   }, [burnsSorted, weekStart, priceUsdPerSol]);
@@ -334,12 +327,8 @@ export default function Page() {
           {/* Pill row under stats */}
           <div className="mt-3 flex flex-wrap gap-3">
             <Pill>Today: {todayBurnsCount} burns</Pill>
-            <Pill>
-              Total Buyback Value: {fmtMoney(totalUsd)}
-            </Pill>
-            <Pill>
-              Live SOL: {priceUsdPerSol ? fmtMoney(priceUsdPerSol) : '—'}
-            </Pill>
+            <Pill>Total Buyback Value: {fmtMoney(totalUsd)}</Pill>
+            <Pill>Live SOL: {priceUsdPerSol ? fmtMoney(priceUsdPerSol) : '—'}</Pill>
           </div>
         </div>
       </section>
@@ -358,7 +347,7 @@ export default function Page() {
             </div>
           )}
           {burnsSorted.map((b) => (
-            <BurnCard key={b.id} burn={b} price={priceUsdPerSol ?? 0} />
+            <BurnCard key={b.id} burn={b as Burn & { timestamp: number }} price={priceUsdPerSol ?? 0} />
           ))}
         </div>
       </section>
@@ -461,7 +450,7 @@ function HowCard({ title, body }: { title: string; body: string }) {
     </div>
   );
 }
-function BurnCard({ burn, price }: { burn: Burn; price: number }) {
+function BurnCard({ burn, price }: { burn: Burn & { timestamp: number }; price: number }) {
   const usd = burn.sol && price ? burn.sol * price : undefined;
   const ageMin = Math.max(0, (Date.now() - burn.timestamp) / 60_000);
   const brightness = Math.max(0.65, 1 - ageMin / 180);
@@ -538,7 +527,6 @@ function WalletCard({
     <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 backdrop-blur">
       <div className="text-sm font-semibold">{title}</div>
       {note && <div className="mt-0.5 text-xs text-white/55">{note}</div>}
-
       <div className="mt-3 flex items-center justify-between gap-2">
         <code className="truncate rounded-md bg-white/5 px-2 py-1 text-[13px] text-white/80">
           {truncateMiddle(address, 8, 8)}
@@ -553,9 +541,7 @@ function WalletCard({
           </a>
           <button
             onClick={handleCopy}
-            className={`rounded-full px-3 py-1 text-sm font-semibold transition ${
-              copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'
-            }`}
+            className={`rounded-full px-3 py-1 text-sm font-semibold transition ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
           >
             {copied ? 'Copied' : 'Copy'}
           </button>
