@@ -333,7 +333,7 @@ export default function Page() {
     />
     <HowCard
       title="30% → Treasury & Buybacks"
-      body="Funds managed transparently for future burns, community events, and buybacks that support long-term price health."
+      body="Funds managed transparently for future burns, community events and buybacks that support long-term price health."
     />
     <HowCard
       title="20% → Team & Marketing"
@@ -356,12 +356,12 @@ export default function Page() {
       note="Destroyed supply lives here forever."
     />
     <WalletCard
-      title="Treasury / Buybacks"
+      title="Treasury & Buybacks"
       address={TREASURY_WALLET}
       note="Funds for buybacks and operations."
     />
     <WalletCard
-      title="Marketing"
+      title="Team & Marketing"
       address={MARKETING_WALLET}
       note="Growth, creators, promos."
     />
@@ -375,7 +375,7 @@ export default function Page() {
 
     <p className="text-white/80 text-base font-medium">
       🔥 The Burning Bear isn’t just a meme — it’s a movement. <br />
-      Built on the <span className="text-[#ffe48d] font-semibold">50/30/20 Campfire Split</span> — transparent, alive, and always feeding the flames.
+      Built on the <span className="text-[#ffe48d] font-semibold">50/30/20 Campfire Split</span> — transparent, alive and always feeding the flames.
     </p>
 
     <div className="flex justify-center gap-6 text-white/60 text-lg">
@@ -412,7 +412,7 @@ export default function Page() {
       <p>
         © {new Date().getFullYear()} The Burning Bear · Built for fun, not financial advice.  
       </p>
-      <p>Stay warm, stay transparent, and keep the fire burning. 🔥</p>
+      <p>Stay warm, stay transparent and keep the fire burning. 🔥</p>
     </div>
   </div>
 </footer>
