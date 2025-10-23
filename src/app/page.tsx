@@ -318,28 +318,72 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== Live Burn Log — 2 wide cards per row ===== */}
-<section id="log" className="w-full px-4 sm:px-6 lg:px-10 mt-6">
-  {/* Title row, centered but spanning wide */}
-  <div className="mx-auto max-w-screen-2xl flex items-baseline justify-between">
+      {/* ===== Live Burn Log — full width, wider boxes ===== */}
+<section id="log" className="w-full px-4 sm:px-6 lg:px-8 mt-6">
+  <div className="flex items-baseline justify-between max-w-7xl mx-auto">
     <h2 className="text-2xl font-bold">Live Burn Log</h2>
     <p className="text-sm text-white/50">TX links open explorer.</p>
   </div>
 
-  {/* Cards grid: 1 col on small, exactly 2 cols on large screens */}
-  <div className="mx-auto max-w-screen-2xl mt-6 grid grid-cols-1 gap-8 xl:grid-cols-2">
-    {burnsSorted.length === 0 && (
-      <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-6 text-white/60 xl:col-span-2">
-        No burns posted yet.
-      </div>
-    )}
+  <div className="mt-6 overflow-x-auto">
+    <div className="flex flex-wrap gap-8 min-w-full justify-center lg:justify-start">
+      {burnsSorted.slice(0, 4).map((b) => (
+        <div
+          key={b.id}
+          className="flex-grow min-w-[460px] max-w-[640px] flex-1 basis-[calc(37.5%-1.5rem)]"
+        >
+          <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-6 md:p-7 shadow-lg flex flex-col justify-between hover:ring-2 ring-amber-400/30 transition">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">
+                  🔥
+                </span>
+                <div>
+                  <div className="text-lg font-bold">
+                    Burn • {b.amount.toLocaleString()} BEAR
+                  </div>
+                  <div className="text-sm text-white/60">
+                    {new Date(b.timestamp).toLocaleString("en-US", {
+                      weekday: "short",
+                      month: "short",
+                      day: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
+                  </div>
+                  {b.sol !== undefined && (
+                    <div className="text-sm text-white/70">
+                      ≈ {b.sol.toFixed(4)} SOL (
+                      {(b.sol * priceUsdPerSol).toLocaleString("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      })}
+                      )
+                    </div>
+                  )}
+                </div>
+              </div>
+              <Link
+                href={b.tx}
+                target="_blank"
+                className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline"
+              >
+                TX
+              </Link>
+            </div>
 
-    {burnsSorted.slice(0, 4).map((b) => (
-      <div key={b.id} className="flex">
-        {/* Your existing card component unchanged */}
-        <BurnCard burn={b as Burn & { timestamp: number }} price={priceUsdPerSol} />
-      </div>
-    ))}
+            <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/5">
+              <div
+                className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
+                style={{ width: "100%" }}
+              />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
   </div>
 </section>
 
