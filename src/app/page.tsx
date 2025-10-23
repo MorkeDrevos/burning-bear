@@ -545,6 +545,15 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
   );
 }
 
+function StatBig({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-6 backdrop-blur">
+      <div className="text-xs uppercase tracking-wider text-white/55">{label}</div>
+      <div className="mt-1 text-3xl font-extrabold">{value}</div>
+    </div>
+  );
+}
+
 function MobileMenu() {
   const [open, setOpen] = React.useState(false);
   return (
