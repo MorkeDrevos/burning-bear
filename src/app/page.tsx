@@ -444,7 +444,7 @@ export default function Page() {
           burns, and creator support. The more the ecosystem moves, the hotter it burns. 🔥
         </p>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3 items-stretch">
           <Reveal delay={0}>
             <HowCard
               title="50% → Auto-Buy & Burn"
@@ -569,7 +569,7 @@ function Pill({ children }: { children: React.ReactNode }) {
 
 function HowCard({ title, body }: { title: string; body: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_10px_24px_rgba(255,183,77,0.10)] hover:border-amber-300/25">
+    <div className="flex flex-col justify-between h-full rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_10px_24px_rgba(255,183,77,0.10)] hover:border-amber-300/25">
       <div className="text-lg font-semibold">{title}</div>
       <div className="mt-2 text-sm text-white/75">{body}</div>
     </div>
