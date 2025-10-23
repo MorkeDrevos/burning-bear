@@ -239,45 +239,62 @@ export default function Page() {
   return (
     <main id="top">
       {/* ===== Sticky Header ===== */}
-      <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
-          <Link href="#top" className="flex items-center gap-3 md:gap-4">
-            <img
-              src="/img/coin-logo.png"
-              alt={TOKEN_NAME}
-              className="h-11 w-11 md:h-12 md:w-12 rounded-full shadow-md"
-            />
-            <div className="leading-tight">
-              <div className="text-base md:text-xl font-extrabold">{TOKEN_NAME}</div>
-              <div className="text-[12px] md:text-sm text-white/55">
-                {TOKEN_SYMBOL} • Live Burn Camp
-              </div>
-            </div>
-          </Link>
-
-          <nav className="hidden items-center gap-8 text-[15px] md:flex">
-            <a href="#log" className="hover:text-amber-300">Live Burns</a>
-            <a href="#how" className="hover:text-amber-300">How It Works</a>
-          </nav>
-
-          <div className="flex items-center gap-2 md:gap-3">
-            <span
-              className="hidden md:inline rounded-full bg-emerald-900/40 px-4 py-2 text-sm text-emerald-300"
-              title={FULL_TOKEN_ADDRESS}
-            >
-              {truncateMiddle(FULL_TOKEN_ADDRESS)}
-            </span>
-            <button
-              onClick={handleCopy}
-              className={`rounded-full px-4 py-2 text-sm md:text-base font-semibold transition
-                ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
-              aria-live="polite"
-            >
-              {copied ? 'Copied!' : 'Copy CA'}
-            </button>
-          </div>
+<header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
+  <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
+    {/* Logo + Title */}
+    <Link href="#top" className="flex items-center gap-3 md:gap-4">
+      <img
+        src="/img/coin-logo.png"
+        alt={TOKEN_NAME}
+        className="h-13 w-13 md:h-14 md:w-14 rounded-full shadow-lg border border-amber-300/30"
+      />
+      <div className="leading-tight">
+        <div className="text-base md:text-xl font-extrabold text-amber-200 tracking-wide drop-shadow-[0_1px_3px_rgba(255,228,141,0.4)]">
+          {TOKEN_NAME}
         </div>
-      </header>
+        <div className="text-[12px] md:text-sm text-white/55">
+          {TOKEN_SYMBOL} • Live Burn Camp
+        </div>
+      </div>
+    </Link>
+
+    {/* Navigation */}
+    <nav className="hidden items-center gap-10 text-[16px] font-semibold md:flex">
+      <a
+        href="#log"
+        className="text-[#ffe48d] hover:text-amber-300 transition drop-shadow-[0_1px_2px_rgba(255,228,141,0.4)]"
+      >
+        Live Burns
+      </a>
+      <a
+        href="#how"
+        className="text-[#ffe48d] hover:text-amber-300 transition drop-shadow-[0_1px_2px_rgba(255,228,141,0.4)]"
+      >
+        How It Works
+      </a>
+    </nav>
+
+    {/* Right side */}
+    <div className="flex items-center gap-2 md:gap-3">
+      <span
+        className="hidden md:inline rounded-full bg-emerald-900/40 px-4 py-2 text-sm text-emerald-300 border border-emerald-500/20"
+        title={FULL_TOKEN_ADDRESS}
+      >
+        {truncateMiddle(FULL_TOKEN_ADDRESS)}
+      </span>
+      <button
+        onClick={handleCopy}
+        className={`rounded-full px-4 py-2 text-sm md:text-base font-semibold transition
+          ${copied
+            ? 'bg-emerald-400 text-black'
+            : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
+        aria-live="polite"
+      >
+        {copied ? 'Copied!' : 'Copy CA'}
+      </button>
+    </div>
+  </div>
+</header>
 
       {/* ===== Hero with video ===== */}
       <section className="relative">
