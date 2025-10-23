@@ -349,18 +349,52 @@ export default function Page() {
 
       {/* ===== Footer ===== */}
       <footer className="border-t border-white/10 bg-[#0d1a14] relative">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
-        <div className="mx-auto max-w-6xl px-4 py-10 text-center text-sm text-white/60 space-y-4">
-          <p className="text-white/80 text-base font-medium">
-            🔥 The Burning Bear isn’t just a meme — it’s a movement. <br />
-            Transparent, alive, and always feeding the flames.
-          </p>
-          <div className="text-xs text-white/40 pt-4">
-            <p>© {new Date().getFullYear()} The Burning Bear · Built for fun, not financial advice.</p>
-            <p>Stay warm, stay transparent, and keep the fire burning. 🔥</p>
-          </div>
-        </div>
-      </footer>
+  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+  <div className="mx-auto max-w-6xl px-4 py-10 text-center text-sm text-white/60 space-y-4">
+
+    <p className="text-white/80 text-base font-medium">
+      🔥 The Burning Bear isn’t just a meme — it’s a movement. <br />
+      Built on the <span className="text-amber-300 font-semibold">50/30/20 Campfire Split</span> — transparent, alive, and always feeding the flames.
+    </p>
+
+    <div className="flex justify-center gap-6 text-white/60 text-lg">
+      <a
+        href="https://x.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-amber-300 transition"
+        title="Follow on X"
+      >
+        <i className="fa-brands fa-x-twitter"></i>
+      </a>
+      <a
+        href="https://t.me"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-amber-300 transition"
+        title="Join Telegram"
+      >
+        <i className="fa-brands fa-telegram"></i>
+      </a>
+      <a
+        href="https://dexscreener.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-amber-300 transition"
+        title="View on DexScreener"
+      >
+        <i className="fa-solid fa-fire"></i>
+      </a>
+    </div>
+
+    <div className="text-xs text-white/40 pt-4">
+      <p>
+        © {new Date().getFullYear()} The Burning Bear · Built for fun, not financial advice.  
+      </p>
+      <p>Stay warm, stay transparent, and keep the fire burning. 🔥</p>
+    </div>
+  </div>
+</footer>
     </main>
   );
 }
