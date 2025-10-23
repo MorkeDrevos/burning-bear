@@ -81,6 +81,52 @@ const fmtCountdown = (ms: number) => {
 const toMs = (ts: number | string) => (typeof ts === 'number' ? ts : Date.parse(ts));
 
 /* =========================
+   Reveal helper (fade-up on scroll)
+========================= */
+function Reveal({
+  children,
+  delay = 0,
+  className = '',
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const ref = React.useRef<HTMLDivElement | null>(null);
+  const [show, setShow] = React.useState(false);
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShow(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={
+        `transform transition-all duration-600 ease-out will-change-transform ` +
+        `${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'} ` +
+        className
+      }
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* =========================
    Page
 ========================= */
 export default function Page() {
@@ -136,7 +182,7 @@ export default function Page() {
     return arr.slice().sort((a, b) => b.timestamp - a.timestamp);
   }, [data]);
 
-  // Shared, absolute countdown targets (everyone sees same time)
+  // Shared, absolute countdown targets
   const targets = useMemo(() => {
     const s = data?.schedule ?? {};
     const bb =
@@ -319,130 +365,108 @@ export default function Page() {
       </section>
 
       {/* ===== Live Burn Log — single horizontal scroll line ===== */}
-<section id="log" className="w-full px-4 sm:px-6 lg:px-8 mt-6">
-  <div className="flex items-baseline justify-between max-w-7xl mx-auto">
-    <h2 className="text-2xl font-bold">Live Burn Log</h2>
-    <p className="text-sm text-white/50">TX links open explorer.</p>
-  </div>
+      <section id="log" className="w-full px-4 sm:px-6 lg:px-8 mt-6">
+        <div className="flex items-baseline justify-between max-w-7xl mx-auto">
+          <h2 className="text-2xl font-bold">Live Burn Log</h2>
+          <p className="text-sm text-white/50">TX links open explorer.</p>
+        </div>
 
-  {/* Horizontal scroll container */}
-  <div className="mt-6 overflow-x-auto pb-4">
-    <div className="flex gap-6 min-w-full px-1">
-      {burnsSorted.slice(0, 6).map((b) => (
-        <div
-          key={b.id}
-          className="flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]"
-        >
-          <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 md:p-6 shadow-lg flex flex-col justify-between hover:ring-2 ring-amber-400/30 transition">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">
-                  🔥
-                </span>
-                <div>
-                  <div className="text-lg font-bold">
-                    Burn • {b.amount.toLocaleString()} BEAR
-                  </div>
-                  <div className="text-sm text-white/60">
-                    {new Date(b.timestamp).toLocaleString("en-US", {
-                      weekday: "short",
-                      month: "short",
-                      day: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    })}
-                  </div>
-                  {b.sol !== undefined && (
-                    <div className="text-sm text-white/70">
-                      ≈ {b.sol.toFixed(4)} SOL (
-                      {(b.sol * priceUsdPerSol).toLocaleString("en-US", {
-                        style: "currency",
-                        currency: "USD",
-                      })}
-                      )
+        {/* Horizontal scroll container */}
+        <div className="mt-6 overflow-x-auto pb-4">
+          <div className="flex gap-6 min-w-full px-1">
+            {burnsSorted.slice(0, 6).map((b) => (
+              <div
+                key={b.id}
+                className="flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]"
+              >
+                <div
+                  className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] flex flex-col justify-between transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_10px_30px_rgba(255,183,77,0.12)] hover:border-amber-300/30"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">
+                        🔥
+                      </span>
+                      <div>
+                        <div className="text-lg font-bold">
+                          Burn • {b.amount.toLocaleString()} BEAR
+                        </div>
+                        <div className="text-sm text-white/60">
+                          {new Date(b.timestamp).toLocaleString('en-US', {
+                            weekday: 'short',
+                            month: 'short',
+                            day: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true,
+                          })}
+                        </div>
+                        {b.sol !== undefined && (
+                          <div className="text-sm text-white/70">
+                            ≈ {b.sol.toFixed(4)} SOL (
+                            {(b.sol * priceUsdPerSol).toLocaleString('en-US', {
+                              style: 'currency',
+                              currency: 'USD',
+                            })}
+                            )
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
+                    <Link
+                      href={b.tx}
+                      target="_blank"
+                      className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline"
+                    >
+                      TX
+                    </Link>
+                  </div>
+
+                  <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
+                    <div className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500" style={{ width: '100%' }} />
+                  </div>
                 </div>
               </div>
-              <Link
-                href={b.tx}
-                target="_blank"
-                className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline"
-              >
-                TX
-              </Link>
-            </div>
-
-            <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/5">
-              <div
-                className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
-                style={{ width: "100%" }}
-              />
-            </div>
+            ))}
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+      </section>
 
-      {/* ===== The 50/30/20 Campfire Split ===== */}
-      <section id="how" className="mx-auto max-w-6xl px-4 pt-14 relative">
-  {/* Section title with ember underline */}
-  <div className="relative inline-block mb-4">
-    <h3 className="text-xl font-bold tracking-tight relative z-10">How It Works</h3>
-    <span className="absolute left-0 bottom-0 w-full h-[3px] bg-gradient-to-r from-amber-400/0 via-amber-400/80 to-amber-400/0 animate-flicker" />
-  </div>
+      {/* ===== How It Works ===== */}
+      <section id="how" className="mx-auto max-w-6xl px-4 pt-14">
+        <h3 className="text-xl font-bold tracking-tight mb-3">How It Works</h3>
 
-  {/* Core explanation */}
-  <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px] mb-8">
-    Every spark — whether it’s a trade, a creator reward, or a network fee — feeds the <span className="text-[#ffe48d] font-semibold">$BEAR</span> fire. 
-    These flames merge into the <span className="text-[#ffe48d] font-semibold transition duration-300 hover:text-amber-300 hover:drop-shadow-[0_0_6px_#ffb74d]"> Campfire Fund</span>, 
-    driving constant buybacks, burns, and creator support. 
-    The more the ecosystem moves, the hotter it burns. 🔥
-  </p>
+        <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px] mb-8">
+          Every spark — whether it’s a trade, a creator reward, or a network fee — feeds the
+          <span className="text-[#ffe48d] font-semibold"> $BEAR</span> fire. These flames merge into the
+          <span className="text-[#ffe48d] font-semibold"> Campfire Fund</span>, driving constant buybacks,
+          burns, and creator support. The more the ecosystem moves, the hotter it burns. 🔥
+        </p>
 
-  {/* Three cards */}
-  <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-    <div className="transition-all duration-300 hover:-translate-y-1 hover:border-amber-300/30 hover:shadow-[0_0_25px_#ffb74d20] rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
-      <div className="text-lg font-semibold">50% → Auto-Buy & Burn</div>
-      <div className="mt-2 text-sm text-white/75">
-        Half of every fee automatically buys $BEAR and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps.
-      </div>
-    </div>
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          <Reveal delay={0}>
+            <HowCard
+              title="50% → Auto-Buy & Burn"
+              body="Half of every fee automatically buys $BEAR and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps."
+            />
+          </Reveal>
 
-    <div className="transition-all duration-300 hover:-translate-y-1 hover:border-amber-300/30 hover:shadow-[0_0_25px_#ffb74d20] rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
-      <div className="text-lg font-semibold">30% → Treasury & Buybacks</div>
-      <div className="mt-2 text-sm text-white/75">
-        Reserved transparently for strategic buybacks, ecosystem stability, and community-driven events that keep $BEAR’s fire burning long-term.
-      </div>
-    </div>
+          <Reveal delay={120}>
+            <HowCard
+              title="30% → Treasury & Buybacks"
+              body="Reserved transparently for strategic buybacks, ecosystem stability, and community-driven events that keep $BEAR’s fire burning long-term."
+            />
+          </Reveal>
 
-    <div className="transition-all duration-300 hover:-translate-y-1 hover:border-amber-300/30 hover:shadow-[0_0_25px_#ffb74d20] rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
-      <div className="text-lg font-semibold">20% → Team, Creators & Growth</div>
-      <div className="mt-2 text-sm text-white/75">
-        Rewards creators, partners, and community builders — spreading the legend of $BEAR across Solana while fueling future innovation.
-      </div>
-    </div>
-  </div>
-
-  {/* Animation style */}
-  <style jsx>{`
-    @keyframes flicker {
-      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-        opacity: 1;
-      }
-      20%, 24%, 55% {
-        opacity: 0.45;
-      }
-    }
-    .animate-flicker {
-      animation: flicker 2.4s infinite;
-    }
-  `}</style>
-</section>
+          <Reveal delay={240}>
+            <HowCard
+              title="20% → Team, Creators & Growth"
+              body="Rewards creators, partners, and community builders — spreading the legend of $BEAR across Solana while fueling future innovation."
+            />
+          </Reveal>
+        </div>
+      </section>
 
       {/* ===== Campfire Wallets ===== */}
       <section id="wallets" className="mx-auto max-w-6xl px-4 pt-14 pb-16">
@@ -460,13 +484,11 @@ export default function Page() {
       <footer className="border-t border-white/10 bg-[#0d1a14] relative">
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
         <div className="mx-auto max-w-6xl px-4 py-10 text-center text-sm text-white/60 space-y-4">
-
           <p className="text-white/80 text-base font-medium">
             🔥 The Burning Bear isn’t just a meme — it’s a movement. <br />
             Built on the <span className="text-[#ffe48d] font-semibold">50/30/20 Campfire Split</span> — transparent, alive and always feeding the flames.
           </p>
 
-          {/* Socials row (always visible) */}
           <div className="flex justify-center gap-8 text-white/70 text-lg pt-2">
             <a
               href="https://x.com/i/communities/1980944446871966021"
@@ -504,74 +526,6 @@ export default function Page() {
         </div>
       </footer>
     </main>
-  );
-}
-
-/* =========================
-   Carousel (new)
-========================= */
-function BurnCarousel({
-  burns,
-  price,
-}: {
-  burns: Array<Burn & { timestamp: number }>;
-  price: number;
-}) {
-  // Use the latest 6 burns (or fewer), but ensure at least 3 for a nice loop
-  const slides = (burns ?? []).slice(0, 6);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const itemRefs = useRef<HTMLDivElement[]>([]);
-  const indexRef = useRef(0);
-  const hovering = useRef(false);
-
-  // auto-advance every 4.5s
-  useEffect(() => {
-    if (!containerRef.current || slides.length === 0) return;
-
-    const tick = () => {
-      if (hovering.current) return;
-      indexRef.current = (indexRef.current + 1) % slides.length;
-      const el = itemRefs.current[indexRef.current];
-      if (el) el.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
-    };
-
-    const id = window.setInterval(tick, 4500);
-    return () => clearInterval(id);
-  }, [slides.length]);
-
-  return (
-    <div
-      className="relative mt-5"
-      onMouseEnter={() => { hovering.current = true; }}
-      onMouseLeave={() => { hovering.current = false; }}
-    >
-      {/* soft edge fades */}
-      <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-[#0d1a14] to-transparent" />
-      <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-[#0d1a14] to-transparent" />
-
-      <div
-        ref={containerRef}
-        className="flex snap-x snap-mandatory overflow-x-auto gap-6 scroll-smooth pb-2"
-        style={{ scrollbarWidth: 'none' } as any}
-      >
-        {slides.map((b, i) => (
-          <div
-            key={b.id}
-            ref={(el) => { if (el) itemRefs.current[i] = el; }}
-            className="snap-start shrink-0 w-full"
-          >
-            <BurnCard burn={b} price={price} />
-          </div>
-        ))}
-
-        {/* Duplicate first slide at end for a smoother last→first feel when swiping */}
-        {slides.length > 1 && (
-          <div className="snap-start shrink-0 w-full">
-            <BurnCard burn={slides[0]} price={price} />
-          </div>
-        )}
-      </div>
-    </div>
   );
 }
 
@@ -615,7 +569,7 @@ function Pill({ children }: { children: React.ReactNode }) {
 
 function HowCard({ title, body }: { title: string; body: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
+    <div className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_10px_24px_rgba(255,183,77,0.10)] hover:border-amber-300/25">
       <div className="text-lg font-semibold">{title}</div>
       <div className="mt-2 text-sm text-white/75">{body}</div>
     </div>
@@ -630,7 +584,7 @@ function BurnCard({ burn, price }: { burn: Burn & { timestamp: number }; price: 
 
   return (
     <div
-      className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 md:p-6 shadow-lg ring-emerald-500/0 transition hover:ring-2"
+      className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_10px_30px_rgba(255,183,77,0.12)] hover:border-amber-300/30 ring-emerald-500/0"
       style={{ filter: `brightness(${brightness})` }}
     >
       <div className="flex items-start justify-between">
@@ -655,7 +609,7 @@ function BurnCard({ burn, price }: { burn: Burn & { timestamp: number }; price: 
         </Link>
       </div>
 
-      <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/5">
+      <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
         <div
           className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
           style={{ width: `${Math.floor(progress * 100)}%` }}
