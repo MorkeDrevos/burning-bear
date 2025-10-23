@@ -398,10 +398,8 @@ export default function Page() {
 
   {/* Core explanation */}
   <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px] mb-8">
-    Every spark — whether it’s a trade, a creator reward, or a network fee — 
-    feeds the <span className="text-[#ffe48d] font-semibold">$BEAR</span> fire. 
-    These flames merge into the 
-    <span className="text-[#ffe48d] font-semibold transition duration-300 hover:text-amber-300 hover:drop-shadow-[0_0_6px_#ffb74d]"> Campfire Fund</span>, 
+    Every spark — whether it’s a trade, a creator reward, or a network fee — feeds the <span className="text-[#ffe48d] font-semibold">$BEAR</span> fire. 
+    These flames merge into the <span className="text-[#ffe48d] font-semibold transition duration-300 hover:text-amber-300 hover:drop-shadow-[0_0_6px_#ffb74d]"> Campfire Fund</span>, 
     driving constant buybacks, burns, and creator support. 
     The more the ecosystem moves, the hotter it burns. 🔥
   </p>
