@@ -304,24 +304,24 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== Live Burn Log ===== */}
-      <section id="log" className="mx-auto max-w-6xl px-4 pt-2 pb-10">
-        <div className="flex items-baseline justify-between">
-          <h2 className="text-2xl font-bold">Live Burn Log</h2>
-          <p className="text-sm text-white/50">TX links open explorer.</p>
-        </div>
+     {/* ===== This Week at the Campfire ===== */}
+<section className="mx-auto max-w-6xl px-4 pb-14">
+  <h3 className="text-xl font-bold">This Week at the Campfire</h3>
+  <p className="mt-1 text-sm text-white/55">
+    Activity in the last 7 days. Auto-updated from the live logs.
+  </p>
 
-        <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-          {burnsSorted.length === 0 && (
-            <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-6 text-white/60">
-              No burns posted yet.
-            </div>
-          )}
-          {burnsSorted.map((b) => (
-            <BurnCard key={b.id} burn={b as Burn & { timestamp: number }} price={priceUsdPerSol} />
-          ))}
-        </div>
-      </section>
+  <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <StatBig label="Burns" value={fmtInt(weekStats.count)} />
+    <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
+    <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
+    <StatBig label="Largest Burn (BEAR)" value={fmtInt(weekStats.largest)} />
+  </div>
+
+  <div className="mt-3">
+    <Pill>Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}</Pill>
+  </div>
+</section>
 
       {/* ===== How It Works (moved up) ===== */}
 <section id="how" className="mx-auto max-w-6xl px-4 pb-10">
