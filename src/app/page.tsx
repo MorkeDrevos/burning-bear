@@ -318,7 +318,7 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== Live Burn Log — glassy boxes + auto-scroll + glowing bars ===== */}
+      {/* ===== Live Burn Log — glassy boxes + auto-scroll + glowing bars (no edge shadow) ===== */}
 <section id="log" className="relative w-full px-4 sm:px-6 lg:px-8 mt-6 overflow-hidden">
   <div className="flex items-baseline justify-between max-w-7xl mx-auto">
     <h2 className="text-2xl font-bold">Live Burn Log</h2>
@@ -326,18 +326,15 @@ export default function Page() {
   </div>
 
   <div className="relative mt-6 group">
-    {/* Edge fades */}
-    <div className="pointer-events-none absolute top-0 left-0 z-10 h-full w-24 bg-gradient-to-r from-[#0d1a14] to-transparent" />
-    <div className="pointer-events-none absolute top-0 right-0 z-10 h-full w-24 bg-gradient-to-l from-[#0d1a14] to-transparent" />
+    {/* Removed side fades for clean edge-to-edge look */}
 
-    {/* Auto-scroll row (duplicates list for seamless loop) */}
     <div
       className="flex gap-6 animate-scroll-x will-change-transform group-hover:[animation-play-state:paused]"
       style={{ width: 'max-content', animation: 'scrollLeft 35s linear infinite' }}
     >
       {[...burnsSorted.slice(0, 6), ...burnsSorted.slice(0, 6)].map((b, i) => (
         <div key={b.id + i} className="flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]">
-          <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-md p-5 md:p-6 shadow-lg flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_25px_#ffb74d30] hover:border-amber-300/30">
+          <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-md p-5 md:p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_25px_#ffb74d30] hover:border-amber-300/30">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">🔥</span>
@@ -373,9 +370,7 @@ export default function Page() {
 
             {/* Progress bar with moving sheen */}
             <div className="relative mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
-              {/* Fill */}
               <div className="h-full w-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500" />
-              {/* Sheen */}
               <div className="pointer-events-none absolute inset-0">
                 <div className="absolute inset-y-0 -left-1/3 w-1/3 animate-sheen bg-gradient-to-r from-transparent via-white/25 to-transparent" />
               </div>
