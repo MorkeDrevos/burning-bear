@@ -390,10 +390,13 @@ export default function Page() {
 
       {/* ===== The 50/30/20 Campfire Split ===== */}
       <section id="how" className="mx-auto max-w-6xl px-4 pt-14">
-        <p className="text-white/70 max-w-3xl mt-2">
-  Every trade, creator reward, or ecosystem fee helps fuel <span className="text-[#ffe48d] font-semibold">$BEAR</span>’s fire.  
-  A portion of each transaction automatically flows into the Campfire Fund — transparently split between burns,  
-  treasury reserves and creator growth to keep the ecosystem alive and blazing.
+        <p className="text-white/75 max-w-3xl mt-3 leading-relaxed">
+  Every trade, creator reward, and ecosystem fee helps fuel the 
+  <span className="text-[#ffe48d] font-semibold"> $BEAR</span> fire.  
+  Each transaction contributes directly to the 
+  <span className="text-[#ffe48d] font-semibold"> Campfire Fund</span> — the engine behind every buyback, burn, and 
+  community reward. This closed-loop system keeps the supply shrinking, 
+  creators rewarded, and the fire burning stronger with every interaction.
 </p>
         <h3 className="text-xl font-bold tracking-tight">How It Works</h3>
         <div className="mt-4 grid grid-cols-1 gap-5 md:grid-cols-3">
