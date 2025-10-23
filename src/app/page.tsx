@@ -304,24 +304,24 @@ export default function Page() {
         </div>
       </section>
 
-     {/* ===== This Week at the Campfire ===== */}
-<section className="mx-auto max-w-6xl px-4 pb-14">
-  <h3 className="text-xl font-bold">This Week at the Campfire</h3>
-  <p className="mt-1 text-sm text-white/55">
-    Activity in the last 7 days. Auto-updated from the live logs.
-  </p>
+      {/* ===== Live Burn Log ===== */}
+      <section id="log" className="mx-auto max-w-6xl px-4 pt-2 pb-10">
+        <div className="flex items-baseline justify-between">
+          <h2 className="text-2xl font-bold">Live Burn Log</h2>
+          <p className="text-sm text-white/50">TX links open explorer.</p>
+        </div>
 
-  <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-    <StatBig label="Burns" value={fmtInt(weekStats.count)} />
-    <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
-    <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
-    <StatBig label="Largest Burn (BEAR)" value={fmtInt(weekStats.largest)} />
-  </div>
-
-  <div className="mt-3">
-    <Pill>Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}</Pill>
-  </div>
-</section>
+        <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
+          {burnsSorted.length === 0 && (
+            <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-6 text-white/60">
+              No burns posted yet.
+            </div>
+          )}
+          {burnsSorted.map((b) => (
+            <BurnCard key={b.id} burn={b as Burn & { timestamp: number }} price={priceUsdPerSol} />
+          ))}
+        </div>
+      </section>
 
       {/* ===== How It Works (moved up) ===== */}
 <section id="how" className="mx-auto max-w-6xl px-4 pb-10">
@@ -333,7 +333,7 @@ export default function Page() {
     />
     <HowCard
       title="30% → Treasury & Buybacks"
-      body="Funds managed transparently for future burns, community events and buybacks that support long-term price health."
+      body="Funds managed transparently for future burns, community events, and buybacks that support long-term price health."
     />
     <HowCard
       title="20% → Team & Marketing"
@@ -379,39 +379,34 @@ export default function Page() {
     </p>
 
     <div className="flex justify-center gap-6 text-white/60 text-lg">
-  {/* X Community */}
-  <a
-    href="https://x.com/i/communities/1980944446871966021"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="hover:text-amber-300 transition"
-    title="Join the X Community"
-  >
-    <i className="fa-brands fa-x-twitter"></i>
-  </a>
-
-  {/* CoinGecko */}
-  <a
-    href="https://www.coingecko.com/"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="hover:text-amber-300 transition"
-    title="View on CoinGecko"
-  >
-    <i className="fa-solid fa-chart-line"></i>
-  </a>
-
-  {/* DexScreener */}
-  <a
-    href="https://dexscreener.com"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="hover:text-amber-300 transition"
-    title="View on DexScreener"
-  >
-    <i className="fa-solid fa-fire"></i>
-  </a>
-</div>
+      <a
+        href="https://x.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-amber-300 transition"
+        title="Follow on X"
+      >
+        <i className="fa-brands fa-x-twitter"></i>
+      </a>
+      <a
+        href="https://t.me"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-amber-300 transition"
+        title="Join Telegram"
+      >
+        <i className="fa-brands fa-telegram"></i>
+      </a>
+      <a
+        href="https://dexscreener.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-amber-300 transition"
+        title="View on DexScreener"
+      >
+        <i className="fa-solid fa-fire"></i>
+      </a>
+    </div>
 
     <div className="text-xs text-white/40 pt-4">
       <p>
@@ -541,15 +536,6 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
           </button>
         </div>
       </div>
-    </div>
-  );
-}
-
-function StatBig({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-6 backdrop-blur">
-      <div className="text-xs uppercase tracking-wider text-white/55">{label}</div>
-      <div className="mt-1 text-3xl font-extrabold">{value}</div>
     </div>
   );
 }
