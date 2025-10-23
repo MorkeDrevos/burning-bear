@@ -317,28 +317,28 @@ export default function Page() {
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
-          {/* Countdowns */}
-          <div className="mt-2 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
-              <div className="text-xs uppercase tracking-[0.25em] text-white/55">Next buyback in</div>
-              <div className="text-4xl font-extrabold text-white/85 md:text-[44px]">
-                {targets.bb ? fmtCountdown(nextBuybackMs) : '—'}
-              </div>
-            </div>
-            <div>
-              <div className="text-xs uppercase tracking-[0.25em] text-white/55">Next burn in</div>
-              <div className="text-4xl font-extrabold text-white/85 md:text-[44px]">
-                {targets.burn ? fmtCountdown(nextBurnMs) : '—'}
-              </div>
-            </div>
-          </div>
+{/* Smaller countdowns */}
+<div className="mt-2 grid grid-cols-1 gap-6 sm:grid-cols-2">
+  <div>
+    <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">Next buyback in</div>
+    <div className="text-3xl font-extrabold text-white/85 md:text-[36px]">
+      {targets.bb ? fmtCountdown(nextBuybackMs) : '—'}
+    </div>
+  </div>
+  <div>
+    <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">Next burn in</div>
+    <div className="text-3xl font-extrabold text-white/85 md:text-[36px]">
+      {targets.burn ? fmtCountdown(nextBurnMs) : '—'}
+    </div>
+  </div>
+</div>
 
 {/* Stats row */}
 <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-4">
-  <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
-  <Stat label="Burned" value={fmtInt(BURNED)} />
+  <Stat label="Burned So Far" value={fmtInt(BURNED)} />
   <Stat label="Current Supply" value={fmtInt(CURRENT)} />
   <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
+  <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
 </div>
 
 {/* Pill row under stats */}
@@ -347,6 +347,7 @@ export default function Page() {
   <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
   <Pill>Live SOL: {priceUsdPerSol ? fmtMoney(priceUsdPerSol) : '—'}</Pill>
 </div>
+
         </div>
       </section>
 
