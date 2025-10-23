@@ -242,17 +242,17 @@ export default function Page() {
 <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
   <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
     {/* Logo + Title */}
-    <Link href="#top" className="flex items-center gap-3 md:gap-4">
+    <Link href="#top" className="flex items-center gap-3 md:gap-4 min-w-0">
       <img
         src="/img/coin-logo.png"
         alt={TOKEN_NAME}
-        className="h-13 w-13 md:h-14 md:w-14 rounded-full shadow-lg border border-amber-300/30"
+        className="h-12 w-12 md:h-14 md:w-14 rounded-full shadow-lg border border-amber-300/30"
       />
-      <div className="leading-tight">
-        <div className="text-base md:text-xl font-extrabold text-amber-200 tracking-wide drop-shadow-[0_1px_3px_rgba(255,228,141,0.4)]">
+      <div className="leading-tight min-w-0">
+        <div className="text-base md:text-xl font-extrabold text-amber-200 tracking-wide drop-shadow-[0_1px_3px_rgba(255,228,141,0.4)] truncate">
           {TOKEN_NAME}
         </div>
-        <div className="text-[12px] md:text-sm text-white/55">
+        <div className="text-[12px] md:text-sm text-white/55 truncate">
           {TOKEN_SYMBOL} • Live Burn Camp
         </div>
       </div>
