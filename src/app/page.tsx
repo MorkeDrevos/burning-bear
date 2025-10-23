@@ -299,19 +299,19 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== Live Burn Log (two columns, wide) ===== */}
+      {/* ===== Live Burn Log (3–4 tiles per row) ===== */}
       <section id="log" className="mx-auto max-w-6xl px-4">
         <h3 className="text-xl font-bold tracking-tight">Live Burn Log</h3>
         <p className="mt-1 text-sm text-white/55 leading-relaxed">TX links open explorer.</p>
 
-        <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {burnsSorted.length === 0 && (
             <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 text-white/60">
               No burns posted yet.
             </div>
           )}
-          {burnsSorted.map((b) => (
-            <BurnCard key={b.id} burn={b as Burn & { timestamp: number }} price={priceUsdPerSol} />
+          {burnsSorted.map((b, i) => (
+            <BurnCard key={b.id} index={i} burn={b as Burn & { timestamp: number }} price={priceUsdPerSol} />
           ))}
         </div>
       </section>
@@ -455,42 +455,70 @@ function HowCard({ title, body }: { title: string; body: string }) {
   );
 }
 
-function BurnCard({ burn, price }: { burn: Burn & { timestamp: number }; price: number }) {
+/** Accent color per tile (very subtle) */
+function accentByIndex(i: number) {
+  const accents = [
+    'from-amber-400/50 to-orange-500/50',
+    'from-emerald-400/50 to-teal-500/50',
+    'from-sky-400/50 to-indigo-500/50',
+    'from-rose-400/50 to-orange-500/50',
+  ];
+  return accents[i % accents.length];
+}
+
+/** Wider, tile-style burn card for dense grid */
+function BurnCard({
+  burn,
+  price,
+  index,
+}: {
+  burn: Burn & { timestamp: number };
+  price: number;
+  index: number;
+}) {
   const usd = burn.sol && price ? burn.sol * price : undefined;
   const ageMin = Math.max(0, (Date.now() - burn.timestamp) / 60_000);
-  const brightness = Math.max(0.68, 1 - ageMin / 180);
   const progress = Math.min(1, ageMin / 10);
 
   return (
-    <div
-      className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 md:p-6 shadow-lg ring-emerald-500/0 transition hover:ring-2"
-      style={{ filter: `brightness(${brightness})` }}
-    >
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">🔥</span>
-          <div>
-            <div className="text-lg font-bold">Burn • {fmtInt(burn.amount)} BEAR</div>
-            <div className="text-sm text-white/60">{fmtWhen(burn.timestamp)}</div>
-            {burn.sol !== undefined && (
-              <div className="text-sm text-white/70">
-                ≈ {burn.sol.toFixed(4)} SOL {usd ? `(${fmtMoney(usd)})` : ''}
-              </div>
-            )}
-          </div>
+    <div className="group relative rounded-3xl border border-white/10 bg-[#0f1f19]/80 p-4 md:p-5 backdrop-blur shadow-lg transition hover:scale-[1.01] hover:shadow-xl">
+      {/* subtle top glow */}
+      <div
+        className={`pointer-events-none absolute -inset-px rounded-3xl opacity-0 blur-[10px] transition group-hover:opacity-30 bg-gradient-to-r ${accentByIndex(
+          index
+        )}`}
+      />
+      {/* Header row */}
+      <div className="relative flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="text-[13px] uppercase tracking-wider text-white/55">Burn</div>
+          <div className="text-lg font-bold truncate">{fmtInt(burn.amount)} BEAR</div>
         </div>
         <Link
           href={burn.tx}
           target="_blank"
-          className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline"
+          className="shrink-0 rounded-full border border-amber-300/30 bg-amber-200/20 px-3 py-1 text-[13px] font-semibold text-amber-200 hover:bg-amber-200/30"
         >
           TX
         </Link>
       </div>
 
-      <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/5">
+      {/* Meta badges */}
+      <div className="relative mt-2 flex flex-wrap gap-2 text-[13px]">
+        {burn.sol !== undefined && (
+          <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5">
+            ≈ {burn.sol.toFixed(4)} SOL {usd ? `(${fmtMoney(usd)})` : ''}
+          </span>
+        )}
+        <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5">
+          {fmtWhen(burn.timestamp)}
+        </span>
+      </div>
+
+      {/* Big progress bar */}
+      <div className="relative mt-4 h-3 w-full overflow-hidden rounded-full bg-white/5">
         <div
-          className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
+          className={`h-3 rounded-full bg-gradient-to-r ${accentByIndex(index)}`}
           style={{ width: `${Math.floor(progress * 100)}%` }}
         />
       </div>
