@@ -312,7 +312,7 @@ export default function Page() {
             <div className="mt-3 flex flex-wrap gap-3">
               <Pill>Today: {todayBurnsCount} burns</Pill>
               <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
-              <Pill>Live SOL: {fmtMoney(priceUsdPerSol)}</Pill>
+              <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
             </div>
           </div>
         </div>
@@ -402,7 +402,7 @@ export default function Page() {
 
       {/* ===== The 50/30/20 Campfire Split ===== */}
       <section id="how" className="mx-auto max-w-6xl px-4 pt-14">
-        <h3 className="text-xl font-bold tracking-tight">How it works</h3>
+        <h3 className="text-xl font-bold tracking-tight">How It Works</h3>
         <div className="mt-4 grid grid-cols-1 gap-5 md:grid-cols-3">
           <HowCard
             title="50% → Auto-Buy & Burn"
