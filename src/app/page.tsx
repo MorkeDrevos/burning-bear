@@ -338,14 +338,23 @@ export default function Page() {
       </section>
 
       {/* ===== How it works ===== */}
-      <section id="how" className="mx-auto max-w-6xl px-4 pb-16">
-        <h3 className="text-xl font-bold">How It Works</h3>
-        <div className="mt-4 grid grid-cols-1 gap-4 text-white/85 md:grid-cols-3">
-          <HowCard title="80% → Buy & Burn" body="Creator fees auto-buy $BEAR and burn them live — the campfire never sleeps." />
-          <HowCard title="20% → Team + Marketing" body="Fuels growth, creators, memes, and keeping the vibes bright." />
-          <HowCard title="Transparent" body="Every buyback & burn is posted with a TX link and timestamp." />
-        </div>
-      </section>
+<section id="how" className="mx-auto max-w-6xl px-4 pb-16">
+  <h3 className="text-xl font-bold">How It Works — The 50/30/20 Campfire Split</h3>
+  <div className="mt-4 grid grid-cols-1 gap-4 text-white/85 md:grid-cols-3">
+    <HowCard
+      title="50% → Auto-Buy & Burn"
+      body="Every fee fuels the fire — half of all activity automatically buys $BEAR and sends it to the burn wallet. The campfire never sleeps."
+    />
+    <HowCard
+      title="30% → Treasury & Buybacks"
+      body="Funds managed transparently for future burns, community events, and buybacks that support long-term price health."
+    />
+    <HowCard
+      title="20% → Team & Marketing"
+      body="For growth, creators, and spreading the $BEAR legend across crypto — keeping the fire visible across Solana."
+    />
+  </div>
+</section>
 
       {/* ===== Footer ===== */}
       <footer className="border-t border-white/10 bg-[#0d1a14] relative">
