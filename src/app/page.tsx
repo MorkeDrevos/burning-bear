@@ -379,34 +379,39 @@ export default function Page() {
     </p>
 
     <div className="flex justify-center gap-6 text-white/60 text-lg">
-      <a
-        href="https://x.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:text-amber-300 transition"
-        title="Follow on X"
-      >
-        <i className="fa-brands fa-x-twitter"></i>
-      </a>
-      <a
-        href="https://t.me"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:text-amber-300 transition"
-        title="Join Telegram"
-      >
-        <i className="fa-brands fa-telegram"></i>
-      </a>
-      <a
-        href="https://dexscreener.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:text-amber-300 transition"
-        title="View on DexScreener"
-      >
-        <i className="fa-solid fa-fire"></i>
-      </a>
-    </div>
+  {/* X Community */}
+  <a
+    href="https://x.com/i/communities/1980944446871966021"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="hover:text-amber-300 transition"
+    title="Join the X Community"
+  >
+    <i className="fa-brands fa-x-twitter"></i>
+  </a>
+
+  {/* CoinGecko */}
+  <a
+    href="https://www.coingecko.com/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="hover:text-amber-300 transition"
+    title="View on CoinGecko"
+  >
+    <i className="fa-solid fa-chart-line"></i>
+  </a>
+
+  {/* DexScreener */}
+  <a
+    href="https://dexscreener.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="hover:text-amber-300 transition"
+    title="View on DexScreener"
+  >
+    <i className="fa-solid fa-fire"></i>
+  </a>
+</div>
 
     <div className="text-xs text-white/40 pt-4">
       <p>
