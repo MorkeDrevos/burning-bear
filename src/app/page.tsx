@@ -318,22 +318,31 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== Live Burn Log — single horizontal scroll line ===== */}
-<section id="log" className="w-full px-4 sm:px-6 lg:px-8 mt-6">
+      {/* ===== Live Burn Log — transparent glassy boxes + auto-scroll ===== */}
+<section id="log" className="relative w-full px-4 sm:px-6 lg:px-8 mt-6 overflow-hidden">
   <div className="flex items-baseline justify-between max-w-7xl mx-auto">
     <h2 className="text-2xl font-bold">Live Burn Log</h2>
     <p className="text-sm text-white/50">TX links open explorer.</p>
   </div>
 
-  {/* Horizontal scroll container */}
-  <div className="mt-6 overflow-x-auto pb-4">
-    <div className="flex gap-6 min-w-full px-1">
-      {burnsSorted.slice(0, 6).map((b) => (
+  <div className="relative mt-6 group">
+    {/* Edge fade gradients */}
+    <div className="pointer-events-none absolute top-0 left-0 z-10 h-full w-24 bg-gradient-to-r from-[#0d1a14] to-transparent" />
+    <div className="pointer-events-none absolute top-0 right-0 z-10 h-full w-24 bg-gradient-to-l from-[#0d1a14] to-transparent" />
+
+    <div
+      className="flex gap-6 animate-scroll-x will-change-transform group-hover:[animation-play-state:paused]"
+      style={{
+        width: "max-content",
+        animation: "scrollLeft 35s linear infinite",
+      }}
+    >
+      {[...burnsSorted.slice(0, 6), ...burnsSorted.slice(0, 6)].map((b, i) => (
         <div
-          key={b.id}
+          key={b.id + i}
           className="flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]"
         >
-          <div className="rounded-3xl border border-white/10 bg-[#0f1f19] p-5 md:p-6 shadow-lg flex flex-col justify-between hover:ring-2 ring-amber-400/30 transition">
+          <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-md p-5 md:p-6 shadow-lg flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_25px_#ffb74d30] hover:border-amber-300/30">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">
@@ -375,7 +384,7 @@ export default function Page() {
               </Link>
             </div>
 
-            <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/5">
+            <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
               <div
                 className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
                 style={{ width: "100%" }}
@@ -386,6 +395,18 @@ export default function Page() {
       ))}
     </div>
   </div>
+
+  {/* Animation keyframes */}
+  <style jsx>{`
+    @keyframes scrollLeft {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+  `}</style>
 </section>
 
       {/* ===== The 50/30/20 Campfire Split ===== */}
