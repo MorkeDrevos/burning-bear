@@ -455,7 +455,7 @@ export default function Page() {
           <Reveal delay={120}>
             <HowCard
               title="30% → Treasury & Buybacks"
-              body="Reserved transparently for strategic buybacks, ecosystem stability, and community-driven events that keep $BEAR’s fire burning long-term."
+              body="Reserved transparently for strategic buybacks, ecosystem stability and community-driven events that keep $BEAR’s fire burning long-term."
             />
           </Reveal>
 
