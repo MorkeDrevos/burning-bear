@@ -135,7 +135,7 @@ export default function Page() {
     return arr.slice().sort((a, b) => b.timestamp - a.timestamp);
   }, [data]);
 
-  // Next targets (use absolute times so everyone sees the same countdown)
+  // Next targets (absolute times so everyone sees the same countdown)
   const targets = useMemo(() => {
     const s = data?.schedule ?? {};
     const bb =
@@ -154,7 +154,7 @@ export default function Page() {
   const nextBuybackMs = targets.bb ? targets.bb - now : 0;
   const nextBurnMs = targets.burn ? targets.burn - now : 0;
 
-  // Auto-advance (loop) when a countdown hits 0 — also catches up if tab was inactive
+  // Auto-advance (loop) when a countdown hits 0
   useEffect(() => {
     if (!data?.schedule) return;
     setData((prev) => {
@@ -184,14 +184,14 @@ export default function Page() {
     });
   }, [now, data?.schedule]);
 
+  // Stats
   const INITIAL = data?.stats?.initialSupply ?? 0;
   const BURNED = data?.stats?.burned ?? 0;
   const CURRENT = data?.stats?.currentSupply ?? Math.max(0, INITIAL - BURNED);
-
   const totalSolSpent = data?.stats?.buybackSol ?? 0;
   const totalUsd = totalSolSpent * priceUsdPerSol;
 
-  // “Today” count
+  // Today count
   const todayStart = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -203,9 +203,7 @@ export default function Page() {
   );
 
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS);
-    } catch {}
+    try { await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS); } catch {}
     setCopied(true);
     if (copyTimer.current) window.clearTimeout(copyTimer.current);
     copyTimer.current = window.setTimeout(() => setCopied(false), 1400);
@@ -283,23 +281,13 @@ export default function Page() {
             Meet The Burning Bear — the classiest arsonist in crypto.
           </h1>
 
-          {/* Countdowns (slightly smaller per your preference) */}
+          {/* Countdowns */}
           <div className="mt-2 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
-              <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">Next buyback in</div>
-              <div className="text-3xl font-extrabold text-white/85 md:text-[36px]">
-                {targets.bb ? fmtCountdown(nextBuybackMs) : '—'}
-              </div>
-            </div>
-            <div>
-              <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">Next burn in</div>
-              <div className="text-3xl font-extrabold text-white/85 md:text-[36px]">
-                {targets.burn ? fmtCountdown(nextBurnMs) : '—'}
-              </div>
-            </div>
+            <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />
+            <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} />
           </div>
 
-          {/* Stats row (order requested) */}
+          {/* Stats row (order you wanted) */}
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-4">
             <Stat label="Burned So Far" value={fmtInt(BURNED)} />
             <Stat label="Current Supply" value={fmtInt(CURRENT)} />
@@ -307,7 +295,7 @@ export default function Page() {
             <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
           </div>
 
-          {/* Pill row */}
+          {/* Pills */}
           <div className="mt-3 flex flex-wrap gap-3">
             <Pill>Today: {todayBurnsCount} burns</Pill>
             <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
@@ -347,15 +335,6 @@ export default function Page() {
           <WalletCard title="Treasury / Buybacks" address={TREASURY_WALLET} note="Funds for buybacks and operations." />
           <WalletCard title="Marketing" address={MARKETING_WALLET} note="Growth, creators, promos." />
         </div>
-      </section>
-
-      {/* ===== This Week at the Campfire ===== */}
-      <section className="mx-auto max-w-6xl px-4 pb-14">
-        <h3 className="text-xl font-bold">This Week at the Campfire</h3>
-        <p className="mt-1 text-sm text-white/55">Activity in the last 7 days. Auto-updated from the live log.</p>
-
-        {/* (Optional) weekly stats — compute on client from burnsSorted if you wish */}
-        {/* You can keep this section, or remove if not needed right now */}
       </section>
 
       {/* ===== How it works ===== */}
@@ -407,6 +386,14 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
+function Pill({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/75 backdrop-blur">
+      {children}
+    </span>
+  );
+}
+
 function HowCard({ title, body }: { title: string; body: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 backdrop-blur">
@@ -440,7 +427,11 @@ function BurnCard({ burn, price }: { burn: Burn & { timestamp: number }; price: 
             )}
           </div>
         </div>
-        <Link href={burn.tx} target="_blank" className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline">
+        <Link
+          href={burn.tx}
+          target="_blank"
+          className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline"
+        >
           TX
         </Link>
       </div>
@@ -460,9 +451,7 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
   const timer = useRef<number | null>(null);
 
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(address);
-    } catch {}
+    try { await navigator.clipboard.writeText(address); } catch {}
     setCopied(true);
     if (timer.current) window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => setCopied(false), 1200);
