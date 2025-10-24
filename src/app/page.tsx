@@ -146,16 +146,32 @@ export default function Page() {
   useEffect(() => {
     let alive = true;
     fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
-      .then((r) => r.json())
-      .then((j: StateJson) => {
-        if (!alive) return;
-        const burns = (j.burns ?? [])
-          .map((b) => ({ ...b, timestamp: toMs(b.timestamp) }))
-          .filter((b) => Number.isFinite(b.timestamp as number));
-        setData({ ...j, burns });
-      })
-      .catch(() => {});
-    return () => { alive = false; };
+  .then(r => r.json())
+  .then((d) => {
+    if (!alive) return;
+
+    // 🧮 Convert schedule minutes → milliseconds
+    if (d.schedule) {
+      const burnMins = d.schedule.burnIntervalMinutes ?? 60;
+      const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
+
+      d.schedule.burnIntervalMs = burnMins * 60 * 1000;
+      d.schedule.buybackIntervalMs = buybackMins * 60 * 1000;
+
+      // Optional: auto-recalculate next timestamps if not set
+      const now = Date.now();
+      if (!d.schedule.nextBurnAt) d.schedule.nextBurnAt = now + burnMins * 60 * 1000;
+      if (!d.schedule.nextBuybackAt) d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
+    }
+
+    // 🔥 Process burn data as before
+    const burns = (d?.burns ?? [])
+      .map(b => ({ ...b, timestamp: toMs(b.timestamp) }))
+      .filter(b => Number.isFinite(b.timestamp as number));
+
+    setData({ ...d, burns });
+  })
+  .catch(() => (alive = false));
   }, []);
 
   // live SOL price (falls back to stats.priceUsdPerSol)
