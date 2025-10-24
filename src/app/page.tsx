@@ -540,7 +540,7 @@ useEffect(() => {
   </h3>
 
   <div className="mx-auto max-w-3xl rounded-2xl border border-white/10 
-                  bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur relative">
+                  bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur">
     <div className="flex flex-wrap items-center justify-between gap-3">
       <code
         className="font-mono text-[15px] text-white/85 bg-white/5 px-2 py-1 
@@ -574,9 +574,6 @@ useEffect(() => {
         </button>
       </div>
     </div>
-
-    {/* Soft amber underline glow — lowered for breathing room */}
-    <div className="absolute left-1/2 -bottom-[8px] -translate-x-1/2 w-[160px] h-[1.5px] bg-[#ffe48d]/20 blur-[2px]" />
   </div>
 </section>
 
