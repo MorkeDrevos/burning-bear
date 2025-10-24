@@ -303,12 +303,12 @@ export default function Page() {
   href="https://x.com/i/communities/1980944446871966021"
   target="_blank"
   rel="noopener noreferrer"
-  className="inline-flex items-center gap-2 text-sm font-semibold text-white/80
-             underline decoration-white/20 underline-offset-[6px]
-             hover:text-amber-100 hover:decoration-amber-300/50 transition-colors duration-200
-             focus:outline-none focus:ring-2 focus:ring-amber-300/25 rounded-sm"
+  className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5
+             text-sm font-medium text-white/80 backdrop-blur-sm transition-all duration-300
+             hover:border-amber-300/40 hover:bg-amber-300/15 hover:text-amber-100
+             focus:outline-none focus:ring-2 focus:ring-amber-300/30"
 >
-  <span className="text-[15px] leading-none">𝕏</span>
+  <span className="text-base leading-none">𝕏</span>
   <span>Community</span>
 </a>
   <MobileMenu />
