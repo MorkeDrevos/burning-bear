@@ -434,17 +434,17 @@ export default function Page() {
       </section>
 
       {/* ===== How It Works ===== */}
-      <section id="how" className="mx-auto max-w-6xl px-4 pt-14">
-        <h3 className="text-xl font-bold tracking-tight mb-3">How It Works</h3>
+      <section id="how" className="mx-auto max-w-6xl px-4 pt-16 scroll-mt-24">
+        <h3 className="text-xl font-bold tracking-tight mb-4">How It Works</h3>
 
-        <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px] mb-8">
+        <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px] mb-6 md:mb-8">
           Every spark — whether it’s a trade, a creator reward, or a network fee — feeds the
           <span className="text-[#ffe48d] font-semibold"> $BEAR</span> fire. These flames merge into the
           <span className="text-[#ffe48d] font-semibold"> Campfire Fund</span>, driving constant buybacks,
           burns, and creator support. The more the ecosystem moves, the hotter it burns. 🔥
         </p>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3 items-stretch">
           <Reveal delay={0}>
             <HowCard
               title="50% → Auto-Buy & Burn"
@@ -469,7 +469,7 @@ export default function Page() {
       </section>
 
       {/* ===== Campfire Wallets ===== */}
-      <section id="wallets" className="mx-auto max-w-6xl px-4 pt-14 pb-16">
+      <section id="wallets" className="mx-auto max-w-6xl px-4 pt-16 pb-16">
         <h3 className="text-xl font-bold tracking-tight">Campfire Wallets</h3>
         <p className="mt-1 text-sm text-white/55">The campfire burns in full view. Every wallet can be verified on Solana Explorer.</p>
 
@@ -569,7 +569,7 @@ function Pill({ children }: { children: React.ReactNode }) {
 
 function HowCard({ title, body }: { title: string; body: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_10px_24px_rgba(255,183,77,0.10)] hover:border-amber-300/25">
+    <div className="flex h-full flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_10px_24px_rgba(255,183,77,0.10)] hover:border-amber-300/25">
       <div className="text-lg font-semibold">{title}</div>
       <div className="mt-2 text-sm text-white/75">{body}</div>
     </div>
