@@ -593,20 +593,19 @@ useEffect(() => {
         View
       </a>
 
-      {/* Copy button (gold) */}
-      <button
-        onClick={handleCopy}
-        className={`rounded-[10px] px-3.5 py-1.5 text-sm font-semibold text-black transition
-          ${copied ? 'bg-[#ffedb3] ring-2 ring-amber-300/40' : 'bg-[#ffedb3] hover:bg-[#ffe48d]'}
-        `}
-      >
-        {copied ? 'Copied!' : 'Copy'}
-      </button>
-    </div>
-  </div>
-</section>
-  </div>
-</section>
+              {/* Copy button (gold) */}
+        <button
+          onClick={handleCopy}
+          className={`rounded-[10px] px-3.5 py-1.5 text-sm font-semibold text-black transition
+            ${copied
+              ? 'bg-[#ffedb3] ring-2 ring-amber-300/40'
+              : 'bg-[#ffedb3] hover:bg-[#ffe48d]'}`}
+        >
+          {copied ? 'Copied!' : 'Copy'}
+        </button>
+      </div> {/* actions row */}
+    </div>   {/* bordered panel */}
+  </section> {/* Contract Address */}
 
       {/* ===== Footer ===== */}
       <footer className="border-t border-white/10 bg-[#0d1a14] relative">
