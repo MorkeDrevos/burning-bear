@@ -534,41 +534,41 @@ useEffect(() => {
 </section>
 
 {/* ===== Contract Address ===== */}
-<section className="mx-auto max-w-6xl px-4 pb-12 text-center">
-  <h3 className="text-base font-semibold text-amber-200/80 mb-3">
+<section className="mx-auto max-w-6xl px-4 pb-10 text-center">
+  <h3 className="text-lg font-semibold text-white/90 mb-3">
     Contract Address
   </h3>
 
-  <div className="flex items-center justify-center gap-3">
-    <code
-      className="font-mono text-[15px] text-white/80 bg-white/[0.04]
-                 border border-white/10 rounded-full px-4 py-1.5
-                 backdrop-blur-sm"
-    >
+  <div className="mx-auto flex max-w-3xl items-center justify-between gap-3
+                  rounded-lg border border-white/10 bg-white/[0.03]
+                  px-4 py-3 backdrop-blur-sm shadow-[0_0_12px_rgba(255,184,76,0.12)]">
+    <code className="font-mono text-[15px] text-white/70 
+                    bg-white/[0.04] border border-white/10 rounded-full 
+                    px-3 py-1 backdrop-blur-sm">
       {truncateMiddle(FULL_TOKEN_ADDRESS, 8, 8)}
     </code>
 
-    <button
-      onClick={handleCopy}
-      className={`text-sm font-semibold px-3 py-1.5 rounded-full border transition
-        ${copied
-          ? 'bg-amber-300 text-black border-amber-300 shadow-[0_0_8px_rgba(255,200,100,0.5)]'
-          : 'bg-transparent border-white/15 text-amber-200 hover:bg-amber-300 hover:text-black hover:border-amber-300'
-        }`}
-    >
-      {copied ? 'Copied!' : 'Copy'}
-    </button>
-  </div>
+    <div className="flex items-center gap-2">
+      <a
+        href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-sm font-medium text-amber-300 hover:text-amber-200 transition"
+      >
+        View
+      </a>
 
-  <div className="mt-3 flex justify-center">
-    <a
-      href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-[13px] text-white/50 hover:text-amber-300 transition"
-    >
-      View on Solana Explorer ↗
-    </a>
+      <button
+        onClick={handleCopy}
+        className={`text-sm font-semibold px-3 py-1.5 rounded-md transition
+          ${copied
+            ? 'bg-amber-400 text-black shadow-[0_0_10px_rgba(255,184,76,0.6)]'
+            : 'bg-zinc-800/70 text-amber-300 hover:bg-amber-300 hover:text-black'
+          }`}
+      >
+        {copied ? 'Copied!' : 'Copy'}
+      </button>
+    </div>
   </div>
 </section>
 
