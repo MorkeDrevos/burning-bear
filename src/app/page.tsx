@@ -535,39 +535,41 @@ useEffect(() => {
 
 {/* ===== Contract Address ===== */}
 <section className="mx-auto max-w-6xl px-4 pb-10 text-center">
-  <h3 className="text-lg font-semibold text-white/90 mb-3">
+  <h3 className="text-lg font-semibold text-[#ffe48d] mb-4">
     Contract Address
   </h3>
 
-  <div className="mx-auto flex max-w-3xl items-center justify-between gap-3
-                  rounded-lg border border-white/10 bg-white/[0.03]
-                  px-4 py-3 backdrop-blur-sm shadow-[0_0_12px_rgba(255,184,76,0.12)]">
-    <code className="font-mono text-[15px] text-white/70 
-                    bg-white/[0.04] border border-white/10 rounded-full 
-                    px-3 py-1 backdrop-blur-sm">
-      {truncateMiddle(FULL_TOKEN_ADDRESS, 8, 8)}
-    </code>
+  <div className="mx-auto max-w-3xl rounded-2xl border border-white/10 
+                  bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <code className="truncate font-mono text-[15px] text-white/85 
+                      bg-white/5 px-2 py-1 rounded-md flex-1 text-left">
+        {truncateMiddle(FULL_TOKEN_ADDRESS, 8, 8)}
+      </code>
 
-    <div className="flex items-center gap-2">
-      <a
-        href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-sm font-medium text-amber-300 hover:text-amber-200 transition"
-      >
-        View
-      </a>
+      <div className="flex items-center gap-2">
+        <a
+          href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-md border border-white/15 bg-white/5 
+                     px-3 py-1 text-sm md:text-base text-white/85 
+                     hover:bg-white/10 transition"
+        >
+          View
+        </a>
 
-      <button
-        onClick={handleCopy}
-        className={`text-sm font-semibold px-3 py-1.5 rounded-md transition
-          ${copied
-            ? 'bg-amber-400 text-black shadow-[0_0_10px_rgba(255,184,76,0.6)]'
-            : 'bg-zinc-800/70 text-amber-300 hover:bg-amber-300 hover:text-black'
-          }`}
-      >
-        {copied ? 'Copied!' : 'Copy'}
-      </button>
+        <button
+          onClick={handleCopy}
+          className={`rounded-md px-3 py-1 text-sm md:text-base font-semibold transition
+            ${copied
+              ? 'bg-amber-400 text-black shadow-[0_0_10px_rgba(255,184,76,0.6)]'
+              : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'
+            }`}
+        >
+          {copied ? 'Copied!' : 'Copy'}
+        </button>
+      </div>
     </div>
   </div>
 </section>
