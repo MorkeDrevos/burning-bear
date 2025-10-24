@@ -303,13 +303,22 @@ export default function Page() {
   href="https://x.com/i/communities/1980944446871966021"
   target="_blank"
   rel="noopener noreferrer"
-  className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5
-             text-sm font-medium text-white/80 backdrop-blur-sm transition-all duration-300
-             hover:border-amber-300/40 hover:bg-amber-300/15 hover:text-amber-100
-             focus:outline-none focus:ring-2 focus:ring-amber-300/30"
+  className="group inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-1.5
+             text-sm font-medium text-white/85 backdrop-blur-md transition-all duration-300
+             hover:border-amber-300/40 hover:bg-white/10 hover:text-amber-100
+             focus:outline-none focus:ring-2 focus:ring-amber-300/25"
 >
-  <span className="text-base leading-none">𝕏</span>
+  <span className="inline-grid place-items-center h-5 w-5 rounded-full border border-white/15
+                   bg-white/5 text-[12px] leading-none text-white/80
+                   transition-colors duration-300 group-hover:border-amber-300/40 group-hover:text-amber-100">
+    𝕏
+  </span>
   <span>Community</span>
+  <svg viewBox="0 0 20 20" className="ml-0.5 h-3.5 w-3.5 opacity-0 -translate-x-1
+                                      transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0"
+       fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M7 4l6 6-6 6M12 10H4" />
+  </svg>
 </a>
   <MobileMenu />
 </div>
