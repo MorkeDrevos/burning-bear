@@ -541,10 +541,10 @@ useEffect(() => {
   {/* Bear image */}
   <div className="relative mx-auto mb-10 w-[220px] md:w-[280px]">
     <img
-      src="/img/burning-bear.png"
-      alt="The Burning Bear"
-      className="w-full h-auto mx-auto drop-shadow-[0_0_40px_rgba(255,140,0,0.3)] rounded-xl"
-    />
+  src="/img/burning-bear.png"
+  alt="The Burning Bear"
+  className="w-full h-auto mx-auto drop-shadow-[0_0_40px_rgba(255,140,0,0.3)] rounded-xl bear-breathe"
+/>
     {/* Gentle animated glow behind him */}
     <div className="absolute inset-0 rounded-xl bg-amber-500/10 blur-[60px] animate-pulse" />
   </div>
