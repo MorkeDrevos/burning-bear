@@ -331,7 +331,7 @@ export default function Page() {
           >
             <source src="/img/burning-bear.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-x-0 top-0 bottom-[120px] bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
         </div>
 
         <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
@@ -367,7 +367,7 @@ export default function Page() {
       {/* ===== Live Burn Log — single horizontal scroll line ===== */}
       <section
   id="log"
-  className="w-full px-4 sm:px-6 lg:px-8 mt-16 scroll-mt-24 md:scroll-mt-28"
+  className="w-full px-4 sm:px-6 lg:px-8 mt-6 scroll-mt-24 md:scroll-mt-28"
 >
         <div className="flex items-baseline justify-between max-w-7xl mx-auto">
           <h2 className="text-2xl font-bold">Live Burn Log</h2>
