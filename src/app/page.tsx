@@ -529,6 +529,8 @@ useEffect(() => {
   </div>
 </section>
 
+<Divider />
+
 {/* ===== Meet the Burning Bear ===== */}
 <section
   id="bear"
@@ -559,18 +561,18 @@ useEffect(() => {
   <div className="mx-auto max-w-3xl text-white/80 leading-relaxed text-lg space-y-5">
     <p>
       Long before the campfire roared across Solana, a quiet bear walked the forests of forgotten
-      chains — collecting embers from every spark of belief.  He wasn’t the kind that sleeps through
+      chains, collecting embers from every spark of belief. He wasn’t the kind that sleeps through
       winters. He was the kind that builds warmth for everyone who dares to dream.
     </p>
     <p>
-      When markets turned cold and others ran, he stayed — feeding the flame, reminding us that even
+      When markets turned cold and others ran, he stayed, feeding the flame, reminding us that even
       in a bearish world, the fire can rise. Each burn he makes is a heartbeat of the community: a
-      symbol of resilience, humor, and transparency.
+      symbol of resilience, humor and transparency.
     </p>
-    <p className="text-amber-200 font-semibold">
-      The Burning Bear isn’t here to watch the forest burn — he’s here to light the way.
-      Every spark counts. Every burn means something. 🔥
-    </p>
+    <p className="text-amber-200 font-semibold mt-6 leading-relaxed">
+      The Burning Bear doesn’t burn alone, he’s here to keep the fire alive for everyone who believes.<br />
+  <span className="text-amber-100/90">Every spark counts. Every burn means something. 🔥</span>
+</p>
   </div>
 
   {/* Ember glow base */}
