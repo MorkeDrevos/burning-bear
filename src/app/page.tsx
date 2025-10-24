@@ -864,21 +864,41 @@ function StatBig({ label, value }: { label: string; value: string }) {
 
 function MobileMenu() {
   const [open, setOpen] = React.useState(false);
+
   return (
     <div className="md:hidden">
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(v => !v)}
         aria-label="Menu"
         className="ml-1 rounded-full border border-white/15 bg-white/5 px-3 py-2 text-white/80"
       >
         ☰
       </button>
+
       {open && (
         <div className="absolute left-0 right-0 top-full z-40 border-b border-white/10 bg-[#0d1a14]/95 backdrop-blur">
           <div className="mx-auto max-w-6xl px-4 py-3 flex flex-col gap-2 text-[15px] font-semibold">
-            <a href="#how" className="py-2 text-[#ffe48d]" onClick={() => setOpen(false)}>How It Works</a>
-            <a href="#log" className="py-2 text-[#ffe48d]" onClick={() => setOpen(false)}>Live Burns</a>
-            <a href="#wallets" className="py-2 text-[#ffe48d]" onClick={() => setOpen(false)}>Campfire Wallets</a>
+            <a
+              href="#how"
+              className="py-2 text-[#ffe48d]"
+              onClick={() => setOpen(false)}
+            >
+              How It Works
+            </a>
+            <a
+              href="#log"
+              className="py-2 text-[#ffe48d]"
+              onClick={() => setOpen(false)}
+            >
+              Live Burns
+            </a>
+            <a
+              href="#wallets"
+              className="py-2 text-[#ffe48d]"
+              onClick={() => setOpen(false)}
+            >
+              Campfire Wallets
+            </a>
           </div>
         </div>
       )}
