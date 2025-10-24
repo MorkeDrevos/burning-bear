@@ -38,3 +38,7 @@
   animation: emberShimmer 9s linear infinite;
   filter: drop-shadow(0 0 5px rgba(251,191,36,0.18));
 }
+
+html {
+  scroll-behavior: smooth;
+}
