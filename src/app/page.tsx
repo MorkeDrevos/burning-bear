@@ -446,26 +446,18 @@ export default function Page() {
       </section>
 
       {/* ===== How It Works ===== */}
-<section
-  id="how"
-  className="relative mx-auto max-w-6xl px-4 py-16 border-t border-white/10"
->
-  {/* Divider Glow */}
-  <div className="absolute -top-px left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-400/30 to-transparent"></div>
-
+<section id="how" className="mx-auto max-w-6xl px-4 py-16">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">How It Works</h3>
   <p className="text-white/70 max-w-3xl">
-    Every spark fuels the fire. Whether it’s a trade, a creator reward, or a
-    network fee — every move feeds the{' '}
-    <span className="text-amber-300 font-semibold">$BBURN Campfire Fund</span>,
-    powering constant buybacks, burns, and community rewards. The more the
-    ecosystem moves, the hotter the fire burns. 🔥
+    Every spark fuels the fire. Whether it’s a trade, a creator reward, or a network fee — every move
+    feeds the <span className="text-amber-300 font-semibold">$BBURN Campfire Fund</span>, powering constant
+    buybacks, burns, and community rewards. The more the ecosystem moves, the hotter the fire burns. 🔥
   </p>
 
   <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
     <HowCard
       title="50% → Auto-Buy & Burn"
-      body="Half of every fee automatically buys $BBURN and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps."
+      body="Half of every fee automatically buys $BBURN and sends it to the burn wallet — shrinking supply with every move."
     />
     <HowCard
       title="30% → Treasury & Buybacks"
@@ -478,66 +470,38 @@ export default function Page() {
   </div>
 </section>
 
-{/* ===== This Week at the Campfire ===== */}
-<section
-  id="week"
-  className="relative mx-auto max-w-6xl px-4 py-16 border-t border-white/10"
->
-  {/* Divider Glow */}
-  <div className="absolute -top-px left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-400/30 to-transparent"></div>
+<Divider />
 
-  <h3 className="text-2xl font-bold text-amber-300 mb-4">
-    This Week at the Campfire
-  </h3>
-  <p className="text-white/60">
-    Activity in the last 7 days. Auto-updated from the live log.
-  </p>
+{/* ===== This Week at the Campfire ===== */}
+<section id="week" className="mx-auto max-w-6xl px-4 py-16">
+  <h3 className="text-2xl font-bold text-amber-300 mb-4">This Week at the Campfire</h3>
+  <p className="text-white/60">Activity in the last 7 days. Auto-updated from the live logs.</p>
 
   <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
     <StatBig label="Burns" value={fmtInt(weekStats.count)} />
     <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
     <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
-    <StatBig label="Largest Burn (BEAR)" value={fmtInt(weekStats.largest)} />
+    <StatBig label="Largest Burn (BBURN)" value={fmtInt(weekStats.largest)} />
   </div>
 
   <div className="mt-4">
-    <Pill>
-      Avg per burn:{' '}
-      {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}
-    </Pill>
+    <Pill>Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}</Pill>
   </div>
 </section>
 
-{/* ===== Campfire Wallets ===== */}
-<section
-  id="wallets"
-  className="relative mx-auto max-w-6xl px-4 py-16 border-t border-white/10"
->
-  {/* Divider Glow */}
-  <div className="absolute -top-px left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-400/30 to-transparent"></div>
+<Divider />
 
+{/* ===== Campfire Wallets ===== */}
+<section id="wallets" className="mx-auto max-w-6xl px-4 py-16">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">Campfire Wallets</h3>
   <p className="text-white/60">
-    The campfire burns in full view. Every wallet can be verified on Solana
-    Explorer.
+    The campfire burns in full view. Every wallet can be verified on Solana Explorer.
   </p>
 
   <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
-    <WalletCard
-      title="Burn Wallet"
-      address={BURN_WALLET}
-      note="Destroyed supply lives here forever."
-    />
-    <WalletCard
-      title="Treasury & Buybacks"
-      address={TREASURY_WALLET}
-      note="Funds for buybacks and operations."
-    />
-    <WalletCard
-      title="Team & Marketing"
-      address={MARKETING_WALLET}
-      note="Growth, creators, and promotions."
-    />
+    <WalletCard title="Burn Wallet" address={BURN_WALLET} note="Destroyed supply lives here forever." />
+    <WalletCard title="Treasury & Buybacks" address={TREASURY_WALLET} note="Funds for buybacks and operations." />
+    <WalletCard title="Team & Marketing" address={MARKETING_WALLET} note="Growth, creators, promos." />
   </div>
 </section>
 
