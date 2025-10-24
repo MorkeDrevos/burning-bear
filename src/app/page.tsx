@@ -381,18 +381,20 @@ export default function Page() {
                   <div className="flex items-start justify-between">
   <div className="flex items-center gap-3">
     <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-900/40">
-      {/* dark ember icon */}
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6" fill="url(#flameDark)">
-        <defs>
-          <linearGradient id="flameDark" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#ffb347" />
-            <stop offset="50%" stopColor="#ff6a00" />
-            <stop offset="100%" stopColor="#b34700" />
-          </linearGradient>
-        </defs>
-        <path d="M12 2c2 2 3 4 3 6 0 1.5-.7 2.8-1.5 3.5 1.2-.4 2.4-1.5 3-3 1 3-1 8-4.5 9.5S6 15 7 10.5C8 6 12 2 12 2z"/>
-      </svg>
-    </span>
+  {/* replace the inside with the SVG below */}
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+       className="h-6 w-6 glow flicker">
+    <defs>
+      <linearGradient id="flameGrad" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%"   stopColor="#ffb347" />
+        <stop offset="55%"  stopColor="#ff6a00" />
+        <stop offset="100%" stopColor="#c95500" />
+      </linearGradient>
+    </defs>
+    <path fill="url(#flameGrad)"
+          d="M12 2c2 2 3 4 3 6 0 1.6-.8 3-1.7 3.7 1.1-.3 2.4-1.3 3-2.9 .9 2.8-.8 7.7-4.3 9-3.9 1.4-6.8-2-5.8-6.4C7.2 6.3 10.6 3 12 2z"/>
+  </svg>
+</span>
 
     <div>
       <div className="text-lg font-bold">
@@ -451,39 +453,40 @@ export default function Page() {
         </h3>
 
         {/* Emphasized first sentence + highlighted fund name */}
-        <p className="text-white/80 max-w-3xl leading-relaxed text-[16px] md:text-[17px] mb-6 md:mb-8">
+<p className="text-white/80 max-w-3xl leading-relaxed text-[16px] md:text-[17px] mb-6 md:mb-8">
   <span className="font-semibold text-[#ffe48d]">Every spark fuels the fire.</span>{' '}
   Whether it’s a trade, a creator reward, or a network fee — every move feeds the{' '}
-  <span className="text-[#ffe48d] font-semibold"> $BEAR Campfire Fund</span>, powering constant buybacks,
-  burns, and community rewards. The more the ecosystem moves, the hotter the fire burns.{' '}
-  <span className="inline-grid h-6 w-6 align-[-2px] place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-700/40 shadow-[0_0_10px_rgba(255,120,40,0.2)] animate-glow">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="url(#flameDark)" className="h-4 w-4">
-    <defs>
-      <linearGradient id="flameDark" x1="0" x2="0" y1="0" y2="1">
-        <stop offset="0%" stopColor="#ffb347" />
-        <stop offset="50%" stopColor="#ff6a00" />
-        <stop offset="100%" stopColor="#b34700" />
-      </linearGradient>
-    </defs>
-    <path d="M12 2c2 2 3 4 3 6 0 1.5-.7 2.8-1.5 3.5 1.2-.4 2.4-1.5 3-3 1 3-1 8-4.5 9.5S6 15 7 10.5C8 6 12 2 12 2z"/>
-  </svg>
-</span>
+  <span className="text-[#ffe48d] font-semibold">$BEAR Campfire Fund</span>, powering constant buybacks,
+  burns, and community rewards. The more the ecosystem moves, the hotter the fire burns. 🔥
 </p>
 
 <style jsx>{`
-  @keyframes emberGlow {
+  /* Slow warm pulse + tiny flicker */
+  @keyframes emberPulse {
     0%, 100% {
-      filter: drop-shadow(0 0 4px rgba(255,140,50,0.2));
-      transform: scale(1);
+      filter: drop-shadow(0 0 4px rgba(255,145,60,0.18));
+      transform: translateY(0) scale(1);
     }
     50% {
-      filter: drop-shadow(0 0 10px rgba(255,140,60,0.4));
-      transform: scale(1.04);
+      filter: drop-shadow(0 0 14px rgba(255,170,75,0.45));
+      transform: translateY(-0.5px) scale(1.05);
     }
   }
-  .animate-glow {
-    animation: emberGlow 3.2s ease-in-out infinite;
-    will-change: transform, filter;
+
+  @keyframes emberFlicker {
+    0%, 18%, 22%, 38%, 39%, 57%, 58%, 100% { opacity: 1; }
+    20% { opacity: .92; }
+    21% { opacity: 1; }
+    37% { opacity: .96; }
+    56% { opacity: .94; }
+  }
+
+  .glow { animation: emberPulse 3.8s ease-in-out infinite; will-change: transform, filter; }
+  .flicker { animation: emberFlicker 2.3s linear infinite; will-change: opacity; }
+
+  /* Respect reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .glow, .flicker { animation: none; }
   }
 `}</style>
 
@@ -595,7 +598,7 @@ export default function Page() {
 
           <div className="text-xs text-white/40 pt-2">
             <p>© {new Date().getFullYear()} The Burning Bear · Built for fun, not financial advice.</p>
-            <p>Stay warm, stay transparent, and keep the fire burning. 🔥</p>
+            <p>Stay warm, stay transparent, and keep the fire burning. </p>
           </div>
         </div>
       </footer>
