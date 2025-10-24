@@ -365,7 +365,10 @@ export default function Page() {
       </section>
 
       {/* ===== Live Burn Log — single horizontal scroll line ===== */}
-      <section id="log" className="w-full px-4 sm:px-6 lg:px-8 mt-6">
+      <section
+  id="log"
+  className="w-full px-4 sm:px-6 lg:px-8 mt-6 scroll-mt-24 md:scroll-mt-28"
+>
         <div className="flex items-baseline justify-between max-w-7xl mx-auto">
           <h2 className="text-2xl font-bold">Live Burn Log</h2>
           <p className="text-sm text-white/50">TX links open explorer.</p>
@@ -434,7 +437,7 @@ export default function Page() {
       </section>
 
       {/* ===== How It Works ===== */}
-      <section id="how" className="mx-auto max-w-6xl px-4 pt-16 scroll-mt-24">
+      <section id="how" className="mx-auto max-w-6xl px-4 pt-16 scroll-mt-24 md:scroll-mt-28">
         <h3 className="text-xl font-bold tracking-tight mb-4">How It Works</h3>
 
         <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px] mb-6 md:mb-8">
@@ -469,7 +472,7 @@ export default function Page() {
       </section>
 
       {/* ===== Campfire Wallets ===== */}
-      <section id="wallets" className="mx-auto max-w-6xl px-4 pt-16 pb-16">
+      <section id="wallets" className="mx-auto max-w-6xl px-4 pt-16 pb-16 scroll-mt-24 md:scroll-mt-28">
         <h3 className="text-xl font-bold tracking-tight">Campfire Wallets</h3>
         <p className="mt-1 text-sm text-white/55">The campfire burns in full view. Every wallet can be verified on Solana Explorer.</p>
 
