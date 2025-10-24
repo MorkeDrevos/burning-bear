@@ -511,8 +511,8 @@ export default function Page() {
       {/* ===== Contract Address (footer placement) ===== */}
 <section id="ca" className="mx-auto max-w-6xl px-4 mt-8 mb-10">
   <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/80 backdrop-blur px-4 py-4 md:px-6 md:py-5 text-center">
-    <div className="text-[15px] uppercase tracking-[0.25em] text-white/55 mb-2">Contract Address</div>
-    <code className="block text-[13px] md:text-[13.5px] text-white/85 mb-3 break-all">
+    <div className="text-[14px] uppercase tracking-[0.25em] text-white/55 mb-2">Contract Address</div>
+    <code className="block text-[14px] md:text-[13.5px] text-white/85 mb-3 break-all">
       {FULL_TOKEN_ADDRESS}
     </code>
     <div className="flex justify-center gap-2">
