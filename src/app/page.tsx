@@ -532,14 +532,16 @@ useEffect(() => {
 {/* ===== Meet the Burning Bear ===== */}
 <section
   id="bear"
-  className="relative mx-auto max-w-6xl px-4 py-20 text-center scroll-mt-28 md:scroll-mt-32"
+  className="relative w-full overflow-hidden py-24 text-center"
 >
-  {/* Subtle dark gradient backdrop */}
+  {/* full-screen dark gradient backdrop */}
   <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0d1a14] via-[#141f1a] to-[#0d1a14]" />
-  <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-amber-500/5 to-transparent blur-[60px]" />
 
-  {/* Bear image */}
-  <div className="relative mx-auto mb-10 w-[220px] md:w-[280px]">
+  {/* subtle campfire glow at bottom */}
+  <div className="absolute inset-x-0 bottom-0 h-[40vh] bg-gradient-to-t from-amber-600/10 via-amber-400/5 to-transparent blur-[80px]" />
+
+  <div className="relative mx-auto max-w-5xl px-6">
+    {/* Bear image + text inside */}
     <img
   src="/img/burning-bear.png"
   alt="The Burning Bear"
