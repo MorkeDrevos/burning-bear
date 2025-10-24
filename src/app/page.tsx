@@ -634,6 +634,19 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
   );
 }
 
+function Divider() {
+  return (
+    <div className="my-16 relative">
+      {/* subtle base line */}
+      <div className="h-px w-full bg-white/10"></div>
+      {/* animated ember glow overlay */}
+      <div className="pointer-events-none absolute inset-0 flex">
+        <div className="h-px w-full ember-divider" />
+      </div>
+    </div>
+  );
+}
+
 function StatBig({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-6 backdrop-blur">
