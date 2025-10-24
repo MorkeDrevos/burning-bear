@@ -566,9 +566,8 @@ useEffect(() => {
     <WalletCard
   title="Treasury & Buybacks"
   address={TREASURY_WALLET}
-  note="Funds for buybacks, growth, and community initiatives. Every transaction strengthens liquidity and stability."
+  note="Funds for buybacks and operations."
 />
-<WalletCard title="Treasury & Buybacks" address={TREASURY_WALLET} note="Funds for buybacks and operations." />
     <WalletCard
   title="Team & Marketing"
   address={MARKETING_WALLET}
