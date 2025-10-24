@@ -509,7 +509,7 @@ useEffect(() => {
     <StatBig label="Burns" value={fmtInt(weekStats.count)} />
     <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
     <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
-    <StatBig label="Largest Burn (BEAR)" value={fmtInt(weekStats.largest)} />
+    <StatBig label="Largest Burn (BBURN)" value={fmtInt(weekStats.largest)} />
   </div>
 
   <div className="mt-4">
@@ -575,8 +575,8 @@ useEffect(() => {
       </div>
     </div>
 
-    {/* Subtle amber underline glow */}
-    <div className="absolute left-1/2 -bottom-[2px] -translate-x-1/2 w-[140px] h-[1px] bg-[#ffe48d]/20 blur-[1.5px]" />
+    {/* Soft amber underline glow — lowered for breathing room */}
+    <div className="absolute left-1/2 -bottom-[8px] -translate-x-1/2 w-[160px] h-[1.5px] bg-[#ffe48d]/20 blur-[2px]" />
   </div>
 </section>
 
