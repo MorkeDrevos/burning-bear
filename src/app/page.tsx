@@ -529,8 +529,6 @@ useEffect(() => {
   </div>
 </section>
 
-<Divider />
-
 {/* ===== Meet the Burning Bear ===== */}
 <section
   id="bear"
@@ -570,8 +568,7 @@ useEffect(() => {
       symbol of resilience, humor and transparency.
     </p>
     <p className="text-amber-200 font-semibold mt-6 leading-relaxed">
-      The Burning Bear doesn’t burn alone, he’s here to keep the fire alive for everyone who believes.<br />
-  <span className="text-amber-100/90">Every spark counts. Every burn means something. 🔥</span>
+  <span className="text-amber-100/90">The Burning Bear doesn’t burn alone, he’s here to keep the fire alive for everyone who believes. Every spark counts. Every burn means something. 🔥</span>
 </p>
   </div>
 
