@@ -379,46 +379,57 @@ export default function Page() {
                 {/* Burn card (NO hover effects) */}
                 <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)]">
                   <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-900/40">
+  <div className="flex items-center gap-3">
+    <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-900/40">
+      {/* dark ember icon */}
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6" fill="url(#flameDark)">
+        <defs>
+          <linearGradient id="flameDark" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor="#ffb347" />
+            <stop offset="50%" stopColor="#ff6a00" />
+            <stop offset="100%" stopColor="#b34700" />
+          </linearGradient>
+        </defs>
+        <path d="M12 2c2 2 3 4 3 6 0 1.5-.7 2.8-1.5 3.5 1.2-.4 2.4-1.5 3-3 1 3-1 8-4.5 9.5S6 15 7 10.5C8 6 12 2 12 2z"/>
+      </svg>
+    </span>
 
-                      <div>
-                        <div className="text-lg font-bold">
-                          Burn • {b.amount.toLocaleString()} BEAR
-                        </div>
-                        <div className="text-sm text-white/60">
-                          {new Date(b.timestamp).toLocaleString('en-US', {
-                            weekday: 'short',
-                            month: 'short',
-                            day: '2-digit',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: true,
-                          })}
-                        </div>
-{b.sol !== undefined && (
-  <div className="text-sm text-white/70">
-    ≈ {b.sol.toFixed(4)} SOL (
-    {(b.sol * priceUsdPerSol).toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    })}
-    )
+    <div>
+      <div className="text-lg font-bold">
+        Burn • {b.amount.toLocaleString()} BEAR
+      </div>
+      <div className="text-sm text-white/60">
+        {new Date(b.timestamp).toLocaleString('en-US', {
+          weekday: 'short',
+          month: 'short',
+          day: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+        })}
+      </div>
+
+      {b.sol !== undefined && (
+        <div className="text-sm text-white/70">
+          ≈ {b.sol.toFixed(4)} SOL (
+          {(b.sol * priceUsdPerSol).toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+          })}
+          )
+        </div>
+      )}
+    </div>
   </div>
-)}  {/* ✅ only ONE closing parenthesis here */}
 
-</div>
-</div>
-
-<Link
-  href={b.tx}
-  target="_blank"
-  className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline"
->
-  TX
-</Link>
-
+  <Link
+    href={b.tx}
+    target="_blank"
+    className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline"
+  >
+    TX
+  </Link>
 </div>
 
                   <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
