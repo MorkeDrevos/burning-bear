@@ -358,7 +358,7 @@ useEffect(() => {
         <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
           <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6">
             <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
-  Meet The Burning Bear $BBURN - the classiest
+  Meet The Burning Bear - the classiest
   <span className="block">arsonist in crypto.</span>
 </h1>
             {/* Countdowns */}
@@ -424,7 +424,7 @@ useEffect(() => {
         className="w-full px-4 sm:px-6 lg:px-8 mt-6 scroll-mt-24 md:scroll-mt-28"
       >
         <div className="flex items-baseline justify-between max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold">Live Burn Log</h2>
+          <h2 className="text-2xl font-bold">Live Burn Log 🔥</h2>
           <p className="text-sm text-white/50">TX links open explorer.</p>
         </div>
 
