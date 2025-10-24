@@ -531,6 +531,83 @@ useEffect(() => {
 
 <Divider />
 
+{/* ===== Meet The Burning Bear (story) ===== */}
+<section id="meet-bear" className="relative mx-auto max-w-5xl px-4 py-14 md:py-18">
+  {/* backdrop + soft glow */}
+  <div className="pointer-events-none absolute inset-0 -z-10">
+    <div className="absolute inset-0 rounded-3xl bg-gradient-to-b from-transparent via-[#0e1914]/70 to-[#0e1914]" />
+    <div className="absolute left-1/2 top-0 h-[420px] w-[680px] -translate-x-1/2 rounded-full
+                    bg-[radial-gradient(ellipse_at_center,_rgba(255,200,95,0.14),_rgba(0,0,0,0)_60%)]
+                    blur-2xl" />
+  </div>
+
+  {/* title */}
+  <div className="text-center">
+    <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight text-[#ffe48d]">
+      Meet The Burning Bear
+    </h3>
+
+    {/* faint campfire flicker under title */}
+    <div className="mx-auto mt-3 h-[6px] w-36 overflow-hidden rounded-full bg-white/5">
+      <span className="ember-flicker block h-full w-full" />
+    </div>
+  </div>
+
+  {/* story */}
+  <div className="mx-auto mt-6 max-w-3xl text-center text-[15.5px] leading-7 text-white/80 md:text-[16px] md:leading-8">
+    <p>
+      In a world that fears the bear, ours chose fire over hibernation. He is not the symbol of a cold market;
+      he is the spark that never dies.
+    </p>
+    <p className="mt-4">
+      Born from ashes and built on faith, <span className="text-amber-300 font-semibold">The Burning Bear</span> burns not to
+      destroy, but to renew and make every ember count. Every token he takes is a promise kept, every flame a story
+      of trust, transparency, and defiance.
+    </p>
+    <p className="mt-4">
+      He does not chase hype. He feeds the fire slowly and steadily with warmth that lasts. While others run from
+      the bear, we gather around him.
+    </p>
+    <p className="mt-6 text-white/85 font-semibold">
+      🔥 The Burning Bear. Not every bear means winter.
+    </p>
+  </div>
+
+  {/* tiny ember specks */}
+  <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 mx-auto h-24 w-[70%] opacity-50">
+    <div className="ember-specks h-full w-full" />
+  </div>
+
+  {/* local styles for flicker + specks */}
+  <style jsx>{`
+    @keyframes flicker {
+      0%, 100% { opacity: .55; transform: translateX(-2%) }
+      50%      { opacity: .85; transform: translateX(2%) }
+    }
+    .ember-flicker {
+      background: linear-gradient(90deg, rgba(255,214,120,.25), rgba(255,184,76,.55), rgba(255,214,120,.25));
+      box-shadow: 0 0 14px rgba(255,184,76,.25), inset 0 0 10px rgba(255,184,76,.2);
+      animation: flicker 2.6s ease-in-out infinite;
+    }
+
+    /* soft moving ember specks */
+    @keyframes drift {
+      0%   { background-position: 0 0, 0 0; opacity: .18; }
+      50%  { background-position: 30px -20px, -25px 10px; opacity: .32; }
+      100% { background-position: 0 0, 0 0; opacity: .18; }
+    }
+    .ember-specks {
+      background:
+        radial-gradient(2px 2px at 20% 60%, rgba(255,184,76,.35) 0, rgba(255,184,76,0) 60%),
+        radial-gradient(2px 2px at 70% 30%, rgba(255,214,120,.25) 0, rgba(255,214,120,0) 60%);
+      animation: drift 6s ease-in-out infinite;
+      filter: blur(.2px);
+    }
+  `}</style>
+</section>
+
+<Divider />
+
 {/* ===== This Week at the Campfire ===== */}
 <section id="week" className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">This Week at the Campfire</h3>
