@@ -385,7 +385,7 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* Smart Copy CA button with refined gold tone */}
+      {/* Smart Copy CA button with $BBURN and refined gold tone */}
 <div className="mt-6 flex justify-center">
   <button
     onClick={handleCopy}
@@ -406,10 +406,12 @@ useEffect(() => {
       <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
     </svg>
 
+    {/* Token and Address */}
     <span className="font-mono text-[13px] text-white/70 tracking-tight">
-      {FULL_TOKEN_ADDRESS.slice(0, 6)}…{FULL_TOKEN_ADDRESS.slice(-6)}
+      $BBURN • {FULL_TOKEN_ADDRESS.slice(0, 6)}…{FULL_TOKEN_ADDRESS.slice(-6)}
     </span>
 
+    {/* Copy state */}
     <span className="text-[13px] font-semibold text-[#e7b65a] group-hover:text-[#f4d27d] transition">
       {copied ? 'Copied!' : 'Copy CA'}
     </span>
