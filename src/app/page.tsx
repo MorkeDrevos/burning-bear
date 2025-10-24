@@ -446,7 +446,7 @@ export default function Page() {
       </section>
 
       {/* ===== How It Works ===== */}
-<section id="how" className="mx-auto max-w-6xl px-4 py-10">
+<section id="how" className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">How It Works</h3>
   <p className="text-white/70 max-w-3xl">
     Every spark fuels the fire. Whether it’s a trade, a creator reward, or a network fee — every move
@@ -473,7 +473,7 @@ export default function Page() {
 <Divider />
 
 {/* ===== This Week at the Campfire ===== */}
-<section id="week" className="mx-auto max-w-6xl px-4 py-10">
+<section id="week" className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">This Week at the Campfire</h3>
   <p className="text-white/60">Activity in the last 7 days. Auto-updated from the live logs.</p>
 
@@ -492,7 +492,7 @@ export default function Page() {
 <Divider />
 
 {/* ===== Campfire Wallets ===== */}
-<section id="wallets" className="mx-auto max-w-6xl px-4 py-10">
+<section id="wallets" className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">Campfire Wallets</h3>
   <p className="text-white/60">
     The campfire burns in full view. Every wallet can be verified on Solana Explorer.
