@@ -652,24 +652,6 @@ function Divider() {
   );
 }
 
-function FooterDivider() {
-  return (
-    <div className="relative mt-8 mb-4">
-      {/* deeper top glow */}
-      <div className="absolute -top-[10px] left-0 w-full h-[10px] bg-gradient-to-b from-amber-400/25 to-transparent blur-md" />
-
-      {/* subtle bottom haze */}
-      <div className="absolute -bottom-[4px] left-0 w-full h-[4px] bg-gradient-to-t from-amber-400/10 to-transparent blur-sm" />
-
-      {/* stronger ember core */}
-      <div className="relative h-[2.5px] w-full rounded-full overflow-hidden">
-        <div className="absolute inset-0 bg-amber-300/30 rounded-full" />
-        <div className="absolute inset-0 ember-divider opacity-90" />
-      </div>
-    </div>
-  );
-}
-
 function StatBig({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-6 backdrop-blur">
