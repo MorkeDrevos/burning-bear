@@ -637,8 +637,10 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
 function Divider() {
   return (
     <div className="relative mt-6 mb-3">
-      {/* soft gradient glow above & below */}
-      <div className="absolute -top-[6px] left-0 w-full h-[6px] bg-gradient-to-b from-amber-400/10 to-transparent blur-sm" />
+      {/* stronger top glow (like heat rising) */}
+      <div className="absolute -top-[8px] left-0 w-full h-[8px] bg-gradient-to-b from-amber-400/20 to-transparent blur-md" />
+      
+      {/* subtle bottom haze */}
       <div className="absolute -bottom-[6px] left-0 w-full h-[6px] bg-gradient-to-t from-amber-400/10 to-transparent blur-sm" />
 
       {/* core glowing ember line */}
