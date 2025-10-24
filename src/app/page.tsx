@@ -565,27 +565,35 @@ useEffect(() => {
 </section>
 
     {/* ===== Contract Address ===== */}
-<section className="mx-auto max-w-3xl rounded-2xl border border-white/[0.05] bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur-sm shadow-[0_0_12px_rgba(255,184,76,0.08)]">
-  <div className="flex items-center justify-between gap-3">
+<section className="mx-auto max-w-4xl px-4 pb-12 text-center">
+  <h3 className="text-lg font-semibold text-[#e7b65a] mb-3">Contract Address</h3>
+
+  <div
+    className="mx-auto flex max-w-3xl items-center justify-between gap-3
+               rounded-xl bg-[#0f1f19]/70 px-4 py-3
+               backdrop-blur-sm shadow-[0_0_12px_rgba(255,184,76,0.06)]
+               border border-white/[0.03]"
+  >
     <code
-      className="flex-1 rounded-md bg-white/[0.05] px-5 py-2 font-mono text-[15px] text-white/85 whitespace-nowrap overflow-x-auto scrollbar-none"
+      className="flex-1 font-mono text-[15px] text-white/85 text-left truncate"
       title={FULL_TOKEN_ADDRESS}
     >
       {FULL_TOKEN_ADDRESS}
     </code>
 
     <div className="flex items-center gap-2">
-      {/* View button — soft glass look */}
+      {/* View Button */}
       <a
         href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="rounded-md bg-white/[0.08] px-4 py-1.5 text-sm text-white/80 hover:bg-white/[0.12] transition"
+        className="rounded-md bg-[#1a1f1b]/70 px-4 py-1.5 text-sm text-white/80
+                   hover:bg-[#262c26]/70 transition"
       >
         View
       </a>
 
-      {/* Copy button — gold accent */}
+      {/* Copy Button */}
       <button
         onClick={handleCopy}
         className={`rounded-md px-4 py-1.5 text-sm font-semibold transition
