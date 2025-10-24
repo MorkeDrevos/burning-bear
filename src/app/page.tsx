@@ -566,7 +566,9 @@ useEffect(() => {
 
     {/* ===== Contract Address ===== */}
 <section className="mx-auto max-w-4xl px-4 pb-10 text-center">
-  <h3 className="text-lg font-semibold text-[#e7b65a] mb-3">Contract Address</h3>
+ <h3 className="text-center text-sm font-semibold text-white/90 tracking-wide mb-2">
+  Contract Address
+</h3>
 
   <div
     className="mx-auto flex max-w-3xl items-center justify-between gap-3
