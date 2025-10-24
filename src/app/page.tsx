@@ -445,7 +445,7 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ===== This Week at the Campfire ===== */}
+{/* ===== This Week at the Campfire ===== */}
 <section className="mx-auto max-w-6xl px-4 pb-14">
   <h3 className="text-xl font-bold">This Week at the Campfire</h3>
   <p className="mt-1 text-sm text-white/55">
@@ -703,6 +703,15 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function StatBig({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-6 backdrop-blur">
+      <div className="text-xs uppercase tracking-wider text-white/55">{label}</div>
+      <div className="mt-1 text-3xl font-extrabold">{value}</div>
     </div>
   );
 }
