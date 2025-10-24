@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 
-/* =========================
+/* ========================= 
    Config
 ========================= */
 const TOKEN_SYMBOL = '$BBURN';
