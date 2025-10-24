@@ -271,40 +271,50 @@ export default function Page() {
     <main id="top">
       {/* ===== Header ===== */}
       <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
-  <div className="mx-auto max-w-6xl px-4 md:px-6">
-    <div className="flex items-center justify-between py-3 md:py-4">
-      {/* left: logo/title */}
-      <Link href="#top" className="flex items-center gap-3 min-w-0">
-        {/* ... */}
-      </Link>
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
+          {/* Left: Logo + Title */}
+          <Link href="#top" className="flex items-center gap-3 md:gap-4 min-w-0">
+            <img
+              src="/img/coin-logo.png"
+              alt={TOKEN_NAME}
+              className="h-12 w-12 md:h-14 md:w-14 rounded-full shadow-lg border border-amber-300/30"
+            />
+            <div className="leading-tight min-w-0">
+              <div className="text-base md:text-xl font-extrabold text-amber-200 tracking-wide truncate">
+                {TOKEN_NAME}
+              </div>
+              <div className="text-[12px] md:text-sm text-white/55 truncate">
+                {TOKEN_SYMBOL} • Live Burn Camp 🔥
+              </div>
+            </div>
+          </Link>
 
-      {/* center: nav */}
-      <nav className="hidden md:flex items-center gap-8 text-sm font-semibold">
-        <a href="#how" className="text-[#ffe48d] hover:text-amber-300 transition">How It Works</a>
-        <a href="#log" className="text-[#ffe48d] hover:text-amber-300 transition">Live Burns</a>
-        <a href="#wallets" className="text-[#ffe48d] hover:text-amber-300 transition">Campfire Wallets</a>
-      </nav>
+          {/* Center: Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-8 text-[15px] font-semibold">
+            <a href="#how" className="text-[#ffe48d] hover:text-amber-300 transition">How It Works</a>
+            <a href="#log" className="text-[#ffe48d] hover:text-amber-300 transition">Live Burns</a>
+            <a href="#wallets" className="text-[#ffe48d] hover:text-amber-300 transition">Campfire Wallets</a>
+          </nav>
 
-      {/* right: actions (includes X Community) */}
-      <div className="flex items-center gap-3 shrink-0">
-        {/* your “X Community” pill (pick your preferred style) */}
-        <a
-          href="https://x.com/i/communities/1980944446871966021"
-          target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5
-                     px-4 py-1.5 text-sm font-medium text-white/85 backdrop-blur-md
-                     hover:border-amber-300/40 hover:bg-white/10 hover:text-amber-100
-                     transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-300/25"
-        >
-          <span className="inline-grid place-items-center h-5 w-5 rounded-full border border-white/15
-                           bg-white/5 text-[12px] leading-none text-white/80
-                           transition-colors duration-300">𝕏</span>
-          <span>Community</span>
-        </a>
-      </div>
-    </div>
-  </div>
-</header>
+          {/* Right: Copy CA + Mobile Menu */}
+<div className="flex items-center gap-2 md:gap-3">
+  {/* removed CA chip + Copy CA */}
+  <a
+  href="https://x.com/i/communities/1980944446871966021"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex items-center gap-2 text-sm font-semibold text-white/80
+             underline decoration-white/20 underline-offset-[6px]
+             hover:text-amber-100 hover:decoration-amber-300/50 transition-colors duration-200
+             focus:outline-none focus:ring-2 focus:ring-amber-300/25 rounded-sm"
+>
+  <span className="text-[15px] leading-none">𝕏</span>
+  <span>Community</span>
+</a>
+  <MobileMenu />
+</div>
+        </div>
+      </header>
 
       {/* ===== HERO with video + translucent text panel ===== */}
       <section className="relative">
