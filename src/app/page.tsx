@@ -303,24 +303,13 @@ export default function Page() {
   href="https://x.com/i/communities/1980944446871966021"
   target="_blank"
   rel="noopener noreferrer"
-  className="group inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-sm font-medium text-white/80
-             transition-all duration-300 hover:border-amber-400/40 hover:bg-amber-400/10 hover:text-amber-200
-             focus:outline-none focus:ring-2 focus:ring-amber-300/30 shadow-ember backdrop-blur-sm"
+  className="inline-flex items-center gap-2 text-sm font-semibold text-white/80
+             underline decoration-white/20 underline-offset-[6px]
+             hover:text-amber-100 hover:decoration-amber-300/50 transition-colors duration-200
+             focus:outline-none focus:ring-2 focus:ring-amber-300/25 rounded-sm"
 >
   <span className="text-[15px] leading-none">𝕏</span>
-  <span className="tracking-wide">Community</span>
-
-  <svg
-    viewBox="0 0 20 20"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="h-3.5 w-3.5 opacity-0 -translate-x-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0"
-  >
-    <path d="M7.5 4.5l6 5.5-6 5.5M12.5 10H3" />
-  </svg>
+  <span>Community</span>
 </a>
   <MobileMenu />
 </div>
