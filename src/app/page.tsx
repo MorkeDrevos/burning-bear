@@ -367,7 +367,7 @@ export default function Page() {
       {/* ===== Live Burn Log — single horizontal scroll line ===== */}
       <section
   id="log"
-  className="w-full px-4 sm:px-6 lg:px-8 mt-6 scroll-mt-24 md:scroll-mt-28"
+  className="w-full px-4 sm:px-6 lg:px-8 mt-16 scroll-mt-24 md:scroll-mt-28"
 >
         <div className="flex items-baseline justify-between max-w-7xl mx-auto">
           <h2 className="text-2xl font-bold">Live Burn Log</h2>
