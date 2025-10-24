@@ -358,8 +358,7 @@ useEffect(() => {
         <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
           <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6">
             <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
-  Meet The Burning Bear - the classiest
-  <span className="block">arsonist in crypto.</span>
+  Meet The Burning Bear – the classiest arsonist in crypto.
 </h1>
             {/* Countdowns */}
             <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -385,14 +384,14 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* Smart Copy CA button with $BBURN and refined gold tone */}
+      {/* Smart Copy CA button with $BBURN and brand gold tone */}
 <div className="mt-6 flex justify-center">
   <button
     onClick={handleCopy}
     className={`group flex items-center gap-3 rounded-md border border-white/10 
                 bg-black/30 px-5 py-2 text-sm font-semibold backdrop-blur-sm transition
-                hover:border-[#e7b65a] hover:text-[#e7b65a]
-                ${copied ? 'text-[#e7b65a] border-[#e7b65a]' : 'text-white/85'}`}
+                hover:border-[#ffe48d] hover:text-[#ffe48d]
+                ${copied ? 'text-[#ffe48d] border-[#ffe48d]' : 'text-white/85'}`}
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -400,7 +399,7 @@ useEffect(() => {
       fill="none"
       stroke="currentColor"
       strokeWidth={1.8}
-      className={`h-4 w-4 ${copied ? 'text-[#e7b65a]' : 'text-white/70'}`}
+      className={`h-4 w-4 ${copied ? 'text-[#ffe48d]' : 'text-white/70'}`}
     >
       <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
       <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
@@ -412,7 +411,7 @@ useEffect(() => {
     </span>
 
     {/* Copy state */}
-    <span className="text-[13px] font-semibold text-[#e7b65a] group-hover:text-[#f4d27d] transition">
+    <span className="text-[13px] font-semibold text-[#ffe48d] group-hover:text-[#fff2be] transition">
       {copied ? 'Copied!' : 'Copy CA'}
     </span>
   </button>
