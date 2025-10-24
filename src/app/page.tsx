@@ -434,32 +434,42 @@ export default function Page() {
       </section>
 
       {/* ===== How It Works ===== */}
-      {/* ===== How It Works ===== */}
 <section id="how" className="mx-auto max-w-6xl px-4 pt-14 relative">
-  {/* Section title */}
   <h3 className="text-xl font-bold tracking-tight mb-5">How It Works</h3>
 
   {/* Paragraph + Coin */}
-  <div className="relative flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-10">
-    {/* Left: Text */}
-    <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px]">
-      Every spark — whether it’s a trade, a creator reward, or a network fee — feeds the{" "}
-      <span className="text-[#ffe48d] font-semibold">$BEAR</span> fire. 
-      These flames merge into the{" "}
-      <span className="text-[#ffe48d] font-semibold transition duration-300 hover:text-amber-300 hover:drop-shadow-[0_0_6px_#ffb74d]">
-        Campfire Fund
-      </span>
-      , driving constant buybacks, burns, and creator support. 
-      The more the ecosystem moves, the hotter it burns. 🔥
-    </p>
+  <div className="relative mx-auto max-w-6xl">
+    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 mb-10">
 
-    {/* Right: Coin */}
-    <div className="flex-shrink-0 md:mt-[-10px]">
-      <img
-        src="/img/coin-logo.png"
-        alt="$BEAR Coin"
-        className="w-28 h-28 md:w-36 md:h-36 opacity-0 animate-fadeInCoin"
-      />
+      {/* Left: Text */}
+      <p className="text-white/75 leading-relaxed text-[15.5px] md:text-[16px] max-w-3xl md:pr-28">
+        Every spark — whether it’s a trade, a creator reward, or a network fee — feeds the
+        <span className="text-[#ffe48d] font-semibold"> $BEAR</span> fire.
+        These flames merge into the
+        <span className="text-[#ffe48d] font-semibold transition duration-300 hover:text-amber-300 hover:drop-shadow-[0_0_6px_#ffb74d]"> Campfire Fund</span>,
+        driving constant buybacks, burns, and creator support.
+        The more the ecosystem moves, the hotter it burns. 🔥
+      </p>
+
+      {/* Right: Coin */}
+      <div
+        className="
+          relative md:absolute md:right-2 lg:right-6 xl:right-10
+          md:top-[-6px] lg:top-[-10px]
+          self-center md:self-auto
+          pointer-events-none
+        "
+        style={{ zIndex: 1 }}
+      >
+        {/* glow */}
+        <div className="absolute inset-0 rounded-full blur-2xl bg-amber-400/20 opacity-0 animate-coinGlow" />
+        {/* coin */}
+        <img
+          src="/img/coin-logo.png"
+          alt="$BEAR Coin"
+          className="relative w-28 h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 opacity-0 animate-fadeInCoin"
+        />
+      </div>
     </div>
   </div>
 
@@ -471,14 +481,12 @@ export default function Page() {
         body="Half of every fee automatically buys $BEAR and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps."
       />
     </Reveal>
-
     <Reveal delay={120}>
       <HowCard
         title="30% → Treasury & Buybacks"
         body="Reserved transparently for strategic buybacks, ecosystem stability, and community-driven events that keep $BEAR’s fire burning long-term."
       />
     </Reveal>
-
     <Reveal delay={240}>
       <HowCard
         title="20% → Team, Creators & Growth"
@@ -487,21 +495,30 @@ export default function Page() {
     </Reveal>
   </div>
 
-  {/* Fade + Spin animations */}
+  {/* Animations */}
   <style jsx>{`
     @keyframes fadeInCoin {
-      from { opacity: 0; transform: translateY(10px) scale(0.98) rotateY(0deg); }
-      to { opacity: 1; transform: translateY(0) scale(1) rotateY(0deg); }
+      from { opacity: 0; transform: translateY(10px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     @keyframes slowSpin {
       from { transform: rotateY(0deg); }
-      to { transform: rotateY(360deg); }
+      to   { transform: rotateY(360deg); }
+    }
+
+    @keyframes coinGlow {
+      0%,100% { opacity: 0.25; transform: scale(1); }
+      50%     { opacity: 0.7; transform: scale(1.2); }
     }
 
     .animate-fadeInCoin {
       animation: fadeInCoin 1.4s ease-out 0.4s forwards, slowSpin 18s linear 1.8s infinite;
       transform-style: preserve-3d;
+    }
+
+    .animate-coinGlow {
+      animation: coinGlow 4.5s ease-in-out 2.2s infinite;
     }
   `}</style>
 </section>
