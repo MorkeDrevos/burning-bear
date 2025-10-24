@@ -361,6 +361,29 @@ useEffect(() => {
   Meet The Burning Bear $BBURN - the classiest
   <span className="block">arsonist in crypto.</span>
 </h1>
+{/* Smart Copy CA button */}
+<div className="mt-4 flex justify-start">
+  <button
+    onClick={handleCopy}
+    className={`group flex items-center gap-2 rounded-md border border-white/10 
+                bg-black/30 px-4 py-2 text-sm font-semibold backdrop-blur-sm transition
+                hover:border-amber-400 hover:text-amber-300
+                ${copied ? 'text-amber-400 border-amber-400' : 'text-white/80'}`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className={`h-4 w-4 ${copied ? 'text-amber-400' : 'text-white/70'}`}
+    >
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+    {copied ? 'Copied!' : 'Copy CA'}
+  </button>
+</div>
 
             {/* Countdowns */}
             <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
