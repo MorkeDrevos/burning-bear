@@ -711,28 +711,38 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
     <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
       <div className="text-base md:text-lg font-semibold">{title}</div>
       {note && <div className="mt-1 text-sm text-white/65">{note}</div>}
-      <div className="mt-3 flex items-center justify-between gap-2">
-        <code className="truncate rounded-md bg-white/5 px-2 py-1 text-sm md:text-[15px] text-white/85">
-          {truncateMiddle(address, 8, 8)}
-        </code>
-        <div className="flex items-center gap-2">
-          <a
-            href={`${EXPLORER}/address/${address}`}
-            target="_blank"
-            className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm md:text-base text-white/85 hover:bg-white/10"
-          >
-            View
-          </a>
-          <button
-            onClick={handleCopy}
-            className={`rounded-full px-3 py-1 text-sm md:text-base font-semibold transition ${
-              copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'
-            }`}
-          >
-            {copied ? 'Copied' : 'Copy'}
-          </button>
-        </div>
-      </div>
+      <div className="mt-3 flex items-center justify-between gap-3">
+  <code className="truncate rounded-md bg-white/5 px-2 py-1 text-sm md:text-[15px] text-white/85">
+    {truncateMiddle(address, 8, 8)}
+  </code>
+
+  <div className="flex items-center gap-2">
+    {/* View (muted pill like Contract Address) */}
+    <a
+      href={`${EXPLORER}/address/${address}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="rounded-[10px] border border-white/12 bg-white/[0.06]
+                 px-3.5 py-1.5 text-sm font-medium text-white/85
+                 hover:bg-white/[0.10] transition"
+    >
+      View
+    </a>
+
+    {/* Copy (gold pill like Contract Address) */}
+    <button
+      onClick={handleCopy}
+      className={`rounded-[10px] px-3.5 py-1.5 text-sm font-semibold
+                  text-black transition
+                  ${copied
+                    ? 'bg-[#ffedb3] ring-2 ring-amber-300/40'
+                    : 'bg-[#ffedb3] hover:bg-[#ffe48d]'
+                  }`}
+    >
+      {copied ? 'Copied!' : 'Copy'}
+    </button>
+  </div>
+</div>
     </div>
   );
 }
