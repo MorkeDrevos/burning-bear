@@ -284,7 +284,7 @@ export default function Page() {
                 {TOKEN_NAME}
               </div>
               <div className="text-[12px] md:text-sm text-white/55 truncate">
-                {TOKEN_SYMBOL} • Live Burn Camp
+                {TOKEN_SYMBOL} • Live Burn Camp 🔥
               </div>
             </div>
           </Link>
@@ -331,7 +331,7 @@ export default function Page() {
         <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
           <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6">
             <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
-              Meet The Burning Bear — the classiest arsonist in crypto.
+              Meet The Burning Bear $BBURN — the classiest arsonist in crypto.
             </h1>
 
             {/* Countdowns */}
