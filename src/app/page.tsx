@@ -533,21 +533,29 @@ useEffect(() => {
   </div>
 </section>
 
-{/* Contract Address */}
-<div className="text-center mt-10 mb-8">
-  <h3 className="text-amber-400 font-semibold mb-3">Contract Address</h3>
-  <div className="flex justify-center items-center gap-2 bg-white/5 border border-white/10 rounded-full px-5 py-2 max-w-fit mx-auto">
-    <span className="text-sm text-white/80 font-mono select-all">
-      4NGbC4RRrUjS78ooSN53Up7gSg4dGrj6F6dxpMWHbonk
+{/* Contract Address Section */}
+<section className="max-w-5xl mx-auto px-4 text-center py-10">
+  <h3 className="text-amber-400 font-semibold text-lg mb-3 tracking-wide">Contract Address</h3>
+  <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2 font-mono text-sm text-white/80">
+    <span className="truncate max-w-[240px] sm:max-w-[360px]">
+      {truncateMiddle(FULL_TOKEN_ADDRESS, 8, 8)}
     </span>
     <button
-      onClick={() => navigator.clipboard.writeText("4NGbC4RRrUjS78ooSN53Up7gSg4dGrj6F6dxpMWHbonk")}
-      className="text-xs font-medium text-amber-400 hover:text-amber-300 transition"
+      onClick={() => {
+        navigator.clipboard.writeText(FULL_TOKEN_ADDRESS);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1000);
+      }}
+      className={`px-3 py-0.5 rounded-full border text-xs transition ${
+        copied
+          ? 'border-amber-300 text-amber-300 bg-amber-400/10'
+          : 'border-amber-400/30 text-amber-400 hover:text-amber-300'
+      }`}
     >
-      Copy
+      {copied ? 'Copied!' : 'Copy'}
     </button>
   </div>
-</div>
+</section>
 
       {/* ===== Footer ===== */}
       <footer className="border-t border-white/10 bg-[#0d1a14] relative">
