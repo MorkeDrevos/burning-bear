@@ -540,11 +540,14 @@ useEffect(() => {
   </h3>
 
   <div className="mx-auto max-w-3xl rounded-2xl border border-white/10 
-                  bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur">
+                  bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur relative">
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <code className="truncate font-mono text-[15px] text-white/85 
-                      bg-white/5 px-2 py-1 rounded-md flex-1 text-left">
-        {truncateMiddle(FULL_TOKEN_ADDRESS, 8, 8)}
+      <code
+        className="font-mono text-[15px] text-white/85 bg-white/5 px-2 py-1 
+                   rounded-md flex-1 text-left whitespace-nowrap overflow-x-auto scrollbar-none"
+        title={FULL_TOKEN_ADDRESS}
+      >
+        {FULL_TOKEN_ADDRESS}
       </code>
 
       <div className="flex items-center gap-2">
@@ -571,6 +574,9 @@ useEffect(() => {
         </button>
       </div>
     </div>
+
+    {/* Subtle amber underline glow */}
+    <div className="absolute left-1/2 -bottom-[2px] -translate-x-1/2 w-[140px] h-[1px] bg-[#ffe48d]/20 blur-[1.5px]" />
   </div>
 </section>
 
