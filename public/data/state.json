@@ -7,8 +7,8 @@
     "priceUsdPerSol": 176.8
   },
   "schedule": {
-    "burnIntervalMinutes": 60,
-    "buybackIntervalMinutes": 20,
+    "burnIntervalMinutes": 45,
+    "buybackIntervalMinutes": 15
     "nextBurnAt": 1730064000000,
     "nextBuybackAt": 1730060400000
   },
