@@ -271,56 +271,52 @@ export default function Page() {
     <main id="top">
       {/* ===== Header ===== */}
       <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
-  <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
-    {/* Left: Logo + Title */}
-    <Link href="#top" className="flex items-center gap-3 md:gap-4 min-w-0">
-      <img
-        src="/img/coin-logo.png"
-        alt={TOKEN_NAME}
-        className="h-12 w-12 md:h-14 md:w-14 rounded-full shadow-lg border border-amber-300/30"
-      />
-      <div className="leading-tight min-w-0">
-        <div className="text-base md:text-xl font-extrabold text-amber-200 tracking-wide truncate">
-          {TOKEN_NAME}
-        </div>
-        <div className="text-[12px] md:text-sm text-white/55 truncate">
-          {TOKEN_SYMBOL} • Live Burn Camp
-        </div>
-      </div>
-    </Link>
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
+          {/* Left: Logo + Title */}
+          <Link href="#top" className="flex items-center gap-3 md:gap-4 min-w-0">
+            <img
+              src="/img/coin-logo.png"
+              alt={TOKEN_NAME}
+              className="h-12 w-12 md:h-14 md:w-14 rounded-full shadow-lg border border-amber-300/30"
+            />
+            <div className="leading-tight min-w-0">
+              <div className="text-base md:text-xl font-extrabold text-amber-200 tracking-wide truncate">
+                {TOKEN_NAME}
+              </div>
+              <div className="text-[12px] md:text-sm text-white/55 truncate">
+                {TOKEN_SYMBOL} • Live Burn Camp
+              </div>
+            </div>
+          </Link>
 
-    {/* Center: Desktop Nav */}
-    <nav className="hidden md:flex items-center gap-8 text-[15px] font-semibold">
-      <a href="#how" className="text-[#ffe48d] hover:text-amber-300 transition">How It Works</a>
-      <a href="#log" className="text-[#ffe48d] hover:text-amber-300 transition">Live Burns</a>
-      <a href="#wallets" className="text-[#ffe48d] hover:text-amber-300 transition">Campfire Wallets</a>
-      <a
-        href="https://x.com/i/communities/1980944446871966021"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-[#ffe48d] hover:text-amber-300 transition"
-      >
-        X Community
-      </a>
-    </nav>
+          {/* Center: Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-8 text-[15px] font-semibold">
+            <a href="#how" className="text-[#ffe48d] hover:text-amber-300 transition">How It Works</a>
+            <a href="#log" className="text-[#ffe48d] hover:text-amber-300 transition">Live Burns</a>
+            <a href="#wallets" className="text-[#ffe48d] hover:text-amber-300 transition">Campfire Wallets</a>
+          </nav>
 
-    {/* Right: Buttons */}
-    <div className="flex items-center gap-3">
-      <button
-        onClick={handleCopy}
-        className={`rounded-full px-4 py-2 text-sm md:text-base font-semibold transition border border-white/10 ${
-          copied
-            ? 'bg-emerald-400 text-black'
-            : 'bg-[#1c1f1d] text-white hover:bg-[#2a2e2c]'
-        }`}
-        aria-live="polite"
-      >
-        {copied ? 'Copied!' : 'Copy CA'}
-      </button>
-      <MobileMenu />
-    </div>
-  </div>
-</header>
+          {/* Right: Copy CA + Mobile Menu */}
+          <div className="flex items-center gap-2 md:gap-3">
+            <span
+              className="hidden lg:inline rounded-full bg-emerald-900/40 px-4 py-2 text-sm text-emerald-300 border border-emerald-500/20"
+              title={FULL_TOKEN_ADDRESS}
+            >
+              {truncateMiddle(FULL_TOKEN_ADDRESS)}
+            </span>
+            <button
+              onClick={handleCopy}
+              className={`rounded-full px-4 py-2 text-sm md:text-base font-semibold transition ${
+                copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'
+              }`}
+              aria-live="polite"
+            >
+              {copied ? 'Copied!' : 'Copy CA'}
+            </button>
+            <MobileMenu />
+          </div>
+        </div>
+      </header>
 
       {/* ===== HERO with video + translucent text panel ===== */}
       <section className="relative">
