@@ -558,7 +558,11 @@ useEffect(() => {
   </p>
 
   <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
-    <WalletCard title="Official Burn Wallet" address={BURN_WALLET} note="Tokens permanently and verifiably destroyed on-chain." />
+    <WalletCard
+  title="Official Burn Wallet"
+  address={BURN_WALLET}
+  note="All $BBURN sent here are burned forever."
+/>
     <WalletCard title="Treasury & Buybacks" address={TREASURY_WALLET} note="Funds for buybacks and operations." />
     <WalletCard title="Team & Marketing" address={MARKETING_WALLET} note="Growth, creators, promos." />
   </div>
