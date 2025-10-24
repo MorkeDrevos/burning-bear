@@ -539,36 +539,38 @@ useEffect(() => {
     Contract Address
   </h3>
 
-  <div className="mx-auto flex max-w-3xl items-center justify-between gap-3
-                  rounded-xl border border-white/10 bg-gradient-to-br
-                  from-[#0c1712]/90 to-[#0a1410]/90 backdrop-blur-sm
-                  px-5 py-3 shadow-[0_0_12px_rgba(255,200,100,0.08)]">
-    <code className="font-mono text-[15px] text-white/70 truncate">
-      {FULL_TOKEN_ADDRESS}
+  <div className="flex items-center justify-center gap-3">
+    <code
+      className="font-mono text-[15px] text-white/80 bg-white/[0.04]
+                 border border-white/10 rounded-full px-4 py-1.5
+                 backdrop-blur-sm"
+    >
+      {truncateMiddle(FULL_TOKEN_ADDRESS, 8, 8)}
     </code>
 
-    <div className="flex items-center gap-2">
-      <a
-        href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-sm font-medium text-amber-300/90 hover:text-amber-200 transition"
-      >
-        View
-      </a>
-
-      <button
-        onClick={handleCopy}
-        className={`text-sm font-semibold px-3 py-1.5 rounded-md transition
-          ${copied
-            ? 'bg-amber-300 text-black shadow-[0_0_8px_rgba(255,200,100,0.6)]'
-            : 'bg-white/[0.05] text-amber-200 hover:bg-amber-300 hover:text-black'
-          }`}
-      >
-        {copied ? 'Copied!' : 'Copy'}
-      </button>
-    </div>
+    <button
+      onClick={handleCopy}
+      className={`text-sm font-semibold px-3 py-1.5 rounded-full border transition
+        ${copied
+          ? 'bg-amber-300 text-black border-amber-300 shadow-[0_0_8px_rgba(255,200,100,0.5)]'
+          : 'bg-transparent border-white/15 text-amber-200 hover:bg-amber-300 hover:text-black hover:border-amber-300'
+        }`}
+    >
+      {copied ? 'Copied!' : 'Copy'}
+    </button>
   </div>
+
+  <div className="mt-3 flex justify-center">
+    <a
+      href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-[13px] text-white/50 hover:text-amber-300 transition"
+    >
+      View on Solana Explorer ↗
+    </a>
+  </div>
+</section>
 
   <div className="mt-3 flex justify-center">
     <div className="h-[1.5px] w-[200px] rounded-full ember-divider opacity-70"></div>
