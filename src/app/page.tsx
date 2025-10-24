@@ -564,14 +564,6 @@ useEffect(() => {
   </div>
 </section>
 
-{/* ===== Contract Address ===== */}
-<section className="mx-auto max-w-6xl px-4 pb-10 text-center">
-  <h3 className="text-lg font-semibold text-[#ffe48d] mb-4">
-    Contract Address
-  </h3>
-
-  <div className="mx-auto max-w-3xl rounded-2xl border border-white/10 
-                  bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur">
     {/* ===== Contract Address ===== */}
 <section className="mx-auto max-w-6xl px-4 pb-10 text-center">
   {/* keep ONLY this heading */}
