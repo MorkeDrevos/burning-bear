@@ -331,7 +331,7 @@ export default function Page() {
           >
             <source src="/img/burning-bear.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
+          <div className="absolute inset-x-0 top-0 bottom-[120px] bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-transparent" />
         </div>
 
         <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
