@@ -397,26 +397,29 @@ export default function Page() {
                             hour12: true,
                           })}
                         </div>
-                        {b.sol !== undefined && (
-                          <div className="text-sm text-white/70">
-                            ≈ {b.sol.toFixed(4)} SOL (
-                            {(b.sol * priceUsdPerSol).toLocaleString('en-US', {
-                              style: 'currency',
-                              currency: 'USD',
-                            })}
-                            )
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <Link
-                      href={b.tx}
-                      target="_blank"
-                      className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline"
-                    >
-                      TX
-                    </Link>
-                  </div>
+{b.sol !== undefined && (
+  <div className="text-sm text-white/70">
+    ≈ {b.sol.toFixed(4)} SOL (
+    {(b.sol * priceUsdPerSol).toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    })}
+    )
+  </div>
+)}  {/* ✅ only ONE closing parenthesis here */}
+
+</div>
+</div>
+
+<Link
+  href={b.tx}
+  target="_blank"
+  className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline"
+>
+  TX
+</Link>
+
+</div>
 
                   <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
                     <div className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500" style={{ width: '100%' }} />
