@@ -529,6 +529,43 @@ useEffect(() => {
   </div>
 </section>
 
+{/* ===== Meet the Burning Bear ===== */}
+<section
+  id="bear"
+  className="relative mx-auto max-w-6xl px-4 py-16 text-center scroll-mt-28 md:scroll-mt-32"
+>
+  {/* Background + glow */}
+  <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0d1a14] via-[#131f1b] to-[#0d1a14]" />
+  <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-amber-500/5 to-transparent blur-[60px]" />
+
+  {/* Flickering title */}
+  <h2 className="relative text-4xl md:text-5xl font-extrabold text-amber-300 drop-shadow-[0_0_10px_rgba(255,184,76,0.25)] mb-6">
+    Meet The Bear
+    <span className="absolute left-1/2 top-full mt-3 h-[3px] w-20 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 animate-pulse" />
+  </h2>
+
+  {/* Story */}
+  <div className="mx-auto max-w-3xl text-white/80 leading-relaxed text-lg">
+    <p className="mb-5">
+      Long before the campfire roared across Solana, a quiet bear walked the forests of forgotten
+      chains — collecting embers from every spark of belief.  He wasn’t the kind that sleeps through
+      winters. He was the kind that builds warmth for everyone who dares to dream.
+    </p>
+    <p className="mb-5">
+      When markets turned cold and others ran, he stayed — feeding the flame, reminding us that even
+      in a bearish world, the fire can rise. Each burn he makes is a heartbeat of the community: a
+      symbol of resilience, humor, and transparency.
+    </p>
+    <p>
+      The Burning Bear isn’t here to watch the forest burn — he’s here to light the way.
+      Every spark counts. Every burn means something. 🔥
+    </p>
+  </div>
+
+  {/* Subtle ember flicker effect */}
+  <div className="absolute left-1/2 top-full mt-10 -translate-x-1/2 w-48 h-48 rounded-full bg-amber-400/10 blur-[80px] animate-pulse" />
+</section>
+
 <Divider />
 
 {/* ===== This Week at the Campfire ===== */}
