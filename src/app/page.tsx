@@ -383,11 +383,6 @@ export default function Page() {
                       <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-700/40 shadow-[0_0_10px_rgba(255,120,40,0.2)] animate-glow">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="url(#flameDark)" className="h-7 w-7">
     <defs>
-      <linearGradient id="flameDark" x1="0" x2="0" y1="0" y2="1">
-  <stop offset="0%" stopColor="#f6c56b" />
-  <stop offset="45%" stopColor="#d88a2b" />
-  <stop offset="100%" stopColor="#6e3a00" />
-</linearGradient>
 
 <style jsx>{`
   @keyframes emberGlow {
@@ -412,7 +407,7 @@ export default function Page() {
   fill="url(#flameDark)"
   className="h-7 w-7 animate-glow"
 >
-  
+
         <stop offset="0%" stopColor="#ffb347" />
         <stop offset="50%" stopColor="#ff6a00" />
         <stop offset="100%" stopColor="#b34700" />
