@@ -557,23 +557,16 @@ useEffect(() => {
     The campfire burns in full view. Every wallet can be verified on Solana Explorer.
   </p>
 
-  <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
-    <WalletCard title="Official Burn Wallet" address={BURN_WALLET} note="On-chain burn wallet. Supply reduced forever." />
-    <WalletCard title="Treasury & Buybacks" address={TREASURY_WALLET} note="Funds for buybacks and operations." />
-    <WalletCard title="Team & Marketing" address={MARKETING_WALLET} note="Growth, creators, promos." />
-  </div>
-</section>
-
-    {/* ===== Contract Address ===== */}
-<section className="mx-auto max-w-4xl px-4 pb-12 text-center">
+{/* ===== Contract Address ===== */}
+<section className="mx-auto max-w-4xl px-4 pb-10 text-center">
   <h3 className="text-lg font-semibold text-[#e7b65a] mb-3">Contract Address</h3>
 
   <div
     className="mx-auto flex max-w-3xl items-center justify-between gap-3
-               rounded-xl bg-[#0f1f19]/70 px-4 py-3
-               backdrop-blur-sm shadow-[0_0_12px_rgba(255,184,76,0.06)]
-               border border-white/[0.03]"
+               rounded-xl border border-white/[0.05] bg-[#0f1f19]/70
+               px-4 py-3 backdrop-blur-sm shadow-[0_0_12px_rgba(255,184,76,0.06)]"
   >
+    {/* Full token address */}
     <code
       className="flex-1 font-mono text-[15px] text-white/85 text-left truncate"
       title={FULL_TOKEN_ADDRESS}
@@ -582,21 +575,22 @@ useEffect(() => {
     </code>
 
     <div className="flex items-center gap-2">
-      {/* View Button */}
+      {/* View button — match Campfire Wallet buttons */}
       <a
         href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="rounded-md bg-[#1a1f1b]/70 px-4 py-1.5 text-sm text-white/80
-                   hover:bg-[#262c26]/70 transition"
+        className="rounded-[10px] border border-white/12 bg-white/[0.06]
+                   px-3.5 py-1.5 text-sm font-medium text-white/85
+                   hover:bg-white/[0.10] transition"
       >
         View
       </a>
 
-      {/* Copy Button */}
+      {/* Copy button — gold highlight */}
       <button
         onClick={handleCopy}
-        className={`rounded-md px-4 py-1.5 text-sm font-semibold transition
+        className={`rounded-[10px] px-3.5 py-1.5 text-sm font-semibold transition
           ${copied
             ? 'bg-[#ffedb3] text-black shadow-[0_0_10px_rgba(255,184,76,0.4)]'
             : 'bg-[#ffedb3]/90 text-black hover:bg-[#ffe48d]'
@@ -605,6 +599,13 @@ useEffect(() => {
         {copied ? 'Copied!' : 'Copy'}
       </button>
     </div>
+  </div>
+</section>
+
+  <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
+    <WalletCard title="Official Burn Wallet" address={BURN_WALLET} note="On-chain burn wallet. Supply reduced forever." />
+    <WalletCard title="Treasury & Buybacks" address={TREASURY_WALLET} note="Funds for buybacks and operations." />
+    <WalletCard title="Team & Marketing" address={MARKETING_WALLET} note="Growth, creators, promos." />
   </div>
 </section>
 
