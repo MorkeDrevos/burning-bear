@@ -383,8 +383,8 @@ export default function Page() {
                 className="flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]"
               >
                 <div
-                  className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] flex flex-col justify-between transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_10px_30px_rgba(255,183,77,0.12)] hover:border-amber-300/30"
-                >
+  className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] flex flex-col justify-between transition-all duration-300 hover:-translate-y-[4px] hover:shadow-[0_0_35px_rgba(255,200,100,0.25)] hover:border-amber-300/40 hover:bg-[#1b1a13]/70 hover:scale-[1.02]"
+>
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">
