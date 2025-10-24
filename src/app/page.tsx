@@ -434,6 +434,7 @@ export default function Page() {
       </section>
 
       {/* ===== How It Works ===== */}
+      {/* ===== How It Works ===== */}
 <section id="how" className="mx-auto max-w-6xl px-4 pt-14 relative">
   {/* Section title */}
   <h3 className="text-xl font-bold tracking-tight mb-5">How It Works</h3>
@@ -502,11 +503,11 @@ export default function Page() {
       animation: fadeInCoin 1.4s ease-out 0.4s forwards, slowSpin 18s linear 1.8s infinite;
       transform-style: preserve-3d;
     }
-   `}</style>
+  `}</style>
 </section>
 
-{/* ===== Campfire Wallets ===== */}
-<section id="wallets" className="mx-auto max-w-6xl px-4 pt-14 pb-16">
+      {/* ===== Campfire Wallets ===== */}
+      <section id="wallets" className="mx-auto max-w-6xl px-4 pt-14 pb-16">
         <h3 className="text-xl font-bold tracking-tight">Campfire Wallets</h3>
         <p className="mt-1 text-sm text-white/55">The campfire burns in full view. Every wallet can be verified on Solana Explorer.</p>
 
