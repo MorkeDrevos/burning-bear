@@ -565,47 +565,40 @@ useEffect(() => {
 </section>
 
     {/* ===== Contract Address ===== */}
-<section className="mx-auto max-w-6xl px-4 pb-10 text-center">
-  {/* keep ONLY this heading */}
-  <h3 className="text-lg font-semibold text-[#ffe48d] mb-4">Contract Address</h3>
+<section className="mx-auto max-w-3xl rounded-2xl bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur-sm shadow-[0_0_12px_rgba(255,184,76,0.08)]">
+  <div className="flex items-center justify-between gap-3">
+    <code
+      className="flex-1 rounded-md bg-white/[0.06] px-5 py-2 font-mono text-[15px] text-white/85 whitespace-nowrap overflow-x-auto scrollbar-none"
+      title={FULL_TOKEN_ADDRESS}
+    >
+      {FULL_TOKEN_ADDRESS}
+    </code>
 
-  <div className="mx-auto max-w-4xl rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur">
-    <div className="flex items-center gap-3">
-      {/* full CA, scrollable on tiny screens */}
-      <code
-        className="flex-1 rounded-[10px] border border-white/12 bg-white/[0.06]
-                   px-3 py-2 font-mono text-[15px] text-white/85
-                   whitespace-nowrap overflow-x-auto"
-        title={FULL_TOKEN_ADDRESS}
-      >
-        {FULL_TOKEN_ADDRESS}
-      </code>
-
-      {/* View button (matches wallet cards) */}
+    <div className="flex items-center gap-2">
+      {/* View button — subtle glass look */}
       <a
         href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="rounded-[10px] border border-white/12 bg-white/[0.06]
-                   px-3.5 py-1.5 text-sm font-medium text-white/85
-                   hover:bg-white/[0.10] transition"
+        className="rounded-md bg-white/[0.08] px-4 py-1.5 text-sm text-white/80 hover:bg-white/[0.12] transition"
       >
         View
       </a>
 
-              {/* Copy button (gold) */}
-        <button
-          onClick={handleCopy}
-          className={`rounded-[10px] px-3.5 py-1.5 text-sm font-semibold text-black transition
-            ${copied
-              ? 'bg-[#ffedb3] ring-2 ring-amber-300/40'
-              : 'bg-[#ffedb3] hover:bg-[#ffe48d]'}`}
-        >
-          {copied ? 'Copied!' : 'Copy'}
-        </button>
-      </div> {/* actions row */}
-    </div>   {/* bordered panel */}
-  </section> {/* Contract Address */}
+      {/* Copy button — gold */}
+      <button
+        onClick={handleCopy}
+        className={`rounded-md px-4 py-1.5 text-sm font-semibold transition
+          ${copied
+            ? 'bg-[#ffedb3] text-black shadow-[0_0_10px_rgba(255,184,76,0.4)]'
+            : 'bg-[#ffedb3]/90 text-black hover:bg-[#ffe48d]'
+          }`}
+      >
+        {copied ? 'Copied!' : 'Copy'}
+      </button>
+    </div>
+  </div>
+</section>
 
       {/* ===== Footer ===== */}
       <footer className="border-t border-white/10 bg-[#0d1a14] relative">
