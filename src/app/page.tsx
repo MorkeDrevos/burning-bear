@@ -294,6 +294,7 @@ export default function Page() {
             <a href="#how" className="text-[#ffe48d] hover:text-amber-300 transition">How It Works</a>
             <a href="#log" className="text-[#ffe48d] hover:text-amber-300 transition">Live Burns</a>
             <a href="#wallets" className="text-[#ffe48d] hover:text-amber-300 transition">Campfire Wallets</a>
+                        <a href="#wallets" className="text-[#ffe48d] hover:text-amber-300 transition">X Community</a>
           </nav>
 
           {/* Right: Copy CA + Mobile Menu */}
