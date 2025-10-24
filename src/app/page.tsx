@@ -563,8 +563,17 @@ useEffect(() => {
   address={BURN_WALLET}
   note="All $BBURN sent here are burned forever."
 />
-    <WalletCard title="Treasury & Buybacks" address={TREASURY_WALLET} note="Funds for buybacks and operations." />
-    <WalletCard title="Team & Marketing" address={MARKETING_WALLET} note="Growth, creators, promos." />
+    <WalletCard
+  title="Treasury & Buybacks"
+  address={TREASURY_WALLET}
+  note="Funds for buybacks, growth and community initiatives."
+/>
+<WalletCard title="Treasury & Buybacks" address={TREASURY_WALLET} note="Funds for buybacks and operations." />
+    <WalletCard
+  title="Team & Marketing"
+  address={MARKETING_WALLET}
+  note="Supports development, creators and partnerships. "
+/>
   </div>
 </section>
 
