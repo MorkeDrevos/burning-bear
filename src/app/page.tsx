@@ -533,18 +533,16 @@ useEffect(() => {
   </div>
 </section>
 
-{/* Contract Address Section */}
-<div className="text-center py-10">
-  <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-6 py-3 shadow-ember backdrop-blur-sm">
-    <span className="text-sm text-white/60 tracking-widest uppercase font-semibold">
-      CA:
-    </span>
-    <span className="text-sm md:text-base text-white/80 font-mono select-all">
+{/* Contract Address */}
+<div className="text-center mt-10 mb-8">
+  <h3 className="text-amber-400 font-semibold mb-3">Contract Address</h3>
+  <div className="flex justify-center items-center gap-2 bg-white/5 border border-white/10 rounded-full px-5 py-2 max-w-fit mx-auto">
+    <span className="text-sm text-white/80 font-mono select-all">
       4NGbC4RRrUjS78ooSN53Up7gSg4dGrj6F6dxpMWHbonk
     </span>
     <button
       onClick={() => navigator.clipboard.writeText("4NGbC4RRrUjS78ooSN53Up7gSg4dGrj6F6dxpMWHbonk")}
-      className="text-xs text-amber-400 hover:text-amber-300 border border-amber-400/30 rounded-full px-3 py-1 transition-all"
+      className="text-xs font-medium text-amber-400 hover:text-amber-300 transition"
     >
       Copy
     </button>
