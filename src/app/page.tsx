@@ -572,12 +572,14 @@ useEffect(() => {
 
   <div className="mx-auto max-w-3xl rounded-2xl border border-white/10 
                   bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur">
-    <section className="mx-auto max-w-6xl px-4 pb-10 text-center">
+    {/* ===== Contract Address ===== */}
+<section className="mx-auto max-w-6xl px-4 pb-10 text-center">
+  {/* keep ONLY this heading */}
   <h3 className="text-lg font-semibold text-[#ffe48d] mb-4">Contract Address</h3>
 
   <div className="mx-auto max-w-4xl rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur">
     <div className="flex items-center gap-3">
-      {/* FULL CA — show everything; scrolls horizontally on tiny screens */}
+      {/* full CA, scrollable on tiny screens */}
       <code
         className="flex-1 rounded-[10px] border border-white/12 bg-white/[0.06]
                    px-3 py-2 font-mono text-[15px] text-white/85
