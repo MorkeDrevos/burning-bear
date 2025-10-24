@@ -42,3 +42,11 @@
 html {
   scroll-behavior: smooth;
 }
+@keyframes bearBreath {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.02); filter: brightness(1.05); }
+}
+
+.bear-breathe {
+  animation: bearBreath 6s ease-in-out infinite;
+}
