@@ -606,8 +606,6 @@ useEffect(() => {
   `}</style>
 </section>
 
-<Divider />
-
 {/* ===== This Week at the Campfire ===== */}
 <section id="week" className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">This Week at the Campfire</h3>
