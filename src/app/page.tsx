@@ -6,7 +6,7 @@ import Link from 'next/link';
 /* =========================
    Config
 ========================= */
-const TOKEN_SYMBOL = '$BEAR';
+const TOKEN_SYMBOL = '$BBURN';
 const TOKEN_NAME = 'The Burning Bear';
 const FULL_TOKEN_ADDRESS = 'CYbYmTLvVLp2xPQ5H4UqyMv9UptmzWDLnYExPsh3JRMA';
 
@@ -456,7 +456,7 @@ export default function Page() {
 <p className="text-white/80 max-w-3xl leading-relaxed text-[16px] md:text-[17px] mb-6 md:mb-8">
   <span className="font-semibold text-[#ffe48d]">Every spark fuels the fire.</span>{' '}
   Whether it’s a trade, a creator reward, or a network fee — every move feeds the{' '}
-  <span className="text-[#ffe48d] font-semibold">$BEAR Campfire Fund</span>, powering constant buybacks,
+  <span className="text-[#ffe48d] font-semibold">$BBURN Campfire Fund</span>, powering constant buybacks,
   burns, and community rewards. The more the ecosystem moves, the hotter the fire burns. 🔥
 </p>
 
@@ -494,21 +494,21 @@ export default function Page() {
           <Reveal delay={0}>
             <HowCard
               title="50% → Auto-Buy & Burn"
-              body="Half of every fee automatically buys $BEAR and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps."
+              body="Half of every fee automatically buys $BBURN and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps."
             />
           </Reveal>
 
           <Reveal delay={120}>
             <HowCard
               title="30% → Treasury & Buybacks"
-              body="Reserved for strategic buybacks, ecosystem stability and community-driven events that keep $BEAR’s fire burning long-term."
+              body="Reserved for strategic buybacks, ecosystem stability and community-driven events that keep $BBURN’s fire burning long-term."
             />
           </Reveal>
 
           <Reveal delay={240}>
             <HowCard
               title="20% → Team, Creators & Growth"
-              body="Rewards creators, partners, and community builders — spreading the legend of $BEAR across Solana while fueling future innovation."
+              body="Rewards creators, partners, and community builders — spreading the legend of $BBURN across Solana while fueling future innovation."
             />
           </Reveal>
         </div>
