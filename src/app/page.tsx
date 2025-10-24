@@ -453,14 +453,14 @@ export default function Page() {
     </p>
 
     {/* Right: Coin */}
-<div className="relative flex-shrink-0 md:ml-auto md:-mt-2 lg:-mt-3 md:-translate-x-10 lg:-translate-x-16">
-  <img
-    src="/img/coin-logo.png"
-    alt="$BEAR Coin"
-    className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 opacity-0 animate-fadeInCoin pointer-events-none drop-shadow-[0_6px_24px_rgba(255,184,77,0.25)]"
-  />
-  <span className="absolute inset-0 -z-10 rounded-full blur-2xl opacity-50 bg-[radial-gradient(closest-side,rgba(255,184,77,0.25),transparent_70%)]" />
-</div>
+    <div className="flex-shrink-0 md:mt-[-10px]">
+      <img
+        src="/img/coin-logo.png"
+        alt="$BEAR Coin"
+        className="w-28 h-28 md:w-36 md:h-36 opacity-0 animate-fadeInCoin"
+      />
+    </div>
+  </div>
 
   {/* Three cards */}
   <div className="grid grid-cols-1 gap-5 md:grid-cols-3 items-stretch">
@@ -502,11 +502,11 @@ export default function Page() {
       animation: fadeInCoin 1.4s ease-out 0.4s forwards, slowSpin 18s linear 1.8s infinite;
       transform-style: preserve-3d;
     }
-  `}</style>
+   `}</style>
 </section>
 
-      {/* ===== Campfire Wallets ===== */}
-      <section id="wallets" className="mx-auto max-w-6xl px-4 pt-14 pb-16">
+{/* ===== Campfire Wallets ===== */}
+<section id="wallets" className="mx-auto max-w-6xl px-4 pt-14 pb-16">
         <h3 className="text-xl font-bold tracking-tight">Campfire Wallets</h3>
         <p className="mt-1 text-sm text-white/55">The campfire burns in full view. Every wallet can be verified on Solana Explorer.</p>
 
