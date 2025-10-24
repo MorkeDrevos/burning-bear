@@ -380,8 +380,17 @@ export default function Page() {
                 <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)]">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#1a1a1a] to-[#2a2015] border border-amber-800/40 shadow-[0_0_8px_rgba(255,150,50,0.15)]">
-  <div className="h-3 w-3 rounded-full bg-gradient-to-b from-amber-400/70 to-orange-700/60 shadow-[0_0_8px_rgba(255,160,80,0.4)]"></div>
+                      <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-700/40 shadow-[0_0_10px_rgba(255,120,40,0.2)] animate-glow">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="url(#flameDark)" className="h-7 w-7">
+    <defs>
+      <linearGradient id="flameDark" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stopColor="#ffb347" />
+        <stop offset="50%" stopColor="#ff6a00" />
+        <stop offset="100%" stopColor="#b34700" />
+      </linearGradient>
+    </defs>
+    <path d="M12 2c2 2 3 4 3 6 0 1.5-.7 2.8-1.5 3.5 1.2-.4 2.4-1.5 3-3 1 3-1 8-4.5 9.5S6 15 7 10.5C8 6 12 2 12 2z"/>
+  </svg>
 </span>
                       <div>
                         <div className="text-lg font-bold">
@@ -443,29 +452,34 @@ export default function Page() {
   Whether it’s a trade, a creator reward, or a network fee — every move feeds the{' '}
   <span className="text-[#ffe48d] font-semibold"> $BEAR Campfire Fund</span>, powering constant buybacks,
   burns, and community rewards. The more the ecosystem moves, the hotter the fire burns.{' '}
-  <span className="inline-block align-[-2px] animate-ember" aria-hidden="true">🔥</span>
+  <span className="inline-grid h-6 w-6 align-[-2px] place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-700/40 shadow-[0_0_10px_rgba(255,120,40,0.2)] animate-glow">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="url(#flameDark)" className="h-4 w-4">
+    <defs>
+      <linearGradient id="flameDark" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stopColor="#ffb347" />
+        <stop offset="50%" stopColor="#ff6a00" />
+        <stop offset="100%" stopColor="#b34700" />
+      </linearGradient>
+    </defs>
+    <path d="M12 2c2 2 3 4 3 6 0 1.5-.7 2.8-1.5 3.5 1.2-.4 2.4-1.5 3-3 1 3-1 8-4.5 9.5S6 15 7 10.5C8 6 12 2 12 2z"/>
+  </svg>
+</span>
 </p>
 
 <style jsx>{`
-  @keyframes emberPulse {
-    0%   { filter: drop-shadow(0 0 0 rgba(255,170,70,0));
-           transform: translateY(0) scale(1); }
-    45%  { filter: drop-shadow(0 0 10px rgba(255,190,90,.30))
-                    drop-shadow(0 0 24px rgba(255,130,50,.15));
-           transform: translateY(-1px) scale(1.03); }
-    60%  { filter: drop-shadow(0 0 6px rgba(255,180,80,.22))
-                    drop-shadow(0 0 18px rgba(255,120,40,.12));
-           transform: translateY(-0.5px) scale(1.02); }
-    100% { filter: drop-shadow(0 0 0 rgba(255,170,70,0));
-           transform: translateY(0) scale(1); }
+  @keyframes emberGlow {
+    0%, 100% {
+      filter: drop-shadow(0 0 4px rgba(255,140,50,0.2));
+      transform: scale(1);
+    }
+    50% {
+      filter: drop-shadow(0 0 10px rgba(255,140,60,0.4));
+      transform: scale(1.04);
+    }
   }
-  .animate-ember {
-    animation: emberPulse 1.9s ease-in-out infinite;
+  .animate-glow {
+    animation: emberGlow 3.2s ease-in-out infinite;
     will-change: transform, filter;
-  }
-  /* Respect users who prefer reduced motion */
-  @media (prefers-reduced-motion: reduce) {
-    .animate-ember { animation: none; }
   }
 `}</style>
 
