@@ -437,39 +437,33 @@ export default function Page() {
       </section>
 
       {/* ===== How It Works ===== */}
-      <section id="how" className="mx-auto max-w-6xl px-4 pt-16 scroll-mt-24 md:scroll-mt-28">
-        <h3 className="text-xl font-bold tracking-tight mb-4">How It Works</h3>
+      <section id="how" className="mx-auto max-w-6xl px-4 pt-20 scroll-mt-28">
+  <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-6 text-amber-200">
+    How It Works
+  </h3>
 
-        <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px] mb-6 md:mb-8">
-          Every spark — whether it’s a trade, a creator reward, or a network fee — feeds the
-          <span className="text-[#ffe48d] font-semibold"> $BEAR</span> fire. These flames merge into the
-          <span className="text-[#ffe48d] font-semibold"> Campfire Fund</span>, driving constant buybacks,
-          burns, and creator support. The more the ecosystem moves, the hotter it burns. 🔥
-        </p>
+  <p className="text-white/80 max-w-3xl leading-relaxed text-[17px] md:text-[18px] mb-10 font-medium">
+    <span className="text-amber-300 font-semibold">Every spark fuels the fire.</span> Whether it’s a trade,
+    a creator reward, or a network fee — every move feeds the 
+    <span className="text-amber-300 font-semibold"> $BEAR Campfire Fund</span>, powering constant buybacks, burns, and community rewards.  
+    The more the ecosystem moves, the hotter the fire burns. 🔥
+  </p>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3 items-stretch">
-          <Reveal delay={0}>
-            <HowCard
-              title="50% → Auto-Buy & Burn"
-              body="Half of every fee automatically buys $BEAR and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps."
-            />
-          </Reveal>
-
-          <Reveal delay={120}>
-            <HowCard
-              title="30% → Treasury & Buybacks"
-              body="Reserved transparently for strategic buybacks, ecosystem stability, and community-driven events that keep $BEAR’s fire burning long-term."
-            />
-          </Reveal>
-
-          <Reveal delay={240}>
-            <HowCard
-              title="20% → Team, Creators & Growth"
-              body="Rewards creators, partners, and community builders — spreading the legend of $BEAR across Solana while fueling future innovation."
-            />
-          </Reveal>
-        </div>
-      </section>
+  <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+    <HowCard
+      title="50% → Auto-Buy & Burn"
+      body="Half of every fee automatically buys $BEAR and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps."
+    />
+    <HowCard
+      title="30% → Treasury & Buybacks"
+      body="Reserved transparently for strategic buybacks, ecosystem stability, and community-driven events that keep $BEAR’s fire burning long-term."
+    />
+    <HowCard
+      title="20% → Team, Creators & Growth"
+      body="Rewards creators, partners, and community builders — spreading the legend of $BEAR across Solana while fueling future innovation."
+    />
+  </div>
+</section>
 
       {/* ===== Campfire Wallets ===== */}
       <section id="wallets" className="mx-auto max-w-6xl px-4 pt-16 pb-16 scroll-mt-24 md:scroll-mt-28">
