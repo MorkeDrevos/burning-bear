@@ -571,7 +571,7 @@ useEffect(() => {
     <WalletCard
   title="Team & Marketing"
   address={MARKETING_WALLET}
-  note="Supports growth, promos, creators and partnerships. "
+  note="Supports growth, creators and partnerships. "
 />
   </div>
 </section>
