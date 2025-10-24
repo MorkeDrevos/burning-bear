@@ -380,42 +380,8 @@ export default function Page() {
                 <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)]">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-700/40 shadow-[0_0_10px_rgba(255,120,40,0.2)] animate-glow">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="url(#flameDark)" className="h-7 w-7">
-    <defs>
+                      <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-900/40">
 
-<style jsx>{`
-  @keyframes emberGlow {
-    0%, 100% {
-      filter: drop-shadow(0 0 3px rgba(255,180,80,0.25));
-      transform: scale(1);
-    }
-    50% {
-      filter: drop-shadow(0 0 8px rgba(255,180,60,0.45));
-      transform: scale(1.05);
-    }
-  }
-  .animate-glow {
-    animation: emberGlow 4.5s ease-in-out infinite;
-    will-change: transform, filter;
-  }
-`}</style>
-
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  viewBox="0 0 24 24"
-  fill="url(#flameDark)"
-  className="h-7 w-7 animate-glow"
->
-
-        <stop offset="0%" stopColor="#ffb347" />
-        <stop offset="50%" stopColor="#ff6a00" />
-        <stop offset="100%" stopColor="#b34700" />
-      </linearGradient>
-    </defs>
-    <path d="M12 2c2 2 3 4 3 6 0 1.5-.7 2.8-1.5 3.5 1.2-.4 2.4-1.5 3-3 1 3-1 8-4.5 9.5S6 15 7 10.5C8 6 12 2 12 2z"/>
-  </svg>
-</span>
                       <div>
                         <div className="text-lg font-bold">
                           Burn • {b.amount.toLocaleString()} BEAR
