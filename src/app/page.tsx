@@ -477,7 +477,7 @@ useEffect(() => {
 <section id="how" className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">How It Works</h3>
   <p className="text-white/70 max-w-3xl">
-    Every spark fuels the fire. Whether it’s a trade, a creator reward, or a network fee — every move
+    Every spark fuels the fire. Whether it’s a trade, a creator reward, or a network fee - every move
     feeds the <span className="text-amber-300 font-semibold">$BBURN Campfire Fund</span>, powering constant
     buybacks, burns, and community rewards. The more the ecosystem moves, the hotter the fire burns. 🔥
   </p>
@@ -485,7 +485,7 @@ useEffect(() => {
   <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
     <HowCard
       title="50% → Auto-Buy & Burn"
-      body="Half of every fee automatically buys $BBURN and sends it to the burn wallet — shrinking supply with every move."
+      body="Half of every fee automatically buys $BBURN and sends it to the burn wallet - shrinking supply with every move."
     />
     <HowCard
       title="30% → Treasury & Buybacks"
@@ -493,7 +493,7 @@ useEffect(() => {
     />
     <HowCard
       title="20% → Team, Creators & Growth"
-      body="Rewards creators, partners, and community builders — spreading the legend of $BBURN across Solana while fueling future innovation."
+      body="Rewards creators, partners, and community builders - spreading the legend of $BBURN across Solana while fueling future innovation."
     />
   </div>
 </section>
@@ -538,8 +538,8 @@ useEffect(() => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
         <div className="mx-auto max-w-6xl px-4 py-10 text-center text-sm text-white/60 space-y-4">
           <p className="text-white/80 text-base font-medium">
-            🔥 The Burning Bear isn’t just a meme — it’s a movement. <br />
-            Built on the <span className="text-[#ffe48d] font-semibold">50/30/20 Campfire Split</span> — transparent, alive and always feeding the flames.
+            🔥 The Burning Bear isn’t just a meme - it’s a movement. <br />
+            Built on the <span className="text-[#ffe48d] font-semibold">50/30/20 Campfire Split</span> - transparent, alive and always feeding the flames.
           </p>
 
           <div className="flex justify-center gap-8 text-white/70 text-sm pt-2">
