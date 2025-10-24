@@ -384,6 +384,35 @@ export default function Page() {
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="url(#flameDark)" className="h-7 w-7">
     <defs>
       <linearGradient id="flameDark" x1="0" x2="0" y1="0" y2="1">
+  <stop offset="0%" stopColor="#f6c56b" />
+  <stop offset="45%" stopColor="#d88a2b" />
+  <stop offset="100%" stopColor="#6e3a00" />
+</linearGradient>
+
+<style jsx>{`
+  @keyframes emberGlow {
+    0%, 100% {
+      filter: drop-shadow(0 0 3px rgba(255,180,80,0.25));
+      transform: scale(1);
+    }
+    50% {
+      filter: drop-shadow(0 0 8px rgba(255,180,60,0.45));
+      transform: scale(1.05);
+    }
+  }
+  .animate-glow {
+    animation: emberGlow 4.5s ease-in-out infinite;
+    will-change: transform, filter;
+  }
+`}</style>
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  fill="url(#flameDark)"
+  className="h-7 w-7 animate-glow"
+>
+  
         <stop offset="0%" stopColor="#ffb347" />
         <stop offset="50%" stopColor="#ff6a00" />
         <stop offset="100%" stopColor="#b34700" />
