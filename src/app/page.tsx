@@ -567,8 +567,14 @@ useEffect(() => {
       in a bearish world, the fire can rise. Each burn he makes is a heartbeat of the community: a
       symbol of resilience, humor and transparency.
     </p>
-    <p className="text-amber-200 font-semibold mt-6 leading-relaxed">
-  <span className="text-amber-100/90">The Burning Bear doesn’t burn alone, he’s here to keep the fire alive for everyone who believes. Every spark counts. Every burn means something. 🔥</span>
+    <p className="relative mt-8 text-amber-200 font-semibold leading-relaxed tracking-wide">
+  <span className="animate-[flicker_6s_ease-in-out_infinite] drop-shadow-[0_0_8px_rgba(255,184,76,0.3)]">
+    The Burning Bear doesn’t burn alone, he’s here to keep the fire alive for everyone who believes.<br />
+    <span className="text-amber-100/90">Every spark counts. Every burn means something. 🔥</span>
+  </span>
+
+  {/* faint ember shimmer backdrop */}
+  <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400/30 to-transparent animate-[emberShimmer_8s_linear_infinite]" />
 </p>
   </div>
 
