@@ -534,44 +534,35 @@ useEffect(() => {
 </section>
 
 {/* ===== Contract Address ===== */}
-<section className="mx-auto max-w-6xl px-4 pb-14 text-center">
-  <div className="relative inline-block">
-    {/* subtle glowing underline */}
-    <div className="absolute -bottom-1 left-1/2 h-[2px] w-[60%] -translate-x-1/2 rounded-full ember-divider opacity-70"></div>
+<section className="mx-auto max-w-6xl px-4 pb-10 text-center">
+  <h3 className="text-lg font-semibold text-amber-200/80 mb-3 tracking-wide">
+    Contract Address
+  </h3>
 
-    <h3 className="text-xl font-semibold text-amber-300 mb-6 tracking-wide drop-shadow-[0_0_8px_rgba(255,200,100,0.25)]">
-      Contract Address
-    </h3>
-  </div>
-
-  <div className="mx-auto max-w-3xl flex flex-col sm:flex-row items-center justify-between
-                  rounded-2xl border border-amber-400/20 bg-gradient-to-br
-                  from-white/[0.04] to-white/[0.02] backdrop-blur-md shadow-[0_0_25px_rgba(255,200,100,0.08)]
-                  px-6 py-4 sm:py-5 space-y-3 sm:space-y-0 sm:space-x-4">
-    
-    {/* Address */}
-    <code className="font-mono text-[15px] text-white/90 truncate">
+  <div className="mx-auto flex max-w-3xl items-center justify-between gap-3
+                  rounded-lg border border-amber-400/10 bg-gradient-to-br
+                  from-[#0e1a15]/90 to-[#0a1410]/90
+                  px-5 py-3 backdrop-blur-sm shadow-[0_0_18px_rgba(255,184,76,0.08)]">
+    <code className="font-mono text-[15px] text-white/70 truncate">
       {FULL_TOKEN_ADDRESS}
     </code>
 
-    {/* Buttons */}
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2">
       <a
         href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="rounded-md border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-sm font-semibold
-                   text-amber-300 hover:bg-amber-400/20 hover:text-white transition-all duration-200"
+        className="text-sm font-medium text-amber-300/90 hover:text-amber-200 transition-colors duration-200"
       >
         View
       </a>
 
       <button
         onClick={handleCopy}
-        className={`rounded-md px-3.5 py-1.5 text-sm font-semibold transition-all duration-200
+        className={`text-sm font-semibold px-3 py-1.5 rounded-md transition-all duration-200
           ${copied
             ? 'bg-amber-300 text-black shadow-[0_0_10px_rgba(255,200,100,0.6)]'
-            : 'bg-white/[0.08] text-amber-200 hover:bg-amber-300 hover:text-black'
+            : 'bg-white/[0.06] text-amber-200 hover:bg-amber-300 hover:text-black'
           }`}
       >
         {copied ? 'Copied!' : 'Copy'}
