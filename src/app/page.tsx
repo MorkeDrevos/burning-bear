@@ -534,18 +534,21 @@ useEffect(() => {
   id="bear"
   className="relative mx-auto max-w-5xl px-4 py-14 md:py-20 text-center"
 >
-  {/* soft glow behind the card */}
-  <div className="pointer-events-none absolute inset-0">
-    <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-amber-400/8 via-amber-300/5 to-transparent blur-[70px]" />
-    <div className="absolute inset-0 rounded-xl bg-amber-500/10 blur-[60px] animate-pulse" />
+  {/* Subtle flickering aura behind everything */}
+  <div className="pointer-events-none absolute inset-0 glow-ember">
+    <div className="absolute inset-0 bg-gradient-to-b from-amber-400/10 via-amber-300/5 to-transparent blur-[90px]" />
   </div>
 
-  <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md px-6 py-10 md:px-10 md:py-12 shadow-ember">
-    <img
-      src="/img/burning-bear.PNG"
-      alt="The Burning Bear"
-      className="mx-auto mb-6 h-28 w-28 rounded-full ring-1 ring-white/15 bear-breathe"
-    />
+  {/* Card */}
+  <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md px-6 py-10 md:px-10 md:py-12 shadow-ember flicker-soft">
+    <div className="relative mx-auto mb-8 w-[220px] md:w-[260px]">
+      <div className="absolute inset-0 rounded-xl bg-amber-500/10 blur-[60px] animate-pulse" />
+      <img
+        src="/img/burning-bear.PNG"
+        alt="The Burning Bear"
+        className="relative w-full h-auto mx-auto drop-shadow-[0_0_40px_rgba(255,140,0,0.3)] rounded-xl bear-breathe"
+      />
+    </div>
 
     <p className="text-xs uppercase tracking-[0.25em] text-white/50">
       The Burning Bear
@@ -554,15 +557,23 @@ useEffect(() => {
       Meet The Burning Bear
     </h3>
 
-    <div className="mx-auto mt-4 max-w-3xl text-white/75 space-y-4">
-      <p>When markets turn cold, most hide. But not this bear. He stands in the fire — calm, unshaken, dressed in his finest suit — because he knows that every burn builds something greater.</p>
-      <p>The Burning Bear was born from chaos, forged by conviction, and fueled by the spirit of those who refuse to quit. He’s not here to watch the forest burn. He’s here to keep the fire alive for everyone who believes.</p>
+    <div className="mx-auto mt-5 max-w-3xl text-white/75 space-y-4 leading-relaxed">
+      <p>
+        When markets turn cold, most hide. But not this bear. He stands in the fire — calm,
+        unshaken, dressed in his finest suit because he knows that every burn builds something
+        greater.
+      </p>
+      <p>
+        The Burning Bear was born from chaos, forged by conviction, and fueled by the spirit of
+        those who refuse to quit. He’s not here to watch the forest burn. He’s here to keep the fire
+        alive for everyone who believes.
+      </p>
       <p className="text-amber-200/90 font-semibold">
-        A bear in a burning world, teaching us that heat is only dangerous if you’ve forgotten what warmth feels like.
+        A bear in a burning world, teaching us that heat is only dangerous if you’ve forgotten what
+        warmth feels like.
       </p>
     </div>
 
-    {/* faint ember line under title */}
     <div className="mx-auto mt-6 h-[1.5px] w-40 overflow-hidden rounded-full">
       <div className="h-full w-full footer-divider rounded-full" />
     </div>
