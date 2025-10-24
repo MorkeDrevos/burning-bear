@@ -533,6 +533,22 @@ useEffect(() => {
   </div>
 </section>
 
+{/* Contract Address */}
+<div className="text-center mt-8">
+  <h3 className="text-amber-400 font-semibold mb-2">Contract Address</h3>
+  <div className="inline-flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+    <span className="text-sm text-white/70 font-mono select-all">
+      4NGbC4RRrUjS78ooSN53Up7gSg4dGrj6F6dxpMWHbonk
+    </span>
+    <button
+      onClick={() => navigator.clipboard.writeText("4NGbC4RRrUjS78ooSN53Up7gSg4dGrj6F6dxpMWHbonk")}
+      className="text-xs text-amber-400 hover:text-amber-300 transition"
+    >
+      Copy
+    </button>
+  </div>
+</div>
+
       {/* ===== Footer ===== */}
       <footer className="border-t border-white/10 bg-[#0d1a14] relative">
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
