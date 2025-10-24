@@ -515,7 +515,7 @@ export default function Page() {
       </section>
 
       {/* ===== This Week at the Campfire ===== */}
-<section className="mx-auto max-w-6xl px-4 pt-10 pb-16">
+<section className="mx-auto max-w-6xl px-4 pt-16 pb-16">
   <h3 className="text-xl font-bold">This Week at the Campfire</h3>
   <p className="mt-1 text-sm text-white/55">
     Activity in the last 7 days. Auto-updated from the live log.
