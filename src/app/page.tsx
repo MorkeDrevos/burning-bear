@@ -365,7 +365,10 @@ export default function Page() {
       </section>
 
       {/* ===== Live Burn Log — single horizontal scroll line ===== */}
-      <section id="log" className="w-full px-4 sm:px-6 lg:px-8 mt-6">
+      <section
+        id="log"
+        className="w-full px-4 sm:px-6 lg:px-8 mt-6 scroll-mt-24 md:scroll-mt-28"
+      >
         <div className="flex items-baseline justify-between max-w-7xl mx-auto">
           <h2 className="text-2xl font-bold">Live Burn Log</h2>
           <p className="text-sm text-white/50">TX links open explorer.</p>
@@ -379,10 +382,8 @@ export default function Page() {
                 key={b.id}
                 className="flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]"
               >
-                <div
-  className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md 
-  p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] flex flex-col justify-between"
->
+                {/* Burn card (NO hover effects) */}
+                <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)]">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">
@@ -428,6 +429,7 @@ export default function Page() {
                     <div className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500" style={{ width: '100%' }} />
                   </div>
                 </div>
+                {/* /Burn card */}
               </div>
             ))}
           </div>
@@ -435,14 +437,18 @@ export default function Page() {
       </section>
 
       {/* ===== How It Works ===== */}
-      <section id="how" className="mx-auto max-w-6xl px-4 pt-16 scroll-mt-24">
-        <h3 className="text-xl font-bold tracking-tight mb-4">How It Works</h3>
+      <section id="how" className="mx-auto max-w-6xl px-4 pt-16 scroll-mt-24 md:scroll-mt-28">
+        {/* Amber headline like your screenshot */}
+        <h3 className="text-3xl md:text-4xl font-extrabold text-[#ffe48d] tracking-tight mb-4">
+          How It Works
+        </h3>
 
-        <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px] mb-6 md:mb-8">
-          Every spark — whether it’s a trade, a creator reward, or a network fee — feeds the
-          <span className="text-[#ffe48d] font-semibold"> $BEAR</span> fire. These flames merge into the
-          <span className="text-[#ffe48d] font-semibold"> Campfire Fund</span>, driving constant buybacks,
-          burns, and creator support. The more the ecosystem moves, the hotter it burns. 🔥
+        {/* Emphasized first sentence + highlighted fund name */}
+        <p className="text-white/80 max-w-3xl leading-relaxed text-[16px] md:text-[17px] mb-6 md:mb-8">
+          <span className="font-semibold text-[#ffe48d]">Every spark fuels the fire.</span>{' '}
+          Whether it’s a trade, a creator reward, or a network fee — every move feeds the{' '}
+          <span className="text-[#ffe48d] font-semibold"> $BEAR Campfire Fund</span>, powering constant buybacks,
+          burns, and community rewards. The more the ecosystem moves, the hotter the fire burns. 🔥
         </p>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3 items-stretch">
@@ -470,7 +476,10 @@ export default function Page() {
       </section>
 
       {/* ===== Campfire Wallets ===== */}
-      <section id="wallets" className="mx-auto max-w-6xl px-4 pt-16 pb-16">
+      <section
+        id="wallets"
+        className="mx-auto max-w-6xl px-4 pt-16 pb-16 scroll-mt-24 md:scroll-mt-28"
+      >
         <h3 className="text-xl font-bold tracking-tight">Campfire Wallets</h3>
         <p className="mt-1 text-sm text-white/55">The campfire burns in full view. Every wallet can be verified on Solana Explorer.</p>
 
@@ -551,15 +560,6 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function StatBig({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-6 md:p-7 backdrop-blur">
-      <div className="text-xs uppercase tracking-wider text-white/55">{label}</div>
-      <div className="mt-1 text-3xl font-extrabold">{value}</div>
-    </div>
-  );
-}
-
 function Pill({ children }: { children: React.ReactNode }) {
   return (
     <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/75 backdrop-blur">
@@ -570,57 +570,15 @@ function Pill({ children }: { children: React.ReactNode }) {
 
 function HowCard({ title, body }: { title: string; body: string }) {
   return (
-    <div className="flex h-full flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_10px_24px_rgba(255,183,77,0.10)] hover:border-amber-300/25">
+    <div className="flex h-full flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6">
       <div className="text-lg font-semibold">{title}</div>
       <div className="mt-2 text-sm text-white/75">{body}</div>
     </div>
   );
 }
 
-function BurnCard({ burn, price }: { burn: Burn & { timestamp: number }; price: number }) {
-  const usd = burn.sol && price ? burn.sol * price : undefined;
-  const ageMin = Math.max(0, (Date.now() - burn.timestamp) / 60_000);
-  const brightness = Math.max(0.68, 1 - ageMin / 180);
-  const progress = Math.min(1, ageMin / 10);
-
-  return (
-    <div
-      className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_10px_30px_rgba(255,183,77,0.12)] hover:border-amber-300/30 ring-emerald-500/0"
-      style={{ filter: `brightness(${brightness})` }}
-    >
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">🔥</span>
-          <div>
-            <div className="text-lg font-bold">Burn • {fmtInt(burn.amount)} BEAR</div>
-            <div className="text-sm text-white/60">{fmtWhen(burn.timestamp)}</div>
-            {burn.sol !== undefined && (
-              <div className="text-sm text-white/70">
-                ≈ {burn.sol.toFixed(4)} SOL {usd ? `(${fmtMoney(usd)})` : ''}
-              </div>
-            )}
-          </div>
-        </div>
-        <Link
-          href={burn.tx}
-          target="_blank"
-          className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline"
-        >
-          TX
-        </Link>
-      </div>
-
-      <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
-        <div
-          className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
-          style={{ width: `${Math.floor(progress * 100)}%` }}
-        />
-      </div>
-    </div>
-  );
-}
-
 function WalletCard({ title, address, note }: { title: string; address: string; note?: string }) {
+  // Font sizes bumped up
   const [copied, setCopied] = useState(false);
   const timer = useRef<number | null>(null);
 
@@ -633,23 +591,25 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
 
   return (
     <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
-      <div className="text-sm font-semibold">{title}</div>
-      {note && <div className="mt-0.5 text-xs text-white/55">{note}</div>}
+      <div className="text-base md:text-lg font-semibold">{title}</div>
+      {note && <div className="mt-1 text-sm text-white/65">{note}</div>}
       <div className="mt-3 flex items-center justify-between gap-2">
-        <code className="truncate rounded-md bg-white/5 px-2 py-1 text-[13px] text-white/80">
+        <code className="truncate rounded-md bg-white/5 px-2 py-1 text-sm md:text-[15px] text-white/85">
           {truncateMiddle(address, 8, 8)}
         </code>
         <div className="flex items-center gap-2">
           <a
             href={`${EXPLORER}/address/${address}`}
             target="_blank"
-            className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/80 hover:bg-white/10"
+            className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm md:text-base text-white/85 hover:bg-white/10"
           >
             View
           </a>
           <button
             onClick={handleCopy}
-            className={`rounded-full px-3 py-1 text-sm font-semibold transition ${copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
+            className={`rounded-full px-3 py-1 text-sm md:text-base font-semibold transition ${
+              copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'
+            }`}
           >
             {copied ? 'Copied' : 'Copy'}
           </button>
