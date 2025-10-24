@@ -561,7 +561,7 @@ useEffect(() => {
     <WalletCard
   title="Official Burn Wallet"
   address={BURN_WALLET}
-  note="All $BBURN sent here are burned forever. 🔥"
+  note="All $BBURN sent here are burned forever."
 />
     <WalletCard
   title="Treasury & Buybacks"
