@@ -358,7 +358,7 @@ useEffect(() => {
         <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
           <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6">
             <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
-  Meet The Burning Bear – the classiest arsonist in crypto.
+  Meet The Burning Bear - the classiest arsonist in crypto.
 </h1>
             {/* Countdowns */}
             <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -558,7 +558,7 @@ useEffect(() => {
   </p>
 
   <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
-    <WalletCard title="Burn Wallet" address={BURN_WALLET} note="Destroyed supply lives here forever." />
+    <WalletCard title="Official Burn Wallet" address={BURN_WALLET} note="On-chain burn wallet. Supply reduced forever." />
     <WalletCard title="Treasury & Buybacks" address={TREASURY_WALLET} note="Funds for buybacks and operations." />
     <WalletCard title="Team & Marketing" address={MARKETING_WALLET} note="Growth, creators, promos." />
   </div>
