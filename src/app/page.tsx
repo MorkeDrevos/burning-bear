@@ -143,36 +143,43 @@ export default function Page() {
   }, []);
 
   // load JSON data (cache-busted) and normalize timestamps
-  useEffect(() => {
-    let alive = true;
-    fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
-  .then(r => r.json())
-  .then((d) => {
-    if (!alive) return;
+useEffect(() => {
+  let alive = true;
 
-    // 🧮 Convert schedule minutes → milliseconds
-    if (d.schedule) {
-      const burnMins = d.schedule.burnIntervalMinutes ?? 60;
-      const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
+  fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
+    .then((r) => r.json())
+    .then((d) => {
+      if (!alive) return;
 
-      d.schedule.burnIntervalMs = burnMins * 60 * 1000;
-      d.schedule.buybackIntervalMs = buybackMins * 60 * 1000;
+      // Convert schedule: minutes → milliseconds (works with burnIntervalMinutes / buybackIntervalMinutes)
+      if (d.schedule) {
+        const burnMins = d.schedule.burnIntervalMinutes ?? 60;
+        const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
 
-      // Optional: auto-recalculate next timestamps if not set
-      const now = Date.now();
-      if (!d.schedule.nextBurnAt) d.schedule.nextBurnAt = now + burnMins * 60 * 1000;
-      if (!d.schedule.nextBuybackAt) d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
-    }
+        d.schedule.burnIntervalMs = burnMins * 60 * 1000;
+        d.schedule.buybackIntervalMs = buybackMins * 60 * 1000;
 
-    // 🔥 Process burn data as before
-    const burns = (d?.burns ?? [])
-      .map(b => ({ ...b, timestamp: toMs(b.timestamp) }))
-      .filter(b => Number.isFinite(b.timestamp as number));
+        // If next times are missing, seed them from now + minutes
+        const now = Date.now();
+        if (!d.schedule.nextBurnAt) d.schedule.nextBurnAt = now + burnMins * 60 * 1000;
+        if (!d.schedule.nextBuybackAt) d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
+      }
 
-    setData({ ...d, burns });
-  })
-  .catch(() => (alive = false));
-  }, []);
+      // Normalize burns (make timestamps numeric) and drop invalid rows
+      const burns = (d?.burns ?? [])
+        .map((b: any) => ({ ...b, timestamp: toMs(b.timestamp) }))
+        .filter((b: any) => Number.isFinite(b.timestamp as number));
+
+      setData({ ...d, burns });
+    })
+    .catch(() => {
+      alive = false;
+    });
+
+  return () => {
+    alive = false;
+  };
+}, []);
 
   // live SOL price (falls back to stats.priceUsdPerSol)
   useEffect(() => {
