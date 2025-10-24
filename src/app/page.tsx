@@ -52,11 +52,11 @@ type StateJson = {
 const truncateMiddle = (str: string, left = 6, right = 6) =>
   !str || str.length <= left + right + 1 ? str : `${str.slice(0, left)}…${str.slice(-right)}`;
 
-const fmtInt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+const fmtInt = (n: number) =>
+  n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
 const fmtMoney = (n?: number) =>
-  n == null || !isFinite(n) ? '$0.00'
-    : n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  n == null || !isFinite(n) ? '$0.00' : n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
 const fmtWhen = (tsMs: number) =>
   new Date(tsMs).toLocaleString('en-US', {
@@ -250,6 +250,16 @@ export default function Page() {
     [burnsSorted, todayStart]
   );
 
+  const weekStats = useMemo(() => {
+    const lastWeek = burnsSorted.filter((b) => (b.timestamp as number) >= weekStart);
+    const count = lastWeek.length;
+    const sol = lastWeek.reduce((acc, b) => acc + (b.sol ?? 0), 0);
+    const usd = sol * priceUsdPerSol;
+    const largest = lastWeek.reduce((m, b) => (b.amount > m ? b.amount : m), 0);
+    const avgSol = count > 0 ? sol / count : 0;
+    return { count, sol, usd, largest, avgSol };
+  }, [burnsSorted, weekStart, priceUsdPerSol]);
+
   const handleCopy = async () => {
     try { await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS); } catch {}
     setCopied(true);
@@ -286,36 +296,23 @@ export default function Page() {
             <a href="#wallets" className="text-[#ffe48d] hover:text-amber-300 transition">Campfire Wallets</a>
           </nav>
 
-          {/* Right: Actions */}
+          {/* Right: Copy CA + Mobile Menu */}
           <div className="flex items-center gap-2 md:gap-3">
-            {/* X Community */}
-            <a
-              href="https://x.com/i/communities/1980944446871966021"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full bg-black/40 border border-white/10 text-white/85 px-4 py-2 text-sm font-medium hover:bg-white/10 transition"
-              title="Join the X Community"
-            >
-              🕊️ X Community
-            </a>
-
-            {/* CA pill (truncated) on lg+ */}
             <span
-              className="hidden lg:inline rounded-full bg-emerald-900/30 px-4 py-2 text-sm text-emerald-300 border border-emerald-500/20"
+              className="hidden lg:inline rounded-full bg-emerald-900/40 px-4 py-2 text-sm text-emerald-300 border border-emerald-500/20"
               title={FULL_TOKEN_ADDRESS}
             >
               {truncateMiddle(FULL_TOKEN_ADDRESS)}
             </span>
-
-            {/* Copy CA (outline classy) */}
             <button
               onClick={handleCopy}
-              className={`rounded-full border border-amber-300/40 text-amber-200 px-4 py-2 text-sm md:text-base font-semibold hover:bg-amber-300/10 transition`}
+              className={`rounded-full px-4 py-2 text-sm md:text-base font-semibold transition ${
+                copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'
+              }`}
               aria-live="polite"
             >
               {copied ? 'Copied!' : 'Copy CA'}
             </button>
-
             <MobileMenu />
           </div>
         </div>
@@ -345,32 +342,33 @@ export default function Page() {
 
             {/* Countdowns */}
             <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <Countdown label="Next buyback in" value={fmtCountdown(targets.bb ? targets.bb - now : 0)} />
-              <Countdown label="Next burn in" value={fmtCountdown(targets.burn ? targets.burn - now : 0)} />
+              <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />
+              <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} />
             </div>
 
             {/* Stats */}
             <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-4">
-              <Stat label="Burned So Far" value={fmtInt(data?.stats?.burned ?? 0)} />
-              <Stat label="Current Supply" value={fmtInt(data?.stats?.currentSupply ?? Math.max(0, (data?.stats?.initialSupply ?? 0) - (data?.stats?.burned ?? 0)))} />
+              <Stat label="Burned So Far" value={fmtInt(BURNED)} />
+              <Stat label="Current Supply" value={fmtInt(CURRENT)} />
               <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
-              <Stat label="Total Buyback Value" value={fmtMoney((data?.stats?.buybackSol ?? 0) * (data?.stats?.priceUsdPerSol ?? solUsd ?? 0))} />
+              <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
             </div>
 
             {/* Pills */}
             <div className="mt-3 flex flex-wrap gap-3">
-              <Pill>Today: {
-                useMemo(() => (data?.burns ?? []).filter(b => toMs(b.timestamp) >= (new Date().setHours(0,0,0,0))).length, [data?.burns])
-              } burns</Pill>
-              <Pill>Initial Supply: {fmtInt(data?.stats?.initialSupply ?? 0)}</Pill>
-              <Pill>SOL: {fmtMoney(solUsd ?? data?.stats?.priceUsdPerSol ?? 0)}</Pill>
+              <Pill>Today: {todayBurnsCount} burns</Pill>
+              <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
+              <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
             </div>
           </div>
         </div>
       </section>
 
       {/* ===== Live Burn Log — single horizontal scroll line ===== */}
-      <section id="log" className="w-full px-4 sm:px-6 lg:px-8 mt-10 scroll-mt-24 md:scroll-mt-28">
+      <section
+        id="log"
+        className="w-full px-4 sm:px-6 lg:px-8 mt-6 scroll-mt-24 md:scroll-mt-28"
+      >
         <div className="flex items-baseline justify-between max-w-7xl mx-auto">
           <h2 className="text-2xl font-bold">Live Burn Log</h2>
           <p className="text-sm text-white/50">TX links open explorer.</p>
@@ -380,8 +378,58 @@ export default function Page() {
         <div className="mt-6 overflow-x-auto pb-4">
           <div className="flex gap-6 min-w-full px-1">
             {burnsSorted.slice(0, 6).map((b) => (
-              <div key={b.id} className="flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]">
-                <BurnCard burn={{ ...b, timestamp: toMs(b.timestamp) }} price={priceUsdPerSol} />
+              <div
+                key={b.id}
+                className="flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]"
+              >
+                {/* Burn card (NO hover effects) */}
+                <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)]">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">
+                        🔥
+                      </span>
+                      <div>
+                        <div className="text-lg font-bold">
+                          Burn • {b.amount.toLocaleString()} BEAR
+                        </div>
+                        <div className="text-sm text-white/60">
+                          {new Date(b.timestamp).toLocaleString('en-US', {
+                            weekday: 'short',
+                            month: 'short',
+                            day: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true,
+                          })}
+                        </div>
+                        {b.sol !== undefined && (
+                          <div className="text-sm text-white/70">
+                            ≈ {b.sol.toFixed(4)} SOL (
+                            {(b.sol * priceUsdPerSol).toLocaleString('en-US', {
+                              style: 'currency',
+                              currency: 'USD',
+                            })}
+                            )
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <Link
+                      href={b.tx}
+                      target="_blank"
+                      className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline"
+                    >
+                      TX
+                    </Link>
+                  </div>
+
+                  <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
+                    <div className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500" style={{ width: '100%' }} />
+                  </div>
+                </div>
+                {/* /Burn card */}
               </div>
             ))}
           </div>
@@ -390,11 +438,15 @@ export default function Page() {
 
       {/* ===== How It Works ===== */}
       <section id="how" className="mx-auto max-w-6xl px-4 pt-16 scroll-mt-24 md:scroll-mt-28">
-        <h3 className="text-xl font-bold tracking-tight mb-4">How It Works</h3>
+        {/* Amber headline like your screenshot */}
+        <h3 className="text-3xl md:text-4xl font-extrabold text-[#ffe48d] tracking-tight mb-4">
+          How It Works
+        </h3>
 
-        <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px] mb-6 md:mb-8">
-          <span className="font-semibold text-[#ffe48d]/95">Every spark fuels the fire.</span>{' '}
-          Whether it’s a trade, a creator reward, or a network fee — every move feeds the
+        {/* Emphasized first sentence + highlighted fund name */}
+        <p className="text-white/80 max-w-3xl leading-relaxed text-[16px] md:text-[17px] mb-6 md:mb-8">
+          <span className="font-semibold text-[#ffe48d]">Every spark fuels the fire.</span>{' '}
+          Whether it’s a trade, a creator reward, or a network fee — every move feeds the{' '}
           <span className="text-[#ffe48d] font-semibold"> $BEAR Campfire Fund</span>, powering constant buybacks,
           burns, and community rewards. The more the ecosystem moves, the hotter the fire burns. 🔥
         </p>
@@ -410,21 +462,24 @@ export default function Page() {
           <Reveal delay={120}>
             <HowCard
               title="30% → Treasury & Buybacks"
-              body="Transparent funds for buybacks and stability — keeping $BEAR burning long-term."
+              body="Reserved for strategic buybacks, ecosystem stability and community-driven events that keep $BEAR’s fire burning long-term."
             />
           </Reveal>
 
           <Reveal delay={240}>
             <HowCard
               title="20% → Team, Creators & Growth"
-              body="Rewards creators, partners, and community builders — spreading the legend of $BEAR."
+              body="Rewards creators, partners, and community builders — spreading the legend of $BEAR across Solana while fueling future innovation."
             />
           </Reveal>
         </div>
       </section>
 
       {/* ===== Campfire Wallets ===== */}
-      <section id="wallets" className="mx-auto max-w-6xl px-4 pt-16 pb-16 scroll-mt-24 md:scroll-mt-28">
+      <section
+        id="wallets"
+        className="mx-auto max-w-6xl px-4 pt-16 pb-16 scroll-mt-24 md:scroll-mt-28"
+      >
         <h3 className="text-xl font-bold tracking-tight">Campfire Wallets</h3>
         <p className="mt-1 text-sm text-white/55">The campfire burns in full view. Every wallet can be verified on Solana Explorer.</p>
 
@@ -522,46 +577,8 @@ function HowCard({ title, body }: { title: string; body: string }) {
   );
 }
 
-function BurnCard({ burn, price }: { burn: Burn & { timestamp: number }; price: number }) {
-  const usd = burn.sol && price ? burn.sol * price : undefined;
-  const ageMin = Math.max(0, (Date.now() - burn.timestamp) / 60_000);
-  const brightness = Math.max(0.68, 1 - ageMin / 180);
-
-  return (
-    <div
-      className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)]"
-      style={{ filter: `brightness(${brightness})` }}
-    >
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">🔥</span>
-          <div>
-            <div className="text-lg font-bold">Burn • {fmtInt(burn.amount)} BEAR</div>
-            <div className="text-sm text-white/60">{fmtWhen(burn.timestamp)}</div>
-            {burn.sol !== undefined && (
-              <div className="text-sm text-white/70">
-                ≈ {burn.sol.toFixed(4)} SOL {usd ? `(${fmtMoney(usd)})` : ''}
-              </div>
-            )}
-          </div>
-        </div>
-        <Link
-          href={burn.tx}
-          target="_blank"
-          className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 hover:underline"
-        >
-          TX
-        </Link>
-      </div>
-
-      <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
-        <div className="h-3 w-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500" />
-      </div>
-    </div>
-  );
-}
-
 function WalletCard({ title, address, note }: { title: string; address: string; note?: string }) {
+  // Font sizes bumped up
   const [copied, setCopied] = useState(false);
   const timer = useRef<number | null>(null);
 
@@ -573,25 +590,26 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
   };
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-6 md:p-7 backdrop-blur">
-      <div className="text-lg font-semibold">{title}</div>
-      {note && <div className="mt-1 text-sm text-white/60">{note}</div>}
-
+    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
+      <div className="text-base md:text-lg font-semibold">{title}</div>
+      {note && <div className="mt-1 text-sm text-white/65">{note}</div>}
       <div className="mt-3 flex items-center justify-between gap-2">
-        <code className="truncate rounded-md bg-white/5 px-2 py-1 text-[14px] text-white/85">
+        <code className="truncate rounded-md bg-white/5 px-2 py-1 text-sm md:text-[15px] text-white/85">
           {truncateMiddle(address, 8, 8)}
         </code>
         <div className="flex items-center gap-2">
           <a
             href={`${EXPLORER}/address/${address}`}
             target="_blank"
-            className="rounded-full bg-black/40 border border-white/10 text-white/85 px-3 py-1.5 text-sm hover:bg-white/10 transition"
+            className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm md:text-base text-white/85 hover:bg-white/10"
           >
             View
           </a>
           <button
             onClick={handleCopy}
-            className="rounded-full bg-black/40 border border-white/10 text-white/85 px-3 py-1.5 text-sm hover:bg-white/10 transition"
+            className={`rounded-full px-3 py-1 text-sm md:text-base font-semibold transition ${
+              copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'
+            }`}
           >
             {copied ? 'Copied' : 'Copy'}
           </button>
