@@ -557,7 +557,14 @@ useEffect(() => {
     The campfire burns in full view. Every wallet can be verified on Solana Explorer.
   </p>
 
-{/* ===== Contract Address ===== */}
+  <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
+    <WalletCard title="Official Burn Wallet" address={BURN_WALLET} note="On-chain burn wallet. Supply reduced forever." />
+    <WalletCard title="Treasury & Buybacks" address={TREASURY_WALLET} note="Funds for buybacks and operations." />
+    <WalletCard title="Team & Marketing" address={MARKETING_WALLET} note="Growth, creators, promos." />
+  </div>
+</section>
+
+    {/* ===== Contract Address ===== */}
 <section className="mx-auto max-w-4xl px-4 pb-10 text-center">
   <h3 className="text-lg font-semibold text-[#e7b65a] mb-3">Contract Address</h3>
 
@@ -599,13 +606,6 @@ useEffect(() => {
         {copied ? 'Copied!' : 'Copy'}
       </button>
     </div>
-  </div>
-</section>
-
-  <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
-    <WalletCard title="Official Burn Wallet" address={BURN_WALLET} note="On-chain burn wallet. Supply reduced forever." />
-    <WalletCard title="Treasury & Buybacks" address={TREASURY_WALLET} note="Funds for buybacks and operations." />
-    <WalletCard title="Team & Marketing" address={MARKETING_WALLET} note="Growth, creators, promos." />
   </div>
 </section>
 
