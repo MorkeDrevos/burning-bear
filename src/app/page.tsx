@@ -565,17 +565,17 @@ useEffect(() => {
 </section>
 
     {/* ===== Contract Address ===== */}
-<section className="mx-auto max-w-3xl rounded-2xl bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur-sm shadow-[0_0_12px_rgba(255,184,76,0.08)]">
+<section className="mx-auto max-w-3xl rounded-2xl border border-white/[0.05] bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur-sm shadow-[0_0_12px_rgba(255,184,76,0.08)]">
   <div className="flex items-center justify-between gap-3">
     <code
-      className="flex-1 rounded-md bg-white/[0.06] px-5 py-2 font-mono text-[15px] text-white/85 whitespace-nowrap overflow-x-auto scrollbar-none"
+      className="flex-1 rounded-md bg-white/[0.05] px-5 py-2 font-mono text-[15px] text-white/85 whitespace-nowrap overflow-x-auto scrollbar-none"
       title={FULL_TOKEN_ADDRESS}
     >
       {FULL_TOKEN_ADDRESS}
     </code>
 
     <div className="flex items-center gap-2">
-      {/* View button — subtle glass look */}
+      {/* View button — soft glass look */}
       <a
         href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
         target="_blank"
@@ -585,7 +585,7 @@ useEffect(() => {
         View
       </a>
 
-      {/* Copy button — gold */}
+      {/* Copy button — gold accent */}
       <button
         onClick={handleCopy}
         className={`rounded-md px-4 py-1.5 text-sm font-semibold transition
