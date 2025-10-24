@@ -380,9 +380,18 @@ export default function Page() {
                 <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)]">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">
-                        🔥
-                      </span>
+                      <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-amber-300/90 to-orange-400/90 shadow-[0_0_14px_rgba(255,160,60,0.5)]">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="url(#flameGradient)" className="h-7 w-7">
+    <defs>
+      <linearGradient id="flameGradient" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stopColor="#FFD180" />
+        <stop offset="50%" stopColor="#FF8A50" />
+        <stop offset="100%" stopColor="#FF6D00" />
+      </linearGradient>
+    </defs>
+    <path d="M12 2c2 2 3 4 3 6 0 1.5-.7 2.8-1.5 3.5 1.2-.4 2.4-1.5 3-3 1 3-1 8-4.5 9.5S6 15 7 10.5C8 6 12 2 12 2z"/>
+  </svg>
+</span>
                       <div>
                         <div className="text-lg font-bold">
                           Burn • {b.amount.toLocaleString()} BEAR
