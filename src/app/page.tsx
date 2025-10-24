@@ -558,18 +558,18 @@ useEffect(() => {
   {/* Story */}
   <div className="mx-auto max-w-3xl text-white/80 leading-relaxed text-lg space-y-5">
     <p>
-      When markets turn cold, most hide. But not this bear.
-      He stands in the fire — calm, unshaken, dressed in his finest suit — because he knows
-      that every burn builds something greater.
+      Long before the campfire roared across Solana, a quiet bear walked the forests of forgotten
+      chains — collecting embers from every spark of belief.  He wasn’t the kind that sleeps through
+      winters. He was the kind that builds warmth for everyone who dares to dream.
     </p>
     <p>
-      The Burning Bear was born from chaos, forged by conviction, and fueled by the spirit
-      of those who refuse to quit. He’s not here to watch the forest burn.
-      He’s here to keep the fire alive for everyone who believes.
+      When markets turned cold and others ran, he stayed — feeding the flame, reminding us that even
+      in a bearish world, the fire can rise. Each burn he makes is a heartbeat of the community: a
+      symbol of resilience, humor, and transparency.
     </p>
     <p className="text-amber-200 font-semibold">
-      A bear in a burning world, teaching us that heat is only dangerous
-      if you’ve forgotten what warmth feels like.
+      The Burning Bear isn’t here to watch the forest burn — he’s here to light the way.
+      Every spark counts. Every burn means something. 🔥
     </p>
   </div>
 
