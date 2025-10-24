@@ -50,3 +50,10 @@ html {
 .bear-breathe {
   animation: bearBreath 6s ease-in-out infinite;
 }
+@keyframes emberPulse {
+  0%, 100% { opacity: 0.4; filter: brightness(1); }
+  50% { opacity: 0.9; filter: brightness(1.08); }
+}
+.glow-ember {
+  animation: emberPulse 4.8s ease-in-out infinite;
+}
