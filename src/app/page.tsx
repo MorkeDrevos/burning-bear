@@ -514,7 +514,7 @@ export default function Page() {
             Built on the <span className="text-[#ffe48d] font-semibold">50/30/20 Campfire Split</span> — transparent, alive and always feeding the flames.
           </p>
 
-          <div className="flex justify-center gap-8 text-white/70 text-lg pt-2">
+          <div className="flex justify-center gap-8 text-white/70 text-sm pt-2">
             <a
               href="https://x.com/i/communities/1980944446871966021"
               target="_blank"
