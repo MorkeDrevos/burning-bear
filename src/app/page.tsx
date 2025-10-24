@@ -294,27 +294,22 @@ export default function Page() {
             <a href="#how" className="text-[#ffe48d] hover:text-amber-300 transition">How It Works</a>
             <a href="#log" className="text-[#ffe48d] hover:text-amber-300 transition">Live Burns</a>
             <a href="#wallets" className="text-[#ffe48d] hover:text-amber-300 transition">Campfire Wallets</a>
+                        <a href="#wallets" className="text-[#ffe48d] hover:text-amber-300 transition">X</a>
           </nav>
 
           {/* Right: Copy CA + Mobile Menu */}
-          <div className="flex items-center gap-2 md:gap-3">
-            <span
-              className="hidden lg:inline rounded-full bg-emerald-900/40 px-4 py-2 text-sm text-emerald-300 border border-emerald-500/20"
-              title={FULL_TOKEN_ADDRESS}
-            >
-              {truncateMiddle(FULL_TOKEN_ADDRESS)}
-            </span>
-            <button
-              onClick={handleCopy}
-              className={`rounded-full px-4 py-2 text-sm md:text-base font-semibold transition ${
-                copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'
-              }`}
-              aria-live="polite"
-            >
-              {copied ? 'Copied!' : 'Copy CA'}
-            </button>
-            <MobileMenu />
-          </div>
+<div className="flex items-center gap-2 md:gap-3">
+  {/* removed CA chip + Copy CA */}
+  <a
+    href="https://x.com/i/communities/1980944446871966021"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="hidden sm:inline rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/80 hover:bg-white/10"
+  >
+    X Community
+  </a>
+  <MobileMenu />
+</div>
         </div>
       </header>
 
@@ -363,6 +358,39 @@ export default function Page() {
           </div>
         </div>
       </section>
+
+      {/* ===== Contract Address strip ===== */}
+<section id="ca" className="mx-auto max-w-6xl px-4 -mt-4 mb-6">
+  <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/80 backdrop-blur px-4 py-4 md:px-6 md:py-5">
+    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div>
+        <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">Contract Address</div>
+        <code className="mt-1 block text-[13.5px] md:text-[14px] text-white/90 break-all">
+          {FULL_TOKEN_ADDRESS}
+        </code>
+      </div>
+      <div className="flex items-center gap-2">
+        <a
+          href={`https://explorer.solana.com/address/${FULL_TOKEN_ADDRESS}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-full border border-white/15 bg-white/5 px-3 py-2 text-sm text-white/85 hover:bg-white/10"
+        >
+          View on Explorer
+        </a>
+        <button
+          onClick={handleCopy}
+          className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+            copied ? 'bg-emerald-400 text-black' : 'bg-[#2A2F2B] text-white hover:bg-[#343a35]'
+          }`}
+          aria-live="polite"
+        >
+          {copied ? 'Copied!' : 'Copy Address'}
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* ===== Live Burn Log — single horizontal scroll line ===== */}
       <section
