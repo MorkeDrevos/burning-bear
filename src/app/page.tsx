@@ -46,6 +46,21 @@ type StateJson = {
   burns?: Burn[];
 };
 
+// ==============================
+// Copy handler for Contract Address
+// ==============================
+const [copiedCA, setCopiedCA] = useState(false);
+
+async function handleCopyCA() {
+  try {
+    await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS);
+    setCopiedCA(true);
+    setTimeout(() => setCopiedCA(false), 1200);
+  } catch (err) {
+    console.error('Clipboard copy failed', err);
+  }
+}
+
 /* =========================
    Utils
 ========================= */
@@ -533,26 +548,49 @@ useEffect(() => {
   </div>
 </section>
 
-{/* Contract Address Section */}
-<section className="max-w-5xl mx-auto px-4 text-center py-10">
-  <h3 className="text-amber-400 font-semibold text-lg mb-3 tracking-wide">Contract Address</h3>
-  <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2 font-mono text-sm text-white/80">
-    <span className="truncate max-w-[240px] sm:max-w-[360px]">
-      {truncateMiddle(FULL_TOKEN_ADDRESS, 8, 8)}
-    </span>
-    <button
-      onClick={() => {
-        navigator.clipboard.writeText(FULL_TOKEN_ADDRESS);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1000);
-      }}
-      className={`px-3 py-0.5 rounded-full border text-xs transition ${
-        copied
-          ? 'border-amber-300 text-amber-300 bg-amber-400/10'
-          : 'border-amber-400/30 text-amber-400 hover:text-amber-300'
-      }`}
+{/* ===== Contract Address Section ===== */}
+<section className="max-w-4xl mx-auto text-center py-10 px-4">
+  <h3 className="text-amber-400 text-lg font-semibold tracking-wide mb-4">
+    Contract Address
+  </h3>
+
+  <div
+    className="relative inline-flex items-center justify-between w-full sm:w-auto max-w-full gap-2
+               bg-gradient-to-r from-black/40 via-zinc-900/40 to-black/40
+               border border-white/10 rounded-full px-4 py-2 shadow-[0_0_12px_rgba(255,184,76,0.15)]"
+  >
+    {/* Token address */}
+    <code
+      className="font-mono text-sm text-white/80 truncate max-w-[60vw] sm:max-w-[400px]"
+      title={FULL_TOKEN_ADDRESS}
     >
-      {copied ? 'Copied!' : 'Copy'}
+      {truncateMiddle(FULL_TOKEN_ADDRESS, 8, 8)}
+    </code>
+
+    {/* Divider line */}
+    <span className="h-4 w-px bg-white/10" />
+
+    {/* View link */}
+    <a
+      href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-xs font-medium text-white/70 hover:text-amber-300 transition"
+    >
+      View
+    </a>
+
+    {/* Copy button */}
+    <button
+      onClick={handleCopyCA}
+      className={`text-xs font-medium rounded-full px-3 py-1 transition
+        ${
+          copiedCA
+            ? 'bg-amber-400 text-black shadow-[0_0_8px_rgba(255,184,76,0.6)]'
+            : 'bg-zinc-800/70 text-amber-300 hover:bg-amber-300 hover:text-black'
+        }`}
+    >
+      {copiedCA ? 'Copied!' : 'Copy'}
     </button>
   </div>
 </section>
