@@ -454,13 +454,15 @@ export default function Page() {
     </p>
 
     {/* Right: Coin */}
-<div className="relative flex-shrink-0 md:ml-auto md:-mt-6 lg:-mt-10 md:-translate-x-20 lg:-translate-x-28">
+<div className="relative flex-shrink-0 md:ml-auto md:-mt-8 lg:-mt-12 md:-translate-x-24 lg:-translate-x-32 xl:-translate-x-36">
   <img
     src="/img/coin-logo.png"
     alt="$BEAR Coin"
-    className="w-36 h-36 md:w-48 md:h-48 lg:w-56 lg:h-56 opacity-0 animate-fadeInCoin pointer-events-none drop-shadow-[0_8px_28px_rgba(255,184,77,0.35)]"
+    className="w-32 h-32 md:w-52 md:h-52 lg:w-60 lg:h-60 opacity-0 animate-fadeInCoin pointer-events-none"
   />
-  <span className="absolute inset-0 -z-10 rounded-full blur-2xl opacity-60 bg-[radial-gradient(closest-side,rgba(255,184,77,0.25),transparent_70%)]" />
+  {/* soft ember glow */}
+  <span className="absolute inset-0 -z-10 scale-125 rounded-full blur-2xl opacity-40
+                   bg-[radial-gradient(closest-side,rgba(255,184,77,0.22),transparent_70%)]" />
 </div>
   </div>
 
