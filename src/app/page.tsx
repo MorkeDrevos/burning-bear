@@ -358,8 +358,9 @@ useEffect(() => {
         <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
           <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6">
             <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
-              Meet The Burning Bear $BBURN - the classiest arsonist in crypto.
-            </h1>
+  Meet The Burning Bear $BBURN — the classiest
+  <span className="block">arsonist in crypto.</span>
+</h1>
 
             {/* Countdowns */}
             <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
