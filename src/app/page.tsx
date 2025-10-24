@@ -532,52 +532,49 @@ useEffect(() => {
 {/* ===== Meet the Burning Bear ===== */}
 <section
   id="bear"
-  className="relative mx-auto max-w-5xl px-4 py-14 md:py-20 text-center"
+  className="relative mx-auto max-w-6xl px-4 py-20 text-center scroll-mt-28 md:scroll-mt-32"
 >
-  {/* Subtle flickering aura behind everything */}
-  <div className="pointer-events-none absolute inset-0 glow-ember">
-    <div className="absolute inset-0 bg-gradient-to-b from-amber-400/10 via-amber-300/5 to-transparent blur-[90px]" />
+  {/* Subtle dark gradient backdrop */}
+  <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0d1a14] via-[#141f1a] to-[#0d1a14]" />
+  <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-amber-500/5 to-transparent blur-[60px]" />
+
+  {/* Bear image */}
+  <div className="relative mx-auto mb-10 w-[220px] md:w-[280px]">
+    <img
+  src="/img/burning-bear.png"
+  alt="The Burning Bear"
+  className="w-full h-auto mx-auto drop-shadow-[0_0_40px_rgba(255,140,0,0.3)] rounded-xl bear-breathe"
+/>
+    {/* Gentle animated glow behind him */}
+    <div className="absolute inset-0 rounded-xl bg-amber-500/10 blur-[60px] animate-pulse" />
   </div>
 
-  {/* Card */}
-  <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md px-6 py-10 md:px-10 md:py-12 shadow-ember flicker-soft">
-    <div className="relative mx-auto mb-8 w-[220px] md:w-[260px]">
-      <div className="absolute inset-0 rounded-xl bg-amber-500/10 blur-[60px] animate-pulse" />
-      <img
-        src="/img/burning-bear.png"
-        alt="The Burning Bear"
-        className="relative w-full h-auto mx-auto drop-shadow-[0_0_40px_rgba(255,140,0,0.3)] rounded-xl bear-breathe"
-      />
-    </div>
+  {/* Title */}
+  <h2 className="relative text-4xl md:text-5xl font-extrabold text-amber-300 drop-shadow-[0_0_10px_rgba(255,184,76,0.25)] mb-6">
+    Meet The Burning Bear
+    <span className="absolute left-1/2 top-full mt-3 h-[3px] w-20 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 animate-pulse" />
+  </h2>
 
-    <p className="text-xs uppercase tracking-[0.25em] text-white/50">
-      The Burning Bear
+  {/* Story */}
+  <div className="mx-auto max-w-3xl text-white/80 leading-relaxed text-lg space-y-5">
+    <p>
+      When markets turn cold, most hide. But not this bear.
+      He stands in the fire — calm, unshaken, dressed in his finest suit — because he knows
+      that every burn builds something greater.
     </p>
-    <h3 className="mt-2 text-3xl md:text-4xl font-extrabold text-amber-200">
-      Meet The Burning Bear
-    </h3>
-
-    <div className="mx-auto mt-5 max-w-3xl text-white/75 space-y-4 leading-relaxed">
-      <p>
-        When markets turn cold, most hide. But not this bear. He stands in the fire — calm,
-        unshaken, dressed in his finest suit because he knows that every burn builds something
-        greater.
-      </p>
-      <p>
-        The Burning Bear was born from chaos, forged by conviction, and fueled by the spirit of
-        those who refuse to quit. He’s not here to watch the forest burn. He’s here to keep the fire
-        alive for everyone who believes.
-      </p>
-      <p className="text-amber-200/90 font-semibold">
-        A bear in a burning world, teaching us that heat is only dangerous if you’ve forgotten what
-        warmth feels like.
-      </p>
-    </div>
-
-    <div className="mx-auto mt-6 h-[1.5px] w-40 overflow-hidden rounded-full">
-      <div className="h-full w-full footer-divider rounded-full" />
-    </div>
+    <p>
+      The Burning Bear was born from chaos, forged by conviction, and fueled by the spirit
+      of those who refuse to quit. He’s not here to watch the forest burn.
+      He’s here to keep the fire alive for everyone who believes.
+    </p>
+    <p className="text-amber-200 font-semibold">
+      A bear in a burning world, teaching us that heat is only dangerous
+      if you’ve forgotten what warmth feels like.
+    </p>
   </div>
+
+  {/* Ember glow base */}
+  <div className="absolute left-1/2 top-full mt-12 -translate-x-1/2 w-64 h-64 rounded-full bg-amber-400/10 blur-[90px] animate-pulse" />
 </section>
 
 {/* ===== This Week at the Campfire ===== */}
