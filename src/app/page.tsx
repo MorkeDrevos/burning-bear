@@ -439,11 +439,35 @@ export default function Page() {
 
         {/* Emphasized first sentence + highlighted fund name */}
         <p className="text-white/80 max-w-3xl leading-relaxed text-[16px] md:text-[17px] mb-6 md:mb-8">
-          <span className="font-semibold text-[#ffe48d]">Every spark fuels the fire.</span>{' '}
-          Whether it’s a trade, a creator reward, or a network fee — every move feeds the{' '}
-          <span className="text-[#ffe48d] font-semibold"> $BEAR Campfire Fund</span>, powering constant buybacks,
-          burns, and community rewards. The more the ecosystem moves, the hotter the fire burns. 🔥
-        </p>
+  <span className="font-semibold text-[#ffe48d]">Every spark fuels the fire.</span>{' '}
+  Whether it’s a trade, a creator reward, or a network fee — every move feeds the{' '}
+  <span className="text-[#ffe48d] font-semibold"> $BEAR Campfire Fund</span>, powering constant buybacks,
+  burns, and community rewards. The more the ecosystem moves, the hotter the fire burns.{' '}
+  <span className="inline-block align-[-2px] animate-ember" aria-hidden="true">🔥</span>
+</p>
+
+<style jsx>{`
+  @keyframes emberPulse {
+    0%   { filter: drop-shadow(0 0 0 rgba(255,170,70,0));
+           transform: translateY(0) scale(1); }
+    45%  { filter: drop-shadow(0 0 10px rgba(255,190,90,.30))
+                    drop-shadow(0 0 24px rgba(255,130,50,.15));
+           transform: translateY(-1px) scale(1.03); }
+    60%  { filter: drop-shadow(0 0 6px rgba(255,180,80,.22))
+                    drop-shadow(0 0 18px rgba(255,120,40,.12));
+           transform: translateY(-0.5px) scale(1.02); }
+    100% { filter: drop-shadow(0 0 0 rgba(255,170,70,0));
+           transform: translateY(0) scale(1); }
+  }
+  .animate-ember {
+    animation: emberPulse 1.9s ease-in-out infinite;
+    will-change: transform, filter;
+  }
+  /* Respect users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-ember { animation: none; }
+  }
+`}</style>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3 items-stretch">
           <Reveal delay={0}>
@@ -487,7 +511,7 @@ export default function Page() {
       {/* ===== Contract Address (footer placement) ===== */}
 <section id="ca" className="mx-auto max-w-6xl px-4 mt-8 mb-10">
   <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/80 backdrop-blur px-4 py-4 md:px-6 md:py-5 text-center">
-    <div className="text-[11px] uppercase tracking-[0.25em] text-white/55 mb-2">Contract Address</div>
+    <div className="text-[15px] uppercase tracking-[0.25em] text-white/55 mb-2">Contract Address</div>
     <code className="block text-[13px] md:text-[13.5px] text-white/85 mb-3 break-all">
       {FULL_TOKEN_ADDRESS}
     </code>
