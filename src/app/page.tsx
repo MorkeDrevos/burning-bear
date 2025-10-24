@@ -385,14 +385,14 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* Smart Copy CA button with partial address */}
+      {/* Smart Copy CA button with refined gold tone */}
 <div className="mt-6 flex justify-center">
   <button
     onClick={handleCopy}
     className={`group flex items-center gap-3 rounded-md border border-white/10 
                 bg-black/30 px-5 py-2 text-sm font-semibold backdrop-blur-sm transition
-                hover:border-amber-400 hover:text-amber-300
-                ${copied ? 'text-amber-400 border-amber-400' : 'text-white/85'}`}
+                hover:border-[#e7b65a] hover:text-[#e7b65a]
+                ${copied ? 'text-[#e7b65a] border-[#e7b65a]' : 'text-white/85'}`}
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -400,7 +400,7 @@ useEffect(() => {
       fill="none"
       stroke="currentColor"
       strokeWidth={1.8}
-      className={`h-4 w-4 ${copied ? 'text-amber-400' : 'text-white/70'}`}
+      className={`h-4 w-4 ${copied ? 'text-[#e7b65a]' : 'text-white/70'}`}
     >
       <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
       <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
@@ -410,7 +410,7 @@ useEffect(() => {
       {FULL_TOKEN_ADDRESS.slice(0, 6)}…{FULL_TOKEN_ADDRESS.slice(-6)}
     </span>
 
-    <span className="text-[13px] font-semibold text-amber-300 group-hover:text-amber-200 transition">
+    <span className="text-[13px] font-semibold text-[#e7b65a] group-hover:text-[#f4d27d] transition">
       {copied ? 'Copied!' : 'Copy CA'}
     </span>
   </button>
