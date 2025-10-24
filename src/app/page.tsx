@@ -457,7 +457,7 @@ export default function Page() {
   <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
     <HowCard
       title="50% → Auto-Buy & Burn"
-      body="Half of every fee automatically buys $BBURN and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps."
+      body="Half of every fee automatically buys $BBURN and sends it to the burn wallet — shrinking supply with every move."
     />
     <HowCard
       title="30% → Treasury & Buybacks"
@@ -475,7 +475,7 @@ export default function Page() {
 {/* ===== This Week at the Campfire ===== */}
 <section id="week" className="mx-auto max-w-6xl px-4 py-10">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">This Week at the Campfire</h3>
-  <p className="text-white/60">Activity in the last 7 days. Auto-updated from the live log.</p>
+  <p className="text-white/60">Activity in the last 7 days. Auto-updated from the live logs.</p>
 
   <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
     <StatBig label="Burns" value={fmtInt(weekStats.count)} />
@@ -636,12 +636,15 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
 
 function Divider() {
   return (
-    <div className="my-8 relative">
-      {/* stronger base line */}
-      <div className="h-[2px] w-full bg-white/15 rounded-full"></div>
-      {/* glowing animated overlay */}
-      <div className="pointer-events-none absolute inset-0 flex">
-        <div className="h-[2px] w-full ember-divider" />
+    <div className="relative my-6">
+      {/* soft gradient glow above & below */}
+      <div className="absolute -top-[6px] left-0 w-full h-[6px] bg-gradient-to-b from-amber-400/10 to-transparent blur-sm" />
+      <div className="absolute -bottom-[6px] left-0 w-full h-[6px] bg-gradient-to-t from-amber-400/10 to-transparent blur-sm" />
+
+      {/* core glowing ember line */}
+      <div className="relative h-[2px] w-full rounded-full overflow-hidden">
+        <div className="absolute inset-0 bg-white/15 rounded-full" />
+        <div className="absolute inset-0 ember-divider" />
       </div>
     </div>
   );
