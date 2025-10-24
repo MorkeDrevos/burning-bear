@@ -572,11 +572,6 @@ useEffect(() => {
   </div>
 </section>
 
-  <div className="mt-3 flex justify-center">
-    <div className="h-[1.5px] w-[200px] rounded-full ember-divider opacity-70"></div>
-  </div>
-</section>
-
       {/* ===== Footer ===== */}
       <footer className="border-t border-white/10 bg-[#0d1a14] relative">
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
