@@ -358,7 +358,7 @@ useEffect(() => {
         <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
           <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6">
             <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
-  Meet The Burning Bear - the classiest arsonist in crypto.
+  Meet The Burning Bear – the classiest arsonist in crypto.
 </h1>
             {/* Countdowns */}
             <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -423,28 +423,7 @@ useEffect(() => {
         className="w-full px-4 sm:px-6 lg:px-8 mt-6 scroll-mt-24 md:scroll-mt-28"
       >
         <div className="flex items-baseline justify-between max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold flex items-center gap-3">
-  <span
-    aria-hidden
-    className="flame-icon"
-    title="Fire"
-  >
-    <svg viewBox="0 0 24 24" className="h-6 w-6">
-      <defs>
-        <linearGradient id="flameGradHdr" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%"  stopColor="#ffd27a"/>
-          <stop offset="55%" stopColor="#ff8a00"/>
-          <stop offset="100%" stopColor="#c74b00"/>
-        </linearGradient>
-      </defs>
-      <path
-        fill="url(#flameGradHdr)"
-        d="M12 2c2 2 3 4 3 6 0 1.6-.8 3-1.7 3.7 1.1-.3 2.4-1.3 3-2.9 .9 2.8-.8 7.7-4.3 9-3.9 1.4-6.8-2-5.8-6.4C7.2 6.3 10.6 3 12 2z"
-      />
-    </svg>
-  </span>
-  Live Burn Log
-</h2>
+          <h2 className="text-2xl font-bold">Live Burn Log 🔥</h2>
           <p className="text-sm text-white/50">TX links open explorer.</p>
         </div>
 
@@ -530,14 +509,14 @@ useEffect(() => {
   <h3 className="text-2xl font-bold text-amber-300 mb-4">How It Works</h3>
   <p className="text-white/70 max-w-3xl">
     Every spark fuels the fire. Whether it’s a trade, a creator reward, or a network fee - every move
-    feeds the <span className="text-amber-300 font-semibold">$BBURN Campfire Fund</span>, powering constant
+    feeds the <span className="text-amber-300 font-semibold">BBURN Campfire Fund</span>, powering constant
     buybacks, burns, and community rewards. The more the ecosystem moves, the hotter the fire burns. 🔥
   </p>
 
   <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
     <HowCard
       title="50% → Auto-Buy & Burn"
-      body="Half of every fee automatically buys $BBURN and sends it to the burn wallet - shrinking supply with every move."
+      body="Half of every fee automatically buys $BBURN and sends it to the official burn wallet, where tokens are permanently destroyed on-chain."
     />
     <HowCard
       title="30% → Treasury & Buybacks"
