@@ -11,7 +11,7 @@ const TOKEN_NAME = 'The Burning Bear';
 const FULL_TOKEN_ADDRESS = 'So11111111111111111111111111111111111111112';
 
 // 🔓 Public, view-only wallets
-const BURN_WALLET = 'CYbYmTLvVLp2xPQ5H4UqyMv9UptmzWDLnYExPsh3JRMA';
+const BURN_WALLET = '2nkSpJx9S7U13ujrSibYLpBHeBWbvRkHBF8bkqwS9xMS';
 const TREASURY_WALLET = 'FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE';
 const MARKETING_WALLET = '7k5rwpdSRyutEMek5tXuNuVVKQEQyubKC9VHEZ91SwZV';
 const EXPLORER = 'https://explorer.solana.com';
