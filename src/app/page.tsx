@@ -572,31 +572,45 @@ useEffect(() => {
 
   <div className="mx-auto max-w-3xl rounded-2xl border border-white/10 
                   bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur">
-    <div className="flex items-center gap-2">
-  {/* View button — match new style */}
-  <a
-    href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="rounded-[10px] border border-white/12 bg-white/[0.06]
-               px-3.5 py-1.5 text-sm font-medium text-white/85
-               hover:bg-white/[0.10] transition"
-  >
-    View
-  </a>
+    <section className="mx-auto max-w-6xl px-4 pb-10 text-center">
+  <h3 className="text-lg font-semibold text-[#ffe48d] mb-4">Contract Address</h3>
 
-  {/* Copy button — same gold tone + subtle glow */}
-  <button
-    onClick={handleCopy}
-    className={`rounded-[10px] px-3.5 py-1.5 text-sm font-semibold text-black transition
-      ${copied
-        ? 'bg-[#ffedb3] ring-2 ring-amber-300/40'
-        : 'bg-[#ffedb3] hover:bg-[#ffe48d]'
-      }`}
-  >
-    {copied ? 'Copied!' : 'Copy'}
-  </button>
-</div>
+  <div className="mx-auto max-w-4xl rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-4 md:p-5 backdrop-blur">
+    <div className="flex items-center gap-3">
+      {/* FULL CA — show everything; scrolls horizontally on tiny screens */}
+      <code
+        className="flex-1 rounded-[10px] border border-white/12 bg-white/[0.06]
+                   px-3 py-2 font-mono text-[15px] text-white/85
+                   whitespace-nowrap overflow-x-auto"
+        title={FULL_TOKEN_ADDRESS}
+      >
+        {FULL_TOKEN_ADDRESS}
+      </code>
+
+      {/* View button (matches wallet cards) */}
+      <a
+        href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="rounded-[10px] border border-white/12 bg-white/[0.06]
+                   px-3.5 py-1.5 text-sm font-medium text-white/85
+                   hover:bg-white/[0.10] transition"
+      >
+        View
+      </a>
+
+      {/* Copy button (gold) */}
+      <button
+        onClick={handleCopy}
+        className={`rounded-[10px] px-3.5 py-1.5 text-sm font-semibold text-black transition
+          ${copied ? 'bg-[#ffedb3] ring-2 ring-amber-300/40' : 'bg-[#ffedb3] hover:bg-[#ffe48d]'}
+        `}
+      >
+        {copied ? 'Copied!' : 'Copy'}
+      </button>
+    </div>
+  </div>
+</section>
   </div>
 </section>
 
