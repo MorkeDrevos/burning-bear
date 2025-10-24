@@ -365,10 +365,7 @@ export default function Page() {
       </section>
 
       {/* ===== Live Burn Log — single horizontal scroll line ===== */}
-      <section
-  id="log"
-  className="w-full px-4 sm:px-6 lg:px-8 mt-6 scroll-mt-24 md:scroll-mt-28"
->
+      <section id="log" className="w-full px-4 sm:px-6 lg:px-8 mt-6">
         <div className="flex items-baseline justify-between max-w-7xl mx-auto">
           <h2 className="text-2xl font-bold">Live Burn Log</h2>
           <p className="text-sm text-white/50">TX links open explorer.</p>
@@ -383,13 +380,8 @@ export default function Page() {
                 className="flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]"
               >
                 <div
-  key={b.id}
-  className="flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]"
->
-  <div
-    className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md 
-    p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] flex flex-col justify-between"
-  >
+                  className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] flex flex-col justify-between transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_10px_30px_rgba(255,183,77,0.12)] hover:border-amber-300/30"
+                >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-orange-200/90 text-2xl">
@@ -442,36 +434,42 @@ export default function Page() {
       </section>
 
       {/* ===== How It Works ===== */}
-      <section id="how" className="mx-auto max-w-6xl px-4 pt-20 scroll-mt-28">
-  <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-6 text-amber-200">
-    How It Works
-  </h3>
+      <section id="how" className="mx-auto max-w-6xl px-4 pt-16 scroll-mt-24">
+        <h3 className="text-xl font-bold tracking-tight mb-4">How It Works</h3>
 
-  <p className="text-white/80 max-w-3xl leading-relaxed text-[17px] md:text-[18px] mb-10 font-medium">
-    <span className="text-amber-300 font-semibold">Every spark fuels the fire.</span> Whether it’s a trade,
-    a creator reward, or a network fee — every move feeds the 
-    <span className="text-amber-300 font-semibold"> $BEAR Campfire Fund</span>, powering constant buybacks, burns, and community rewards.  
-    The more the ecosystem moves, the hotter the fire burns. 🔥
-  </p>
+        <p className="text-white/75 max-w-3xl leading-relaxed text-[15.5px] md:text-[16px] mb-6 md:mb-8">
+          Every spark — whether it’s a trade, a creator reward, or a network fee — feeds the
+          <span className="text-[#ffe48d] font-semibold"> $BEAR</span> fire. These flames merge into the
+          <span className="text-[#ffe48d] font-semibold"> Campfire Fund</span>, driving constant buybacks,
+          burns, and creator support. The more the ecosystem moves, the hotter it burns. 🔥
+        </p>
 
-  <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-    <HowCard
-      title="50% → Auto-Buy & Burn"
-      body="Half of every fee automatically buys $BEAR and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps."
-    />
-    <HowCard
-      title="30% → Treasury & Buybacks"
-      body="Reserved transparently for strategic buybacks, ecosystem stability, and community-driven events that keep $BEAR’s fire burning long-term."
-    />
-    <HowCard
-      title="20% → Team, Creators & Growth"
-      body="Rewards creators, partners, and community builders — spreading the legend of $BEAR across Solana while fueling future innovation."
-    />
-  </div>
-</section>
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3 items-stretch">
+          <Reveal delay={0}>
+            <HowCard
+              title="50% → Auto-Buy & Burn"
+              body="Half of every fee automatically buys $BEAR and sends it to the burn wallet — shrinking supply with every move. The campfire never sleeps."
+            />
+          </Reveal>
+
+          <Reveal delay={120}>
+            <HowCard
+              title="30% → Treasury & Buybacks"
+              body="Reserved transparently for strategic buybacks, ecosystem stability, and community-driven events that keep $BEAR’s fire burning long-term."
+            />
+          </Reveal>
+
+          <Reveal delay={240}>
+            <HowCard
+              title="20% → Team, Creators & Growth"
+              body="Rewards creators, partners, and community builders — spreading the legend of $BEAR across Solana while fueling future innovation."
+            />
+          </Reveal>
+        </div>
+      </section>
 
       {/* ===== Campfire Wallets ===== */}
-      <section id="wallets" className="mx-auto max-w-6xl px-4 pt-16 pb-16 scroll-mt-24 md:scroll-mt-28">
+      <section id="wallets" className="mx-auto max-w-6xl px-4 pt-16 pb-16">
         <h3 className="text-xl font-bold tracking-tight">Campfire Wallets</h3>
         <p className="mt-1 text-sm text-white/55">The campfire burns in full view. Every wallet can be verified on Solana Explorer.</p>
 
