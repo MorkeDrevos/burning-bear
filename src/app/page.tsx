@@ -440,14 +440,14 @@ export default function Page() {
   {/* Paragraph + Coin */}
   <div className="relative mx-auto max-w-6xl">
     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 mb-10">
-
       {/* Left: Text */}
       <p className="text-white/75 leading-relaxed text-[15.5px] md:text-[16px] max-w-3xl md:pr-28">
         Every spark — whether it’s a trade, a creator reward, or a network fee — feeds the
         <span className="text-[#ffe48d] font-semibold"> $BEAR</span> fire.
         These flames merge into the
-        <span className="text-[#ffe48d] font-semibold transition duration-300 hover:text-amber-300 hover:drop-shadow-[0_0_6px_#ffb74d]"> Campfire Fund</span>,
-        driving constant buybacks, burns, and creator support.
+        <span className="text-[#ffe48d] font-semibold transition duration-300 hover:text-amber-300">
+          {" "}Campfire Fund
+        </span>, driving constant buybacks, burns, and creator support.
         The more the ecosystem moves, the hotter it burns. 🔥
       </p>
 
@@ -461,9 +461,7 @@ export default function Page() {
         "
         style={{ zIndex: 1 }}
       >
-        {/* glow */}
         <div className="absolute inset-0 rounded-full blur-2xl bg-amber-400/20 opacity-0 animate-coinGlow" />
-        {/* coin */}
         <img
           src="/img/coin-logo.png"
           alt="$BEAR Coin"
@@ -473,7 +471,7 @@ export default function Page() {
     </div>
   </div>
 
-  {/* Three cards */}
+  {/* Cards */}
   <div className="grid grid-cols-1 gap-5 md:grid-cols-3 items-stretch">
     <Reveal delay={0}>
       <HowCard
