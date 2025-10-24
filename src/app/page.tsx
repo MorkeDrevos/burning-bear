@@ -331,7 +331,7 @@ export default function Page() {
         <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
           <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6">
             <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
-              Meet The Burning Bear $BBURN — The Classiest Arsonist in Crypto.
+              Meet The Burning Bear $BBURN — the classiest arsonist in crypto.
             </h1>
 
             {/* Countdowns */}
@@ -398,7 +398,7 @@ export default function Page() {
 
     <div>
       <div className="text-lg font-bold">
-        Burn • {b.amount.toLocaleString()} $BBURN
+        Burn • {b.amount.toLocaleString()} BBURN
       </div>
       <div className="text-sm text-white/60">
         {new Date(b.timestamp).toLocaleString('en-US', {
