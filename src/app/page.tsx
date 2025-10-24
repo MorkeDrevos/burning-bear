@@ -533,40 +533,70 @@ useEffect(() => {
   </div>
 </section>
 
-{/* ===== Contract Address ===== */}
-<section className="mx-auto max-w-6xl px-4 pb-10 text-center">
-  <h3 className="text-lg font-semibold text-amber-200/80 mb-3 tracking-wide">
-    Contract Address
-  </h3>
+{/* ===== Contract Address (Elite Panel) ===== */}
+<section className="mx-auto max-w-6xl px-4 pb-12">
+  <div className="mx-auto max-w-3xl">
+    <div className="mb-3 flex items-center justify-between">
+      <h3 className="text-[15px] tracking-widest uppercase text-amber-200/80">
+        Contract Address
+      </h3>
+      <span className="text-[11px] font-medium tracking-wider text-white/40">
+        Solana • SPL
+      </span>
+    </div>
 
-  <div className="mx-auto flex max-w-3xl items-center justify-between gap-3
-                  rounded-lg border border-amber-400/10 bg-gradient-to-br
-                  from-[#0e1a15]/90 to-[#0a1410]/90
-                  px-5 py-3 backdrop-blur-sm shadow-[0_0_18px_rgba(255,184,76,0.08)]">
-    <code className="font-mono text-[15px] text-white/70 truncate">
-      {FULL_TOKEN_ADDRESS}
-    </code>
+    {/* Panel */}
+    <div className="relative rounded-xl border border-white/12 bg-gradient-to-br from-white/[0.035] to-white/[0.02] backdrop-blur-md
+                    shadow-[0_6px_24px_rgba(0,0,0,0.35)] ring-1 ring-white/5
+                    hover:ring-amber-300/15 transition">
+      {/* corner accents */}
+      <span className="pointer-events-none absolute -top-px -left-px h-3 w-3 rounded-tl-xl border-t border-l border-amber-300/25" />
+      <span className="pointer-events-none absolute -top-px -right-px h-3 w-3 rounded-tr-xl border-t border-r border-amber-300/25" />
+      <span className="pointer-events-none absolute -bottom-px -left-px h-3 w-3 rounded-bl-xl border-b border-l border-amber-300/15" />
+      <span className="pointer-events-none absolute -bottom-px -right-px h-3 w-3 rounded-br-xl border-b border-r border-amber-300/15" />
 
-    <div className="flex items-center gap-2">
-      <a
-        href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-sm font-medium text-amber-300/90 hover:text-amber-200 transition-colors duration-200"
-      >
-        View
-      </a>
+      <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+        {/* Address field (inset glass) */}
+        <div className="flex-1">
+          <div className="rounded-lg border border-white/10 bg-black/25 px-3 py-2.5 backdrop-blur
+                          shadow-inner">
+            <code className="block truncate font-mono text-[15px] text-white/75">
+              {FULL_TOKEN_ADDRESS}
+            </code>
+          </div>
+          <div className="mt-1.5 text-[11px] text-white/45">
+            Verify before use • Clicking “View” opens Solana Explorer
+          </div>
+        </div>
 
-      <button
-        onClick={handleCopy}
-        className={`text-sm font-semibold px-3 py-1.5 rounded-md transition-all duration-200
-          ${copied
-            ? 'bg-amber-300 text-black shadow-[0_0_10px_rgba(255,200,100,0.6)]'
-            : 'bg-white/[0.06] text-amber-200 hover:bg-amber-300 hover:text-black'
-          }`}
-      >
-        {copied ? 'Copied!' : 'Copy'}
-      </button>
+        {/* Actions */}
+        <div className="flex shrink-0 items-center gap-2">
+          <a
+            href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-md border border-amber-300/25 bg-amber-300/10 px-3 py-2 text-sm font-semibold
+                       text-amber-200 hover:bg-amber-300/20 hover:text-white transition"
+          >
+            View
+          </a>
+          <button
+            onClick={handleCopy}
+            className={`rounded-md px-3.5 py-2 text-sm font-semibold transition
+              ${copied
+                ? 'bg-amber-300 text-black shadow-[0_0_10px_rgba(255,200,100,0.55)]'
+                : 'bg-white/[0.06] text-amber-200 hover:bg-amber-300 hover:text-black'}`}
+            aria-live="polite"
+          >
+            {copied ? 'Copied!' : 'Copy'}
+          </button>
+        </div>
+      </div>
+
+      {/* subtle ember shimmer underline */}
+      <div className="px-5 pb-4">
+        <div className="h-[2px] w-full rounded-full ember-divider opacity-70"></div>
+      </div>
     </div>
   </div>
 </section>
