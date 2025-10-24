@@ -534,23 +534,37 @@ useEffect(() => {
 </section>
 
 {/* ===== Contract Address ===== */}
-<section className="mx-auto max-w-6xl px-4 pb-8 text-center">
-  <h3 className="text-lg font-semibold text-white/90 mb-2">Contract Address</h3>
+<section className="mx-auto max-w-6xl px-4 pb-10 text-center">
+  <h3 className="text-lg font-semibold text-white/90 mb-3">Contract Address</h3>
 
-  <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-3 backdrop-blur-sm">
-    <code className="text-white/90 text-[15px]">
-      {truncateMiddle(FULL_TOKEN_ADDRESS, 6, 6)}
+  <div className="mx-auto flex max-w-3xl items-center justify-between gap-3
+                  rounded-lg border border-white/10 bg-white/[0.03]
+                  px-4 py-3 backdrop-blur-sm shadow-[0_0_12px_rgba(255,184,76,0.12)]">
+    <code className="font-mono text-[15px] text-white/85 truncate">
+      {FULL_TOKEN_ADDRESS}
     </code>
 
-    <button
-      onClick={handleCopy}
-      className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${
-        copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'
-      }`}
-      aria-live="polite"
-    >
-      {copied ? 'Copied!' : 'Copy'}
-    </button>
+    <div className="flex items-center gap-2">
+      <a
+        href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-sm font-medium text-amber-300 hover:text-amber-200 transition"
+      >
+        View
+      </a>
+
+      <button
+        onClick={handleCopy}
+        className={`text-sm font-semibold px-3 py-1.5 rounded-md transition
+          ${copied
+            ? 'bg-amber-400 text-black shadow-[0_0_10px_rgba(255,184,76,0.6)]'
+            : 'bg-zinc-800/70 text-amber-300 hover:bg-amber-300 hover:text-black'
+          }`}
+      >
+        {copied ? 'Copied!' : 'Copy'}
+      </button>
+    </div>
   </div>
 </section>
 
