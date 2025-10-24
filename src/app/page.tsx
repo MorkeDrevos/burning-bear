@@ -454,13 +454,14 @@ export default function Page() {
     </p>
 
     {/* Right: Coin */}
-    <div className="flex-shrink-0 md:mt-[-10px]">
-      <img
-        src="/img/coin-logo.png"
-        alt="$BEAR Coin"
-        className="w-28 h-28 md:w-36 md:h-36 opacity-0 animate-fadeInCoin"
-      />
-    </div>
+<div className="relative flex-shrink-0 md:ml-auto md:-mt-6 lg:-mt-10 md:-translate-x-20 lg:-translate-x-28">
+  <img
+    src="/img/coin-logo.png"
+    alt="$BEAR Coin"
+    className="w-36 h-36 md:w-48 md:h-48 lg:w-56 lg:h-56 opacity-0 animate-fadeInCoin pointer-events-none drop-shadow-[0_8px_28px_rgba(255,184,77,0.35)]"
+  />
+  <span className="absolute inset-0 -z-10 rounded-full blur-2xl opacity-60 bg-[radial-gradient(closest-side,rgba(255,184,77,0.25),transparent_70%)]" />
+</div>
   </div>
 
   {/* Three cards */}
