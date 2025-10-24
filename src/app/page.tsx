@@ -445,27 +445,6 @@ export default function Page() {
         </div>
       </section>
 
-{/* ===== This Week at the Campfire ===== */}
-<section className="mx-auto max-w-6xl px-4 pb-14">
-  <h3 className="text-xl font-bold">This Week at the Campfire</h3>
-  <p className="mt-1 text-sm text-white/55">
-    Activity in the last 7 days. Auto-updated from the live log.
-  </p>
-
-  <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-    <StatBig label="Burns" value={fmtInt(weekStats.count)} />
-    <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
-    <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
-    <StatBig label="Largest Burn (BEAR)" value={fmtInt(weekStats.largest)} />
-  </div>
-
-  <div className="mt-3">
-    <Pill>
-      Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}
-    </Pill>
-  </div>
-</section>
-
       {/* ===== How It Works ===== */}
       <section id="how" className="mx-auto max-w-6xl px-4 pt-16 scroll-mt-24 md:scroll-mt-28">
         {/* Amber headline like your screenshot */}
@@ -534,6 +513,27 @@ export default function Page() {
           </Reveal>
         </div>
       </section>
+
+      {/* ===== This Week at the Campfire ===== */}
+<section className="mx-auto max-w-6xl px-4 pb-14">
+  <h3 className="text-xl font-bold">This Week at the Campfire</h3>
+  <p className="mt-1 text-sm text-white/55">
+    Activity in the last 7 days. Auto-updated from the live log.
+  </p>
+
+  <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <StatBig label="Burns" value={fmtInt(weekStats.count)} />
+    <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
+    <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
+    <StatBig label="Largest Burn (BEAR)" value={fmtInt(weekStats.largest)} />
+  </div>
+
+  <div className="mt-3">
+    <Pill>
+      Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}
+    </Pill>
+  </div>
+</section>
 
       {/* ===== Campfire Wallets ===== */}
       <section
