@@ -533,6 +533,27 @@ useEffect(() => {
   </div>
 </section>
 
+{/* ===== Contract Address ===== */}
+<section className="mx-auto max-w-6xl px-4 pb-8 text-center">
+  <h3 className="text-lg font-semibold text-white/90 mb-2">Contract Address</h3>
+
+  <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-3 backdrop-blur-sm">
+    <code className="text-white/90 text-[15px]">
+      {truncateMiddle(FULL_TOKEN_ADDRESS, 6, 6)}
+    </code>
+
+    <button
+      onClick={handleCopy}
+      className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${
+        copied ? 'bg-emerald-400 text-black' : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'
+      }`}
+      aria-live="polite"
+    >
+      {copied ? 'Copied!' : 'Copy'}
+    </button>
+  </div>
+</section>
+
       {/* ===== Footer ===== */}
       <footer className="border-t border-white/10 bg-[#0d1a14] relative">
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
