@@ -8,7 +8,7 @@ import Link from 'next/link';
 ========================= */
 const TOKEN_SYMBOL = '$BBURN';
 const TOKEN_NAME = 'The Burning Bear';
-const FULL_TOKEN_ADDRESS = 'So11111111111111111111111111111111111111112';
+const FULL_TOKEN_ADDRESS = 'So11111111111111111111111111111111111111112'; 
 
 // 🔓 Public, view-only wallets
 const BURN_WALLET = '2nkSpJx9S7U13ujrSibYLpBHeBWbvRkHBF8bkqwS9xMS';
