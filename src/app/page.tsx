@@ -515,17 +515,17 @@ export default function Page() {
       </section>
 
       {/* ===== This Week at the Campfire ===== */}
-<section className="mx-auto max-w-6xl px-4 pt-16 pb-16">
+<section className="mx-auto max-w-6xl px-4 py-16 border-t border-white/10">
   <h3 className="text-xl font-bold">This Week at the Campfire</h3>
   <p className="mt-1 text-sm text-white/55">
-    Activity in the last 7 days. Auto-updated from the live log.
+    Activity in the last 7 days. Auto-updated from the live logs.
   </p>
 
   <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
     <StatBig label="Burns" value={fmtInt(weekStats.count)} />
     <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
     <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
-    <StatBig label="Largest Burn (BEAR)" value={fmtInt(weekStats.largest)} />
+    <StatBig label="Largest Burn (BBURN)" value={fmtInt(weekStats.largest)} />
   </div>
 
   <div className="mt-3">
