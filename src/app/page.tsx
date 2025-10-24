@@ -306,20 +306,12 @@ export default function Page() {
 
     {/* Right: Buttons */}
     <div className="flex items-center gap-3">
-      <a
-        href="https://x.com/i/communities/1980944446871966021"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="rounded-full border border-emerald-600/40 bg-emerald-950/40 px-4 py-2 text-sm font-semibold text-emerald-300 hover:bg-emerald-900/60 transition"
-      >
-        🕊️ X Community
-      </a>
       <button
         onClick={handleCopy}
-        className={`rounded-full px-4 py-2 text-sm md:text-base font-semibold transition ${
+        className={`rounded-full px-4 py-2 text-sm md:text-base font-semibold transition border border-white/10 ${
           copied
             ? 'bg-emerald-400 text-black'
-            : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'
+            : 'bg-[#1c1f1d] text-white hover:bg-[#2a2e2c]'
         }`}
         aria-live="polite"
       >
