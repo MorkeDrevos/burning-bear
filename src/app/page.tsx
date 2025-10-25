@@ -340,7 +340,7 @@ useEffect(() => {
       </header>
 
       {/* ===== HERO with video + translucent text panel ===== */}
-<section className="relative">
+<section id="hero" className="relative">
   {/* Background video + vignette */}
   <div className="absolute inset-0 -z-10 overflow-hidden hero-vignette">
     <video
@@ -356,6 +356,9 @@ useEffect(() => {
     {/* Dark gradient for legibility */}
     <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
   </div>
+
+  {/* Subtle smoke layer */}
+  <SmokeOverlay density="light" area="top" />
 
   <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20 relative">
     {/* subtle fire glow behind hero box */}
