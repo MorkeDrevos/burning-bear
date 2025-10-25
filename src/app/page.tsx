@@ -762,24 +762,6 @@ function Pill({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Tiny click-embers (uses .ember-particle from globals.css)
-const spawnEmbers = (e: React.MouseEvent, count = 14) => {
-  const root = document.body;
-  const { clientX: x, clientY: y } = e;
-  for (let i = 0; i < count; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'ember-particle';
-    const delay = Math.random() * 200;
-    const dur = 700 + Math.random() * 500;
-    dot.style.setProperty('--delay', `${delay}ms`);
-    dot.style.setProperty('--dur', `${dur}ms`);
-    dot.style.left = `${x + (Math.random() * 40 - 20)}px`;
-    dot.style.top = `${y + (Math.random() * 24 - 12)}px`;
-    root.appendChild(dot);
-    setTimeout(() => dot.remove(), 1200 + delay);
-  }
-};
-
 function Embers({ count = 20 }: { count?: number }) {
   // Renders N light dots that rise & drift; all CSS-driven
   const dots = Array.from({ length: count });
