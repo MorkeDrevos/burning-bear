@@ -538,15 +538,15 @@ useEffect(() => {
   <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0d1a14] via-[#141f1a] to-[#0d1a14]" />
   <div className="absolute inset-x-0 bottom-0 h-[40vh] bg-gradient-to-t from-amber-600/10 via-amber-400/5 to-transparent blur-[80px]" />
 
-  {/* Bear image (refined size, centered) */}
-  <div className="mx-auto mb-8 w-[280px] md:w-[320px] relative">
+  {/* Bear image (smaller + centered) */}
+  <div className="mx-auto mb-8 w-[240px] md:w-[280px] relative">
     <img
       src="/img/burning-bear.png"
       alt="The Burning Bear"
       className="w-full h-auto rounded-2xl bear-breathe shadow-ember"
     />
-    {/* gentle glow behind him */}
-    <div className="pointer-events-none absolute inset-0 rounded-2xl bg-amber-500/10 blur-[60px] animate-pulse" />
+    {/* subtle glow behind him */}
+    <div className="pointer-events-none absolute inset-0 rounded-2xl bg-amber-500/10 blur-[50px] animate-pulse" />
   </div>
 
   {/* Title */}
@@ -554,7 +554,7 @@ useEffect(() => {
     Meet The Burning Bear
   </h2>
 
-  {/* Underline — equal spacing above/below */}
+  {/* Underline — clean and symmetrical */}
   <div className="mx-auto my-4 h-[3px] w-24 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 drop-shadow-[0_0_6px_rgba(255,184,76,0.35)]" />
 
   {/* Story */}
@@ -571,17 +571,14 @@ useEffect(() => {
     </p>
 
     {/* Closing line */}
-    <p className="text-amber-200 font-semibold tracking-wide">
+    <p className="text-amber-200 font-semibold tracking-wide mt-8">
       The Burning Bear doesn’t burn alone, he keeps the fire alive for everyone who believes.<br />
       <span className="text-amber-100/90">
         Every spark counts. Every burn means something. 🔥
       </span>
     </p>
-
-    {/* Closing-line underline — subtle shimmer */}
-    <div className="mx-auto mt-3 h-[2px] w-64 bg-gradient-to-r from-transparent via-amber-400/30 to-transparent animate-[emberShimmer_8s_linear_infinite]" />
   </div>
-
+  
   {/* Soft base glow below section */}
   <div className="pointer-events-none absolute left-1/2 top-full mt-12 -translate-x-1/2 h-64 w-64 rounded-full bg-amber-400/10 blur-[90px]" />
 </section>
