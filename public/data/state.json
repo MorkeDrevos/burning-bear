@@ -1,10 +1,10 @@
 {
   "stats": {
     "initialSupply": 1000000000,
-    "burned": 0,
-    "currentSupply": 998869,
+    "burned": 1130587.564785,
+    "currentSupply": 998869412.435215,
     "buybackSol": 0.160931,
-    "pricedUsdPerSol": 176.8
+    "priceUsdPerSol": 176.8
   },
   "schedule": {
     "burnIntervalMinutes": 50,
@@ -12,34 +12,13 @@
     "nextBurnAt": 1730604000000,
     "nextBuybackAt": 1730606400000
   },
-  "burns": {
+  "burns": [
     {
       "id": "tx_001",
       "amount": 1130587.564785,
       "sol": 0.16,
       "timestamp": "2025-10-25T13:00:00Z",
       "tx": "https://solscan.io/tx/5YCJzXJwoztzubHZnkqqShanfDWBhjxWKWUQV3BxheQtwG6ki4H7G52XieyfG7kmYVcruGTRTHZMv67NMwEDpiC8"
-    },
-    {
-      "id": "tx_002",
-      "amount": 0,
-      "sol": 0.00,
-      "timestamp": "2025-10-25T13:00:00Z",
-      "tx": "https://explorer.solana.com/tx/0xTEST002"
-    },
-    {
-      "id": "tx_003",
-      "amount": 0,
-      "sol": 0.00,
-      "timestamp": "2025-10-25T13:00:00Z",
-      "tx": "https://explorer.solana.com/tx/0xTEST003"
-    },
-    {
-      "id": "tx_003",
-      "amount": 0,
-      "sol": 0.00,
-      "timestamp": "2025-10-25T13:00:00Z",
-      "tx": "https://explorer.solana.com/tx/0xTEST003"
     }
   ],
   "wallets": {
