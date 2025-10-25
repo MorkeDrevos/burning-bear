@@ -542,10 +542,10 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* ===== How It Works ===== */}
-  <section
+{/* ===== How It Works ===== */}
+<section
   id="how"
-  className="mx-auto max-w-6xl px-4 pt-12 pb-16 md:pt-14 md:pb-20"
+  className="mx-auto max-w-6xl px-4 pt-12 pb-16 md:pt-14 md:pb-20 scroll-mt-[88px] md:scroll-mt-[100px] lg:scroll-mt-[116px]"
 >
   <h3 className="text-2xl font-bold text-amber-300 mb-4">How It Works</h3>
   <p className="text-white/70 max-w-3xl">
@@ -568,7 +568,7 @@ useEffect(() => {
       body="Rewards creators, partners, and community builders — spreading the legend of $BBURN across Solana while fueling future innovation."
     />
   </div>
-</section>
+</section>    
 
 {/* ===== Meet the Burning Bear ===== */}
   <section id="bear" className="relative w-full overflow-hidden pt-16 pb-16 md:pt-20 md:pb-20 text-center">
