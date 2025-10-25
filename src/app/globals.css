@@ -156,3 +156,12 @@ html {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
+/* Gentle ambient flame flicker */
+@keyframes flicker {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.25); }
+}
+
+.group:hover svg path {
+  animation: flicker 1.8s ease-in-out infinite;
+}
