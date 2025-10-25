@@ -339,50 +339,88 @@ useEffect(() => {
         </div>
       </header>
 
-      {/* ===== HERO with video + translucent text panel ===== */}
-      <section className="relative">
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          <video
-            className="h-[66vh] w-full object-cover"
-            playsInline
-            autoPlay
-            muted
-            loop
-            poster="/img/burning-bear-frame.jpg"
-          >
-            <source src="/img/burning-bear.mp4" type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
-        </div>
+      {/* ===== HERO with cinematic hover + ember CTA ===== */}
+<section className="relative">
+  {/* Background video stays the same */}
+  <div className="absolute inset-0 -z-10 overflow-hidden">
+    <video
+      className="h-[66vh] w-full object-cover"
+      playsInline autoPlay muted loop
+      poster="/img/burning-bear-frame.jpg"
+    >
+      <source src="/img/burning-bear.mp4" type="video/mp4" />
+    </video>
+    <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
+  </div>
 
-        <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
-          <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6">
-            <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
-  Meet The Burning Bear - the classiest arsonist in crypto.
-</h1>
-            {/* Countdowns */}
-            <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />
-              <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} />
-            </div>
+  {/* Clickable cinematic layer */}
+  <a
+    href="#bear"
+    className="group relative block"
+    aria-label="Meet The Burning Bear"
+    onMouseMove={(e) => {
+      const t = e.currentTarget.getBoundingClientRect();
+      const x = ((e.clientX - t.left) / t.width  - 0.5) * 2; // -1..1
+      const y = ((e.clientY - t.top)  / t.height - 0.5) * 2;
+      e.currentTarget.style.setProperty('--tilt-x', `${-(y*3)}deg`);
+      e.currentTarget.style.setProperty('--tilt-y', `${ x*3 }deg`);
+      e.currentTarget.style.setProperty('--drift-x', `${x*40}px`);
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.setProperty('--tilt-x', `0deg`);
+      e.currentTarget.style.setProperty('--tilt-y', `0deg`);
+      e.currentTarget.style.setProperty('--drift-x', `0px`);
+    }}
+  >
+    {/* Parallax / zoom plane */}
+    <div
+      className="hero-vignette hero-zoom"
+      style={{
+        transform: 'perspective(900px) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg)) scale(1)',
+      }}
+    >
+      {/* Your translucent panel + stats */}
+      <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
+        <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6 transition-transform duration-700 group-hover:scale-[1.01]">
+          <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
+            Meet The Burning Bear - the classiest arsonist in crypto.
+          </h1>
 
-            {/* Stats */}
-            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-4">
-              <Stat label="Burned So Far" value={fmtInt(BURNED)} />
-              <Stat label="Current Supply" value={fmtInt(CURRENT)} />
-              <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
-              <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
-            </div>
+          {/* Countdowns */}
+          <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />
+            <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} />
+          </div>
 
-            {/* Pills */}
-            <div className="mt-3 flex flex-wrap gap-3">
-              <Pill>Today: {todayBurnsCount} burns</Pill>
-              <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
-              <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
-            </div>
+          {/* Stats */}
+          <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-4">
+            <Stat label="Burned So Far" value={fmtInt(BURNED)} />
+            <Stat label="Current Supply" value={fmtInt(CURRENT)} />
+            <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
+            <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
+          </div>
+
+          {/* Pills */}
+          <div className="mt-3 flex flex-wrap gap-3">
+            <Pill>Today: {todayBurnsCount} burns</Pill>
+            <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
+            <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+
+    {/* Ember sprinkle overlay (super cheap) */}
+    <Embers count={24} />
+
+    {/* Hover CTA chip (bottom-center) */}
+    <div className="pointer-events-none absolute inset-x-0 -bottom-2 sm:bottom-3 flex justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+      <span className="rounded-full bg-black/40 px-3 py-1 text-[12px] font-semibold text-amber-200 backdrop-blur-sm border border-white/10">
+        Click to meet the Bear ↓
+      </span>
+    </div>
+  </a>
+</section>
 
       {/* Smart Copy CA button with $BBURN and brand gold tone */}
 <div className="mt-6 flex justify-center">
@@ -749,6 +787,101 @@ function Pill({ children }: { children: React.ReactNode }) {
     <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/75 backdrop-blur">
       {children}
     </span>
+  );
+}
+
+function Embers({ count = 20 }: { count?: number }) {
+  // Renders N light dots that rise & drift; all CSS-driven
+  const dots = Array.from({ length: count });
+  return (
+    <div className="pointer-events-none absolute inset-0">
+      {dots.map((_, i) => {
+        // deterministic but varied per index
+        const left = Math.random() * 100;
+        const delay = Math.random() * 6; // seconds
+        const rise = 5 + Math.random() * 5; // 5..10s
+        const size = 2 + Math.round(Math.random() * 2); // 2..4 px
+        const bottom = Math.random() * 60; // start somewhere low-mid
+
+        return (
+          <span
+            key={i}
+            className="ember-dot"
+            style={{
+              left: `${left}%`,
+              bottom: `${bottom}px`,
+              animationDelay: `${delay}s`,
+              ['--rise' as any]: `${rise}s`,
+              width: `${size}px`,
+              height: `${size}px`,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+function EmberLink({
+  children,
+  href = "#bear",
+}: {
+  children: React.ReactNode;
+  href?: string;
+}) {
+  const ref = React.useRef<HTMLAnchorElement | null>(null);
+  const [burstKey, setBurstKey] = React.useState(0); // force rerender for new burst
+
+  const spawnEmbers = (x: number, y: number) => {
+    const count = 14; // small, tasteful
+    const container = document.body;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement("span");
+      p.className = "ember-particle";
+      const dx = (Math.random() - 0.5) * 80;   // horizontal drift
+      const dy = (Math.random() * 20) - 10;    // slight start variance
+      const dur = 750 + Math.random() * 650;   // 0.75s - 1.4s
+      const delay = Math.random() * 120;
+
+      p.style.left = `${x + dx}px`;
+      p.style.top = `${y + dy}px`;
+      p.style.setProperty("--dur", `${dur}ms`);
+      p.style.setProperty("--delay", `${delay}ms`);
+
+      container.appendChild(p);
+      setTimeout(() => p.remove(), dur + delay + 50);
+    }
+  };
+
+  const onClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const rect = ref.current?.getBoundingClientRect();
+    const cx = (rect?.left ?? 0) + (rect?.width ?? 0) / 2;
+    const cy = (rect?.top ?? 0) + (rect?.height ?? 0) / 2;
+    spawnEmbers(cx, cy);
+    setBurstKey(k => k + 1);
+
+    // Smooth scroll to the section
+    const target = document.querySelector(href);
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  return (
+    <a
+      ref={ref}
+      href={href}
+      onClick={onClick}
+      className="group inline-block relative cursor-pointer"
+    >
+      <span className="headline-glow transition">
+        {children}
+      </span>
+
+      {/* whisper on hover */}
+      <span className="absolute left-1/2 top-full mt-2 -translate-x-1/2 text-sm text-amber-300/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        Dare to meet him?
+      </span>
+    </a>
   );
 }
 
