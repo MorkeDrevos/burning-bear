@@ -29,7 +29,7 @@
     },
     {
       "id": "tx_003",
-      "amount": 700000,
+      "amount": 0,
       "sol": 0.00,
       "timestamp": "2025-10-25T13:00:00Z",
       "tx": "https://explorer.solana.com/tx/0xTEST003"
