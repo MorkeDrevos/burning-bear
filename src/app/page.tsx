@@ -573,7 +573,7 @@ useEffect(() => {
 {/* ===== Meet the Burning Bear ===== */}
 <section
   id="bear"
-  className="relative mt-14 md:mt-20 w-full overflow-hidden py-24 text-center"
+  className="relative mt-10 md:mt-14 w-full overflow-hidden py-24 text-center"
 >
   {/* full-width dark background */}
   <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0d1a14] via-[#141f1a] to-[#0d1a14]" />
