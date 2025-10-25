@@ -146,12 +146,12 @@ export default function Page() {
 useEffect(() => {
   let alive = true;
 
-  fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
+  fetch(`/data/state.json?t=${Date.now()}`, { cache: "no-store" })
     .then((r) => r.json())
     .then((d) => {
       if (!alive) return;
 
-      // Convert schedule: minutes → milliseconds (works with burnIntervalMinutes / buybackIntervalMinutes)
+      // Convert schedule: minutes → ms, seed missing next times
       if (d.schedule) {
         const burnMins = d.schedule.burnIntervalMinutes ?? 60;
         const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
@@ -159,24 +159,27 @@ useEffect(() => {
         d.schedule.burnIntervalMs = burnMins * 60 * 1000;
         d.schedule.buybackIntervalMs = buybackMins * 60 * 1000;
 
-        // If next times are missing, seed them from now + minutes
         const now = Date.now();
         if (!d.schedule.nextBurnAt) d.schedule.nextBurnAt = now + burnMins * 60 * 1000;
         if (!d.schedule.nextBuybackAt) d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
       }
 
-      // Normalize burns: coerce timestamp to number (ms) and drop invalid rows
-      const burns = (d?.burns ?? [])
+      // Normalize burns: coerce timestamp → number (ms) and drop invalid rows
+      const burns = (d.burns ?? [])
         .map((b: any) => ({
           ...b,
-          timestamp: typeof b.timestamp === 'number' ? b.timestamp : Date.parse(b.timestamp),
+          timestamp:
+            typeof b.timestamp === "number"
+              ? b.timestamp
+              : Date.parse(b.timestamp),
         }))
         .filter((b: any) => Number.isFinite(b.timestamp));
 
       setData({ ...d, burns });
     })
-    .catch(() => {
-      // no-op; keep previous data on fetch error
+    .catch((err) => {
+      console.error("Failed to load state.json", err);
+      // no-op: keep previous data on fetch error
     });
 
   return () => {
