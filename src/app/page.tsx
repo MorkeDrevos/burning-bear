@@ -386,35 +386,26 @@ useEffect(() => {
 
       {/* Smart Copy CA button with $BBURN and brand gold tone */}
 <div className="mt-6 flex justify-center">
-  <button
-    onClick={handleCopy}
-    className={`group flex items-center gap-3 rounded-md border border-white/10 
-                bg-black/30 px-5 py-2 text-sm font-semibold backdrop-blur-sm transition
-                hover:border-[#ffe48d] hover:text-[#ffe48d]
-                ${copied ? 'text-[#ffe48d] border-[#ffe48d]' : 'text-white/85'}`}
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      className={`h-4 w-4 ${copied ? 'text-[#ffe48d]' : 'text-white/70'}`}
+  <div className="inline-flex items-center gap-2 text-sm text-white/70">
+    <span className="font-semibold">{TOKEN_SYMBOL}</span>
+    <span className="text-white/50">•</span>
+    <code className="font-mono text-white/70" title={FULL_TOKEN_ADDRESS}>
+      {truncateMiddle(FULL_TOKEN_ADDRESS, 6, 6)}
+    </code>
+    <a
+      href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
+      target="_blank" rel="noopener noreferrer"
+      className="ml-2 underline decoration-white/20 underline-offset-4 hover:text-amber-200 hover:decoration-amber-300/50 transition"
     >
-      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-    </svg>
-
-    {/* Token and Address */}
-    <span className="font-mono text-[13px] text-white/70 tracking-tight">
-      $BBURN • {FULL_TOKEN_ADDRESS.slice(0, 6)}…{FULL_TOKEN_ADDRESS.slice(-6)}
-    </span>
-
-    {/* Copy state */}
-    <span className="text-[13px] font-semibold text-[#ffe48d] group-hover:text-[#fff2be] transition">
-      {copied ? 'Copied!' : 'Copy CA'}
-    </span>
-  </button>
+      View
+    </a>
+    <button
+      onClick={handleCopy}
+      className="ml-1 rounded-sm underline decoration-white/20 underline-offset-4 text-amber-200 hover:text-amber-100 hover:decoration-amber-300/50 transition"
+    >
+      {copied ? 'Copied!' : 'Copy'}
+    </button>
+  </div>
 </div>
 
       {/* ===== Live Burn Log — single horizontal scroll line ===== */}
