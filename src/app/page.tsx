@@ -543,7 +543,7 @@ useEffect(() => {
       </section>
 
       {/* ===== How It Works ===== */}
-  <section id="how" className="mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-14 md:pb-14">
+  <section id="how" className="mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-14 md:pb-18">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">How It Works</h3>
   <p className="text-white/70 max-w-3xl">
     Every spark fuels the fire. Whether it’s a trade, a creator reward, or a network fee — every move
@@ -616,7 +616,7 @@ useEffect(() => {
 </section>
 
 {/* ===== This Week at the Campfire ===== */}
-  <section id="week" className="mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-16 md:pb-14">
+  <section id="week" className="mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-18 md:pb-14">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">
     This Week at the Campfire
   </h3>
