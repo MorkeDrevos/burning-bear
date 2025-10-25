@@ -616,7 +616,7 @@ useEffect(() => {
 </section>
 
 {/* ===== This Week at the Campfire ===== */}
-  <section id="week" className="mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-0 md:pb-14">
+  <section id="week" className="mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-20 md:pb-14">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">
     This Week at the Campfire
   </h3>
