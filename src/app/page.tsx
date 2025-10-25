@@ -151,7 +151,6 @@ useEffect(() => {
     .then((d) => {
       if (!alive) return;
 
-      // Convert schedule: minutes → milliseconds (works with burnIntervalMinutes / buybackIntervalMinutes)
       if (d.schedule) {
         const burnMins = d.schedule.burnIntervalMinutes ?? 60;
         const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
@@ -160,25 +159,20 @@ useEffect(() => {
         d.schedule.buybackIntervalMs = buybackMins * 60 * 1000;
 
         const now = Date.now();
-        if (!d.schedule.nextBurnAt)
-          d.schedule.nextBurnAt = now + burnMins * 60 * 1000;
-        if (!d.schedule.nextBuybackAt)
-          d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
+        if (!d.schedule.nextBurnAt) d.schedule.nextBurnAt = now + burnMins * 60 * 1000;
+        if (!d.schedule.nextBuybackAt) d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
       }
 
-      // Normalize burns: coerce timestamp → number (ms) and drop invalid rows
       const burns = (d.burns ?? [])
         .map((b: any) => ({
           ...b,
           timestamp:
-            typeof b.timestamp === "number"
-              ? b.timestamp
-              : Date.parse(b.timestamp),
+            typeof b.timestamp === "number" ? b.timestamp : Date.parse(b.timestamp),
         }))
         .filter((b: any) => Number.isFinite(b.timestamp));
 
       setData({ ...d, burns });
-    }) // 👈 this closing brace + parenthesis ends the .then() block correctly
+    }) // ✅ end .then
     .catch((err) => {
       console.error("Failed to load state.json", err);
       alive = false;
