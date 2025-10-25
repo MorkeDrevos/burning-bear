@@ -339,61 +339,75 @@ useEffect(() => {
         </div>
       </header>
 
-{/* Burn card (clickable + non-moving hover) */}
-<Link
-  key={b.id}
-  href={b.tx}
-  target="_blank"
-  className="group block focus:outline-none"
->
-  <div
-    className="
-      relative rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md
-      p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)]
-      transition-colors duration-300
-      hover:border-amber-300/30
-      hover:shadow-[0_0_0_1px_rgba(251,191,36,0.18),0_8px_24px_rgba(251,191,36,0.08)]
-    "
-  >
-    {/* soft inner glow on hover (no movement) */}
-    <div
-      className="
-        pointer-events-none absolute inset-0 rounded-[inherit]
-        opacity-0 group-hover:opacity-100 transition-opacity duration-300
-        bg-[radial-gradient(120%_80%_at_50%_0%,rgba(251,191,36,0.10),rgba(0,0,0,0)_60%)]
-      "
-      aria-hidden="true"
-    />
+      {/* ===== HERO with video + translucent text panel ===== */}
+<section className="relative">
+  {/* Background video + vignette */}
+  <div className="absolute inset-0 -z-10 overflow-hidden hero-vignette">
+    <video
+      className="h-[66vh] w-full object-cover hero-zoom"
+      playsInline
+      autoPlay
+      muted
+      loop
+      poster="/img/burning-bear-frame.jpg"
+    >
+      <source src="/img/burning-bear.mp4" type="video/mp4" />
+    </video>
+    {/* Dark gradient for legibility */}
+    <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
+  </div>
 
-    {/* sheen sweep on hover (purely decorative) */}
-    <span
-      className="
-        pointer-events-none absolute inset-y-0 -left-1/3 w-[35%] rotate-6
-        bg-gradient-to-r from-transparent via-white/10 to-transparent
-        opacity-0 group-hover:opacity-100
-        [mask-image:linear-gradient(to_right,transparent,black,transparent)]
-        transition-opacity duration-150
-        group-hover:animate-[sheen_800ms_linear_1]
-      "
-      aria-hidden="true"
-    />
+  <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20 relative">
+    {/* subtle fire glow behind hero box */}
+    <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-amber-600/10 via-transparent to-transparent blur-[120px]" />
 
-    {/* --- your existing header/rows stay exactly the same --- */}
-    <div className="flex items-start justify-between">
-      <div className="flex items-center gap-3">
-        {/* flame avatar + titles + subtext ... */}
+    {/* ember particle layer (very lightweight) */}
+    <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      {[...Array(10)].map((_, i) => (
+        <span
+          key={i}
+          className="ember-dot"
+          style={{
+            left: `${Math.random() * 100}%`,
+            bottom: `${Math.random() * 40}%`,
+            animationDelay: `${Math.random() * 5}s`,
+            ['--drift-x' as any]: `${Math.random() * 40 - 20}px`,
+            ['--rise' as any]: `${5 + Math.random() * 4}s`,
+          } as React.CSSProperties}
+        />
+      ))}
+    </div>
+
+    {/* translucent stats panel */}
+    <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
+      {/* Headline */}
+      <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
+        Meet The Burning Bear – the classiest arsonist in crypto.
+      </h1>
+
+      {/* Countdowns */}
+      <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />
+        <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} />
       </div>
 
-      <span className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 group-hover:underline">
-        View TX →
-      </span>
-    </div>
+      {/* Stats */}
+      <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
+        <Stat label="Burned So Far" value={fmtInt(BURNED)} />
+        <Stat label="Current Supply" value={fmtInt(CURRENT)} />
+        <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
+        <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
+      </div>
 
-    <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
-      <div className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500" style={{ width: '100%' }} />
+      {/* Pills */}
+      <div className="mt-5 flex flex-wrap gap-3">
+        <Pill>Today: {todayBurnsCount} burns</Pill>
+        <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
+        <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
+      </div>
     </div>
   </div>
-</Link>
+</section>
 
       {/* Contract Address Pill — Cleaned */}
 <div className="mt-6 flex justify-center">
@@ -441,75 +455,46 @@ useEffect(() => {
   </div>
 </div>
 
-{/* ===== Live Burn Log — single horizontal scroll line ===== */}
+{/* ===== Live Burn Log — marquee + full-click cards ===== */}
 <section
   id="log"
-  className="relative z-20 w-full px-4 sm:px-6 lg:px-8 mt-6 scroll-mt-24 md:scroll-mt-28"
+  className="w-full px-4 sm:px-6 lg:px-8 mt-6 scroll-mt-24 md:scroll-mt-28"
 >
   <div className="flex items-baseline justify-between max-w-7xl mx-auto">
     <h2 className="text-2xl font-bold">Live Burn Log 🔥</h2>
     <p className="text-sm text-white/50">TX links open explorer.</p>
   </div>
 
-  {/* Horizontal scroll container */}
-  <div className="mt-6 overflow-x-auto pb-4">
-    <div className="flex gap-6 min-w-full px-1">
-      {burnsSorted.slice(0, 6).map((b) => (
-        /* Burn card (clickable + non-moving hover) */
+  {/* Marquee wrapper */}
+  <div className="mt-6 relative overflow-hidden auto-marquee">
+    {/* Track (duplicated items for seamless loop) */}
+    <div className="marquee-track flex gap-6 will-change-transform px-1">
+      {[...burnsSorted.slice(0, 6), ...burnsSorted.slice(0, 6)].map((b, i) => (
         <Link
-          key={b.id}
+          key={`${b.id}-${i}`}
           href={b.tx}
           target="_blank"
-          className="group block focus:outline-none w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]"
+          rel="noopener noreferrer"
+          aria-label={`View TX for burn of ${b.amount.toLocaleString()} BBURN`}
+          className="group block flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded-3xl"
         >
-          <div
-            className="
-              relative rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md
-              p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)]
-              transition-colors duration-300
-              hover:border-amber-300/30
-              hover:shadow-[0_0_0_1px_rgba(251,191,36,0.18),0_8px_24px_rgba(251,191,36,0.08)]
-            "
-          >
-            {/* soft inner glow on hover (no movement) */}
-            <div
-              className="
-                pointer-events-none absolute inset-0 rounded-[inherit]
-                opacity-0 group-hover:opacity-100 transition-opacity duration-300
-                bg-[radial-gradient(120%_80%_at_50%_0%,rgba(251,191,36,0.10),rgba(0,0,0,0)_60%)]
-              "
-              aria-hidden="true"
-            />
-
-            {/* sheen sweep on hover (purely decorative) */}
-            <span
-              className="
-                pointer-events-none absolute inset-y-0 -left-1/3 w-[35%] rotate-6
-                bg-gradient-to-r from-transparent via-white/10 to-transparent
-                opacity-0 group-hover:opacity-100
-                [mask-image:linear-gradient(to_right,transparent,black,transparent)]
-                transition-opacity duration-150
-                group-hover:animate-[sheen_800ms_linear_1]
-              "
-              aria-hidden="true"
-            />
-
-            {/* content */}
+          {/* Card */}
+          <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-transform">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-900/40">
-                  {/* Flame icon */}
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                       className="h-6 w-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6">
                     <defs>
                       <linearGradient id="flameGrad" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="0%"   stopColor="#ffb347" />
-                        <stop offset="55%"  stopColor="#ff6a00" />
+                        <stop offset="0%" stopColor="#ffb347" />
+                        <stop offset="55%" stopColor="#ff6a00" />
                         <stop offset="100%" stopColor="#c95500" />
                       </linearGradient>
                     </defs>
-                    <path fill="url(#flameGrad)"
-                          d="M12 2c2 2 3 4 3 6 0 1.6-.8 3-1.7 3.7 1.1-.3 2.4-1.3 3-2.9 .9 2.8-.8 7.7-4.3 9-3.9 1.4-6.8-2-5.8-6.4C7.2 6.3 10.6 3 12 2z"/>
+                    <path
+                      fill="url(#flameGrad)"
+                      d="M12 2c2 2 3 4 3 6 0 1.6-.8 3-1.7 3.7 1.1-.3 2.4-1.3 3-2.9 .9 2.8-.8 7.7-4.3 9-3.9 1.4-6.8-2-5.8-6.4C7.2 6.3 10.6 3 12 2z"
+                    />
                   </svg>
                 </span>
 
@@ -541,8 +526,8 @@ useEffect(() => {
                   )}
                 </div>
               </div>
-
-              <span className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 group-hover:underline">
+              {/* tiny hint that it's clickable */}
+              <span className="text-sm font-semibold text-amber-300/80 opacity-80 group-hover:opacity-100">
                 View TX →
               </span>
             </div>
@@ -554,6 +539,7 @@ useEffect(() => {
               />
             </div>
           </div>
+          {/* /Card */}
         </Link>
       ))}
     </div>
