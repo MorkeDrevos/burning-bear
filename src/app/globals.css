@@ -105,3 +105,21 @@ html {
     smokeSway var(--sway, 6s) ease-in-out calc(var(--delay, 0s) / 2) infinite;
   will-change: transform, opacity;
 }
+@keyframes smoke {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-10px) scale(1.05);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.2;
+  }
+}
+
+.animate-smoke {
+  animation: smoke 12s ease-in-out infinite;
+}
