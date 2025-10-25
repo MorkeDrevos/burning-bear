@@ -339,87 +339,59 @@ useEffect(() => {
         </div>
       </header>
 
-      {/* ===== HERO with cinematic hover + ember CTA ===== */}
-<section className="relative">
-  {/* Background video stays the same */}
-  <div className="absolute inset-0 -z-10 overflow-hidden">
+      {/* ===== HERO with video, vignette + CTA ===== */}
+<section id="hero" className="relative group">
+  {/* Background video */}
+  <div className="absolute inset-0 -z-10 overflow-hidden hero-vignette">
     <video
-      className="h-[66vh] w-full object-cover"
-      playsInline autoPlay muted loop
+      className="h-[66vh] w-full object-cover hero-zoom"
+      playsInline
+      autoPlay
+      muted
+      loop
       poster="/img/burning-bear-frame.jpg"
     >
       <source src="/img/burning-bear.mp4" type="video/mp4" />
     </video>
-    <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
+    {/* Dark gradient for legibility */}
+    <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-[#0b1712]/35 to-[#0b1712]" />
   </div>
 
-  {/* Clickable cinematic layer */}
-  <a
-    href="#bear"
-    className="group relative block"
-    aria-label="Meet The Burning Bear"
-    onMouseMove={(e) => {
-      const t = e.currentTarget.getBoundingClientRect();
-      const x = ((e.clientX - t.left) / t.width  - 0.5) * 2; // -1..1
-      const y = ((e.clientY - t.top)  / t.height - 0.5) * 2;
-      e.currentTarget.style.setProperty('--tilt-x', `${-(y*3)}deg`);
-      e.currentTarget.style.setProperty('--tilt-y', `${ x*3 }deg`);
-      e.currentTarget.style.setProperty('--drift-x', `${x*40}px`);
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.setProperty('--tilt-x', `0deg`);
-      e.currentTarget.style.setProperty('--tilt-y', `0deg`);
-      e.currentTarget.style.setProperty('--drift-x', `0px`);
-    }}
-  >
-    {/* Parallax / zoom plane */}
-    <div
-      className="hero-vignette hero-zoom"
-      style={{
-        transform: 'perspective(900px) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg)) scale(1)',
-      }}
-    >
-      {/* Your translucent panel + stats */}
-      <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
-        <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6 transition-transform duration-700 group-hover:scale-[1.01]">
-          <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
-            Meet The Burning Bear - the classiest arsonist in crypto.
-          </h1>
+  <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
+    {/* Title */}
+    <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight headline-glow">
+      Meet The Burning Bear — the classiest arsonist in crypto.
+    </h1>
 
-          {/* Countdowns */}
-          <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />
-            <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} />
-          </div>
-
-          {/* Stats */}
-          <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-4">
-            <Stat label="Burned So Far" value={fmtInt(BURNED)} />
-            <Stat label="Current Supply" value={fmtInt(CURRENT)} />
-            <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
-            <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
-          </div>
-
-          {/* Pills */}
-          <div className="mt-3 flex flex-wrap gap-3">
-            <Pill>Today: {todayBurnsCount} burns</Pill>
-            <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
-            <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
-          </div>
-        </div>
-      </div>
+    {/* Countdowns */}
+    <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />
+      <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} />
     </div>
 
-    {/* Ember sprinkle overlay (super cheap) */}
-    <Embers count={24} />
-
-    {/* Hover CTA chip (bottom-center) */}
-    <div className="pointer-events-none absolute inset-x-0 -bottom-2 sm:bottom-3 flex justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-      <span className="rounded-full bg-black/40 px-3 py-1 text-[12px] font-semibold text-amber-200 backdrop-blur-sm border border-white/10">
-        Click to meet the Bear ↓
-      </span>
+    {/* Stats */}
+    <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-4">
+      <Stat label="Burned So Far" value={fmtInt(BURNED)} />
+      <Stat label="Current Supply" value={fmtInt(CURRENT)} />
+      <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
+      <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
     </div>
-  </a>
+
+    {/* CTA → Meet the Bear */}
+    <div className="mt-6">
+      <a
+        href="#bear"
+        onClick={(e) => spawnEmbers(e, 18)}
+        className="inline-flex items-center gap-2 rounded-full border border-amber-300/30
+                   bg-black/30 px-5 py-2 text-sm font-semibold text-amber-100
+                   backdrop-blur-sm hover:border-amber-300 hover:text-amber-50
+                   transition shadow-ember"
+      >
+        Click to meet the Bear
+        <span className="text-amber-300">↘</span>
+      </a>
+    </div>
+  </div>
 </section>
 
       {/* Smart Copy CA button with $BBURN and brand gold tone */}
@@ -789,6 +761,24 @@ function Pill({ children }: { children: React.ReactNode }) {
     </span>
   );
 }
+
+// Tiny click-embers (uses .ember-particle from globals.css)
+const spawnEmbers = (e: React.MouseEvent, count = 14) => {
+  const root = document.body;
+  const { clientX: x, clientY: y } = e;
+  for (let i = 0; i < count; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'ember-particle';
+    const delay = Math.random() * 200;
+    const dur = 700 + Math.random() * 500;
+    dot.style.setProperty('--delay', `${delay}ms`);
+    dot.style.setProperty('--dur', `${dur}ms`);
+    dot.style.left = `${x + (Math.random() * 40 - 20)}px`;
+    dot.style.top = `${y + (Math.random() * 24 - 12)}px`;
+    root.appendChild(dot);
+    setTimeout(() => dot.remove(), 1200 + delay);
+  }
+};
 
 function Embers({ count = 20 }: { count?: number }) {
   // Renders N light dots that rise & drift; all CSS-driven
