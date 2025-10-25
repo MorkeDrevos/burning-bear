@@ -545,7 +545,7 @@ useEffect(() => {
       {/* ===== How It Works ===== */}
 <section
   id="how"
-  className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 pt-20 pb-12"
+  className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 pt-20 pb-20 relative"
 >
   <h3 className="text-2xl font-bold text-amber-300 mb-4">How It Works</h3>
   <p className="text-white/70 max-w-3xl">
@@ -568,6 +568,9 @@ useEffect(() => {
       body="Rewards creators, partners, and community builders — spreading the legend of $BBURN across Solana while fueling future innovation."
     />
   </div>
+
+  {/* Subtle fade-out for smooth transition to next section */}
+  <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-b from-transparent to-[#0d1a14]" />
 </section>
 
 {/* ===== Meet the Burning Bear ===== */}
