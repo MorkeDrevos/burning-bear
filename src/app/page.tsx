@@ -143,14 +143,17 @@ export default function Page() {
   }, []);
 
   // load JSON data (cache-busted) and normalize timestamps
+// load JSON data (cache-busted) and normalize timestamps
 useEffect(() => {
   let alive = true;
 
-  fetch(`/data/state.json?t=${Date.now()}`, { cache: "no-store" })
-    .then((r) => r.json())
-    .then((d) => {
+  (async () => {
+    try {
+      const r = await fetch(`/data/state.json?t=${Date.now()}`, { cache: "no-store" });
+      const d = await r.json();
       if (!alive) return;
 
+      // Convert schedule: minutes → ms + seed next times
       if (d.schedule) {
         const burnMins = d.schedule.burnIntervalMinutes ?? 60;
         const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
@@ -163,6 +166,7 @@ useEffect(() => {
         if (!d.schedule.nextBuybackAt) d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
       }
 
+      // Normalize burns
       const burns = (d.burns ?? [])
         .map((b: any) => ({
           ...b,
@@ -172,10 +176,11 @@ useEffect(() => {
         .filter((b: any) => Number.isFinite(b.timestamp));
 
       setData({ ...d, burns });
-    }).catch((err) => {
+    } catch (err) {
       console.error("Failed to load state.json", err);
-      // no-op
-    });
+      // keep previous state on error
+    }
+  })();
 
   return () => {
     alive = false;
