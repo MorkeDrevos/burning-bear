@@ -1,45 +1,19 @@
-/* =========================================================
-   🔥 The Burning Bear — Global Styles
-   ========================================================= */
-
-/* --- Tailwind Core (order must stay exactly like this) --- */
+/* globals.css — keep this exact order */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* =========================================================
-   Shadows & Glow Helpers
-   ========================================================= */
 
 /* subtle coin-like shadow on logos/buttons */
 .shadow-ember {
   box-shadow: 0 6px 24px rgba(255, 184, 76, 0.2);
 }
 
-/* slight breathing glow on golden UI bits */
-@keyframes emberPulse {
-  0%, 100% { opacity: 0.4; filter: brightness(1); }
-  50% { opacity: 0.9; filter: brightness(1.08); }
-}
-.glow-ember {
-  animation: emberPulse 4.8s ease-in-out infinite;
-}
-
-/* headline hover glow */
-.headline-glow:hover {
-  filter: drop-shadow(0 0 16px rgba(255,184,76,.45));
-}
-
-/* =========================================================
-   Divider & Shimmer Effects
-   ========================================================= */
-
+/* ember shimmer for dividers */
 @keyframes emberShimmer {
   0%   { background-position: 180% 0; opacity: 0.45; }
   50%  { background-position: 100% 0; opacity: 0.85; }
   100% { background-position: -180% 0; opacity: 0.45; }
 }
-
 .ember-divider {
   background-image: linear-gradient(
     90deg,
@@ -52,6 +26,7 @@
   filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.14));
 }
 
+/* (optional) slightly stronger footer divider only */
 .footer-divider {
   background-image: linear-gradient(
     90deg,
@@ -64,94 +39,25 @@
   filter: drop-shadow(0 0 5px rgba(251,191,36,0.18));
 }
 
-/* =========================================================
-   Animations — Bear & Embers
-   ========================================================= */
-
-/* gentle breathing pulse for hero bear */
+html {
+  scroll-behavior: smooth;
+}
 @keyframes bearBreath {
   0%, 100% { transform: scale(1); filter: brightness(1); }
   50% { transform: scale(1.02); filter: brightness(1.05); }
 }
+
 .bear-breathe {
   animation: bearBreath 6s ease-in-out infinite;
 }
-
-/* flicker used for flames / small lights */
+@keyframes emberPulse {
+  0%, 100% { opacity: 0.4; filter: brightness(1); }
+  50% { opacity: 0.9; filter: brightness(1.08); }
+}
+.glow-ember {
+  animation: emberPulse 4.8s ease-in-out infinite;
+}
 @keyframes flicker {
   0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
   20%, 24%, 55% { opacity: 0.85; }
-}
-
-/* tiny upward ember motion (for click particles) */
-@keyframes emberUp {
-  0%   { transform: translate(-50%,-50%) translateY(0) scale(1); opacity: 1; }
-  100% { transform: translate(-50%,-50%) translateY(-70px) scale(0.7); opacity: 0; }
-}
-.ember-particle {
-  position: fixed;
-  width: 6px;
-  height: 6px;
-  border-radius: 9999px;
-  pointer-events: none;
-  background: radial-gradient(circle, #ffb347 0%, #ff7a18 65%, rgba(255,122,24,0) 70%);
-  filter: drop-shadow(0 0 8px rgba(255,184,76,.6));
-  animation: emberUp var(--dur, 900ms) ease-out var(--delay, 0ms) forwards;
-}
-
-/* lightweight continuous embers (used in hero hover) */
-@keyframes emberRise {
-  0%   { transform: translateY(0) translateX(0) scale(1); opacity: .0; }
-  8%   { opacity: .45; }
-  100% { transform: translateY(-140px) translateX(var(--drift-x)) scale(1.1); opacity: 0; }
-}
-.ember-dot {
-  position: absolute;
-  width: 3px;
-  height: 3px;
-  border-radius: 9999px;
-  background: radial-gradient(circle, rgba(255,196,120,.9) 0%, rgba(255,138,18,.9) 60%, rgba(255,138,18,0) 70%);
-  filter: drop-shadow(0 0 6px rgba(255,170,60,.6));
-  animation: emberRise var(--rise, 6s) linear infinite;
-  opacity: 0;
-}
-
-/* =========================================================
-   Cinematic Hero (hover tilt / zoom)
-   ========================================================= */
-.hero-zoom {
-  transition: transform 900ms ease, filter 900ms ease;
-  will-change: transform, filter;
-}
-.hero-vignette::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  box-shadow: inset 0 0 180px rgba(0,0,0,.45);
-  transition: opacity 600ms ease;
-  opacity: .6;
-}
-.group:hover .hero-vignette::after { opacity: .8; }
-
-/* =========================================================
-   Base HTML Settings
-   ========================================================= */
-html {
-  scroll-behavior: smooth;
-  background-color: #0d1a14;
-  color-scheme: dark;
-}
-
-/* =========================================================
-   Accessibility — Reduced Motion
-   ========================================================= */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0ms !important;
-    animation-iteration-count: 1 !important;
-    transition: none !important;
-  }
 }
