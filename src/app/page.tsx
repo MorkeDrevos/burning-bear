@@ -584,7 +584,10 @@ useEffect(() => {
 </section>
 
 {/* ===== This Week at the Campfire ===== */}
-<section id="week" className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
+<section
+  id="week"
+  className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 pt-20 pb-10"
+>
   <h3 className="text-2xl font-bold text-amber-300 mb-4">This Week at the Campfire</h3>
   <p className="text-white/60">Activity in the last 7 days. Auto-updated from the live logs.</p>
 
