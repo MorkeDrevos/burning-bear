@@ -384,35 +384,40 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* Smart Copy CA button with $BBURN and brand gold tone */}
+      {/* Contract Address Line */}
 <div className="mt-6 flex justify-center">
-  <div className="inline-flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 backdrop-blur-sm shadow-ember">
-    {/* Copy Icon */}
+  <div className="inline-flex items-center gap-3 text-sm">
+    {/* Copy Icon (no background) */}
     <button
       onClick={handleCopy}
       aria-label="Copy contract address"
-      className="text-white/60 hover:text-amber-200 transition"
+      className="text-white/55 hover:text-amber-200 transition"
       title={copied ? 'Copied!' : 'Copy'}
     >
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-           fill="none" stroke="currentColor" strokeWidth="1.8"
-           className="h-4 w-4">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        className="h-4 w-4"
+      >
         <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
       </svg>
     </button>
 
-    {/* Token + Address */}
-    <span className="text-sm font-semibold text-white/75">{TOKEN_SYMBOL}</span>
+    {/* Token and Address */}
+    <span className="font-semibold text-white/75">{TOKEN_SYMBOL}</span>
     <span className="text-white/50">•</span>
     <code
-      className="font-mono text-[13px] text-white/70"
+      className="font-mono text-[13px] text-white/65"
       title={FULL_TOKEN_ADDRESS}
     >
       {truncateMiddle(FULL_TOKEN_ADDRESS, 6, 6)}
     </code>
 
-    {/* Copy button */}
+    {/* Copy Button */}
     <button
       onClick={handleCopy}
       className={`ml-2 rounded-md px-3 py-1 text-[12px] font-semibold transition
