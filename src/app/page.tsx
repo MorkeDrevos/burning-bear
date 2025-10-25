@@ -582,7 +582,7 @@ useEffect(() => {
   {/* Animated Bear GIF */}
   <div className="mx-auto mb-8 w-[260px] md:w-[320px] relative">
     <img
-  src="/img/burning_bear_BBURN.gif"
+  src="/img/burning_bear_BBURN_v2.gif"
   alt="The Burning Bear"
   className="w-full h-auto rounded-2xl bear-breathe shadow-ember"
 />
