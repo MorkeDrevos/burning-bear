@@ -539,15 +539,14 @@ useEffect(() => {
   <div className="absolute inset-x-0 bottom-0 h-[40vh] bg-gradient-to-t from-amber-600/10 via-amber-400/5 to-transparent blur-[80px]" />
 
   {/* Bear image (clamped, centered) */}
-<div className="relative mx-auto mb-8">
-  <img
-    src="/img/burning-bear.png"
-    alt="The Burning Bear"
-    className="mx-auto h-[170px] w-auto rounded-xl md:h-[220px] bear-breathe shadow-ember"
-  />
-</div>
+  <div className="relative mx-auto mb-8 w-fit">
+    <img
+      src="/img/burning-bear.png"
+      alt="The Burning Bear"
+      className="relative z-10 mx-auto h-[170px] w-auto rounded-xl md:h-[220px] bear-breathe shadow-ember"
+    />
     {/* Gentle animated glow behind him */}
-    <div className="absolute inset-0 rounded-xl bg-amber-500/10 blur-[60px] animate-pulse" />
+    <div className="pointer-events-none absolute inset-0 rounded-xl bg-amber-500/10 blur-[60px] animate-pulse"></div>
   </div>
 
   {/* Title */}
@@ -568,36 +567,20 @@ useEffect(() => {
       in a bearish world, the fire can rise. Each burn he makes is a heartbeat of the community: a
       symbol of resilience, humor and transparency.
     </p>
-    <p className="relative mt-8 text-amber-200 font-semibold leading-relaxed tracking-wide">
-  <span className="animate-[flicker_6s_ease-in-out_infinite] drop-shadow-[0_0_8px_rgba(255,184,76,0.3)]">
-    The Burning Bear doesn’t burn alone, he keeps the fire alive for everyone who believes.<br />
-    <span className="text-amber-100/90">Every spark counts. Every burn means something. 🔥</span>
-  </span>
 
-  {/* faint ember shimmer backdrop */}
-  <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400/30 to-transparent animate-[emberShimmer_8s_linear_infinite]" />
-</p>
+    {/* Closing line with underline just under the last sentence */}
+    <p className="relative mt-8 text-amber-200 font-semibold leading-relaxed tracking-wide">
+      <span className="animate-[flicker_6s_ease-in-out_infinite] drop-shadow-[0_0_8px_rgba(255,184,76,0.3)]">
+        The Burning Bear doesn’t burn alone, he keeps the fire alive for everyone who believes.<br />
+        <span className="text-amber-100/90">Every spark counts. Every burn means something. 🔥</span>
+      </span>
+      {/* faint ember shimmer underline under the LAST line */}
+      <span className="pointer-events-none absolute left-1/2 -bottom-2 h-[2px] w-64 -translate-x-1/2 bg-gradient-to-r from-transparent via-amber-400/30 to-transparent animate-[emberShimmer_8s_linear_infinite]"></span>
+    </p>
   </div>
 
   {/* Ember glow base */}
   <div className="absolute left-1/2 top-full mt-12 -translate-x-1/2 w-64 h-64 rounded-full bg-amber-400/10 blur-[90px] animate-pulse" />
-</section>
-
-{/* ===== This Week at the Campfire ===== */}
-<section id="week" className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
-  <h3 className="text-2xl font-bold text-amber-300 mb-4">This Week at the Campfire</h3>
-  <p className="text-white/60">Activity in the last 7 days. Auto-updated from the live logs.</p>
-
-  <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-    <StatBig label="Burns" value={fmtInt(weekStats.count)} />
-    <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
-    <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
-    <StatBig label="Largest Burn (BBURN)" value={fmtInt(weekStats.largest)} />
-  </div>
-
-  <div className="mt-4">
-    <Pill>Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}</Pill>
-  </div>
 </section>
 
 <Divider />
