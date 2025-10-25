@@ -538,26 +538,27 @@ useEffect(() => {
   <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0d1a14] via-[#141f1a] to-[#0d1a14]" />
   <div className="absolute inset-x-0 bottom-0 h-[40vh] bg-gradient-to-t from-amber-600/10 via-amber-400/5 to-transparent blur-[80px]" />
 
-  {/* Bear image (clamped, centered) */}
-  <div className="relative mx-auto mb-8 w-fit">
+  {/* Bear image (fixed visual size, centered) */}
+  <div className="mx-auto mb-10 w-[320px] md:w-[360px] relative">
     <img
       src="/img/burning-bear.png"
       alt="The Burning Bear"
-      className="relative z-10 mx-auto h-[170px] w-auto rounded-xl md:h-[220px] bear-breathe shadow-ember"
+      className="w-full h-auto rounded-2xl bear-breathe shadow-ember"
     />
     {/* gentle glow behind him */}
-    <div className="pointer-events-none absolute inset-0 rounded-xl bg-amber-500/10 blur-[60px] animate-pulse" />
+    <div className="pointer-events-none absolute inset-0 rounded-2xl bg-amber-500/10 blur-[60px] animate-pulse" />
   </div>
 
   {/* Title */}
   <h2 className="text-4xl md:text-5xl font-extrabold text-amber-300 drop-shadow-[0_0_10px_rgba(255,184,76,0.25)]">
     Meet The Burning Bear
   </h2>
-  {/* Title underline (block, not absolute) */}
-  <div className="mx-auto mt-4 h-[3px] w-24 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 animate-pulse/70 blur-[0.5px]" />
+
+  {/* Underline — snug below title, extra breathing space below */}
+  <div className="mx-auto mt-3 mb-10 h-[3px] w-24 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 drop-shadow-[0_0_6px_rgba(255,184,76,0.35)]" />
 
   {/* Story */}
-  <div className="mx-auto mt-8 max-w-3xl text-white/80 leading-relaxed text-lg space-y-5">
+  <div className="mx-auto max-w-3xl text-white/80 leading-relaxed text-lg space-y-5">
     <p>
       Long before the campfire roared across Solana, a quiet bear walked the forests of forgotten
       chains, collecting embers from every spark of belief. He wasn’t the kind that sleeps through
@@ -572,10 +573,13 @@ useEffect(() => {
     {/* Closing line */}
     <p className="text-amber-200 font-semibold tracking-wide">
       The Burning Bear doesn’t burn alone, he keeps the fire alive for everyone who believes.<br />
-      <span className="text-amber-100/90">Every spark counts. Every burn means something. 🔥</span>
+      <span className="text-amber-100/90">
+        Every spark counts. Every burn means something. 🔥
+      </span>
     </p>
-    {/* Closing-line underline (block, sits just below) */}
-    <div className="mx-auto mt-2 h-[2px] w-64 bg-gradient-to-r from-transparent via-amber-400/30 to-transparent animate-[emberShimmer_8s_linear_infinite]" />
+
+    {/* Closing-line underline — subtle, faint shimmer */}
+    <div className="mx-auto mt-3 h-[2px] w-64 bg-gradient-to-r from-transparent via-amber-400/30 to-transparent animate-[emberShimmer_8s_linear_infinite]" />
   </div>
 
   {/* Soft base glow below the section */}
@@ -598,8 +602,6 @@ useEffect(() => {
     <Pill>Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}</Pill>
   </div>
 </section>
-
-<Divider />
 
 {/* ===== Campfire Wallets ===== */}
 <section id="wallets" className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
