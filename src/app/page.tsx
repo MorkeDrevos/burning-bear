@@ -340,7 +340,7 @@ useEffect(() => {
         </div>
       </header>
 
-      {/* ===== HERO with video + translucent text panel ===== */}
+{/* ===== HERO with video + translucent text panel ===== */}
 <section id="hero" className="relative">
   {/* Background video + vignette */}
   <div className="absolute inset-0 -z-10 overflow-hidden hero-vignette">
@@ -354,12 +354,13 @@ useEffect(() => {
     >
       <source src="/img/burning-bear.mp4" type="video/mp4" />
     </video>
+
     {/* Dark gradient for legibility */}
     <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
-  </div>
 
-  {/* Subtle smoke layer */}
-  <SmokeOverlay density="light" area="top" />
+    {/* Subtle smoke layer (now above video+gradient, below content) */}
+    <SmokeOverlay density="medium" area="top" />
+  </div>
 
   <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20 relative">
     {/* subtle fire glow behind hero box */}
@@ -384,7 +385,6 @@ useEffect(() => {
 
     {/* translucent stats panel */}
     <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
-      {/* Headline */}
       <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
         Meet The Burning Bear – the classiest arsonist in crypto.
       </h1>
