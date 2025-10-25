@@ -3,14 +3,12 @@
     "initialSupply": 1000000000,
     "burned": 3077644.848126,
     "currentSupply": 996922355.151874,
-    "buybackSol": 0.5754,
+    "buybackSol": 0.287628429,
     "priceUsdPerSol": 176.8
   },
   "schedule": {
     "burnIntervalMinutes": 241,
-    "buybackIntervalMinutes": 125,
-    "nextBurnAt": 1730622000000,
-    "nextBuybackAt": 1730614800000
+    "buybackIntervalMinutes": 125
   },
   "burns": [
     {
