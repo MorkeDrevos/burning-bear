@@ -14,12 +14,12 @@
   },
   "burns": [
     {
-  "tx": "https://solscan.io/tx/5YCJzXJwoztzubHZnkqqShanfDWBhjxWKWUQV3BxheQtwG6ki4H7G52XieyfG7kmYVcruGTRTHZMv67NMwEDpiC8",
-  "amount": 1130587.564785,
-  "sol": 0.0020,
-  "timestamp": "2025-10-25T14:26:51Z",
-  "wallet": "2nkSpJx97U1SujrSiYLYpBHeBWbVbRkHFBbkqwS9xMS"
-},
+      "id": "tx_001",
+      "amount": 1130587.564785,
+      "sol": 0.16,
+      "timestamp": "2025-10-25T13:00:00Z",
+      "tx": "https://solscan.io/tx/5YCJzXJwoztzubHZnkqqShanfDWBhjxWKWUQV3BxheQtwG6ki4H7G52XieyfG7kmYVcruGTRTHZMv67NMwEDpiC8"
+    },
     {
       "id": "tx_002",
       "amount": 0,
