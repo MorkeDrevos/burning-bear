@@ -571,8 +571,7 @@ useEffect(() => {
     </p>
     <p className="relative mt-8 text-amber-200 font-semibold leading-relaxed tracking-wide">
   <span className="animate-[flicker_6s_ease-in-out_infinite] drop-shadow-[0_0_8px_rgba(255,184,76,0.3)]">
-    The Burning Bear doesn’t burn alone, he’s here to keep the fire alive for everyone who believes.<br />
-    <span className="text-amber-100/90">Every spark counts. Every burn means something. 🔥</span>
+    <span className="text-amber-100/90">The Burning Bear doesn’t burn alone, he’s here to keep the fire alive for everyone who believes. Every spark counts. Every burn means something. 🔥</span>
   </span>
 
   {/* faint ember shimmer backdrop */}
