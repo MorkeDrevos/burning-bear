@@ -165,6 +165,25 @@ useEffect(() => {
         if (!d.schedule.nextBuybackAt) d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
       }
 
+      // Normalize burns: coerce timestamp to number (ms) and drop invalid rows
+      const burns = (d?.burns ?? [])
+        .map((b: any) => ({
+          ...b,
+          timestamp: typeof b.timestamp === 'number' ? b.timestamp : Date.parse(b.timestamp),
+        }))
+        .filter((b: any) => Number.isFinite(b.timestamp));
+
+      setData({ ...d, burns });
+    })
+    .catch(() => {
+      // no-op; keep previous data on fetch error
+    });
+
+  return () => {
+    alive = false;
+  };
+}, []);
+
       // Normalize burns (make timestamps numeric) and drop invalid rows
       const burns = (d?.burns ?? [])
         .map((b: any) => ({ ...b, timestamp: toMs(b.timestamp) }))
@@ -455,7 +474,7 @@ useEffect(() => {
   </div>
 </div>
 
-{/* ===== Live Burn Log — marquee + full-click cards ===== */}
+{/* ===== Live Burn Log — scrollable + full-click cards ===== */}
 <section
   id="log"
   className="w-full px-4 sm:px-6 lg:px-8 mt-6 scroll-mt-24 md:scroll-mt-28"
@@ -465,21 +484,35 @@ useEffect(() => {
     <p className="text-sm text-white/50">TX links open explorer.</p>
   </div>
 
-  {/* Marquee wrapper */}
-  <div className="mt-6 relative overflow-hidden auto-marquee">
-    {/* Track (duplicated items for seamless loop) */}
-    <div className="marquee-track flex gap-6 will-change-transform px-1">
-      {[...burnsSorted.slice(0, 6), ...burnsSorted.slice(0, 6)].map((b, i) => (
+  {/* Scrollable rail */}
+  <div
+    ref={railRef}
+    className="
+      relative mt-6 overflow-x-auto pb-4
+      snap-x snap-mandatory select-none
+      [-ms-overflow-style:none] [scrollbar-width:none]
+      [&::-webkit-scrollbar]:hidden
+    "
+    onMouseDown={(e) => startDrag(e as unknown as React.MouseEvent)}
+    onMouseMove={(e) => onDrag(e as unknown as React.MouseEvent)}
+    onMouseUp={endDrag}
+    onMouseLeave={endDrag}
+    onTouchStart={(e) => startDrag(e.touches[0])}
+    onTouchMove={(e) => onDrag(e.touches[0])}
+    onTouchEnd={endDrag}
+  >
+    <div className="flex gap-6 min-w-max px-1">
+      {burnsSorted.slice(0, 12).map((b) => (
         <Link
-          key={`${b.id}-${i}`}
+          key={b.id}
           href={b.tx}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`View TX for burn of ${b.amount.toLocaleString()} BBURN`}
-          className="group block flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded-3xl"
+          className="group block flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px] snap-start focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded-3xl"
         >
           {/* Card */}
-          <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-transform">
+          <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)]">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-900/40">
@@ -526,7 +559,7 @@ useEffect(() => {
                   )}
                 </div>
               </div>
-              {/* tiny hint that it's clickable */}
+
               <span className="text-sm font-semibold text-amber-300/80 opacity-80 group-hover:opacity-100">
                 View TX →
               </span>
@@ -543,6 +576,10 @@ useEffect(() => {
         </Link>
       ))}
     </div>
+
+    {/* Optional edge fades for better look */}
+    <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#0d1a14] to-transparent" />
+    <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#0d1a14] to-transparent" />
   </div>
 </section>
 
