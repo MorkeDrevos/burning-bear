@@ -543,7 +543,10 @@ useEffect(() => {
       </section>
 
       {/* ===== How It Works ===== */}
-  <section id="how" className="mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-14 md:pb-10">
+<section
+  id="how"
+  className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-14 md:pb-14"
+>
   <h3 className="text-2xl font-bold text-amber-300 mb-4">How It Works</h3>
   <p className="text-white/70 max-w-3xl">
     Every spark fuels the fire. Whether it’s a trade, a creator reward, or a network fee — every move
@@ -567,31 +570,35 @@ useEffect(() => {
   </div>
 </section>
 
-{/* ===== Meet the Burning Bear ===== */}
-  <section id="bear" className="relative w-full overflow-hidden pt-16 pb-16 md:pt-20 md:pb-20 text-center">
-  {/* full-width dark background */}
+
+{/* ===== Meet The Burning Bear ===== */}
+<section
+  id="bear"
+  className="relative w-full overflow-hidden text-center px-4 pt-16 pb-16 md:pt-20 md:pb-20"
+>
+  {/* background glow */}
   <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0d1a14] via-[#141f1a] to-[#0d1a14]" />
   <div className="absolute inset-x-0 bottom-0 h-[40vh] bg-gradient-to-t from-amber-600/10 via-amber-400/5 to-transparent blur-[80px]" />
 
-  {/* Animated Bear GIF */}
+  {/* bear GIF */}
   <div className="mx-auto mb-8 w-[260px] md:w-[320px] relative">
     <img
-  src="/img/burning_bear_BBURN_v2.gif"
-  alt="The Burning Bear"
-  className="w-full h-auto rounded-2xl bear-breathe shadow-ember"
-/>
+      src="/img/burning_bear_BBURN.gif"
+      alt="The Burning Bear"
+      className="w-full h-auto rounded-2xl bear-breathe shadow-ember"
+    />
     <div className="pointer-events-none absolute inset-0 rounded-2xl bg-amber-500/10 blur-[60px] animate-pulse" />
   </div>
 
-  {/* Title */}
+  {/* title */}
   <h2 className="text-4xl md:text-5xl font-extrabold text-amber-300 drop-shadow-[0_0_10px_rgba(255,184,76,0.25)]">
     Meet The Burning Bear
   </h2>
 
-  {/* Underline */}
+  {/* underline */}
   <div className="mx-auto mt-3 mb-6 h-[3px] w-24 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 drop-shadow-[0_0_6px_rgba(255,184,76,0.35)]" />
 
-  {/* Story */}
+  {/* story */}
   <div className="mx-auto max-w-3xl text-white/80 leading-relaxed text-lg space-y-5">
     <p>
       Long before the campfire roared across Solana, a quiet bear walked the forests of forgotten
@@ -604,22 +611,20 @@ useEffect(() => {
       symbol of resilience, humor and transparency.
     </p>
     <p className="text-amber-200 font-semibold tracking-wide">
-      The Burning Bear doesn’t burn alone, he keeps the fire alive for everyone who believes.<br />
+      The Burning Bear doesn’t burn alone — he keeps the fire alive for everyone who believes.
+      <br />
       <span className="text-amber-100/90">
         Every spark counts. Every burn means something. 🔥
       </span>
     </p>
   </div>
-
-  {/* Soft base glow */}
-  <div className="pointer-events-none absolute left-1/2 top-full mt-12 -translate-x-1/2 h-64 w-64 rounded-full bg-amber-400/10 blur-[90px]" />
-</section>
-
+  
 {/* ===== This Week at the Campfire ===== */}
-  <section id="week" className="mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-10 md:pb-14">
-  <h3 className="text-2xl font-bold text-amber-300 mb-4">
-    This Week at the Campfire
-  </h3>
+<section
+  id="week"
+  className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-14 md:pb-14"
+>
+  <h3 className="text-2xl font-bold text-amber-300 mb-4">This Week at the Campfire</h3>
   <p className="text-white/60">
     Activity in the last 7 days. Auto-updated from the live logs.
   </p>
