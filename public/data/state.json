@@ -11,6 +11,36 @@
     "buybackIntervalMinutes": 22,
     "nextBurnAt": 1730604000000,
     "nextBuybackAt": 1730606400000
+  },
+  "burns": [
+    {
+      "id": "tx_001",
+      "amount": 0,
+      "sol": 0.00,
+      "timestamp": "2025-10-25T13:00:00Z",
+      "tx": "https://explorer.solana.com/tx/0xTEST001"
+    },
+    {
+      "id": "tx_002",
+      "amount": 0,
+      "sol": 0.00,
+      "timestamp": "2025-10-25T13:00:00Z",
+      "tx": "https://explorer.solana.com/tx/0xTEST002"
+    },
+    {
+      "id": "tx_003",
+      "amount": 700000,
+      "sol": 0.00,
+      "timestamp": "2025-10-25T13:00:00Z",
+      "tx": "https://explorer.solana.com/tx/0xTEST003"
+    },
+    {
+      "id": "tx_003",
+      "amount": 0,
+      "sol": 0.00,
+      "timestamp": "2025-10-25T13:00:00Z",
+      "tx": "https://explorer.solana.com/tx/0xTEST003"
+    }
   ],
   "wallets": {
     "burn": "2nkSpJx9s7U13ujfSibYLPHreBbVbRkHBfBbkxgS9kM5",
