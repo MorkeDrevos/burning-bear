@@ -455,7 +455,7 @@ useEffect(() => {
   </div>
 </div>
 
-{/* ===== Live Burn Log — marquee + full-click cards ===== */}
+{/* ===== Live Burn Log — marquee + clickable cards with hover ===== */}
 <section
   id="log"
   className="w-full px-4 sm:px-6 lg:px-8 mt-6 scroll-mt-24 md:scroll-mt-28"
@@ -467,7 +467,6 @@ useEffect(() => {
 
   {/* Marquee wrapper */}
   <div className="mt-6 relative overflow-hidden auto-marquee">
-    {/* Track (duplicated items for seamless loop) */}
     <div className="marquee-track flex gap-6 will-change-transform px-1">
       {[...burnsSorted.slice(0, 6), ...burnsSorted.slice(0, 6)].map((b, i) => (
         <Link
@@ -479,11 +478,17 @@ useEffect(() => {
           className="group block flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded-3xl"
         >
           {/* Card */}
-          <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-transform">
-            <div className="flex items-start justify-between">
+          <div className="relative rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] 
+            transition-all duration-500 ease-out group-hover:translate-y-[-4px] group-hover:shadow-[0_4px_24px_rgba(255,184,76,0.25)] group-hover:border-amber-500/20">
+
+            {/* Subtle glow */}
+            <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-40 bg-gradient-to-b from-amber-400/10 via-orange-500/5 to-transparent blur-2xl transition-opacity duration-700"></div>
+
+            <div className="relative flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-900/40">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6">
+                <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-900/40 shadow-inner group-hover:shadow-[0_0_12px_rgba(255,184,76,0.3)] transition-shadow">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                    className="h-6 w-6 transition-transform duration-700 group-hover:scale-110 group-hover:rotate-6">
                     <defs>
                       <linearGradient id="flameGrad" x1="0" x2="0" y1="0" y2="1">
                         <stop offset="0%" stopColor="#ffb347" />
@@ -499,7 +504,7 @@ useEffect(() => {
                 </span>
 
                 <div>
-                  <div className="text-lg font-bold">
+                  <div className="text-lg font-bold text-amber-100">
                     Burn • {b.amount.toLocaleString()} BBURN
                   </div>
                   <div className="text-sm text-white/60">
@@ -513,7 +518,6 @@ useEffect(() => {
                       hour12: true,
                     })}
                   </div>
-
                   {typeof b.sol === 'number' && (
                     <div className="text-sm text-white/70">
                       ≈ {b.sol.toFixed(4)} SOL (
@@ -526,20 +530,18 @@ useEffect(() => {
                   )}
                 </div>
               </div>
-              {/* tiny hint that it's clickable */}
-              <span className="text-sm font-semibold text-amber-300/80 opacity-80 group-hover:opacity-100">
+              <span className="text-sm font-semibold text-amber-300/80 opacity-70 group-hover:opacity-100 transition-opacity">
                 View TX →
               </span>
             </div>
 
             <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
               <div
-                className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
+                className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 transition-all duration-500 group-hover:from-orange-400 group-hover:to-amber-500"
                 style={{ width: '100%' }}
               />
             </div>
           </div>
-          {/* /Card */}
         </Link>
       ))}
     </div>
