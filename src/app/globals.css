@@ -61,3 +61,25 @@ html {
   0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
   20%, 24%, 55% { opacity: 0.85; }
 }
+/* ===== Meet-the-bear micro-interactions ===== */
+
+@keyframes emberUp {
+  0%   { transform: translate(-50%,-50%) translateY(0) scale(1); opacity: 1; }
+  100% { transform: translate(-50%,-50%) translateY(-70px) scale(0.7); opacity: 0; }
+}
+
+.ember-particle {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(circle, #ffb347 0%, #ff7a18 65%, rgba(255,122,24,0) 70%);
+  filter: drop-shadow(0 0 8px rgba(255,184,76,.6));
+  animation: emberUp var(--dur, 900ms) ease-out var(--delay, 0ms) forwards;
+}
+
+/* subtle headline glow on hover */
+.headline-glow:hover {
+  filter: drop-shadow(0 0 16px rgba(255,184,76,.45));
+}
