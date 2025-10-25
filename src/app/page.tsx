@@ -151,7 +151,6 @@ useEffect(() => {
     .then((d) => {
       if (!alive) return;
 
-      // Convert schedule: minutes → ms, seed missing next times
       if (d.schedule) {
         const burnMins = d.schedule.burnIntervalMinutes ?? 60;
         const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
@@ -164,7 +163,6 @@ useEffect(() => {
         if (!d.schedule.nextBuybackAt) d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
       }
 
-      // Normalize burns: coerce timestamp → number (ms) and drop invalid rows
       const burns = (d.burns ?? [])
         .map((b: any) => ({
           ...b,
@@ -176,10 +174,10 @@ useEffect(() => {
         .filter((b: any) => Number.isFinite(b.timestamp));
 
       setData({ ...d, burns });
-    })
+    }) // <-- keep .catch on this same line
     .catch((err) => {
       console.error("Failed to load state.json", err);
-      // no-op: keep previous data on fetch error
+      // no-op
     });
 
   return () => {
