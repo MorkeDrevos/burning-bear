@@ -384,14 +384,14 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* Contract Address Line */}
+      {/* Contract Address Pill — Cleaned */}
 <div className="mt-6 flex justify-center">
-  <div className="inline-flex items-center gap-3 text-sm">
-    {/* Copy Icon (no background) */}
+  <div className="inline-flex items-center gap-3 bg-[#0f1f19]/60 px-4 py-2 rounded-xl backdrop-blur-sm">
+    {/* Copy Icon */}
     <button
       onClick={handleCopy}
       aria-label="Copy contract address"
-      className="text-white/55 hover:text-amber-200 transition"
+      className="text-white/60 hover:text-amber-200 transition"
       title={copied ? 'Copied!' : 'Copy'}
     >
       <svg
@@ -407,11 +407,11 @@ useEffect(() => {
       </svg>
     </button>
 
-    {/* Token and Address */}
-    <span className="font-semibold text-white/75">{TOKEN_SYMBOL}</span>
+    {/* Token + Address */}
+    <span className="text-sm font-semibold text-white/75">{TOKEN_SYMBOL}</span>
     <span className="text-white/50">•</span>
     <code
-      className="font-mono text-[13px] text-white/65"
+      className="font-mono text-[13px] text-white/70"
       title={FULL_TOKEN_ADDRESS}
     >
       {truncateMiddle(FULL_TOKEN_ADDRESS, 6, 6)}
