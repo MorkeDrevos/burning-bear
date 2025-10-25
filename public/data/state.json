@@ -12,7 +12,7 @@
     "nextBurnAt": 1730604000000,
     "nextBuybackAt": 1730606400000
   },
-  "burns": [
+  "burns": {
     {
       "id": "tx_001",
       "amount": 1130587.564785,
