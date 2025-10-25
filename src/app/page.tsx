@@ -570,7 +570,6 @@ useEffect(() => {
   </div>
 </section>
 
-
 {/* ===== Meet The Burning Bear ===== */}
 <section
   id="bear"
@@ -618,7 +617,10 @@ useEffect(() => {
       </span>
     </p>
   </div>
-  
+
+  <div className="pointer-events-none absolute left-1/2 top-full mt-12 -translate-x-1/2 h-64 w-64 rounded-full bg-amber-400/10 blur-[90px]" />
+</section>
+
 {/* ===== This Week at the Campfire ===== */}
 <section
   id="week"
