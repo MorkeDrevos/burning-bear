@@ -1,14 +1,14 @@
 {
   "stats": {
     "initialSupply": 1000000000,
-    "burned": 2424236.564785,
-    "currentSupply": 997575763.435215,
-    "buybackSol": 0.25118029,
+    "burned": 3,077,644.848126,
+    "currentSupply": 996,922,355.151874,
+    "buybackSol": 0.5754,
     "priceUsdPerSol": 176.8
   },
   "schedule": {
-    "burnIntervalMinutes": 240,
-    "buybackIntervalMinutes": 120,
+    "burnIntervalMinutes": 241,
+    "buybackIntervalMinutes": 125,
     "nextBurnAt": 1730622000000,
     "nextBuybackAt": 1730614800000
   },
