@@ -14,6 +14,7 @@
   50%  { background-position: 100% 0; opacity: 0.85; }
   100% { background-position: -180% 0; opacity: 0.45; }
 }
+
 .ember-divider {
   background-image: linear-gradient(
     90deg,
@@ -42,6 +43,12 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* ======================================================
+   Animations
+   ====================================================== */
+
+/* Bear breathing subtle animation */
 @keyframes bearBreath {
   0%, 100% { transform: scale(1); filter: brightness(1); }
   50% { transform: scale(1.02); filter: brightness(1.05); }
@@ -50,39 +57,51 @@ html {
 .bear-breathe {
   animation: bearBreath 6s ease-in-out infinite;
 }
+
+/* Glowing ember pulse */
 @keyframes emberPulse {
   0%, 100% { opacity: 0.4; filter: brightness(1); }
   50% { opacity: 0.9; filter: brightness(1.08); }
 }
+
 .glow-ember {
   animation: emberPulse 4.8s ease-in-out infinite;
 }
+
+/* Flicker (used on lights / highlights) */
 @keyframes flicker {
   0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
   20%, 24%, 55% { opacity: 0.85; }
 }
-/* ---- Smoke (CSS-only) ---------------------------------- */
+
+/* ======================================================
+   Smoke (CSS-only)
+   ====================================================== */
+
+/* rising motion */
 @keyframes smokeRise {
   0%   { transform: translateY(0) translateX(0) scale(0.9); opacity: 0; }
-  8%   { opacity: .20; }
-  60%  { opacity: .18; }
+  8%   { opacity: 0.2; }
+  60%  { opacity: 0.18; }
   100% { transform: translateY(-220px) translateX(var(--drift-x, 20px)) scale(1.2); opacity: 0; }
 }
 
+/* gentle side sway */
 @keyframes smokeSway {
   0%,100% { transform: translateX(-8px); }
-  50%     { transform: translateX(8px);  }
+  50%     { transform: translateX(8px); }
 }
 
 /* container */
 .smoke-overlay {
   pointer-events: none;
-  position: absolute; inset: 0;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  mix-blend-mode: screen; /* nice over dark bg/video */
+  mix-blend-mode: screen; /* blends softly over dark areas */
 }
 
-/* one plume */
+/* one smoke puff */
 .smoke-plume {
   position: absolute;
   width: var(--size, 140px);
@@ -91,7 +110,6 @@ html {
   bottom: var(--bottom, 0px);
   translate: -50% 0;
 
-  /* soft puff with feathered edge */
   background:
     radial-gradient(closest-side,
       rgba(255,255,255,.20) 0%,
@@ -100,26 +118,10 @@ html {
       rgba(160,160,160, 0) 70%);
   filter: blur(var(--blur, 16px)) saturate(0.8);
   opacity: .14;
+
   animation:
     smokeRise var(--rise, 11s) linear var(--delay, 0s) infinite,
     smokeSway var(--sway, 6s) ease-in-out calc(var(--delay, 0s) / 2) infinite;
-  will-change: transform, opacity;
-}
-@keyframes smoke {
-  0% {
-    transform: translateY(0) scale(1);
-    opacity: 0.2;
-  }
-  50% {
-    transform: translateY(-10px) scale(1.05);
-    opacity: 0.3;
-  }
-  100% {
-    transform: translateY(0) scale(1);
-    opacity: 0.2;
-  }
-}
 
-.animate-smoke {
-  animation: smoke 12s ease-in-out infinite;
+  will-change: transform, opacity;
 }
