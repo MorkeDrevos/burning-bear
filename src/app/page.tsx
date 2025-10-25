@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import SmokeOverlay from './components/SmokeOverlay';
 
 /* =========================
    Config
