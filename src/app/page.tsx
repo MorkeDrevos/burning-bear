@@ -339,78 +339,61 @@ useEffect(() => {
         </div>
       </header>
 
-{/* ===== HERO with video + translucent text panel ===== */}
-<section id="hero" className="relative isolate">
-  {/* Background video + vignette */}
-  <div className="absolute inset-0 -z-10 overflow-hidden hero-vignette" aria-hidden="true">
-    <video
-      className="h-[66vh] w-full object-cover hero-zoom"
-      playsInline
-      autoPlay
-      muted
-      loop
-      poster="/img/burning-bear-frame.jpg"
-    >
-      <source src="/img/burning-bear.mp4" type="video/mp4" />
-    </video>
-    {/* Dark gradient for legibility (push behind with -z-10) */}
-    <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
-  </div>
-
-  <div className="relative mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
-    {/* subtle fire glow behind hero box */}
+{/* Burn card (clickable + non-moving hover) */}
+<Link
+  key={b.id}
+  href={b.tx}
+  target="_blank"
+  className="group block focus:outline-none"
+>
+  <div
+    className="
+      relative rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md
+      p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)]
+      transition-colors duration-300
+      hover:border-amber-300/30
+      hover:shadow-[0_0_0_1px_rgba(251,191,36,0.18),0_8px_24px_rgba(251,191,36,0.08)]
+    "
+  >
+    {/* soft inner glow on hover (no movement) */}
     <div
-      className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-amber-600/10 via-transparent to-transparent blur-[120px]"
+      className="
+        pointer-events-none absolute inset-0 rounded-[inherit]
+        opacity-0 group-hover:opacity-100 transition-opacity duration-300
+        bg-[radial-gradient(120%_80%_at_50%_0%,rgba(251,191,36,0.10),rgba(0,0,0,0)_60%)]
+      "
       aria-hidden="true"
     />
 
-    {/* ember particle layer (very lightweight) */}
-    <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
-      {[...Array(10)].map((_, i) => (
-        <span
-          key={i}
-          className="ember-dot"
-          style={{
-            left: `${Math.random() * 100}%`,
-            bottom: `${Math.random() * 40}%`,
-            animationDelay: `${Math.random() * 5}s`,
-            ['--drift-x' as any]: `${Math.random() * 40 - 20}px`,
-            ['--rise' as any]: `${5 + Math.random() * 4}s`,
-          } as React.CSSProperties}
-        />
-      ))}
+    {/* sheen sweep on hover (purely decorative) */}
+    <span
+      className="
+        pointer-events-none absolute inset-y-0 -left-1/3 w-[35%] rotate-6
+        bg-gradient-to-r from-transparent via-white/10 to-transparent
+        opacity-0 group-hover:opacity-100
+        [mask-image:linear-gradient(to_right,transparent,black,transparent)]
+        transition-opacity duration-150
+        group-hover:animate-[sheen_800ms_linear_1]
+      "
+      aria-hidden="true"
+    />
+
+    {/* --- your existing header/rows stay exactly the same --- */}
+    <div className="flex items-start justify-between">
+      <div className="flex items-center gap-3">
+        {/* flame avatar + titles + subtext ... */}
+      </div>
+
+      <span className="mt-1 text-right text-sm font-semibold text-amber-300 underline-offset-2 group-hover:underline">
+        View TX →
+      </span>
     </div>
 
-    {/* translucent stats panel */}
-    <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
-      {/* Headline */}
-      <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
-        Meet The Burning Bear – the classiest arsonist in crypto.
-      </h1>
-
-      {/* Countdowns */}
-      <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />
-        <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} />
-      </div>
-
-      {/* Stats */}
-      <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
-        <Stat label="Burned So Far" value={fmtInt(BURNED)} />
-        <Stat label="Current Supply" value={fmtInt(CURRENT)} />
-        <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
-        <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
-      </div>
-
-      {/* Pills */}
-      <div className="mt-5 flex flex-wrap gap-3">
-        <Pill>Today: {todayBurnsCount} burns</Pill>
-        <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
-        <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
-      </div>
+    <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
+      <div className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500" style={{ width: '100%' }} />
     </div>
   </div>
-</section>
+</Link>
 
       {/* Contract Address Pill — Cleaned */}
 <div className="mt-6 flex justify-center">
