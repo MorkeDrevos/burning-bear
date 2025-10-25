@@ -571,59 +571,50 @@ useEffect(() => {
 </section>
 
 {/* ===== Meet the Burning Bear ===== */}
-<section
-  id="bear"
-  className="relative w-full overflow-hidden py-24 text-center"
->
+  <section id="bear" className="relative w-full overflow-hidden pt-16 pb-16 md:pt-20 md:pb-20 text-center">
   {/* full-width dark background */}
   <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0d1a14] via-[#141f1a] to-[#0d1a14]" />
   <div className="absolute inset-x-0 bottom-0 h-[40vh] bg-gradient-to-t from-amber-600/10 via-amber-400/5 to-transparent blur-[80px]" />
 
-  {/* --- Campfire smoke, bottom area only --- */}
-  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[36vh] z-0">
-    <div className="smoke-overlay">
-      {[...Array(8)].map((_, i) => (
-        <span
-          key={i}
-          className="smoke-plume"
-          style={{
-            // distribute plumes across the width with some randomness
-            ['--left' as any]: `${10 + i * 11 + (Math.random() * 6 - 3)}%`,
-            ['--bottom' as any]: `${-8 + Math.random() * 8}px`,
-            ['--size' as any]: `${130 + Math.random() * 50}px`,
-            ['--blur' as any]: `${14 + Math.random() * 8}px`,
-            ['--drift-x' as any]: `${-18 + Math.random() * 36}px`,
-            ['--rise' as any]: `${10 + Math.random() * 4}s`,
-            ['--sway' as any]: `${6 + Math.random() * 3}s`,
-            ['--delay' as any]: `${Math.random() * 6}s`,
-          } as React.CSSProperties}
-        />
-      ))}
-    </div>
-  </div>
-
-  {/* Bear image */}
-  <div className="mx-auto mb-8 w-[260px] md:w-[320px] relative z-10">
+  {/* Animated Bear GIF */}
+  <div className="mx-auto mb-8 w-[260px] md:w-[320px] relative">
     <img
-      src="/img/burning-bear.png"
-      alt="The Burning Bear"
-      className="w-full h-auto rounded-2xl bear-breathe shadow-ember"
-    />
+  src="/img/burning_bear_BBURN_v2.gif"
+  alt="The Burning Bear"
+  className="w-full h-auto rounded-2xl bear-breathe shadow-ember"
+/>
     <div className="pointer-events-none absolute inset-0 rounded-2xl bg-amber-500/10 blur-[60px] animate-pulse" />
   </div>
 
   {/* Title */}
-  <h2 className="relative z-10 text-4xl md:text-5xl font-extrabold text-amber-300 drop-shadow-[0_0_10px_rgba(255,184,76,0.25)]">
+  <h2 className="text-4xl md:text-5xl font-extrabold text-amber-300 drop-shadow-[0_0_10px_rgba(255,184,76,0.25)]">
     Meet The Burning Bear
   </h2>
 
+  {/* Underline */}
   <div className="mx-auto mt-3 mb-6 h-[3px] w-24 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 drop-shadow-[0_0_6px_rgba(255,184,76,0.35)]" />
 
   {/* Story */}
-  <div className="relative z-10 mx-auto max-w-3xl text-white/80 leading-relaxed text-lg space-y-5">
-    {/* ...your existing copy... */}
+  <div className="mx-auto max-w-3xl text-white/80 leading-relaxed text-lg space-y-5">
+    <p>
+      Long before the campfire roared across Solana, a quiet bear walked the forests of forgotten
+      chains, collecting embers from every spark of belief. He wasn’t the kind that sleeps through
+      winters. He was the kind that builds warmth for everyone who dares to dream.
+    </p>
+    <p>
+      When markets turned cold and others ran, he stayed, feeding the flame, reminding us that even
+      in a bearish world, the fire can rise. Each burn he makes is a heartbeat of the community: a
+      symbol of resilience, humor and transparency.
+    </p>
+    <p className="text-amber-200 font-semibold tracking-wide">
+      The Burning Bear doesn’t burn alone, he keeps the fire alive for everyone who believes.<br />
+      <span className="text-amber-100/90">
+        Every spark counts. Every burn means something. 🔥
+      </span>
+    </p>
   </div>
 
+  {/* Soft base glow */}
   <div className="pointer-events-none absolute left-1/2 top-full mt-12 -translate-x-1/2 h-64 w-64 rounded-full bg-amber-400/10 blur-[90px]" />
 </section>
 
