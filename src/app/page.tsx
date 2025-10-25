@@ -529,8 +529,6 @@ useEffect(() => {
   </div>
 </section>
 
-<Divider />
-
 {/* ===== Meet the Burning Bear ===== */}
 <section
   id="bear"
@@ -583,8 +581,6 @@ useEffect(() => {
   {/* Soft base glow below the section */}
   <div className="pointer-events-none absolute left-1/2 top-full mt-12 -translate-x-1/2 h-64 w-64 rounded-full bg-amber-400/10 blur-[90px]" />
 </section>
-
-<Divider />
 
 {/* ===== This Week at the Campfire ===== */}
 <section id="week" className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
