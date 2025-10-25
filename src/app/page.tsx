@@ -538,15 +538,15 @@ useEffect(() => {
   <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0d1a14] via-[#141f1a] to-[#0d1a14]" />
   <div className="absolute inset-x-0 bottom-0 h-[40vh] bg-gradient-to-t from-amber-600/10 via-amber-400/5 to-transparent blur-[80px]" />
 
-  {/* Bear image (refined size, centered) */}
-  <div className="mx-auto mb-6 w-[220px] md:w-[260px] relative">
+  {/* Bear image (slightly larger, balanced) */}
+  <div className="mx-auto mb-8 w-[260px] md:w-[320px] relative">
     <img
       src="/img/burning-bear.png"
       alt="The Burning Bear"
       className="w-full h-auto rounded-2xl bear-breathe shadow-ember"
     />
     {/* subtle glow behind him */}
-    <div className="pointer-events-none absolute inset-0 rounded-2xl bg-amber-500/10 blur-[50px] animate-pulse" />
+    <div className="pointer-events-none absolute inset-0 rounded-2xl bg-amber-500/10 blur-[60px] animate-pulse" />
   </div>
 
   {/* Title */}
