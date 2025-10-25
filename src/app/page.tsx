@@ -545,7 +545,7 @@ useEffect(() => {
       {/* ===== How It Works ===== */}
 <section
   id="how"
-  className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 pt-20 pb-16 md:pb-24"
+  className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 pt-12 pb-10 md:pb-14"
 >
   <h3 className="text-2xl font-bold text-amber-300 mb-4">How It Works</h3>
   <p className="text-white/70 max-w-3xl">
