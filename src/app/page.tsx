@@ -582,12 +582,10 @@ useEffect(() => {
   {/* Animated Bear GIF */}
   <div className="mx-auto mb-8 w-[260px] md:w-[320px] relative">
     <img
-      src="/img/burning_bear_BBURN.gif"
-      alt="The Burning Bear"
-      loading="lazy"
-      className="w-full h-auto rounded-2xl bear-breathe shadow-ember"
-      onError={(e) => { e.currentTarget.src = "/img/burning-bear.png" }}
-    />
+  src="/img/burning_bear_BBURN.gif"
+  alt="The Burning Bear"
+  className="w-full h-auto rounded-2xl bear-breathe shadow-ember"
+/>
     <div className="pointer-events-none absolute inset-0 rounded-2xl bg-amber-500/10 blur-[60px] animate-pulse" />
   </div>
 
