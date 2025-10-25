@@ -172,10 +172,9 @@ useEffect(() => {
         .filter((b: any) => Number.isFinite(b.timestamp));
 
       setData({ ...d, burns });
-    }) // ✅ end .then
-    .catch((err) => {
+    }).catch((err) => {
       console.error("Failed to load state.json", err);
-      alive = false;
+      // no-op
     });
 
   return () => {
