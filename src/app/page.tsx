@@ -542,31 +542,23 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* ===== How It Works ===== */}
+     {/* ===== This Week at the Campfire ===== */}
 <section
-  id="how"
-  className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 pt-12 pb-10 md:pb-14"
+  id="week"
+  className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-14 md:pb-14"
 >
-  <h3 className="text-2xl font-bold text-amber-300 mb-4">How It Works</h3>
-  <p className="text-white/70 max-w-3xl">
-    Every spark fuels the fire. Whether it’s a trade, a creator reward, or a network fee — every move
-    feeds the <span className="text-amber-300 font-semibold">BBURN Campfire Fund</span>, powering constant
-    buybacks, burns, and community rewards. The more the ecosystem moves, the hotter the fire burns.
-  </p>
+  <h3 className="text-2xl font-bold text-amber-300 mb-4">This Week at the Campfire</h3>
+  <p className="text-white/60">Activity in the last 7 days. Auto-updated from the live logs.</p>
 
-  <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
-    <HowCard
-      title="50% → Auto-Buy & Burn"
-      body="Half of every fee automatically buys $BBURN and sends it to the official burn wallet, where tokens are permanently destroyed on-chain."
-    />
-    <HowCard
-      title="30% → Treasury & Buybacks"
-      body="Reserved for strategic buybacks, ecosystem stability, and community-driven events that keep $BBURN’s fire burning long-term."
-    />
-    <HowCard
-      title="20% → Team, Creators & Growth"
-      body="Rewards creators, partners, and community builders — spreading the legend of $BBURN across Solana while fueling future innovation."
-    />
+  <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <StatBig label="Burns" value={fmtInt(weekStats.count)} />
+    <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
+    <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
+    <StatBig label="Largest Burn (BBURN)" value={fmtInt(weekStats.largest)} />
+  </div>
+
+  <div className="mt-4">
+    <Pill>Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}</Pill>
   </div>
 </section>
 
