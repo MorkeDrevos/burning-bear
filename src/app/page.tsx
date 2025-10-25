@@ -579,14 +579,14 @@ useEffect(() => {
   <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0d1a14] via-[#141f1a] to-[#0d1a14]" />
   <div className="absolute inset-x-0 bottom-0 h-[40vh] bg-gradient-to-t from-amber-600/10 via-amber-400/5 to-transparent blur-[80px]" />
 
-  {/* Bear image (slightly larger, balanced) */}
+  {/* Animated Bear GIF (replaces static image) */}
   <div className="mx-auto mb-8 w-[260px] md:w-[320px] relative">
     <img
-      src="/img/burning-bear.png"
+      src="/img/burning_bear_BBURN.gif"
       alt="The Burning Bear"
       className="w-full h-auto rounded-2xl bear-breathe shadow-ember"
     />
-    {/* subtle glow behind him */}
+    {/* soft ambient glow behind him */}
     <div className="pointer-events-none absolute inset-0 rounded-2xl bg-amber-500/10 blur-[60px] animate-pulse" />
   </div>
 
@@ -595,7 +595,7 @@ useEffect(() => {
     Meet The Burning Bear
   </h2>
 
-  {/* Underline — slightly tighter spacing below */}
+  {/* Underline */}
   <div className="mx-auto mt-3 mb-6 h-[3px] w-24 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 drop-shadow-[0_0_6px_rgba(255,184,76,0.35)]" />
 
   {/* Story */}
@@ -610,8 +610,6 @@ useEffect(() => {
       in a bearish world, the fire can rise. Each burn he makes is a heartbeat of the community: a
       symbol of resilience, humor and transparency.
     </p>
-
-    {/* Closing line */}
     <p className="text-amber-200 font-semibold tracking-wide">
       The Burning Bear doesn’t burn alone, he keeps the fire alive for everyone who believes.<br />
       <span className="text-amber-100/90">
@@ -620,7 +618,7 @@ useEffect(() => {
     </p>
   </div>
 
-  {/* Soft base glow below section */}
+  {/* Soft base glow */}
   <div className="pointer-events-none absolute left-1/2 top-full mt-12 -translate-x-1/2 h-64 w-64 rounded-full bg-amber-400/10 blur-[90px]" />
 </section>
 
