@@ -339,60 +339,50 @@ useEffect(() => {
         </div>
       </header>
 
-      {/* ===== HERO with video, vignette + CTA ===== */}
-<section id="hero" className="relative group">
-  {/* Background video */}
-  <div className="absolute inset-0 -z-10 overflow-hidden hero-vignette">
-    <video
-      className="h-[66vh] w-full object-cover hero-zoom"
-      playsInline
-      autoPlay
-      muted
-      loop
-      poster="/img/burning-bear-frame.jpg"
-    >
-      <source src="/img/burning-bear.mp4" type="video/mp4" />
-    </video>
-    {/* Dark gradient for legibility */}
-    <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-[#0b1712]/35 to-[#0b1712]" />
-  </div>
+      {/* ===== HERO with video + translucent text panel ===== */}
+      <section className="relative">
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <video
+            className="h-[66vh] w-full object-cover"
+            playsInline
+            autoPlay
+            muted
+            loop
+            poster="/img/burning-bear-frame.jpg"
+          >
+            <source src="/img/burning-bear.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
+        </div>
 
-  <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
-    {/* Title */}
-    <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight headline-glow">
-      Meet The Burning Bear — the classiest arsonist in crypto.
-    </h1>
+        <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
+          <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6">
+            <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
+  Meet The Burning Bear - the classiest arsonist in crypto.
+</h1>
+            {/* Countdowns */}
+            <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />
+              <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} />
+            </div>
 
-    {/* Countdowns */}
-    <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
-      <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />
-      <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} />
-    </div>
+            {/* Stats */}
+            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-4">
+              <Stat label="Burned So Far" value={fmtInt(BURNED)} />
+              <Stat label="Current Supply" value={fmtInt(CURRENT)} />
+              <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
+              <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
+            </div>
 
-    {/* Stats */}
-    <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-4">
-      <Stat label="Burned So Far" value={fmtInt(BURNED)} />
-      <Stat label="Current Supply" value={fmtInt(CURRENT)} />
-      <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
-      <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
-    </div>
-
-    {/* CTA → Meet the Bear */}
-    <div className="mt-6">
-      <a
-        href="#bear"
-        onClick={(e) => spawnEmbers(e, 18)}
-        className="inline-flex items-center gap-2 rounded-full border border-amber-300/30
-                   bg-black/30 px-5 py-2 text-sm font-semibold text-amber-100
-                   backdrop-blur-sm hover:border-amber-300 hover:text-amber-50
-                   transition shadow-ember"
-      >
-        Click to meet the Bear
-        <span className="text-amber-300">↘</span>
-      </a>
-    </div>
-  </div>
-</section>
+            {/* Pills */}
+            <div className="mt-3 flex flex-wrap gap-3">
+              <Pill>Today: {todayBurnsCount} burns</Pill>
+              <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
+              <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Smart Copy CA button with $BBURN and brand gold tone */}
 <div className="mt-6 flex justify-center">
@@ -594,10 +584,7 @@ useEffect(() => {
 </section>
 
 {/* ===== This Week at the Campfire ===== */}
-<section
-  id="week"
-  className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 pt-20 pb-10"
->
+<section id="week" className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">This Week at the Campfire</h3>
   <p className="text-white/60">Activity in the last 7 days. Auto-updated from the live logs.</p>
 
@@ -732,7 +719,6 @@ useEffect(() => {
     </main>
   );
 }
-
 /* =========================
    Components
 ========================= */
@@ -762,71 +748,6 @@ function Pill({ children }: { children: React.ReactNode }) {
   );
 }
 
-
-
-function EmberLink({
-  children,
-  href = "#bear",
-}: {
-  children: React.ReactNode;
-  href?: string;
-}) {
-  const ref = React.useRef<HTMLAnchorElement | null>(null);
-  const [burstKey, setBurstKey] = React.useState(0); // force rerender for new burst
-
-  const spawnEmbers = (x: number, y: number) => {
-    const count = 14; // small, tasteful
-    const container = document.body;
-    for (let i = 0; i < count; i++) {
-      const p = document.createElement("span");
-      p.className = "ember-particle";
-      const dx = (Math.random() - 0.5) * 80;   // horizontal drift
-      const dy = (Math.random() * 20) - 10;    // slight start variance
-      const dur = 750 + Math.random() * 650;   // 0.75s - 1.4s
-      const delay = Math.random() * 120;
-
-      p.style.left = `${x + dx}px`;
-      p.style.top = `${y + dy}px`;
-      p.style.setProperty("--dur", `${dur}ms`);
-      p.style.setProperty("--delay", `${delay}ms`);
-
-      container.appendChild(p);
-      setTimeout(() => p.remove(), dur + delay + 50);
-    }
-  };
-
-  const onClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const rect = ref.current?.getBoundingClientRect();
-    const cx = (rect?.left ?? 0) + (rect?.width ?? 0) / 2;
-    const cy = (rect?.top ?? 0) + (rect?.height ?? 0) / 2;
-    spawnEmbers(cx, cy);
-    setBurstKey(k => k + 1);
-
-    // Smooth scroll to the section
-    const target = document.querySelector(href);
-    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  return (
-    <a
-      ref={ref}
-      href={href}
-      onClick={onClick}
-      className="group inline-block relative cursor-pointer"
-    >
-      <span className="headline-glow transition">
-        {children}
-      </span>
-
-      {/* whisper on hover */}
-      <span className="absolute left-1/2 top-full mt-2 -translate-x-1/2 text-sm text-amber-300/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        Dare to meet him?
-      </span>
-    </a>
-  );
-}
-
 function HowCard({ title, body }: { title: string; body: string }) {
   return (
     <div className="flex h-full flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6">
@@ -837,7 +758,6 @@ function HowCard({ title, body }: { title: string; body: string }) {
 }
 
 function WalletCard({ title, address, note }: { title: string; address: string; note?: string }) {
-  // Font sizes bumped up
   const [copied, setCopied] = useState(false);
   const timer = useRef<number | null>(null);
 
@@ -853,54 +773,26 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
       <div className="text-base md:text-lg font-semibold">{title}</div>
       {note && <div className="mt-1 text-sm text-white/65">{note}</div>}
       <div className="mt-3 flex items-center justify-between gap-3">
-  <code className="truncate rounded-md bg-white/5 px-2 py-1 text-sm md:text-[15px] text-white/85">
-    {truncateMiddle(address, 8, 8)}
-  </code>
-
-  <div className="flex items-center gap-2">
-    {/* View (muted pill like Contract Address) */}
-    <a
-      href={`${EXPLORER}/address/${address}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="rounded-[10px] border border-white/12 bg-white/[0.06]
-                 px-3.5 py-1.5 text-sm font-medium text-white/85
-                 hover:bg-white/[0.10] transition"
-    >
-      View
-    </a>
-
-    {/* Copy (gold pill like Contract Address) */}
-    <button
-      onClick={handleCopy}
-      className={`rounded-[10px] px-3.5 py-1.5 text-sm font-semibold
-                  text-black transition
-                  ${copied
-                    ? 'bg-[#ffedb3] ring-2 ring-amber-300/40'
-                    : 'bg-[#ffedb3] hover:bg-[#ffe48d]'
-                  }`}
-    >
-      {copied ? 'Copied!' : 'Copy'}
-    </button>
-  </div>
-</div>
-    </div>
-  );
-}
-
-function Divider() {
-  return (
-    <div className="relative mt-6 mb-3">
-      {/* soft top glow */}
-      <div className="absolute -top-[6px] left-0 w-full h-[6px] bg-gradient-to-b from-amber-400/12 to-transparent blur-md" />
-
-      {/* very light bottom haze */}
-      <div className="absolute -bottom-[4px] left-0 w-full h-[4px] bg-gradient-to-t from-amber-400/6 to-transparent blur-sm" />
-
-      {/* delicate ember line */}
-      <div className="relative h-[1.5px] w-full rounded-full overflow-hidden">
-        <div className="absolute inset-0 bg-white/10 rounded-full" />
-        <div className="absolute inset-0 ember-divider opacity-70" />
+        <code className="truncate rounded-md bg-white/5 px-2 py-1 text-sm md:text-[15px] text-white/85">
+          {truncateMiddle(address, 8, 8)}
+        </code>
+        <div className="flex items-center gap-2">
+          <a
+            href={`${EXPLORER}/address/${address}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-[10px] border border-white/12 bg-white/[0.06] px-3.5 py-1.5 text-sm font-medium text-white/85 hover:bg-white/[0.10] transition"
+          >
+            View
+          </a>
+          <button
+            onClick={handleCopy}
+            className={`rounded-[10px] px-3.5 py-1.5 text-sm font-semibold text-black transition
+              ${copied ? 'bg-[#ffedb3] ring-2 ring-amber-300/40' : 'bg-[#ffedb3] hover:bg-[#ffe48d]'}`}
+          >
+            {copied ? 'Copied!' : 'Copy'}
+          </button>
+        </div>
       </div>
     </div>
   );
