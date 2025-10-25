@@ -5,9 +5,9 @@ export const metadata: Metadata = {
   title: 'The Burning Bear – the classiest arsonist in crypto.',
   description: 'Live buybacks and burns with on-chain TX links.',
   icons: {
-    icon: '/favicon.gif', // 🔥 use your new animated favicon
-    apple: '/img/coin-logo.png',
-    shortcut: '/img/coin-logo.png',
+    icon: '/favicon.gif',         // 🔥 animated favicon
+    shortcut: '/favicon.gif',
+    apple: '/img/coin-logo.png',  // optional Apple touch icon
   },
 };
 
