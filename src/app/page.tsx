@@ -762,37 +762,7 @@ function Pill({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Embers({ count = 20 }: { count?: number }) {
-  // Renders N light dots that rise & drift; all CSS-driven
-  const dots = Array.from({ length: count });
-  return (
-    <div className="pointer-events-none absolute inset-0">
-      {dots.map((_, i) => {
-        // deterministic but varied per index
-        const left = Math.random() * 100;
-        const delay = Math.random() * 6; // seconds
-        const rise = 5 + Math.random() * 5; // 5..10s
-        const size = 2 + Math.round(Math.random() * 2); // 2..4 px
-        const bottom = Math.random() * 60; // start somewhere low-mid
 
-        return (
-          <span
-            key={i}
-            className="ember-dot"
-            style={{
-              left: `${left}%`,
-              bottom: `${bottom}px`,
-              animationDelay: `${delay}s`,
-              ['--rise' as any]: `${rise}s`,
-              width: `${size}px`,
-              height: `${size}px`,
-            }}
-          />
-        );
-      })}
-    </div>
-  );
-}
 
 function EmberLink({
   children,
