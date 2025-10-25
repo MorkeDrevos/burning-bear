@@ -355,33 +355,38 @@ useEffect(() => {
           <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
         </div>
 
-        <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
-          <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-4 py-5 md:px-6 md:py-6">
-            <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
-  Meet The Burning Bear - the classiest arsonist in crypto.
-</h1>
-            {/* Countdowns */}
-            <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />
-              <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} />
-            </div>
+        <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20 relative">
+  {/* subtle fire glow behind hero box */}
+  <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-amber-600/10 via-transparent to-transparent blur-[120px]" />
 
-            {/* Stats */}
-            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-4">
-              <Stat label="Burned So Far" value={fmtInt(BURNED)} />
-              <Stat label="Current Supply" value={fmtInt(CURRENT)} />
-              <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
-              <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
-            </div>
+  <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
+    {/* Headline */}
+    <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
+      Meet The Burning Bear – the classiest arsonist in crypto.
+    </h1>
 
-            {/* Pills */}
-            <div className="mt-3 flex flex-wrap gap-3">
-              <Pill>Today: {todayBurnsCount} burns</Pill>
-              <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
-              <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
-            </div>
-          </div>
-        </div>
+    {/* Countdowns */}
+    <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />
+      <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} />
+    </div>
+
+    {/* Stats */}
+    <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
+      <Stat label="Burned So Far" value={fmtInt(BURNED)} />
+      <Stat label="Current Supply" value={fmtInt(CURRENT)} />
+      <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
+      <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
+    </div>
+
+    {/* Pills */}
+    <div className="mt-5 flex flex-wrap gap-3">
+      <Pill>Today: {todayBurnsCount} burns</Pill>
+      <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
+      <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
+    </div>
+  </div>
+</div>
       </section>
 
       {/* Contract Address Pill — Cleaned */}
