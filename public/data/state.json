@@ -1,7 +1,7 @@
 {
   "stats": {
     "initialSupply": 1000000000,
-    "burned": 12700000,
+    "burned": 0,
     "currentSupply": 999300000,
     "buybackSol": 0.26,
     "pricedUsdPerSol": 176.8
@@ -15,14 +15,14 @@
   "burns": [
     {
       "id": "tx_001",
-      "amount": 250000,
+      "amount": 0,
       "sol": 0.05,
       "timestamp": "2025-10-24T08:00:00Z",
       "tx": "https://explorer.solana.com/tx/0xTEST001"
     },
     {
       "id": "tx_002",
-      "amount": 320000,
+      "amount": 0,
       "sol": 0.07,
       "timestamp": "2025-10-24T09:30:00Z",
       "tx": "https://explorer.solana.com/tx/0xTEST002"
