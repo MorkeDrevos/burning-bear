@@ -510,7 +510,7 @@ useEffect(() => {
   <p className="text-white/70 max-w-3xl">
     Every spark fuels the fire. Whether it’s a trade, a creator reward, or a network fee - every move
     feeds the <span className="text-amber-300 font-semibold">BBURN Campfire Fund</span>, powering constant
-    buybacks, burns, and community rewards. The more the ecosystem moves, the hotter the fire burns. 🔥
+    buybacks, burns, and community rewards. The more the ecosystem moves, the hotter the fire burns. 
   </p>
 
   <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
@@ -529,6 +529,8 @@ useEffect(() => {
   </div>
 </section>
 
+<Divider />
+
 {/* ===== Meet the Burning Bear ===== */}
 <section
   id="bear"
@@ -545,18 +547,19 @@ useEffect(() => {
       alt="The Burning Bear"
       className="relative z-10 mx-auto h-[170px] w-auto rounded-xl md:h-[220px] bear-breathe shadow-ember"
     />
-    {/* Gentle animated glow behind him */}
-    <div className="pointer-events-none absolute inset-0 rounded-xl bg-amber-500/10 blur-[60px] animate-pulse"></div>
+    {/* gentle glow behind him */}
+    <div className="pointer-events-none absolute inset-0 rounded-xl bg-amber-500/10 blur-[60px] animate-pulse" />
   </div>
 
   {/* Title */}
-  <h2 className="relative text-4xl md:text-5xl font-extrabold text-amber-300 drop-shadow-[0_0_10px_rgba(255,184,76,0.25)] mb-6">
+  <h2 className="text-4xl md:text-5xl font-extrabold text-amber-300 drop-shadow-[0_0_10px_rgba(255,184,76,0.25)]">
     Meet The Burning Bear
-    <span className="absolute left-1/2 top-full mt-5 h-[3px] w-24 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 animate-pulse blur-[1px]" />
   </h2>
+  {/* Title underline (block, not absolute) */}
+  <div className="mx-auto mt-4 h-[3px] w-24 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 animate-pulse/70 blur-[0.5px]" />
 
   {/* Story */}
-  <div className="mx-auto max-w-3xl text-white/80 leading-relaxed text-lg space-y-5">
+  <div className="mx-auto mt-8 max-w-3xl text-white/80 leading-relaxed text-lg space-y-5">
     <p>
       Long before the campfire roared across Solana, a quiet bear walked the forests of forgotten
       chains, collecting embers from every spark of belief. He wasn’t the kind that sleeps through
@@ -568,19 +571,36 @@ useEffect(() => {
       symbol of resilience, humor and transparency.
     </p>
 
-    {/* Closing line with underline just under the last sentence */}
-    <p className="relative mt-8 text-amber-200 font-semibold leading-relaxed tracking-wide">
-      <span className="animate-[flicker_6s_ease-in-out_infinite] drop-shadow-[0_0_8px_rgba(255,184,76,0.3)]">
-        The Burning Bear doesn’t burn alone, he keeps the fire alive for everyone who believes.<br />
-        <span className="text-amber-100/90">Every spark counts. Every burn means something. 🔥</span>
-      </span>
-      {/* faint ember shimmer underline under the LAST line */}
-      <span className="pointer-events-none absolute left-1/2 -bottom-2 h-[2px] w-64 -translate-x-1/2 bg-gradient-to-r from-transparent via-amber-400/30 to-transparent animate-[emberShimmer_8s_linear_infinite]"></span>
+    {/* Closing line */}
+    <p className="text-amber-200 font-semibold tracking-wide">
+      The Burning Bear doesn’t burn alone, he keeps the fire alive for everyone who believes.<br />
+      <span className="text-amber-100/90">Every spark counts. Every burn means something. 🔥</span>
     </p>
+    {/* Closing-line underline (block, sits just below) */}
+    <div className="mx-auto mt-2 h-[2px] w-64 bg-gradient-to-r from-transparent via-amber-400/30 to-transparent animate-[emberShimmer_8s_linear_infinite]" />
   </div>
 
-  {/* Ember glow base */}
-  <div className="absolute left-1/2 top-full mt-12 -translate-x-1/2 w-64 h-64 rounded-full bg-amber-400/10 blur-[90px] animate-pulse" />
+  {/* Soft base glow below the section */}
+  <div className="pointer-events-none absolute left-1/2 top-full mt-12 -translate-x-1/2 h-64 w-64 rounded-full bg-amber-400/10 blur-[90px]" />
+</section>
+
+<Divider />
+
+{/* ===== This Week at the Campfire ===== */}
+<section id="week" className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
+  <h3 className="text-2xl font-bold text-amber-300 mb-4">This Week at the Campfire</h3>
+  <p className="text-white/60">Activity in the last 7 days. Auto-updated from the live logs.</p>
+
+  <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <StatBig label="Burns" value={fmtInt(weekStats.count)} />
+    <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
+    <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
+    <StatBig label="Largest Burn (BBURN)" value={fmtInt(weekStats.largest)} />
+  </div>
+
+  <div className="mt-4">
+    <Pill>Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}</Pill>
+  </div>
 </section>
 
 <Divider />
