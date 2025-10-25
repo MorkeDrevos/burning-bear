@@ -534,10 +534,8 @@ useEffect(() => {
   id="bear"
   className="relative w-full overflow-hidden py-24 text-center"
 >
-  {/* full-screen dark gradient backdrop */}
+  {/* full-width dark background */}
   <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0d1a14] via-[#141f1a] to-[#0d1a14]" />
-
-  {/* subtle campfire glow at bottom */}
   <div className="absolute inset-x-0 bottom-0 h-[40vh] bg-gradient-to-t from-amber-600/10 via-amber-400/5 to-transparent blur-[80px]" />
 
   <div className="relative mx-auto max-w-5xl px-6">
@@ -554,7 +552,7 @@ useEffect(() => {
   {/* Title */}
   <h2 className="relative text-4xl md:text-5xl font-extrabold text-amber-300 drop-shadow-[0_0_10px_rgba(255,184,76,0.25)] mb-6">
     Meet The Burning Bear
-    <span className="absolute left-1/2 top-full mt-3 h-[3px] w-20 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 animate-pulse" />
+    <span className="absolute left-1/2 top-full mt-5 h-[3px] w-24 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 animate-pulse blur-[1px]" />
   </h2>
 
   {/* Story */}
