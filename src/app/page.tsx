@@ -626,88 +626,53 @@ useEffect(() => {
   </div>
 </section>
 
-    {/* ===== Contract Address (refined) ===== */}
-<section className="mx-auto max-w-4xl px-4 pt-4 pb-20">
-  <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 backdrop-blur shadow-[0_6px_30px_rgba(0,0,0,.25)]">
-    {/* header */}
-    <div className="flex items-center justify-between px-5 py-3 border-b border-white/10">
-      <div className="flex items-center gap-2">
-        <span className="inline-flex items-center rounded-md bg-white/5 px-2 py-1 text-[12px] font-semibold text-amber-200 border border-amber-300/20">
-          $BBURN&nbsp;CA
-        </span>
-        <h3 className="text-sm font-semibold text-white/80">Contract Address</h3>
-      </div>
+    {/* ===== Contract Address (blended) ===== */}
+<section className="mx-auto max-w-5xl px-4 pt-8 pb-20 text-center">
+  <h3 className="text-lg font-semibold text-amber-300 mb-3">
+    Contract Address
+  </h3>
 
-      {/* actions (desktop top-right on narrow screens they’ll repeat below) */}
-      <div className="hidden sm:flex items-center gap-2">
-        <a
-          href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="rounded-lg border border-white/12 bg-white/[0.06] px-3 py-1.5 text-sm font-medium text-white/85 hover:bg-white/[0.10] transition"
-        >
-          View
-        </a>
-        <button
-          onClick={handleCopy}
-          className={`rounded-lg px-3.5 py-1.5 text-sm font-semibold transition
-            ${copied
-              ? 'bg-[#ffedb3] text-black shadow-[0_0_10px_rgba(255,184,76,0.35)]'
-              : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`
-          }
-        >
-          {copied ? 'Copied!' : 'Copy'}
-        </button>
-      </div>
-    </div>
+  <div
+    className="mx-auto flex max-w-3xl items-center justify-between gap-3
+               rounded-xl border border-white/[0.08] bg-white/[0.03]
+               px-4 py-3 backdrop-blur-sm shadow-[0_0_20px_rgba(255,184,76,0.04)]"
+  >
+    {/* Address */}
+    <code
+      className="flex-1 font-mono text-[15px] text-white/90 text-left truncate select-text"
+      title={FULL_TOKEN_ADDRESS}
+    >
+      {FULL_TOKEN_ADDRESS}
+    </code>
 
-    {/* address row */}
-    <div className="px-5 py-4">
-      <div
-        className="flex items-center gap-3 rounded-xl bg-black/25 border border-white/[0.06] px-3 py-2"
-        title={FULL_TOKEN_ADDRESS}
+    {/* Buttons */}
+    <div className="flex items-center gap-2">
+      <a
+        href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="rounded-lg border border-white/10 bg-white/[0.06]
+                   px-3 py-1.5 text-sm font-medium text-white/80
+                   hover:bg-white/[0.1] hover:text-white/90 transition"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4 text-amber-200/90"
-          viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
-        >
-          <path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 1 0-7.07-7.07L10.5 5"/>
-          <path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 1 0 7.07 7.07L13.5 19"/>
-        </svg>
-
-        <code className="flex-1 font-mono text-[15px] text-white/90 overflow-hidden text-ellipsis whitespace-nowrap">
-          {FULL_TOKEN_ADDRESS}
-        </code>
-
-        {/* actions (mobile-friendly duplicates) */}
-        <div className="flex sm:hidden items-center gap-2">
-          <a
-            href={`${EXPLORER}/address/${FULL_TOKEN_ADDRESS}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-md border border-white/12 bg-white/[0.06] px-2.5 py-1 text-xs font-medium text-white/85 hover:bg-white/[0.10] transition"
-          >
-            View
-          </a>
-          <button
-            onClick={handleCopy}
-            className={`rounded-md px-2.5 py-1 text-xs font-semibold transition
-              ${copied
-                ? 'bg-[#ffedb3] text-black'
-                : 'bg-[#ffedb3] text-black hover:bg-[#ffe48d]'}`}
-          >
-            {copied ? 'Copied' : 'Copy'}
-          </button>
-        </div>
-      </div>
-
-      {/* tiny helper text */}
-      <p className="mt-2 text-xs text-white/45">
-        Always verify on Solana Explorer before sending funds.
-      </p>
+        View
+      </a>
+      <button
+        onClick={handleCopy}
+        className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition
+          ${copied
+            ? 'bg-[#ffedb3] text-black shadow-[0_0_8px_rgba(255,184,76,0.35)]'
+            : 'bg-[#ffedb3]/90 text-black hover:bg-[#ffe48d]'
+          }`}
+      >
+        {copied ? 'Copied!' : 'Copy'}
+      </button>
     </div>
   </div>
+
+  <p className="mt-3 text-sm text-white/45">
+    Always verify this address on Solana Explorer before interacting.
+  </p>
 </section>
 
       {/* ===== Footer ===== */}
