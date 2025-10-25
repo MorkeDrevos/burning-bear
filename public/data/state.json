@@ -1,36 +1,9 @@
 {
   "stats": {
     "initialSupply": 1000000000,
-    "burned": 1987227.564785,
-    "currentSupply": 998012772.435215,
-    "buybackSol": 0.221807,
-    "priceUsdPerSol": 176.8
-  },
-  "schedule": {
-    "burnIntervalMinutes": 50,
-    "buybackIntervalMinutes": 22,
-    "nextBurnAt": 1730604000000,
-    "nextBuybackAt": 1730606400000
-  },
-  "burns": [
-    {
-      "id": "tx_001",
-      "amount": 1130587.564785,
-      "sol": 0.160931,
-      "timestamp": "2025-10-25T13:00:00Z",
-      "tx": "https://solscan.io/tx/5YCJzXJwoztzubHZnkqqShanfDWBhjxWKWUQV3BxheQtwG6ki4H7G52XieyfG7kmYVcruGTRTHZMv67NMwEDpiC8"
-    },
-    {
-      "id": "tx_002",
-      "amount": 856640,
-      "sol": 0.039164,
-      "timestamp": "2025-10-25T15:20:00Z",
-      "tx": "{
-  "stats": {
-    "initialSupply": 1000000000,
-    "burned": 1987227.564785,
-    "currentSupply": 998012772.435215,
-    "buybackSol": 0.221807,
+    "burned": 1796132.564785,
+    "currentSupply": 998203867.435215,
+    "buybackSol": 0.22180729,
     "priceUsdPerSol": 176.8
   },
   "schedule": {
@@ -50,23 +23,9 @@
     {
       "id": "tx_002",
       "amount": 665545,
-      "sol": 0.06087629 ,
+      "sol": 0.06087629,
       "timestamp": "2025-10-25T14:20:00Z",
       "tx": "https://solscan.io/tx/5fBwMojnTAYsJK2s1ovCdLogYa1G2rjBtUTvLtFSYo4QFsej78q6HHYMC2yJgUZ61HiefXrBrLnHTcZJA2qeHipN"
-    }
-  ],
-  "wallets": {
-    "burn": "2nkSpJx9s7U13ujfSibYLPHreBbVbRkHBfBbkxgS9kM5",
-    "treasury": "FH2EathAXbSScEmfbZn47FvEBYvL6gw7ooSnhwXozg5E",
-    "marketing": "7k5rwpdSyuEtmEk5xUhVvKQEyoUbkSCYWpEhZ91SwzV"
-  },
-  "meta": {
-    "tokenSymbol": "$BBURN",
-    "tokenName": "The Burning Bear",
-    "fullTokenAddress": "So11111111111111111111111111111111111111112",
-    "explorer": "https://explorer.solana.com"
-  }
-}"
     }
   ],
   "wallets": {
