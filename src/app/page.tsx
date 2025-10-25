@@ -339,10 +339,10 @@ useEffect(() => {
         </div>
       </header>
 
-      {/* ===== HERO with video + translucent text panel ===== */}
-<section className="relative">
+{/* ===== HERO with video + translucent text panel ===== */}
+<section id="hero" className="relative isolate">
   {/* Background video + vignette */}
-  <div className="absolute inset-0 -z-10 overflow-hidden hero-vignette">
+  <div className="absolute inset-0 -z-10 overflow-hidden hero-vignette" aria-hidden="true">
     <video
       className="h-[66vh] w-full object-cover hero-zoom"
       playsInline
@@ -353,16 +353,19 @@ useEffect(() => {
     >
       <source src="/img/burning-bear.mp4" type="video/mp4" />
     </video>
-    {/* Dark gradient for legibility */}
-    <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
+    {/* Dark gradient for legibility (push behind with -z-10) */}
+    <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
   </div>
 
-  <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20 relative">
+  <div className="relative mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20">
     {/* subtle fire glow behind hero box */}
-    <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-amber-600/10 via-transparent to-transparent blur-[120px]" />
+    <div
+      className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-amber-600/10 via-transparent to-transparent blur-[120px]"
+      aria-hidden="true"
+    />
 
     {/* ember particle layer (very lightweight) */}
-    <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+    <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
       {[...Array(10)].map((_, i) => (
         <span
           key={i}
