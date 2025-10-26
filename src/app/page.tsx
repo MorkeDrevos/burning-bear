@@ -762,7 +762,7 @@ useEffect(() => {
               🕊️ <span className="align-middle">X Community</span>
             </a>
             <a
-              href="https://www.coingecko.com/"
+              href="https://www.geckoterminal.com/solana/pools/9hVAstjuDaVGznN4iAUW6cb2nQxNieSW7vR2pu6x32CQ"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-amber-300 transition"
@@ -771,7 +771,7 @@ useEffect(() => {
               🦎 <span className="align-middle">CoinGecko</span>
             </a>
             <a
-              href="https://dexscreener.com"
+              href="https://dexscreener.com/solana/9hvastjudavgznn4iauw6cb2nqxniesw7vr2pu6x32cq"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-amber-300 transition"
