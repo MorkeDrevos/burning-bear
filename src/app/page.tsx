@@ -224,35 +224,57 @@ useEffect(() => {
   const nextBuybackMs = targets.bb ? targets.bb - now : 0;
   const nextBurnMs = targets.burn ? targets.burn - now : 0;
 
-  // Auto-advance (loop) when a countdown hits 0
-  useEffect(() => {
-    if (!data?.schedule) return;
-    setData((prev) => {
-      if (!prev?.schedule) return prev;
-      const { buybackIntervalMs = 0, burnIntervalMs = 0 } = prev.schedule;
-      let { nextBuybackAt, nextBurnAt } = prev.schedule;
+ // Auto-loop: seed if missing and roll forward if due (supports minutes or ms)
+useEffect(() => {
+  setData((prev) => {
+    if (!prev?.schedule) return prev;
 
-      const jumpForward = (t?: number, i?: number) => {
-        if (!t || !i || i <= 0) return t;
-        while (t <= Date.now()) t += i;
-        return t;
-      };
+    const s = prev.schedule as any;
+    const nowTs = Date.now();
 
-      const bbDue = nextBuybackAt && nextBuybackAt - Date.now() <= 0;
-      const burnDue = nextBurnAt && nextBurnAt - Date.now() <= 0;
-      if (!bbDue && !burnDue) return prev;
+    // Accept minutes or ms; minutes are converted to ms
+    const minsToMs = (v?: number) =>
+      typeof v === "number"
+        ? v >= 10000
+          ? v
+          : v * 60 * 1000
+        : undefined;
 
-      return {
-        ...prev,
-        schedule: {
-          ...prev.schedule,
-          nextBuybackAt: bbDue ? jumpForward(nextBuybackAt, buybackIntervalMs) : nextBuybackAt,
-          nextBurnAt: burnDue ? jumpForward(nextBurnAt, burnIntervalMs) : nextBurnAt,
-        },
-      };
-    });
-  }, [now, data?.schedule]);
+    const burnI = s.burnIntervalMs ?? minsToMs(s.burnIntervalMinutes);
+    const buyI = s.buybackIntervalMs ?? minsToMs(s.buybackIntervalMinutes);
 
+    if (!burnI && !buyI) return prev;
+
+    // Seed next times if missing
+    let nextBurnAt = s.nextBurnAt ?? (burnI ? nowTs + burnI : undefined);
+    let nextBuybackAt = s.nextBuybackAt ?? (buyI ? nowTs + buyI : undefined);
+
+    // Roll forward by full intervals if past
+    const advance = (t?: number, i?: number) => {
+      if (t == null || i == null || i <= 0) return t;
+      if (t > nowTs) return t;
+      const k = Math.ceil((nowTs - t) / i);
+      return t + k * i;
+    };
+
+    const newBurn = advance(nextBurnAt, burnI);
+    const newBuy = advance(nextBuybackAt, buyI);
+
+    if (newBurn === s.nextBurnAt && newBuy === s.nextBuybackAt) return prev;
+
+    return {
+      ...prev,
+      schedule: {
+        ...s,
+        burnIntervalMs: burnI ?? s.burnIntervalMs,
+        buybackIntervalMs: buyI ?? s.buybackIntervalMs,
+        nextBurnAt: newBurn,
+        nextBuybackAt: newBuy,
+      },
+    };
+  });
+}, [now]);
+ 
   // Stats
   const INITIAL = data?.stats?.initialSupply ?? 0;
   const BURNED = data?.stats?.burned ?? 0;
