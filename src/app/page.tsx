@@ -151,82 +151,35 @@ useEffect(() => {
     .then((d) => {
       if (!alive) return;
 
-      // --- Convert/normalize schedule safely (supports minutes OR milliseconds)
+      // Convert schedule: minutes → milliseconds (works with burnIntervalMinutes / buybackIntervalMinutes)
       if (d.schedule) {
-        const rawBurn = d.schedule.burnIntervalMinutes ?? d.schedule.burnIntervalMs ?? 60;
-        const rawBuy  = d.schedule.buybackIntervalMinutes ?? d.schedule.buybackIntervalMs ?? 20;
+        const burnMins = d.schedule.burnIntervalMinutes ?? 60;
+        const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
 
-        // If value is large (>= 10,000), treat as milliseconds; else treat as minutes
-        const burnMs    = rawBurn >= 10000 ? Number(rawBurn) : Number(rawBurn) * 60 * 1000;
-        const buybackMs = rawBuy  >= 10000 ? Number(rawBuy)  : Number(rawBuy)  * 60 * 1000;
+        d.schedule.burnIntervalMs = burnMins * 60 * 1000;
+        d.schedule.buybackIntervalMs = buybackMins * 60 * 1000;
 
+        // If next times are missing, seed them from now + minutes
         const now = Date.now();
-
-        const toEpochMs = (v: any) => {
-          if (v == null) return null;
-          let n = typeof v === 'string' ? Date.parse(v) : Number(v);
-          if (!Number.isFinite(n)) return null;
-          if (n < 1e12) n *= 1000; // seconds → ms
-          return n;
-        };
-
-        let nextBurnAt    = toEpochMs(d.schedule.nextBurnAt);
-        let nextBuybackAt = toEpochMs(d.schedule.nextBuybackAt);
-
-        // seed only if missing (seed to different offsets if intervals differ)
-        if (nextBurnAt == null)    nextBurnAt    = now + burnMs;
-        if (nextBuybackAt == null) nextBuybackAt = now + buybackMs;
-
-        // roll forward only if in the past
-        if (nextBurnAt <= now) {
-          const k = Math.ceil((now - nextBurnAt) / burnMs);
-          nextBurnAt += k * burnMs;
-        }
-        if (nextBuybackAt <= now) {
-          const k = Math.ceil((now - nextBuybackAt) / buybackMs);
-          nextBuybackAt += k * buybackMs;
-        }
-
-        d.schedule.burnIntervalMs = burnMs;
-        d.schedule.buybackIntervalMs = buybackMs;
-        d.schedule.nextBurnAt = nextBurnAt;
-        d.schedule.nextBuybackAt = nextBuybackAt;
-
-        // TEMP: sanity log
-        console.log('[schedule FINAL]', {
-          burnMs, buybackMs,
-          nextBurnAtISO: new Date(nextBurnAt).toISOString(),
-          nextBuybackAtISO: new Date(nextBuybackAt).toISOString(),
-        });
+        if (!d.schedule.nextBurnAt) d.schedule.nextBurnAt = now + burnMins * 60 * 1000;
+        if (!d.schedule.nextBuybackAt) d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
       }
 
+      // Normalize burns (make timestamps numeric) and drop invalid rows
       const burns = (d?.burns ?? [])
         .map((b: any) => ({ ...b, timestamp: toMs(b.timestamp) }))
         .filter((b: any) => Number.isFinite(b.timestamp as number));
 
       setData({ ...d, burns });
     })
-    .catch(() => { alive = false; });
+    .catch(() => {
+      alive = false;
+    });
 
-  return () => { alive = false; };
+  return () => {
+    alive = false;
+  };
 }, []);
-
-// Debug: log schedule values to verify countdowns differ
-useEffect(() => {
-  if (!data?.schedule) return;
-  console.log('[targets]', {
-    nextBuybackAt: data.schedule.nextBuybackAt,
-    nextBurnAt: data.schedule.nextBurnAt,
-    nextBuybackAtISO: data.schedule.nextBuybackAt
-      ? new Date(data.schedule.nextBuybackAt).toISOString()
-      : null,
-    nextBurnAtISO: data.schedule.nextBurnAt
-      ? new Date(data.schedule.nextBurnAt).toISOString()
-      : null,
-    buybackMs: data.schedule.buybackIntervalMs,
-    burnMs: data.schedule.burnIntervalMs,
-  });
-}, [data?.schedule]);
 
   // live SOL price (falls back to stats.priceUsdPerSol)
   useEffect(() => {
