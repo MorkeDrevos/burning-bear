@@ -7,17 +7,8 @@
     "priceUsdPerSol": 176.8
   },
   "schedule": {
-    "burnIntervalMinutes": 240,
-    "buybackIntervalMinutes": 180,
-    "burnIntervalMs": 14400000,
-    "buybackIntervalMs": 10800000,
-
-    // 👇 set these to DIFFERENT, FUTURE epoch-ms values
-    "nextBuybackAt":  /* NOW + 30 min  */  1730613000000,
-    "nextBurnAt":     /* NOW + 90 min  */  1730616600000,
-
-    "lastBurnAt": null,
-    "lastBuybackAt": null
+    "nextBuybackAt": 1730613000000,
+    "nextBurnAt": 1730616600000
   },
   "burns": [
     {
