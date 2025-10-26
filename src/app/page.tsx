@@ -142,7 +142,7 @@ export default function Page() {
     return () => clearInterval(id);
   }, []);
 
-  // load JSON data (cache-busted) and normalize timestamps
+  // load JSON data (cache-busted)
 useEffect(() => {
   let alive = true;
 
@@ -151,11 +151,16 @@ useEffect(() => {
     .then((d) => {
       if (!alive) return;
 
-      // Normalize burns (make timestamps numeric) and drop invalid rows
+      // Normalize burns (make timestamps numeric)
       const burns = (d?.burns ?? [])
-        .map((b: any) => ({ ...b, timestamp: toMs(b.timestamp) }))
-        .filter((b: any) => Number.isFinite(b.timestamp as number));
+        .map((b: any) => ({
+          ...b,
+          timestamp:
+            typeof b.timestamp === 'string' ? Date.parse(b.timestamp) : b.timestamp,
+        }))
+        .filter((b: any) => Number.isFinite(b.timestamp));
 
+      // ✅ Keep schedule exactly as provided in JSON
       setData({ ...d, burns });
     })
     .catch(() => {
@@ -184,6 +189,14 @@ useEffect(() => {
   }, []);
 
   const priceUsdPerSol = solUsd ?? data?.stats?.priceUsdPerSol ?? 0;
+
+  const targets = useMemo(() => {
+  const s = data?.schedule ?? {};
+  return {
+    bb: typeof s.nextBuybackAt === 'number' ? s.nextBuybackAt : undefined,
+    burn: typeof s.nextBurnAt === 'number' ? s.nextBurnAt : undefined,
+  };
+}, [data]);
 
   // sorted burns (new → old)
   const burnsSorted = useMemo(() => {
