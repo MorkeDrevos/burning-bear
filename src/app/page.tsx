@@ -401,7 +401,7 @@ useEffect(() => {
 
       {/* Pills */}
       <div className="mt-5 flex flex-wrap gap-3">
-        <Pill>Today: {todayBurnsCount} burns</Pill>
+        {/* <Pill>Today: {todayBurnsCount} burns</Pill> */}
         <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
         <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
       </div>
