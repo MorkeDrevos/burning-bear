@@ -409,8 +409,8 @@ useEffect(() => {
 
       {/* Countdowns */}
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />
-        <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} />
+       {/*  <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />*/}
+        <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} /> 
       </div>
 
       {/* Stats */}
