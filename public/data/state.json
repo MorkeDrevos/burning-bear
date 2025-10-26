@@ -11,8 +11,11 @@
     "buybackIntervalMinutes": 180,
     "burnIntervalMs": 14400000,
     "buybackIntervalMs": 10800000,
-    "nextBurnAt": 1730618400000,
-    "nextBuybackAt": 1730614800000,
+
+    // 👇 set these to DIFFERENT, FUTURE epoch-ms values
+    "nextBuybackAt":  /* NOW + 30 min  */  1730613000000,
+    "nextBurnAt":     /* NOW + 90 min  */  1730616600000,
+
     "lastBurnAt": null,
     "lastBuybackAt": null
   },
@@ -56,7 +59,7 @@
   "wallets": {
     "burn": "2nkSpJx9s7U13ujfSibYLPHreBbVbRkHBfBbkxgS9kM5",
     "treasury": "FH2EathAXbSScEmfbZn4FYVEbjLwGo7QoSNxvNxQZ5qE",
-    "marketing": "7k5rwpdSyuEtmEk5xUhVvKQEyoUbkSCYWpEhZ91SwzV"
+    "marketing": "7k5rwpdSyuEtmEk5xUhVvKQEyoUbkSCYWpEhZ91SwZ"
   },
   "meta": {
     "tokenSymbol": "$BBURN",
