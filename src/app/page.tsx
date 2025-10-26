@@ -146,62 +146,70 @@ export default function Page() {
 useEffect(() => {
   let alive = true;
 
-  fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
+  fetch(`/data/state.json?t=${Date.now()}`, { cache: "no-store" })
     .then((r) => r.json())
     .then((d) => {
       if (!alive) return;
 
-      // Convert schedule: minutes → milliseconds (works with burnIntervalMinutes / buybackIntervalMinutes)
+      // Normalize schedule and roll forward only if past
       if (d.schedule) {
-  const burnMins = d.schedule.burnIntervalMinutes ?? 60;
-  const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
+        const burnMins = d.schedule.burnIntervalMinutes ?? 60;
+        const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
 
-  const burnMs = burnMins * 60 * 1000;
-  const buybackMs = buybackMins * 60 * 1000;
+        const burnMs = burnMins * 60 * 1000;
+        const buybackMs = buybackMins * 60 * 1000;
 
-  const now = Date.now();
+        const now = Date.now();
 
-  // --- normalize "next" fields to epoch-ms numbers ---
-  const toMs = (v: any) => {
-    if (v == null) return null;
-    let n = typeof v === "string" ? Date.parse(v) : Number(v);
-    if (!Number.isFinite(n)) return null;
-    // if seconds, convert to ms
-    if (n < 1e12) n = n * 1000;
-    return n;
-  };
+        // local helper → epoch ms (accepts ms, sec, ISO)
+        const toEpochMs = (v: any) => {
+          if (v == null) return null;
+          let n = typeof v === "string" ? Date.parse(v) : Number(v);
+          if (!Number.isFinite(n)) return null;
+          if (n < 1e12) n *= 1000; // seconds → ms
+          return n;
+        };
 
-  let nextBurnAt = toMs(d.schedule.nextBurnAt);
-  let nextBuybackAt = toMs(d.schedule.nextBuybackAt);
+        let nextBurnAt = toEpochMs(d.schedule.nextBurnAt);
+        let nextBuybackAt = toEpochMs(d.schedule.nextBuybackAt);
 
-  // If missing, seed from now + interval
-  if (nextBurnAt == null) nextBurnAt = now + burnMs;
-  if (nextBuybackAt == null) nextBuybackAt = now + buybackMs;
+        // seed only if missing
+        if (nextBurnAt == null) nextBurnAt = now + burnMs;
+        if (nextBuybackAt == null) nextBuybackAt = now + buybackMs;
 
-  // If in the past, roll forward by whole intervals to the next future tick
-  if (nextBurnAt <= now) {
-    const k = Math.ceil((now - nextBurnAt) / burnMs);
-    nextBurnAt += k * burnMs;
-  }
-  if (nextBuybackAt <= now) {
-    const k = Math.ceil((now - nextBuybackAt) / buybackMs);
-    nextBuybackAt += k * buybackMs;
-  }
+        // roll forward only if in the past
+        if (nextBurnAt <= now) {
+          const k = Math.ceil((now - nextBurnAt) / burnMs);
+          nextBurnAt += k * burnMs;
+        }
+        if (nextBuybackAt <= now) {
+          const k = Math.ceil((now - nextBuybackAt) / buybackMs);
+          nextBuybackAt += k * buybackMs;
+        }
 
-  d.schedule.burnIntervalMs = burnMs;
-  d.schedule.buybackIntervalMs = buybackMs;
-  d.schedule.nextBurnAt = nextBurnAt;
-  d.schedule.nextBuybackAt = nextBuybackAt;
-}
+        d.schedule.burnIntervalMs = burnMs;
+        d.schedule.buybackIntervalMs = buybackMs;
+        d.schedule.nextBurnAt = nextBurnAt;
+        d.schedule.nextBuybackAt = nextBuybackAt;
+
+        // sanity log (remove later if you want)
+        console.log("[schedule]", {
+          burnMs,
+          buybackMs,
+          nowISO: new Date(now).toISOString(),
+          nextBurnAtISO: new Date(nextBurnAt!).toISOString(),
+          nextBuybackAtISO: new Date(nextBuybackAt!).toISOString(),
+        });
+      }
 
       // Normalize burns (make timestamps numeric) and drop invalid rows
+      // NOTE: uses your global toMs(ts) util defined above
       const burns = (d?.burns ?? [])
         .map((b: any) => ({ ...b, timestamp: toMs(b.timestamp) }))
         .filter((b: any) => Number.isFinite(b.timestamp as number));
 
       setData({ ...d, burns });
-    })
-    .catch(() => {
+    }).catch(() => {
       alive = false;
     });
 
