@@ -7,8 +7,8 @@
     "priceUsdPerSol": 176.8
   },
   "schedule": {
-    "burnIntervalMinutes": 240,
-    "buybackIntervalMinutes": 60,
+    "burnIntervalMinutes": 360,
+    "buybackIntervalMinutes": 300,
     "nextBurnAt": 1730622000000,
     "nextBuybackAt": 1730614800000
   },
@@ -40,6 +40,13 @@
       "sol": 0.036448139,
       "timestamp": "2025-10-25T18:19:00Z",
       "tx": "https://solscan.io/tx/2CvmESyjAf6d5u2q7A2Uu9m7RCtDFzPkxqgVivruj4s7GmDA29f1j6s39AEi9cgnXC25i4AWVwPiyZ254WxFd1Zk"
+    },
+    {
+      "id": "tx_004",
+      "amount": 506578.394837,
+      "sol": 0.029208729,
+      "timestamp": "2025-10-26T00:25:34Z",
+      "tx": "https://solscan.io/tx/3UxQuxEpj7igJKvRHy3pVFeHCVUVHx9ha1U7dQS3wr8BQMVXPqfrUaJsjy1ymejATArtWw3UU7UxhoQYoYgSotEH"
     }
   ],
   "wallets": {
