@@ -153,17 +153,46 @@ useEffect(() => {
 
       // Convert schedule: minutes → milliseconds (works with burnIntervalMinutes / buybackIntervalMinutes)
       if (d.schedule) {
-        const burnMins = d.schedule.burnIntervalMinutes ?? 60;
-        const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
+  const burnMins = d.schedule.burnIntervalMinutes ?? 60;
+  const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
 
-        d.schedule.burnIntervalMs = burnMins * 60 * 1000;
-        d.schedule.buybackIntervalMs = buybackMins * 60 * 1000;
+  const burnMs = burnMins * 60 * 1000;
+  const buybackMs = buybackMins * 60 * 1000;
 
-        // If next times are missing, seed them from now + minutes
-        const now = Date.now();
-        if (!d.schedule.nextBurnAt) d.schedule.nextBurnAt = now + burnMins * 60 * 1000;
-        if (!d.schedule.nextBuybackAt) d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
-      }
+  const now = Date.now();
+
+  // --- normalize "next" fields to epoch-ms numbers ---
+  const toMs = (v: any) => {
+    if (v == null) return null;
+    let n = typeof v === "string" ? Date.parse(v) : Number(v);
+    if (!Number.isFinite(n)) return null;
+    // if seconds, convert to ms
+    if (n < 1e12) n = n * 1000;
+    return n;
+  };
+
+  let nextBurnAt = toMs(d.schedule.nextBurnAt);
+  let nextBuybackAt = toMs(d.schedule.nextBuybackAt);
+
+  // If missing, seed from now + interval
+  if (nextBurnAt == null) nextBurnAt = now + burnMs;
+  if (nextBuybackAt == null) nextBuybackAt = now + buybackMs;
+
+  // If in the past, roll forward by whole intervals to the next future tick
+  if (nextBurnAt <= now) {
+    const k = Math.ceil((now - nextBurnAt) / burnMs);
+    nextBurnAt += k * burnMs;
+  }
+  if (nextBuybackAt <= now) {
+    const k = Math.ceil((now - nextBuybackAt) / buybackMs);
+    nextBuybackAt += k * buybackMs;
+  }
+
+  d.schedule.burnIntervalMs = burnMs;
+  d.schedule.buybackIntervalMs = buybackMs;
+  d.schedule.nextBurnAt = nextBurnAt;
+  d.schedule.nextBuybackAt = nextBuybackAt;
+}
 
       // Normalize burns (make timestamps numeric) and drop invalid rows
       const burns = (d?.burns ?? [])
