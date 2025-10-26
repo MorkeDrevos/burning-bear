@@ -151,24 +151,43 @@ useEffect(() => {
     .then((d) => {
       if (!alive) return;
 
-      // Convert schedule: minutes → milliseconds (works with burnIntervalMinutes / buybackIntervalMinutes)
+      // ✅ THIS block stays inside here
       if (d.schedule) {
-        const burnMins = d.schedule.burnIntervalMinutes ?? 60;
-        const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
+        const rawBurn = d.schedule.burnIntervalMinutes ?? 60;
+        const rawBuy = d.schedule.buybackIntervalMinutes ?? 20;
 
-        d.schedule.burnIntervalMs = burnMins * 60 * 1000;
-        d.schedule.buybackIntervalMs = buybackMins * 60 * 1000;
+        const burnMs = rawBurn >= 10000 ? Number(rawBurn) : Number(rawBurn) * 60 * 1000;
+        const buybackMs = rawBuy >= 10000 ? Number(rawBuy) : Number(rawBuy) * 60 * 1000;
 
-        // If next times are missing, seed them from now + minutes
         const now = Date.now();
-        if (!d.schedule.nextBurnAt) d.schedule.nextBurnAt = now + burnMins * 60 * 1000;
-        if (!d.schedule.nextBuybackAt) d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
+
+        const toEpochMs = (v: any) => {
+          if (v == null) return null;
+          let n = typeof v === "string" ? Date.parse(v) : Number(v);
+          if (!Number.isFinite(n)) return null;
+          if (n < 1e12) n *= 1000; // seconds → ms
+          return n;
+        };
+
+        let nextBurnAt = toEpochMs(d.schedule.nextBurnAt);
+        let nextBuybackAt = toEpochMs(d.schedule.nextBuybackAt);
+
+        if (nextBurnAt == null) nextBurnAt = now + burnMs;
+        if (nextBuybackAt == null) nextBuybackAt = now + buybackMs;
+
+        if (nextBurnAt <= now) nextBurnAt += Math.ceil((now - nextBurnAt) / burnMs) * burnMs;
+        if (nextBuybackAt <= now)
+          nextBuybackAt += Math.ceil((now - nextBuybackAt) / buybackMs) * buybackMs;
+
+        d.schedule.burnIntervalMs = burnMs;
+        d.schedule.buybackIntervalMs = buybackMs;
+        d.schedule.nextBurnAt = nextBurnAt;
+        d.schedule.nextBuybackAt = nextBuybackAt;
       }
 
-      // Normalize burns (make timestamps numeric) and drop invalid rows
       const burns = (d?.burns ?? [])
-        .map((b: any) => ({ ...b, timestamp: toMs(b.timestamp) }))
-        .filter((b: any) => Number.isFinite(b.timestamp as number));
+        .map((b: any) => ({ ...b, timestamp: typeof b.timestamp === "string" ? Date.parse(b.timestamp) : b.timestamp }))
+        .filter((b: any) => Number.isFinite(b.timestamp));
 
       setData({ ...d, burns });
     })
@@ -176,9 +195,7 @@ useEffect(() => {
       alive = false;
     });
 
-  return () => {
-    alive = false;
-  };
+  return () => { alive = false; };
 }, []);
 
   // live SOL price (falls back to stats.priceUsdPerSol)
