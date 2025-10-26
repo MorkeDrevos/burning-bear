@@ -211,6 +211,23 @@ useEffect(() => {
   return () => { alive = false; };
 }, []);
 
+// Debug: log schedule values to verify countdowns differ
+useEffect(() => {
+  if (!data?.schedule) return;
+  console.log('[targets]', {
+    nextBuybackAt: data.schedule.nextBuybackAt,
+    nextBurnAt: data.schedule.nextBurnAt,
+    nextBuybackAtISO: data.schedule.nextBuybackAt
+      ? new Date(data.schedule.nextBuybackAt).toISOString()
+      : null,
+    nextBurnAtISO: data.schedule.nextBurnAt
+      ? new Date(data.schedule.nextBurnAt).toISOString()
+      : null,
+    buybackMs: data.schedule.buybackIntervalMs,
+    burnMs: data.schedule.burnIntervalMs,
+  });
+}, [data?.schedule]);
+
   // live SOL price (falls back to stats.priceUsdPerSol)
   useEffect(() => {
     let alive = true;
