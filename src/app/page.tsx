@@ -145,7 +145,7 @@ export default function Page() {
   // Convert/normalize schedule safely (supports minutes OR milliseconds)
 if (d.schedule) {
   const rawBurn = d.schedule.burnIntervalMinutes ?? d.schedule.burnIntervalMs ?? 60;
-const rawBuy = d.schedule.buybackIntervalMinutes ?? d.schedule.buybackIntervalMs ?? 20;
+  const rawBuy = d.schedule.buybackIntervalMinutes ?? d.schedule.buybackIntervalMs ?? 20;
 
   // If value is large (>= 10,000), treat as milliseconds; else treat as minutes
   const burnMs    = rawBurn  >= 10000 ? Number(rawBurn) : Number(rawBurn)  * 60 * 1000;
