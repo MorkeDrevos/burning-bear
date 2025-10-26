@@ -142,7 +142,7 @@ export default function Page() {
     return () => clearInterval(id);
   }, []);
 
-  // load JSON data (cache-busted) and normalize timestamps
+  // load JSON data (cache-busted)
 useEffect(() => {
   let alive = true;
 
@@ -151,25 +151,16 @@ useEffect(() => {
     .then((d) => {
       if (!alive) return;
 
-      // Convert schedule: minutes → milliseconds (works with burnIntervalMinutes / buybackIntervalMinutes)
-      if (d.schedule) {
-        const burnMins = d.schedule.burnIntervalMinutes ?? 60;
-        const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
-
-        d.schedule.burnIntervalMs = burnMins * 60 * 1000;
-        d.schedule.buybackIntervalMs = buybackMins * 60 * 1000;
-
-        // If next times are missing, seed them from now + minutes
-        const now = Date.now();
-        if (!d.schedule.nextBurnAt) d.schedule.nextBurnAt = now + burnMins * 60 * 1000;
-        if (!d.schedule.nextBuybackAt) d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
-      }
-
-      // Normalize burns (make timestamps numeric) and drop invalid rows
+      // Normalize burns (make timestamps numeric)
       const burns = (d?.burns ?? [])
-        .map((b: any) => ({ ...b, timestamp: toMs(b.timestamp) }))
-        .filter((b: any) => Number.isFinite(b.timestamp as number));
+        .map((b: any) => ({
+          ...b,
+          timestamp:
+            typeof b.timestamp === 'string' ? Date.parse(b.timestamp) : b.timestamp,
+        }))
+        .filter((b: any) => Number.isFinite(b.timestamp));
 
+      // ✅ Keep schedule exactly as provided in JSON
       setData({ ...d, burns });
     })
     .catch(() => {
@@ -198,6 +189,14 @@ useEffect(() => {
   }, []);
 
   const priceUsdPerSol = solUsd ?? data?.stats?.priceUsdPerSol ?? 0;
+
+  const targets = useMemo(() => {
+  const s = data?.schedule ?? {};
+  return {
+    bb: typeof s.nextBuybackAt === 'number' ? s.nextBuybackAt : undefined,
+    burn: typeof s.nextBurnAt === 'number' ? s.nextBurnAt : undefined,
+  };
+}, [data]);
 
   // sorted burns (new → old)
   const burnsSorted = useMemo(() => {
