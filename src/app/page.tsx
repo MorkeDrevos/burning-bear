@@ -142,52 +142,44 @@ export default function Page() {
     return () => clearInterval(id);
   }, []);
 
-  // Convert/normalize schedule safely (supports minutes OR milliseconds)
-if (d.schedule) {
-  const rawBurn = d.schedule.burnIntervalMinutes ?? d.schedule.burnIntervalMs ?? 60;
-  const rawBuy = d.schedule.buybackIntervalMinutes ?? d.schedule.buybackIntervalMs ?? 20;
+  // load JSON data (cache-busted) and normalize timestamps
+useEffect(() => {
+  let alive = true;
 
-  // If value is large (>= 10,000), treat as milliseconds; else treat as minutes
-  const burnMs    = rawBurn  >= 10000 ? Number(rawBurn) : Number(rawBurn)  * 60 * 1000;
-  const buybackMs = rawBuy   >= 10000 ? Number(rawBuy)  : Number(rawBuy)   * 60 * 1000;
+  fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
+    .then((r) => r.json())
+    .then((d) => {
+      if (!alive) return;
 
-  const now = Date.now();
+      // Convert schedule: minutes → milliseconds (works with burnIntervalMinutes / buybackIntervalMinutes)
+      if (d.schedule) {
+        const burnMins = d.schedule.burnIntervalMinutes ?? 60;
+        const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
 
-  // normalize "next" fields to epoch-ms (accept ms, sec, ISO, or null)
-  const toEpochMs = (v: any) => {
-    if (v == null) return null;
-    let n = typeof v === "string" ? Date.parse(v) : Number(v);
-    if (!Number.isFinite(n)) return null;
-    if (n < 1e12) n *= 1000; // seconds → ms
-    return n;
+        d.schedule.burnIntervalMs = burnMins * 60 * 1000;
+        d.schedule.buybackIntervalMs = buybackMins * 60 * 1000;
+
+        // If next times are missing, seed them from now + minutes
+        const now = Date.now();
+        if (!d.schedule.nextBurnAt) d.schedule.nextBurnAt = now + burnMins * 60 * 1000;
+        if (!d.schedule.nextBuybackAt) d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
+      }
+
+      // Normalize burns (make timestamps numeric) and drop invalid rows
+      const burns = (d?.burns ?? [])
+        .map((b: any) => ({ ...b, timestamp: toMs(b.timestamp) }))
+        .filter((b: any) => Number.isFinite(b.timestamp as number));
+
+      setData({ ...d, burns });
+    })
+    .catch(() => {
+      alive = false;
+    });
+
+  return () => {
+    alive = false;
   };
-
-  let nextBurnAt     = toEpochMs(d.schedule.nextBurnAt);
-  let nextBuybackAt  = toEpochMs(d.schedule.nextBuybackAt);
-
-  // seed only if missing
-  if (nextBurnAt == null)     nextBurnAt = now + burnMs;
-  if (nextBuybackAt == null)  nextBuybackAt = now + buybackMs;
-
-  // roll forward only if in the past
-  if (nextBurnAt <= now) {
-    const k = Math.ceil((now - nextBurnAt) / burnMs);
-    nextBurnAt += k * burnMs;
-  }
-  if (nextBuybackAt <= now) {
-    const k = Math.ceil((now - nextBuybackAt) / buybackMs);
-    nextBuybackAt += k * buybackMs;
-  }
-
-  // write back normalized values
-  d.schedule.burnIntervalMs = burnMs;
-  d.schedule.buybackIntervalMs = buybackMs;
-  d.schedule.nextBurnAt = nextBurnAt;
-  d.schedule.nextBuybackAt = nextBuybackAt;
-
-  // (optional) sanity log
-  // console.log("[schedule]", { burnMs, buybackMs, nextBurnAt, nextBuybackAt, now });
-}
+}, []);
 
   // live SOL price (falls back to stats.priceUsdPerSol)
   useEffect(() => {
