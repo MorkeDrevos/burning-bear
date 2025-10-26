@@ -151,20 +151,6 @@ useEffect(() => {
     .then((d) => {
       if (!alive) return;
 
-      // Convert schedule: minutes → milliseconds (works with burnIntervalMinutes / buybackIntervalMinutes)
-      if (d.schedule) {
-        const burnMins = d.schedule.burnIntervalMinutes ?? 60;
-        const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
-
-        d.schedule.burnIntervalMs = burnMins * 60 * 1000;
-        d.schedule.buybackIntervalMs = buybackMins * 60 * 1000;
-
-        // If next times are missing, seed them from now + minutes
-        const now = Date.now();
-        if (!d.schedule.nextBurnAt) d.schedule.nextBurnAt = now + burnMins * 60 * 1000;
-        if (!d.schedule.nextBuybackAt) d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
-      }
-
       // Normalize burns (make timestamps numeric) and drop invalid rows
       const burns = (d?.burns ?? [])
         .map((b: any) => ({ ...b, timestamp: toMs(b.timestamp) }))
