@@ -7,8 +7,10 @@
     "priceUsdPerSol": 176.8
   },
   "schedule": {
-    "nextBuybackAt": 1730613000000,
-    "nextBurnAt": 1730616600000
+  "burnIntervalMinutes": 240,
+  "buybackIntervalMinutes": 80,
+  "nextBurnAt": 1730502000000,
+  "nextBuybackAt": 1730516400000
   },
   "burns": [
     {
@@ -49,8 +51,8 @@
   ],
   "wallets": {
     "burn": "2nkSpJx9s7U13ujfSibYLPHreBbVbRkHBfBbkxgS9kM5",
-    "treasury": "FH2EathAXbSScEmfbZn4FYVEbjLwGo7QoSNxvNxQZ5qE",
-    "marketing": "7k5rwpdSyuEtmEk5xUhVvKQEyoUbkSCYWpEhZ91SwZ"
+    "treasury": "FH2EathAXbSScEmfbZn47FvEBYvL6gw7ooSnhwXozg5E",
+    "marketing": "7k5rwpdSyuEtmEk5xUhVvKQEyoUbkSCYWpEhZ91SwzV"
   },
   "meta": {
     "tokenSymbol": "$BBURN",
