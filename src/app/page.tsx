@@ -403,10 +403,14 @@ useEffect(() => {
     {/* translucent stats panel */}
     <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
       {/* Headline */}
-      <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_14px_rgba(255,184,76,0.25)]">
-  Meet The Burning Bear
+      <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
+  <span className="bg-gradient-to-b from-amber-100 via-amber-200 to-amber-400 bg-clip-text text-transparent drop-shadow-[0_0_14px_rgba(255,184,76,0.25)]">
+    Meet The Burning Bear
+  </span>
   <br className="hidden sm:block" />
-  <span className="text-amber-200 font-bold">the classiest arsonist in crypto.</span>
+  <span className="text-amber-100 drop-shadow-[0_0_10px_rgba(255,184,76,0.15)]">
+    the classiest arsonist in crypto.
+  </span>
 </h1>
 
       {/* Countdowns */}
