@@ -864,8 +864,15 @@ function SegmentBox({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Colon() {
-  return <span className="px-0.5 md:px-1 text-amber-300/80 colon-pulse">:</span>;
+function Colon({ soon = false }: { soon?: boolean }) {
+  return (
+    <span
+      className="px-0.5 md:px-1 text-amber-200 colon-pulse colon-glow"
+      style={{ ['--colon-speed' as any]: soon ? '1.1s' : '2.6s' }}
+    >
+      :
+    </span>
+  );
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
