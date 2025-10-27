@@ -415,7 +415,7 @@ useEffect(() => {
         <Stat label="Burned So Far" value={fmtInt(BURNED)} />
         <Stat label="Current Supply" value={fmtInt(CURRENT)} />
         <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
-        <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
+        <Stat label="Buyback Value" value={fmtMoney(totalUsd)} />
       </div>
 
 {/* Pills */}
@@ -858,16 +858,15 @@ function SegmentBox({
   label?: string;
 }) {
   return (
-    <span className="relative inline-flex items-center justify-center rounded-xl
+    <span className="relative inline-flex items-end justify-center rounded-xl
                      border border-white/10 bg-white/[0.08] backdrop-blur
                      px-3.5 py-2 text-[24px] md:text-[28px] font-extrabold tracking-tight
                      leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]">
       {children}
       {label && (
         <span
-          className="absolute bottom-[9px] right-[14px] md:bottom-[10px] md:right-[16px]
-                     text-[11px] md:text-[12px] font-semibold text-amber-200/85
-                     drop-shadow-[0_0_4px_rgba(0,0,0,0.35)]"
+          className="ml-1 text-[14px] md:text-[15px] font-semibold text-amber-300/90
+                     translate-y-[2px] select-none"
         >
           {label}
         </span>
