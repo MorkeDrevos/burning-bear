@@ -915,36 +915,10 @@ function SegmentBox({
   label?: string;
 }) {
   return (
-    <span className="relative inline-flex items-center justify-center rounded-xl
-                     border border-white/10 bg-white/[0.08] backdrop-blur
-                     px-3.5 py-2 text-[24px] md:text-[28px] font-extrabold tracking-tight
-                     leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]">
-      {children}
-      {label && (
-        <span
-          className="absolute bottom-[8px] right-[12px] md:bottom-[10px] md:right-[14px]
-                     text-[10px] md:text-[11px] font-semibold text-amber-200/80
-                     tracking-tight drop-shadow-[0_0_3px_rgba(0,0,0,0.4)] select-none"
-        >
-          {label}
-        </span>
-      )}
-    </span>
-  );
-}
-
-function SegmentBox({
-  children,
-  label,
-}: {
-  children: React.ReactNode;
-  label?: string;
-}) {
-  return (
     <span
       className="relative inline-flex items-center justify-center rounded-xl
                  border border-white/10 bg-white/[0.08] backdrop-blur
-                 px-3.5 pr-[22px] md:pr-[26px] py-2
+                 px-3.5 pr-[24px] md:pr-[28px] py-2
                  text-[24px] md:text-[28px] font-extrabold tracking-tight
                  leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]"
     >
