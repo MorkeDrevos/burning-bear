@@ -830,13 +830,9 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
       {/* Value */}
       {variant === 'segments' && segs ? (
         <div className="mt-2 flex items-center gap-[4px] md:gap-[6px]">
-<div className="mt-2 flex items-center gap-1.5 md:gap-2">
-  <SegmentBox label="h">{segs.h}</SegmentBox>
-  <Colon />
-  <SegmentBox label="m">{segs.m}</SegmentBox>
-  <Colon />
-  <SegmentBox label="s">{segs.s}</SegmentBox>
-</div>
+          <SegmentBox>{segs.h}</SegmentBox><Colon />
+          <SegmentBox>{segs.m}</SegmentBox><Colon />
+          <SegmentBox>{segs.s}</SegmentBox>
         </div>
       ) : variant === 'glow' ? (
         <div
@@ -854,29 +850,14 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
   );
 }
 
-function SegmentBox({
-  children,
-  label,
-}: {
-  children: React.ReactNode;
-  label?: string;
-}) {
+function SegmentBox({ children }: { children: React.ReactNode }) {
   return (
-    <span className="relative inline-flex items-center justify-center rounded-xl
-                     border border-white/10 bg-white/[0.08] backdrop-blur
-                     px-4 py-2.5 text-[28px] md:text-[34px] font-extrabold tracking-tight
-                     leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]">
-      {children}
-      {label && (
-        <span
-          className="absolute bottom-[4px] right-[10px] md:bottom-[5px] md:right-[12px]
-                     text-[11px] md:text-[12px] font-semibold text-amber-200/85
-                     drop-shadow-[0_0_4px_rgba(0,0,0,0.35)]"
-        >
-          {label}
-        </span>
-      )}
-    </span>
+<span className="inline-flex items-center justify-center rounded-xl
+                 border border-white/10 bg-white/[0.08] backdrop-blur
+                 px-3.5 py-2 text-[24px] md:text-[28px] font-extrabold tracking-tight
+                 leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]">
+  {children}
+</span>
   );
 }
 
