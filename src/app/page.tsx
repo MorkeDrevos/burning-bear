@@ -830,9 +830,22 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
       {/* Value */}
       {variant === 'segments' && segs ? (
         <div className="mt-2 flex items-center gap-[4px] md:gap-[6px]">
-          <SegmentBox>{segs.h}</SegmentBox><Colon />
-          <SegmentBox>{segs.m}</SegmentBox><Colon />
-          <SegmentBox>{segs.s}</SegmentBox>
+          <div className="flex items-end gap-1.5 md:gap-2">
+  <div className="flex flex-col items-center">
+    <SegmentBox>{segs.h}</SegmentBox>
+    <span className="text-[10px] text-white/50 mt-1">h</span>
+  </div>
+  <Colon />
+  <div className="flex flex-col items-center">
+    <SegmentBox>{segs.m}</SegmentBox>
+    <span className="text-[10px] text-white/50 mt-1">m</span>
+  </div>
+  <Colon />
+  <div className="flex flex-col items-center">
+    <SegmentBox>{segs.s}</SegmentBox>
+    <span className="text-[10px] text-white/50 mt-1">s</span>
+  </div>
+</div>
         </div>
       ) : variant === 'glow' ? (
         <div
