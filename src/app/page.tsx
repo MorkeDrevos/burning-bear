@@ -407,11 +407,14 @@ useEffect(() => {
         Meet The Burning Bear – the classiest arsonist in crypto.
       </h1>
 
-      {/* Countdowns */}
-      <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-       {/*  <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />*/}
-        <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} /> 
-      </div>
+<Countdown
+  label={
+    <span className="bg-gradient-to-r from-amber-300 via-orange-400 to-amber-300 bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(255,180,90,0.5)] animate-pulse">
+      Next Burn In
+    </span>
+  }
+  value={fmtCountdown(nextBurnMs)}
+/>
 
       {/* Stats */}
       <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
@@ -814,7 +817,10 @@ function Countdown({ label, value }: { label: React.ReactNode; value: string }) 
   return (
     <div>
       <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">{label}</div>
-      <div className="text-3xl font-extrabold text-white/85 md:text-[36px]">{value}</div>
+      <div className="relative text-3xl font-extrabold text-white/85 md:text-[36px]">
+        <span className="absolute inset-0 blur-lg bg-amber-400/10 rounded-full animate-pulse"></span>
+        <span className="relative">{value}</span>
+      </div>
     </div>
   );
 }
