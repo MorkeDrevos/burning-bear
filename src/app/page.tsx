@@ -421,12 +421,12 @@ useEffect(() => {
         <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
       </div>
 
-      {/* Pills */}
-      <div className="mt-5 flex flex-wrap gap-3">
-        {/* <Pill>Today: {todayBurnsCount} burns</Pill> */}
-        <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
-        <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
-      </div>
+{/* Pills */}
+<div className="mt-5 flex flex-wrap gap-3">
+  <Pill>Total Burns: {data?.burns?.length ?? 0}</Pill>
+  <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
+  <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
+</div>
     </div>
   </div>
 </section>
