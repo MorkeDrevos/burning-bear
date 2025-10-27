@@ -1,9 +1,9 @@
 {
   "stats": {
     "initialSupply": 1000000000,
-    "burned": 5204399.6,
-    "currentSupply": 994795600.4,
-    "buybackSol": 0.894,
+    "burned": 5509058.15,
+    "currentSupply": 994490941.85,
+    "buybackSol": 0.954,
     "priceUsdPerSol": 204.8
   },
   "schedule": {
