@@ -863,9 +863,10 @@ function SegmentBox({
                      px-3.5 py-2 text-[24px] md:text-[28px] font-extrabold tracking-tight
                      leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]">
       {children}
+
       {label && (
         <span
-          className="absolute bottom-[4px] right-[10px] md:bottom-[5px] md:right-[12px]
+          className="absolute bottom-[6px] right-[10px] md:bottom-[7px] md:right-[12px]
                      text-[11px] md:text-[12px] font-semibold text-amber-200/85
                      drop-shadow-[0_0_4px_rgba(0,0,0,0.35)]"
         >
