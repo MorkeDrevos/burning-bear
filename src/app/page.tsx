@@ -803,7 +803,7 @@ function Countdown({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">{label}</div>
-      <div className="text-3xl font-extrabold text-white/85 md:text-[36px]">{value}</div>
+      <div className="text-3xl font-extrabold text-white/85 md:text-[36px] tracking-tight animate-pulse-slow">{value}</div>
     </div>
   );
 }
