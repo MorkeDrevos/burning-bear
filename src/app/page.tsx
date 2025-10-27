@@ -424,13 +424,13 @@ useEffect(() => {
 {/* Pills */}
 <div className="mt-5 flex flex-wrap gap-3">
   <a href="#log">
-    <Pill className="cursor-pointer bg-orange-500/20 text-orange-400 font-semibold hover:bg-orange-500/25 py-1.5 px-3 text-sm">
+    <Pill className="cursor-pointer bg-orange-500/20 text-orange-400 font-semibold hover:bg-orange-500/25 py-2 px-4 text-[15px]">
       🔥 Total Burns: {data?.burns?.length ?? 0}
     </Pill>
   </a>
 
-  <Pill className="py-1.5 px-3 text-sm">Initial Supply: {fmtInt(INITIAL)}</Pill>
-  <Pill className="py-1.5 px-3 text-sm">SOL: {fmtMoney(priceUsdPerSol)}</Pill>
+  <Pill className="py-2 px-4 text-[15px]">Initial Supply: {fmtInt(INITIAL)}</Pill>
+  <Pill className="py-2 px-4 text-[15px]">SOL: {fmtMoney(priceUsdPerSol)}</Pill>
 </div>
     </div>
   </div>
