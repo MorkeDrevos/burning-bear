@@ -224,7 +224,7 @@ useEffect(() => {
   const nextBuybackMs = targets.bb ? targets.bb - now : 0;
   const nextBurnMs = targets.burn ? targets.burn - now : 0;
 
- // Auto-loop: seed if missing and roll forward if due (supports minutes or ms)
+ // Auto-loop: seed if missing and roll forward with a small buffer
 useEffect(() => {
   setData((prev) => {
     if (!prev?.schedule) return prev;
@@ -232,35 +232,32 @@ useEffect(() => {
     const s = prev.schedule as any;
     const nowTs = Date.now();
 
-    // Accept minutes or ms; minutes are converted to ms
-    const minsToMs = (v?: number) =>
-      typeof v === "number"
-        ? v >= 10000
-          ? v
-          : v * 60 * 1000
-        : undefined;
+    // accept minutes or ms
+    const toMs = (v?: number) =>
+      typeof v === 'number' ? (v >= 10_000 ? v : v * 60_000) : undefined;
 
-    const burnI = s.burnIntervalMs ?? minsToMs(s.burnIntervalMinutes);
-    const buyI = s.buybackIntervalMs ?? minsToMs(s.buybackIntervalMinutes);
-
+    const burnI = s.burnIntervalMs ?? toMs(s.burnIntervalMinutes);
+    const buyI  = s.buybackIntervalMs ?? toMs(s.buybackIntervalMinutes);
     if (!burnI && !buyI) return prev;
 
-    // Seed next times if missing
-    let nextBurnAt = s.nextBurnAt ?? (burnI ? nowTs + burnI : undefined);
-    let nextBuybackAt = s.nextBuybackAt ?? (buyI ? nowTs + buyI : undefined);
+    // seed if missing
+    let nextBurnAt     = s.nextBurnAt     ?? (burnI ? nowTs + burnI : undefined);
+    let nextBuybackAt  = s.nextBuybackAt  ?? (buyI  ? nowTs + buyI  : undefined);
 
-    // Roll forward by full intervals if past
-    const advance = (t?: number, i?: number) => {
-      if (t == null || i == null || i <= 0) return t;
-      if (t > nowTs) return t;
-      const k = Math.ceil((nowTs - t) / i);
-      return t + k * i;
-    };
+    // only advance after a tiny buffer past the target
+    const BUFFER = 15_000; // 15s
 
-    const newBurn = advance(nextBurnAt, burnI);
-    const newBuy = advance(nextBuybackAt, buyI);
+    if (nextBurnAt && burnI && nowTs > nextBurnAt + BUFFER) {
+      const k = Math.ceil((nowTs - (nextBurnAt + BUFFER)) / burnI);
+      nextBurnAt = nextBurnAt + k * burnI;
+    }
+    if (nextBuybackAt && buyI && nowTs > nextBuybackAt + BUFFER) {
+      const k = Math.ceil((nowTs - (nextBuybackAt + BUFFER)) / buyI);
+      nextBuybackAt = nextBuybackAt + k * buyI;
+    }
 
-    if (newBurn === s.nextBurnAt && newBuy === s.nextBuybackAt) return prev;
+    // no change? keep previous object
+    if (nextBurnAt === s.nextBurnAt && nextBuybackAt === s.nextBuybackAt) return prev;
 
     return {
       ...prev,
@@ -268,8 +265,8 @@ useEffect(() => {
         ...s,
         burnIntervalMs: burnI ?? s.burnIntervalMs,
         buybackIntervalMs: buyI ?? s.buybackIntervalMs,
-        nextBurnAt: newBurn,
-        nextBuybackAt: newBuy,
+        nextBurnAt,
+        nextBuybackAt,
       },
     };
   });
