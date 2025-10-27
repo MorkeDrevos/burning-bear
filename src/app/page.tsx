@@ -837,7 +837,18 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
     <SegmentBox>{segs.m}</SegmentBox><Colon />
     <SegmentBox>{segs.s}</SegmentBox>
   </div>
-) : /* ... */ }
+) : variant === 'glow' ? (
+  <div
+    className="mt-1 text-3xl font-extrabold bg-gradient-to-r from-amber-200 via-amber-100 to-white bg-clip-text text-transparent md:text-[36px]"
+    style={{ textShadow: '0 0 12px rgba(255,184,76,0.25)' }}
+  >
+    {value}
+  </div>
+) : (
+  <div className="mt-1 text-3xl font-extrabold text-white/85 md:text-[36px]">
+    {value}
+  </div>
+)}
         <div
           className="mt-1 text-3xl font-extrabold bg-gradient-to-r from-amber-200 via-amber-100 to-white bg-clip-text text-transparent md:text-[36px]"
           style={{ textShadow: '0 0 12px rgba(255,184,76,0.25)' }}
