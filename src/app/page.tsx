@@ -429,6 +429,10 @@ useEffect(() => {
   <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
 </div>
 
+    </div>
+  </div>
+</section>
+
       {/* Contract Address Pill — Cleaned */}
 <div className="mt-6 flex justify-center">
   <div className="inline-flex items-center gap-3 bg-[#0f1f19]/60 px-4 py-2 rounded-xl backdrop-blur-sm">
