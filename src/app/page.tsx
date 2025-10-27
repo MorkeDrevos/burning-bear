@@ -423,15 +423,14 @@ useEffect(() => {
 
 {/* Pills */}
 <div className="mt-5 flex flex-wrap gap-3">
-  <Pill className="!bg-orange-500/20 !text-orange-400 font-semibold hover:!bg-orange-500/15 hover:!text-orange-300 transition">
-    🔥 Total Burns: {data?.burns?.length ?? 0}
-  </Pill>
-  <Pill className="hover:bg-white/10 hover:text-amber-200 transition">
-    Initial Supply: {fmtInt(INITIAL)}
-  </Pill>
-  <Pill className="hover:bg-white/10 hover:text-amber-200 transition">
-    SOL: {fmtMoney(priceUsdPerSol)}
-  </Pill>
+  <a href="#log">
+    <Pill className="!bg-orange-500/20 !text-orange-400 font-semibold hover:!bg-orange-500/15 hover:!text-orange-300 transition">
+      🔥 Total Burns: {data?.burns?.length ?? 0}
+    </Pill>
+  </a>
+
+  <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
+  <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
 </div>
     </div>
   </div>
@@ -817,10 +816,16 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Pill({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+function Pill({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <span
-      className={`inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-white/75 backdrop-blur ${className}`}
+      className={`rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/75 backdrop-blur ${className}`}
     >
       {children}
     </span>
