@@ -832,7 +832,7 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
 
       {/* Value */}
       {variant === 'segments' && segs ? (
-        <div className="mt-2 flex items-center gap-2">
+        <div className="mt-2 flex items-center gap-1.5 md:gap-2">
           <SegmentBox>{segs.h}</SegmentBox><Colon />
           <SegmentBox>{segs.m}</SegmentBox><Colon />
           <SegmentBox>{segs.s}</SegmentBox>
