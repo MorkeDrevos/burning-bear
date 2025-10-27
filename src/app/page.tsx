@@ -425,8 +425,8 @@ useEffect(() => {
 <div className="mt-5 flex flex-wrap gap-3">
   <a href="#log">
     <Pill className="cursor-pointer bg-orange-500/20 text-orange-400 font-semibold hover:bg-orange-500/25">
-      🔥 Total Burns: {data?.burns?.length ?? 0}
-    </Pill>
+  🔥 Total Burns: {data?.burns?.length ?? 0}
+</Pill>
   </a>
 
   <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
@@ -816,9 +816,17 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Pill({ children }: { children: React.ReactNode }) {
+function Pill({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <span className="inline-flex h-10 items-center rounded-full border border-white/15 bg-white/5 px-3 text-sm text-white/75 backdrop-blur">
+    <span
+      className={`inline-flex h-10 items-center rounded-full border border-white/15 bg-white/5 px-3 text-sm text-white/75 backdrop-blur ${className}`}
+    >
       {children}
     </span>
   );
