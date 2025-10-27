@@ -889,10 +889,13 @@ function Colon({ soon = false }: { soon?: boolean }) {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
-      <div className="text-[11px] uppercase tracking-wider text-white/55">{label}</div>
-      <div className="mt-1 text-2xl font-extrabold">{value}</div>
-    </div>
+    <span
+  className="absolute bottom-[8px] right-[6px] md:bottom-[10px] md:right-[8px]
+             text-[10px] md:text-[11px] font-semibold text-amber-200/80
+             tracking-tight drop-shadow-[0_0_3px_rgba(0,0,0,0.4)] select-none"
+>
+  {label}
+</span>
   );
 }
 
