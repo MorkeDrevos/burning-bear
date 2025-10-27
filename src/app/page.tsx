@@ -869,7 +869,7 @@ function SegmentBox({
       {children}
       {label && (
         <span
-          className="absolute bottom-[4px] right-[6px] md:bottom-[5px] md:right-[8px]
+          className="absolute bottom-[4px] right-[10px] md:bottom-[5px] md:right-[12px]
                      text-[11px] md:text-[12px] font-semibold text-amber-200/85
                      drop-shadow-[0_0_4px_rgba(0,0,0,0.35)]"
         >
