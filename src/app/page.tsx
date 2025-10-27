@@ -424,18 +424,13 @@ useEffect(() => {
 {/* Pills */}
 <div className="mt-5 flex flex-wrap gap-3">
   <a href="#log">
-    <Pill className="cursor-pointer bg-orange-500/20 text-orange-400 font-semibold hover:bg-orange-500/25 py-[6px] px-4 text-[15px]">
+    <Pill className="cursor-pointer bg-orange-500/20 text-orange-400 font-semibold hover:bg-orange-500/25">
       🔥 Total Burns: {data?.burns?.length ?? 0}
     </Pill>
   </a>
 
-  <Pill className="py-[6px] px-4 text-[15px]">
-    Initial Supply: {fmtInt(INITIAL)}
-  </Pill>
-
-  <Pill className="py-[6px] px-4 text-[15px]">
-    SOL: {fmtMoney(priceUsdPerSol)}
-  </Pill>
+  <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
+  <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
 </div>
     </div>
   </div>
@@ -830,7 +825,11 @@ function Pill({
 }) {
   return (
     <span
-      className={`inline-flex h-10 items-center rounded-full border border-white/15 bg-white/5 px-3 text-sm text-white/75 backdrop-blur ${className}`}
+      className={
+        `inline-flex items-center rounded-2xl border border-white/15 bg-white/5
+         px-4 py-[6px] text-[15px] leading-none text-white/75 backdrop-blur
+         ${className}`
+      }
     >
       {children}
     </span>
