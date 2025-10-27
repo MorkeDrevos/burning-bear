@@ -193,3 +193,27 @@ html {
 .colon-pulse {
   animation: colonPulse 2.5s ease-in-out infinite;
 }
+@keyframes colonPulse {
+  0%, 100% {
+    opacity: 0.6;
+    filter: drop-shadow(0 0 2px rgba(255,196,114,0.25));
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px rgba(255,196,114,0.65));
+    transform: translateY(-0.5px);
+  }
+}
+
+/* Use a CSS variable for speed so we can change it from React */
+.colon-pulse {
+  animation: colonPulse var(--colon-speed, 2.6s) ease-in-out infinite;
+}
+
+/* Extra text-glow so it’s clearly visible on the hero background */
+.colon-glow {
+  text-shadow:
+    0 0 6px rgba(255,200,120,0.65),
+    0 0 12px rgba(255,170,60,0.35);
+}
