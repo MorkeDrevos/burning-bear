@@ -86,6 +86,13 @@
       "sol": 0.036263193,
       "timestamp": "2025-10-27T07:11:26Z",
       "tx": "https://solscan.io/tx/2pf6eEBK2AvGrUqduSwho9uH5NEZ9pxwaqbXcLGofVKf3tMU8brMEfKc38kGwtBmofJw6Xk5zCNjXxF1rRTKuU29"
+    },
+    {
+      "id": "tx_010",
+      "amount": 304658.5487,
+      "sol": 0.030242913,
+      "timestamp": "2025-10-27T14:16:20Z",
+      "tx": "https://solscan.io/tx/3TMWRG7QvZEcxcwzvGfAiFAXun8fVpCwdddzRWn4Ee6hoAD27GwXa22TEcP1UvcCR4z8RZeen8APAUbyc5VCQMJR"
     }
   ]
 }
