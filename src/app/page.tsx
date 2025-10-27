@@ -811,39 +811,40 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
   const segs =
     typeof ms === 'number'
       ? (() => {
-          const t = Math.max(0, Math.floor(ms / 1000));
-          const h = Math.floor(t / 3600);
-          const m = Math.floor((t % 3600) / 60);
-          const s = t % 60;
+          const h = Math.max(0, Math.floor(ms / 1000 / 3600));
+          const m = Math.floor((ms % 3600000) / 60000);
+          const s = Math.floor((ms % 60000) / 1000);
           return {
-            h: String(h),
+            h: h.toString(),
             m: m.toString().padStart(2, '0'),
             s: s.toString().padStart(2, '0'),
           };
         })()
       : null;
 
+  // ✅ Put it HERE (INSIDE the component)
+  const soon = typeof ms === 'number' && ms < 10 * 60 * 1000;
+
   return (
     <div>
-      {/* Label */}
+      {/* label */}
       <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">
         {label}
       </div>
 
-      {/* Value */}
+      {/* segments */}
       {variant === 'segments' && segs ? (
-<div
-  <div
-  className={`relative mt-2 flex items-center gap-0.5 md:gap-1 countdown-bridge ${
-    soon ? 'active' : ''
-  }`}
->
-  <SegmentBox soon={soon}>{segs.h}</SegmentBox>
-  <Colon soon={soon} />
-  <SegmentBox soon={soon}>{segs.m}</SegmentBox>
-  <Colon soon={soon} />
-  <SegmentBox soon={soon}>{segs.s}</SegmentBox>
-</div>
+        <div
+          className={`relative mt-2 flex items-center gap-0.5 md:gap-1 countdown-bridge ${
+            soon ? 'active' : ''
+          }`}
+        >
+          <SegmentBox soon={soon}>{segs.h}</SegmentBox>
+          <Colon soon={soon} />
+          <SegmentBox soon={soon}>{segs.m}</SegmentBox>
+          <Colon soon={soon} />
+          <SegmentBox soon={soon}>{segs.s}</SegmentBox>
+        </div>
       ) : variant === 'glow' ? (
         <div
           className="mt-1 text-3xl font-extrabold bg-gradient-to-r from-amber-200 via-amber-100 to-white bg-clip-text text-transparent md:text-[36px]"
