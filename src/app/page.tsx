@@ -857,22 +857,28 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
 function SegmentBox({
   children,
   label,
-}: { children: React.ReactNode; label?: string }) {
+}: {
+  children: React.ReactNode;
+  label?: string;
+}) {
   return (
     <span className="relative inline-flex items-center justify-center rounded-xl
                      border border-white/10 bg-white/[0.08] backdrop-blur
                      px-4 py-2.5 text-[28px] md:text-[34px] font-extrabold tracking-tight
                      leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]">
-      {children}
-      {label && (
-        <span
-          className="pointer-events-none absolute bottom-1.5 right-1
-                     text-[10px] md:text-[11px] font-semibold leading-none
-                     text-amber-200/85 drop-shadow-[0_0_4px_rgba(0,0,0,0.35)]"
-        >
-          {label}
-        </span>
-      )}
+      {/* main number */}
+      <span className="relative">
+        {children}
+        {label && (
+          <span
+            className="absolute top-[2px] -right-[12px] md:-right-[14px]
+                       text-[12px] md:text-[13px] font-semibold text-amber-200/85
+                       drop-shadow-[0_0_4px_rgba(0,0,0,0.35)]"
+          >
+            {label}
+          </span>
+        )}
+      </span>
     </span>
   );
 }
