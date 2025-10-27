@@ -832,11 +832,17 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
 
       {/* Value */}
       {variant === 'segments' && segs ? (
-        <div className="mt-2 flex items-center gap-0.5 md:gap-1">
-          <SegmentBox>{segs.h}</SegmentBox><Colon />
-          <SegmentBox>{segs.m}</SegmentBox><Colon />
-          <SegmentBox>{segs.s}</SegmentBox>
-        </div>
+<div
+  className={`relative mt-2 flex items-center gap-0.5 md:gap-1 countdown-bridge ${
+    soon ? 'active' : ''
+  }`}
+>
+  <SegmentBox soon={soon}>{segs.h}</SegmentBox>
+  <Colon soon={soon} />
+  <SegmentBox soon={soon}>{segs.m}</SegmentBox>
+  <Colon soon={soon} />
+  <SegmentBox soon={soon}>{segs.s}</SegmentBox>
+</div>
       ) : variant === 'glow' ? (
         <div
           className="mt-1 text-3xl font-extrabold bg-gradient-to-r from-amber-200 via-amber-100 to-white bg-clip-text text-transparent md:text-[36px]"
