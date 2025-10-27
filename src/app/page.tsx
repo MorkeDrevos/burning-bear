@@ -403,8 +403,7 @@ useEffect(() => {
     {/* translucent stats panel */}
     <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
       {/* Headline */}
-      <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight 
-text-amber-50 drop-shadow-[0_0_20px_rgba(0,0,0,0.25)]">
+      <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
         Meet The Burning Bear – the classiest arsonist in crypto.
       </h1>
 
@@ -422,17 +421,12 @@ text-amber-50 drop-shadow-[0_0_20px_rgba(0,0,0,0.25)]">
         <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
       </div>
 
-{/* Pills */}
-<div className="mt-5 flex flex-wrap gap-3">
-  <a href="#log">
-  <Pill className="cursor-pointer bg-orange-500/20 text-orange-400 font-semibold hover:bg-orange-500/15 hover:text-orange-300 transition">
-    🔥 Total Burns: {data?.burns?.length ?? 0}
-  </Pill>
-</a>
-
-  <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
-  <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
-</div>
+      {/* Pills */}
+      <div className="mt-5 flex flex-wrap gap-3">
+        {/* <Pill>Today: {todayBurnsCount} burns</Pill> */}
+        <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
+        <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
+      </div>
     </div>
   </div>
 </section>
@@ -803,7 +797,7 @@ function Countdown({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">{label}</div>
-      <div className="text-3xl font-extrabold text-white/85 md:text-[36px] tracking-tight animate-pulse-slow">{value}</div>
+      <div className="text-3xl font-extrabold text-white/85 md:text-[36px]">{value}</div>
     </div>
   );
 }
@@ -817,17 +811,9 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Pill({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+function Pill({ children }: { children: React.ReactNode }) {
   return (
-    <span
-      className={`rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/75 backdrop-blur ${className}`}
-    >
+    <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/75 backdrop-blur">
       {children}
     </span>
   );
