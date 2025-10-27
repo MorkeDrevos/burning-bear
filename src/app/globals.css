@@ -171,3 +171,10 @@ html {
   90%  { opacity: 1; }
   100% { transform: translateX(140%); opacity: 0; }
 }
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.92; transform: scale(1.02); }
+}
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
