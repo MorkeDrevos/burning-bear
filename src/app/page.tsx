@@ -407,14 +407,11 @@ useEffect(() => {
         Meet The Burning Bear – the classiest arsonist in crypto.
       </h1>
 
-<Countdown
-  label={
-    <span className="bg-gradient-to-r from-amber-300 via-orange-400 to-amber-300 bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(255,180,90,0.5)] animate-pulse">
-      Next Burn In
-    </span>
-  }
-  value={fmtCountdown(nextBurnMs)}
-/>
+      {/* Countdowns */}
+      <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+       {/*  <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />*/}
+        <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} /> 
+      </div>
 
       {/* Stats */}
       <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
@@ -424,28 +421,13 @@ useEffect(() => {
         <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
       </div>
 
-{/* Pills */}
+     {/* Pills */}
 <div className="mt-5 flex flex-wrap gap-3">
-  {(() => {
-    const totalBurns = data?.burns?.length ?? 0;
-    const lastBurnAt = data?.burns?.length
-      ? (data.burns[0].timestamp as number)
-      : null;
-
-    return (
-      <>
-        <Pill
-          className="bg-orange-500/20 text-orange-300 font-semibold"
-          title={lastBurnAt ? `Last burn: ${fmtWhen(lastBurnAt)}` : ''}
-        >
-          🔥 Total Burn{totalBurns === 1 ? '' : 's'}: {totalBurns}
-        </Pill>
-        <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
-        <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
-      </>
-    );
-  })()}
+  <Pill>Total Burns: {data?.burns?.length ?? 0}</Pill>
+  <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
+  <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
 </div>
+
 
     </div>
   </div>
@@ -813,14 +795,11 @@ useEffect(() => {
 /* =========================
    Components
 ========================= */
-function Countdown({ label, value }: { label: React.ReactNode; value: string }) {
+function Countdown({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">{label}</div>
-      <div className="relative text-3xl font-extrabold text-white/85 md:text-[36px]">
-        <span className="absolute inset-0 blur-lg bg-amber-400/10 rounded-full animate-pulse"></span>
-        <span className="relative">{value}</span>
-      </div>
+      <div className="text-3xl font-extrabold text-white/85 md:text-[36px]">{value}</div>
     </div>
   );
 }
@@ -837,28 +816,19 @@ function Stat({ label, value }: { label: string; value: string }) {
 function Pill({
   children,
   className = '',
-  title = '',
 }: {
   children: React.ReactNode;
   className?: string;
-  title?: string;
 }) {
   return (
     <span
-      title={title}
-      className={`rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/75 backdrop-blur ${className}`}
+      className={
+        `rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/75 backdrop-blur ` +
+        className
+      }
     >
       {children}
     </span>
-  );
-}
-
-function HowCard({ title, body }: { title: string; body: string }) {
-  return (
-    <div className="flex h-full flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6">
-      <div className="text-lg font-semibold">{title}</div>
-      <div className="mt-2 text-sm text-white/75">{body}</div>
-    </div>
   );
 }
 
