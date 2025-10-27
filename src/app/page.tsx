@@ -401,17 +401,11 @@ useEffect(() => {
     </div>
 
     {/* translucent stats panel */}
-    <div className="mx-auto text-center md:text-left rounded-2xl bg-black/25 backdrop-blur-sm px-6 py-7 md:px-8 md:py-8 shadow-[0_0_40px_rgba(255,170,60,0.1)] max-w-4xl">
+    <div className="inline-block rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
       {/* Headline */}
-      <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight">
-  <span className="bg-gradient-to-b from-amber-100 via-amber-200 to-amber-400 bg-clip-text text-transparent drop-shadow-[0_0_14px_rgba(255,184,76,0.25)]">
-    Meet The Burning Bear
-  </span>
-  <br className="hidden sm:block" />
-  <span className="text-amber-100 drop-shadow-[0_0_10px_rgba(255,184,76,0.15)]">
-    the classiest arsonist in crypto.
-  </span>
-</h1>
+      <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
+        Meet The Burning Bear – the classiest arsonist in crypto.
+      </h1>
 
       {/* Countdowns */}
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
