@@ -798,32 +798,40 @@ useEffect(() => {
 /* =========================
    Components
 ========================= */
-// At the bottom of page.tsx (where your components live)
-type CountdownProps = {
-  label: React.ReactNode;
-  value?: string;          // for 'plain' or 'glow'
-  ms?: number;             // for 'segments' (pass the raw ms)
-  variant?: 'plain' | 'glow' | 'segments';
-};
+// At the top of Countdown (inside the function body)
+const [hydrated, setHydrated] = React.useState(false);
+React.useEffect(() => setHydrated(true), []);
+if (!hydrated) {
+  // keep layout space reserved so nothing jumps
+  return (
+    <div className="opacity-0" aria-hidden>
+      <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">{label}</div>
+      <div className="mt-1 text-3xl font-extrabold md:text-[36px]">00</div>
+    </div>
+  );
+}
 
-function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
-  // Small formatter when using the 'segments' style
-  const segs =
-    typeof ms === 'number'
-      ? (() => {
-          const h = Math.max(0, Math.floor(ms / 1000 / 3600));
-          const m = Math.floor((ms % 3600000) / 60000);
-          const s = Math.floor((ms % 60000) / 1000);
-          return {
-            h: h.toString(),
-            m: m.toString().padStart(2, '0'),
-            s: s.toString().padStart(2, '0'),
-          };
-        })()
-      : null;
+// Clamp and sanitize ms to avoid negatives/NaN
+const safe = Math.max(
+  0,
+  typeof ms === 'number' && isFinite(ms) ? Math.floor(ms) : 0
+);
 
-  // ✅ Put it HERE (INSIDE the component)
-  const soon = typeof ms === 'number' && ms < 10 * 60 * 1000;
+// Recompute segments from the clamped value
+const segs = React.useMemo(() => {
+  const h = Math.max(0, Math.floor(safe / 3_600_000));
+  const m = Math.floor((safe % 3_600_000) / 60_000);
+  const s = Math.floor((safe % 60_000) / 1_000);
+  return {
+    h: String(h),
+    m: String(m).padStart(2, '0'),
+    s: String(s).padStart(2, '0'),
+  };
+}, [safe]);
+
+// Use the clamped value for visual states
+const soon  = safe < 10 * 60 * 1000; // < 10 minutes
+const final = safe < 60 * 1000;      // < 1 minute (only if you use it)
 
   return (
     <div>
