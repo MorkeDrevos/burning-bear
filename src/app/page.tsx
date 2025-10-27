@@ -421,14 +421,17 @@ useEffect(() => {
         <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
       </div>
 
-     {/* Pills */}
-<Pill className="bg-orange-500/20 text-orange-400 font-semibold">
-  🔥 Total Burns: {data?.burns?.length ?? 0}
-</Pill>
+<div className="mt-5 flex flex-wrap gap-3">
+  <Pill className="bg-orange-500/20 text-orange-300 font-semibold">
+    🔥 Total Burns: {data?.burns?.length ?? 0}
+  </Pill>
   <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
   <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
 </div>
 
+<Pill className="bg-orange-500/20 text-orange-400 font-semibold">
+  🔥 Total Burns: {data?.burns?.length ?? 0}
+</Pill>
     </div>
   </div>
 </section>
@@ -813,20 +816,22 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Pill({ children }: { children: React.ReactNode }) {
+function Pill({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/75 backdrop-blur">
+    <span
+      className={
+        `rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/75 backdrop-blur ` +
+        className
+      }
+    >
       {children}
     </span>
-  );
-}
-
-function HowCard({ title, body }: { title: string; body: string }) {
-  return (
-    <div className="flex h-full flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6">
-      <div className="text-lg font-semibold">{title}</div>
-      <div className="mt-2 text-sm text-white/75">{body}</div>
-    </div>
   );
 }
 
