@@ -217,3 +217,11 @@ html {
     0 0 6px rgba(255,200,120,0.65),
     0 0 12px rgba(255,170,60,0.35);
 }
+@keyframes emberFlicker {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  50% { opacity: 0.92; filter: brightness(1.15); }
+}
+
+.soon-flicker {
+  animation: emberFlicker 2.8s ease-in-out infinite;
+}
