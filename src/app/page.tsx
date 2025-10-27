@@ -890,7 +890,7 @@ function Colon({ soon = false }: { soon?: boolean }) {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <span
-  className="absolute bottom-[8px] right-[1px] md:bottom-[10px] md:right-[8px]
+  className="absolute bottom-[8px] right-[4px] md:bottom-[10px] md:right-[6px]
              text-[10px] md:text-[11px] font-semibold text-amber-200/80
              tracking-tight drop-shadow-[0_0_3px_rgba(0,0,0,0.4)] select-none"
 >
