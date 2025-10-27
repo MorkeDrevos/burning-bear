@@ -855,10 +855,10 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
 
 function SegmentBox({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center justify-center rounded-xl
-                     border border-white/10 bg-white/[0.06] backdrop-blur
-                     px-3 py-2 text-[18px] md:text-[20px] font-extrabold
-                     leading-none text-white/90 shadow-[0_2px_12px_rgba(0,0,0,0.25)]">
+    <span className="inline-flex items-center justify-center rounded-2xl
+                 border border-white/10 bg-white/[0.08] backdrop-blur
+                 px-5 py-3 text-[32px] md:text-[42px] font-extrabold tracking-tight
+                 leading-none text-white/90 shadow-[0_0_24px_rgba(0,0,0,0.35)]">
       {children}
     </span>
   );
