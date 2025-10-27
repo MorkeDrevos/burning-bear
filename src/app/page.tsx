@@ -798,60 +798,44 @@ useEffect(() => {
 /* =========================
    Components
 ========================= */
-// At the top of Countdown (inside the function body)
-const [hydrated, setHydrated] = React.useState(false);
-React.useEffect(() => setHydrated(true), []);
-if (!hydrated) {
-  // keep layout space reserved so nothing jumps
-  return (
-    <div className="opacity-0" aria-hidden>
-      <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">{label}</div>
-      <div className="mt-1 text-3xl font-extrabold md:text-[36px]">00</div>
-    </div>
-  );
-}
+// At the bottom of page.tsx (where your components live)
+type CountdownProps = {
+  label: React.ReactNode;
+  value?: string;          // for 'plain' or 'glow'
+  ms?: number;             // for 'segments' (pass the raw ms)
+  variant?: 'plain' | 'glow' | 'segments';
+};
 
-// Clamp and sanitize ms to avoid negatives/NaN
-const safe = Math.max(
-  0,
-  typeof ms === 'number' && isFinite(ms) ? Math.floor(ms) : 0
-);
-
-// Recompute segments from the clamped value
-const segs = React.useMemo(() => {
-  const h = Math.max(0, Math.floor(safe / 3_600_000));
-  const m = Math.floor((safe % 3_600_000) / 60_000);
-  const s = Math.floor((safe % 60_000) / 1_000);
-  return {
-    h: String(h),
-    m: String(m).padStart(2, '0'),
-    s: String(s).padStart(2, '0'),
-  };
-}, [safe]);
-
-// Use the clamped value for visual states
-const soon  = safe < 10 * 60 * 1000; // < 10 minutes
-const final = safe < 60 * 1000;      // < 1 minute (only if you use it)
+function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
+  // Small formatter when using the 'segments' style
+  const segs =
+    typeof ms === 'number'
+      ? (() => {
+          const t = Math.max(0, Math.floor(ms / 1000));
+          const h = Math.floor(t / 3600);
+          const m = Math.floor((t % 3600) / 60);
+          const s = t % 60;
+          return {
+            h: String(h),
+            m: m.toString().padStart(2, '0'),
+            s: s.toString().padStart(2, '0'),
+          };
+        })()
+      : null;
 
   return (
     <div>
-      {/* label */}
+      {/* Label */}
       <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">
         {label}
       </div>
 
-      {/* segments */}
+      {/* Value */}
       {variant === 'segments' && segs ? (
-        <div
-          className={`relative mt-2 flex items-center gap-0.5 md:gap-1 countdown-bridge ${
-            soon ? 'active' : ''
-          }`}
-        >
-          <SegmentBox soon={soon}>{segs.h}</SegmentBox>
-          <Colon soon={soon} />
-          <SegmentBox soon={soon}>{segs.m}</SegmentBox>
-          <Colon soon={soon} />
-          <SegmentBox soon={soon}>{segs.s}</SegmentBox>
+        <div className="mt-2 flex items-center gap-1.5 md:gap-2">
+          <SegmentBox>{segs.h}</SegmentBox><Colon />
+          <SegmentBox>{segs.m}</SegmentBox><Colon />
+          <SegmentBox>{segs.s}</SegmentBox>
         </div>
       ) : variant === 'glow' ? (
         <div
@@ -869,17 +853,12 @@ const final = safe < 60 * 1000;      // < 1 minute (only if you use it)
   );
 }
 
-function SegmentBox({ children, soon = false }: { children: React.ReactNode; soon?: boolean }) {
+function SegmentBox({ children }: { children: React.ReactNode }) {
   return (
-    <span
-      className={`inline-flex items-center justify-center rounded-2xl border backdrop-blur-sm
-                  px-3.5 py-2.5 text-[28px] md:text-[36px] font-extrabold leading-none tracking-tight
-                  transition-all duration-700 ease-in-out
-                  ${soon
-                    ? 'border-amber-400/40 bg-amber-300/[0.10] shadow-[0_0_24px_rgba(255,190,80,0.25)] text-amber-100 scale-[1.05]'
-                    : 'border-white/10 bg-white/[0.07] text-white/90 shadow-[0_0_20px_rgba(255,170,50,0.10)]'
-                  }`}
-    >
+    <span className="inline-flex items-center justify-center rounded-2xl
+                 border border-white/10 bg-white/[0.08] backdrop-blur
+                 px-5 py-3 text-[32px] md:text-[42px] font-extrabold tracking-tight
+                 leading-none text-white/90 shadow-[0_0_24px_rgba(0,0,0,0.35)]">
       {children}
     </span>
   );
