@@ -832,7 +832,7 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
 
       {/* Value */}
       {variant === 'segments' && segs ? (
-        <div className="mt-2 flex items-center gap-1.5 md:gap-2">
+        <div className="mt-2 flex items-center gap-[4px] md:gap-[6px]">
           <SegmentBox>{segs.h}</SegmentBox><Colon />
           <SegmentBox>{segs.m}</SegmentBox><Colon />
           <SegmentBox>{segs.s}</SegmentBox>
@@ -855,10 +855,10 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
 
 function SegmentBox({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center justify-center rounded-2xl
-                 border border-white/10 bg-white/[0.08] backdrop-blur
-                 px-5 py-3 text-[32px] md:text-[42px] font-extrabold tracking-tight
-                 leading-none text-white/90 shadow-[0_0_24px_rgba(0,0,0,0.35)]">
+    <span className="inline-flex items-center justify-center rounded-xl
+                     border border-white/10 bg-white/[0.08] backdrop-blur
+                     px-3.5 py-2 text-[24px] md:text-[28px] font-extrabold tracking-tight
+                     leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]">
       {children}
     </span>
   );
