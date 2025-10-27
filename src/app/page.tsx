@@ -833,6 +833,7 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
       {/* Value */}
       {variant === 'segments' && segs ? (
 <div
+  <div
   className={`relative mt-2 flex items-center gap-0.5 md:gap-1 countdown-bridge ${
     soon ? 'active' : ''
   }`}
