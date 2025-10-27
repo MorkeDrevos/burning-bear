@@ -830,21 +830,12 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
       {/* Value */}
       {variant === 'segments' && segs ? (
         <div className="mt-2 flex items-center gap-[4px] md:gap-[6px]">
-          <div className="flex items-end gap-1.5 md:gap-2">
-  <div className="flex flex-col items-center">
-    <SegmentBox>{segs.h}</SegmentBox>
-    <span className="text-[10px] text-white/50 mt-1">h</span>
-  </div>
+          <div className="mt-2 flex items-center gap-1.5 md:gap-2">
+  <SegmentBox label="h">{segs.h}</SegmentBox>
   <Colon />
-  <div className="flex flex-col items-center">
-    <SegmentBox>{segs.m}</SegmentBox>
-    <span className="text-[10px] text-white/50 mt-1">m</span>
-  </div>
+  <SegmentBox label="m">{segs.m}</SegmentBox>
   <Colon />
-  <div className="flex flex-col items-center">
-    <SegmentBox>{segs.s}</SegmentBox>
-    <span className="text-[10px] text-white/50 mt-1">s</span>
-  </div>
+  <SegmentBox label="s">{segs.s}</SegmentBox>
 </div>
         </div>
       ) : variant === 'glow' ? (
@@ -863,14 +854,25 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
   );
 }
 
-function SegmentBox({ children }: { children: React.ReactNode }) {
+function SegmentBox({
+  children,
+  label,
+}: {
+  children: React.ReactNode;
+  label?: string;
+}) {
   return (
-<span className="inline-flex items-center justify-center rounded-xl
-                 border border-white/10 bg-white/[0.08] backdrop-blur
-                 px-3.5 py-2 text-[24px] md:text-[28px] font-extrabold tracking-tight
-                 leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]">
-  {children}
-</span>
+    <span className="relative inline-flex items-center justify-center rounded-xl
+                     border border-white/10 bg-white/[0.08] backdrop-blur
+                     px-4 py-2.5 text-[28px] md:text-[34px] font-extrabold tracking-tight
+                     leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]">
+      {children}
+      {label && (
+        <span className="absolute bottom-1 right-1 text-[10px] text-white/50 font-semibold">
+          {label}
+        </span>
+      )}
+    </span>
   );
 }
 
