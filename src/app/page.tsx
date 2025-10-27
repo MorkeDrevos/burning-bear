@@ -835,6 +835,15 @@ function Pill({
   );
 }
 
+function HowCard({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="flex h-full flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6">
+      <div className="text-lg font-semibold">{title}</div>
+      <div className="mt-2 text-sm text-white/75">{body}</div>
+    </div>
+  );
+}
+
 function WalletCard({ title, address, note }: { title: string; address: string; note?: string }) {
   const [copied, setCopied] = useState(false);
   const timer = useRef<number | null>(null);
