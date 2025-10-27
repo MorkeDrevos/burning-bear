@@ -865,7 +865,7 @@ function SegmentBox({ children }: { children: React.ReactNode }) {
 }
 
 function Colon() {
-  return <span className="px-0.5 md:px-1 text-white/65">:</span>;
+  return <span className="px-0.5 md:px-1 text-amber-300/80 colon-pulse">:</span>;
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
