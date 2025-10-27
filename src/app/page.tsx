@@ -829,7 +829,7 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
 
       {/* Value */}
       {variant === 'segments' && segs ? (
-        <div className="mt-2 flex items-center gap-[4px] md:gap-[6px]">
+        <<div className="mt-2 flex items-center gap-[4px] md:gap-[6px]">
   <SegmentBox label="h">{segs.h}</SegmentBox><Colon />
   <SegmentBox label="m">{segs.m}</SegmentBox><Colon />
   <SegmentBox label="s">{segs.s}</SegmentBox>
@@ -876,45 +876,32 @@ function SegmentBox({
   );
 }
 
-function Colon({ soon = false }: { soon?: boolean }) {
-  return (
-    <span
-      className="px-0.5 text-amber-200 colon-pulse colon-glow"
-      style={{ ['--colon-speed' as any]: soon ? '1.1s' : '2.6s' }}
-    >
-      :
-    </span>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <span
-  className="absolute bottom-[8px] right-[4px] md:bottom-[10px] md:right-[6px]
-             text-[10px] md:text-[11px] font-semibold text-amber-200/80
-             tracking-tight drop-shadow-[0_0_3px_rgba(0,0,0,0.4)] select-none"
->
-  {label}
-</span>
-  );
-}
-
-function Pill({
+function SegmentBox({
   children,
-  className = '',
+  label,
 }: {
   children: React.ReactNode;
-  className?: string;
+  label?: string;
 }) {
   return (
     <span
-      className={
-        `inline-flex items-center rounded-2xl border border-white/15 bg-white/5
-         px-4 py-[7px] text-[15px] leading-none text-white/75 backdrop-blur
-         ${className}`
-      }
+      className="relative inline-flex items-center justify-center rounded-xl
+                 border border-white/10 bg-white/[0.08] backdrop-blur
+                 px-3.5 pr-[22px] md:pr-[26px] py-2
+                 text-[24px] md:text-[28px] font-extrabold tracking-tight
+                 leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]"
     >
       {children}
+
+      {label && (
+        <span
+          className="absolute bottom-[8px] right-[6px] md:bottom-[10px] md:right-[8px]
+                     text-[10px] md:text-[11px] font-semibold text-amber-200/85
+                     tracking-tight drop-shadow-[0_0_3px_rgba(0,0,0,0.40)] select-none"
+        >
+          {label}
+        </span>
+      )}
     </span>
   );
 }
