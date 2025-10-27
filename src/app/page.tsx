@@ -813,9 +813,17 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Pill({ children }: { children: React.ReactNode }) {
+function Pill({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/75 backdrop-blur">
+    <span
+      className={`rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/75 backdrop-blur ${className}`}
+    >
       {children}
     </span>
   );
