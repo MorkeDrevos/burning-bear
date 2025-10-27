@@ -827,7 +827,7 @@ function Pill({
     <span
       className={
         `inline-flex items-center rounded-2xl border border-white/15 bg-white/5
-         px-4 py-[6px] text-[15px] leading-none text-white/75 backdrop-blur
+         px-4 py-[7px] text-[15px] leading-none text-white/75 backdrop-blur
          ${className}`
       }
     >
