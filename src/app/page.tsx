@@ -856,12 +856,12 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
 function SegmentBox({ children, soon = false }: { children: React.ReactNode; soon?: boolean }) {
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-xl border backdrop-blur
-                  px-4 py-2.5 text-[26px] md:text-[34px] font-extrabold leading-none tracking-tight
+      className={`inline-flex items-center justify-center rounded-2xl border backdrop-blur-sm
+                  px-4 py-2.5 text-[28px] md:text-[36px] font-extrabold leading-none tracking-tight
                   transition-all duration-700 ease-in-out
                   ${soon
-                    ? 'border-amber-400/40 bg-amber-300/[0.10] shadow-[0_0_18px_rgba(255,190,80,0.25)] text-amber-100'
-                    : 'border-white/10 bg-white/[0.07] text-white/90 shadow-[0_0_18px_rgba(255,170,50,0.10)]'
+                    ? 'border-amber-400/40 bg-amber-300/[0.10] shadow-[0_0_24px_rgba(255,190,80,0.25)] text-amber-100 scale-[1.05]'
+                    : 'border-white/10 bg-white/[0.07] text-white/90 shadow-[0_0_20px_rgba(255,170,50,0.10)]'
                   }`}
     >
       {children}
