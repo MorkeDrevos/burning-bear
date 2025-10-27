@@ -225,3 +225,24 @@ html {
 .soon-flicker {
   animation: emberFlicker 2.8s ease-in-out infinite;
 }
+/* faint connecting glow bridge between countdown boxes */
+.countdown-bridge::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: -4px;
+  right: -4px;
+  z-index: 0;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(255, 180, 60, 0.15) 0%,
+    rgba(255, 180, 60, 0.08) 35%,
+    transparent 70%
+  );
+  filter: blur(8px);
+  opacity: 0.35;
+  transition: opacity 1.5s ease;
+}
+.countdown-bridge.active::before {
+  opacity: 0.55;
+}
