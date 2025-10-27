@@ -421,12 +421,27 @@ useEffect(() => {
         <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
       </div>
 
+{/* Pills */}
 <div className="mt-5 flex flex-wrap gap-3">
-  <Pill className="bg-orange-500/20 text-orange-300 font-semibold">
-    🔥 Total Burns: {data?.burns?.length ?? 0}
-  </Pill>
-  <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
-  <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
+  {(() => {
+    const totalBurns = data?.burns?.length ?? 0;
+    const lastBurnAt = data?.burns?.length
+      ? (data.burns[0].timestamp as number)
+      : null;
+
+    return (
+      <>
+        <Pill
+          className="bg-orange-500/20 text-orange-300 font-semibold"
+          title={lastBurnAt ? `Last burn: ${fmtWhen(lastBurnAt)}` : ''}
+        >
+          🔥 Total Burn{totalBurns === 1 ? '' : 's'}: {totalBurns}
+        </Pill>
+        <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
+        <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
+      </>
+    );
+  })()}
 </div>
 
     </div>
@@ -816,16 +831,16 @@ function Stat({ label, value }: { label: string; value: string }) {
 function Pill({
   children,
   className = '',
+  title = '',
 }: {
   children: React.ReactNode;
   className?: string;
+  title?: string;
 }) {
   return (
     <span
-      className={
-        `rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/75 backdrop-blur ` +
-        className
-      }
+      title={title}
+      className={`rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm text-white/75 backdrop-blur ${className}`}
     >
       {children}
     </span>
