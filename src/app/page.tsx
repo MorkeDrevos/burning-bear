@@ -410,7 +410,7 @@ useEffect(() => {
       {/* Countdowns */}
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
        {/*  <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />*/}
-        <Countdown label="Next burn in" value={fmtCountdown(nextBurnMs)} /> 
+        <Countdown label="Next burn in" ms={nextBurnMs} variant="segments" />
       </div>
 
       {/* Stats */}
@@ -798,13 +798,74 @@ useEffect(() => {
 /* =========================
    Components
 ========================= */
-function Countdown({ label, value }: { label: string; value: string }) {
+// At the bottom of page.tsx (where your components live)
+type CountdownProps = {
+  label: React.ReactNode;
+  value?: string;          // for 'plain' or 'glow'
+  ms?: number;             // for 'segments' (pass the raw ms)
+  variant?: 'plain' | 'glow' | 'segments';
+};
+
+function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
+  // Small formatter when using the 'segments' style
+  const segs =
+    typeof ms === 'number'
+      ? (() => {
+          const t = Math.max(0, Math.floor(ms / 1000));
+          const h = Math.floor(t / 3600);
+          const m = Math.floor((t % 3600) / 60);
+          const s = t % 60;
+          return {
+            h: String(h),
+            m: m.toString().padStart(2, '0'),
+            s: s.toString().padStart(2, '0'),
+          };
+        })()
+      : null;
+
   return (
     <div>
-      <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">{label}</div>
-      <div className="text-3xl font-extrabold text-white/85 md:text-[36px]">{value}</div>
+      {/* Label */}
+      <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">
+        {label}
+      </div>
+
+      {/* Value */}
+      {variant === 'segments' && segs ? (
+        <div className="mt-2 flex items-center gap-2">
+          <SegmentBox>{segs.h}</SegmentBox><Colon />
+          <SegmentBox>{segs.m}</SegmentBox><Colon />
+          <SegmentBox>{segs.s}</SegmentBox>
+        </div>
+      ) : variant === 'glow' ? (
+        <div
+          className="mt-1 text-3xl font-extrabold bg-gradient-to-r from-amber-200 via-amber-100 to-white bg-clip-text text-transparent md:text-[36px]"
+          style={{ textShadow: '0 0 12px rgba(255,184,76,0.25)' }}
+        >
+          {value}
+        </div>
+      ) : (
+        <div className="mt-1 text-3xl font-extrabold text-white/85 md:text-[36px]">
+          {value}
+        </div>
+      )}
     </div>
   );
+}
+
+function SegmentBox({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center justify-center rounded-xl
+                     border border-white/10 bg-white/[0.06] backdrop-blur
+                     px-3 py-2 text-[18px] md:text-[20px] font-extrabold
+                     leading-none text-white/90 shadow-[0_2px_12px_rgba(0,0,0,0.25)]">
+      {children}
+    </span>
+  );
+}
+
+function Colon() {
+  return <span className="px-0.5 md:px-1 text-white/65">:</span>;
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
