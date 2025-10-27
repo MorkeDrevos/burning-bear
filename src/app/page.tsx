@@ -810,7 +810,7 @@ useEffect(() => {
 /* =========================
    Components
 ========================= */
-function Countdown({ label, value }: { label: string; value: string }) {
+function Countdown({ label, value }: { label: React.ReactNode; value: string }) {
   return (
     <div>
       <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">{label}</div>
