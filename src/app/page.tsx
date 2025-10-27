@@ -855,23 +855,18 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
 
 function SegmentBox({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center justify-center rounded-xl
-                     border border-white/10 bg-white/[0.08] backdrop-blur
-                     px-3.5 py-2 text-[24px] md:text-[28px] font-extrabold tracking-tight
-                     leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]">
-      {children}
-    </span>
+<span className="inline-flex items-center justify-center rounded-xl
+                 border border-white/10 bg-white/[0.08] backdrop-blur
+                 px-3.5 py-2 text-[24px] md:text-[28px] font-extrabold tracking-tight
+                 leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]">
+  {children}
+</span>
   );
 }
 
 function Colon({ soon = false }: { soon?: boolean }) {
   return (
-    <span
-      className="px-0.5 md:px-1 text-amber-200 colon-pulse colon-glow"
-      style={{ ['--colon-speed' as any]: soon ? '1.1s' : '2.6s' }}
-    >
-      :
-    </span>
+    <span className="px-0.5 text-amber-200 colon-pulse colon-glow"
   );
 }
 
