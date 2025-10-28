@@ -588,7 +588,6 @@ useEffect(() => {
           escrowUrl="https://lock.jup.ag/escrow/7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
           escrowAddress="7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
           recipientAddress="FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE"
-          showCountdown={false} // optional prop if your component supports it
         />
       </div>
     </div>
