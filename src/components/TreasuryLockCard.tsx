@@ -105,7 +105,6 @@ export default function TreasuryLockCard(props: TreasuryLockCardProps) {
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-2">
           <div className="relative">
-            <div className="absolute inset-0 blur-md bg-emerald-400/30 rounded-xl" />
             <div className="relative grid place-items-center w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-400/30">
               <Lock className="w-5 h-5 text-emerald-300" />
             </div>
