@@ -571,21 +571,26 @@ useEffect(() => {
   </div>
 </section>
 
-{/* ===== Treasury Lock (Between Live Burn Log and How It Works) ===== */}
-<section
-  id="treasury-lock"
-  className="mx-auto mt-10 mb-12 max-w-6xl px-4 sm:px-6 lg:px-8"
->
-  <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-2">
-    <TreasuryLockCard
-      tokenSymbol="BBURN"
-      lockedAmount={30000000}
-      lockedAtISO="2025-10-28T12:00:00Z"
-      unlockAtISO="2026-04-28T00:00:00Z"
-      escrowUrl="https://lock.jup.ag/escrow/7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
-      escrowAddress="7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
-      recipientAddress="FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE"
-    />
+{/* ===== Treasury Lock (Full-row + dark band) ===== */}
+<section id="treasury-lock" className="relative mt-10">
+  {/* dark background band */}
+  <div className="absolute inset-0 bg-[#0b1712]/85" />
+
+  {/* pull section edges to viewport, then re-add padding inside */}
+  <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 py-8">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="w-full rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.35)] p-2">
+        <TreasuryLockCard
+          tokenSymbol="BBURN"
+          lockedAmount={30000000}
+          lockedAtISO="2025-10-28T12:00:00Z"
+          unlockAtISO="2026-04-28T00:00:00Z"
+          escrowUrl="https://lock.jup.ag/escrow/7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
+          escrowAddress="7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
+          recipientAddress="FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE"
+        />
+      </div>
+    </div>
   </div>
 </section>
 
