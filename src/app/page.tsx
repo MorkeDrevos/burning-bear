@@ -571,12 +571,12 @@ useEffect(() => {
   </div>
 </section>
 
-{/* ===== Treasury Lock (aligned to site width + dark band) ===== */}
+{/* ===== Treasury Lock (no countdown, aligned to site width + dark band) ===== */}
 <section id="treasury-lock" className="relative mt-10">
-  {/* dark background band behind the card */}
+  {/* dark background band */}
   <div className="absolute inset-0 bg-[#0b1712]/85" />
 
-  {/* keep inner content EXACTLY the same width/padding as other sections */}
+  {/* centered content aligned with rest of site */}
   <div className="relative py-8">
     <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
       <div className="w-full rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.35)] p-2">
@@ -588,6 +588,7 @@ useEffect(() => {
           escrowUrl="https://lock.jup.ag/escrow/7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
           escrowAddress="7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
           recipientAddress="FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE"
+          showCountdown={false} // optional prop if your component supports it
         />
       </div>
     </div>
