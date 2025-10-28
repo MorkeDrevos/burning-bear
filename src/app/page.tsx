@@ -795,7 +795,9 @@ useEffect(() => {
 /* =========================
    Components
 ========================= */
-// At the bottom of page.tsx (where your components live)
+/* =========================
+   Countdown (no h/m/s labels)
+========================= */
 type CountdownProps = {
   label: React.ReactNode;
   value?: string;          // for 'plain' or 'glow'
@@ -804,7 +806,6 @@ type CountdownProps = {
 };
 
 function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
-  // Small formatter when using the 'segments' style
   const segs =
     typeof ms === 'number'
       ? (() => {
@@ -822,12 +823,10 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
 
   return (
     <div>
-      {/* Label */}
       <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">
         {label}
       </div>
 
-      {/* Value */}
       {variant === 'segments' && segs ? (
         <div className="mt-2 flex items-center gap-[4px] md:gap-[6px]">
           <SegmentBox>{segs.h}</SegmentBox><Colon />
@@ -850,17 +849,25 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
   );
 }
 
+/* =========================
+   Segment Box (simple)
+========================= */
 function SegmentBox({ children }: { children: React.ReactNode }) {
   return (
-<span className="inline-flex items-center justify-center rounded-xl
+    <span
+      className="inline-flex items-center justify-center rounded-xl
                  border border-white/10 bg-white/[0.08] backdrop-blur
                  px-3.5 py-2 text-[24px] md:text-[28px] font-extrabold tracking-tight
-                 leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]">
-  {children}
-</span>
+                 leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]"
+    >
+      {children}
+    </span>
   );
 }
 
+/* =========================
+   Colon Separator
+========================= */
 function Colon({ soon = false }: { soon?: boolean }) {
   return (
     <span
