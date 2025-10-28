@@ -430,19 +430,6 @@ useEffect(() => {
   <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
   <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
 </div>
-
-{/* Treasury Lock (full card) */}
-<div className="mt-6">
-  <TreasuryLockCard
-    tokenSymbol="BBURN"
-    lockedAmount={30000000}
-    lockedAtISO="2025-10-28T12:00:00Z"
-    unlockAtISO="2026-04-28T00:00:00Z"
-    escrowUrl="https://lock.jup.ag/escrow/7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
-    escrowAddress="7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
-    recipientAddress="FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE"
-  />
-</div>
     </div>
   </div>
 </section>
@@ -581,6 +568,24 @@ useEffect(() => {
         </Link>
       ))}
     </div>
+  </div>
+</section>
+
+{/* ===== Treasury Lock (Between Live Burn Log and How It Works) ===== */}
+<section
+  id="treasury-lock"
+  className="mx-auto mt-10 mb-12 max-w-6xl px-4 sm:px-6 lg:px-8"
+>
+  <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-2">
+    <TreasuryLockCard
+      tokenSymbol="BBURN"
+      lockedAmount={30000000}
+      lockedAtISO="2025-10-28T12:00:00Z"
+      unlockAtISO="2026-04-28T00:00:00Z"
+      escrowUrl="https://lock.jup.ag/escrow/7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
+      escrowAddress="7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
+      recipientAddress="FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE"
+    />
   </div>
 </section>
 
