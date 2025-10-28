@@ -132,23 +132,16 @@ export default function TreasuryLockCard(props: TreasuryLockCardProps) {
       </div>
 
       {/* Actions */}
-      <div className="mt-5 flex flex-wrap items-center gap-2">
-        <a
-          href={escrowUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-2 rounded-xl px-3.5 py-2 bg-emerald-500/20 hover:bg-emerald-500/25 border border-emerald-400/30"
-        >
-          <CheckCircle2 className="w-4 h-4" /> Verify on Jupiter
-        </a>
-        <div className="group inline-flex items-center gap-2 text-white/70 text-sm">
-          <HelpCircle className="w-4 h-4" />
-          <span>
-            Why it matters: 3% of total supply is locked. No movement possible
-            until the unlock date.
-          </span>
-        </div>
-      </div>
+<div className="mt-5">
+  <a
+    href={escrowUrl}
+    target="_blank"
+    rel="noreferrer"
+    className="w-full inline-flex justify-center items-center gap-2 rounded-xl px-4 py-3 bg-emerald-500/20 hover:bg-emerald-500/25 border border-emerald-400/30 text-base font-medium"
+  >
+    <CheckCircle2 className="w-5 h-5" /> Verify on Jupiter
+  </a>
+</div>
     </motion.div>
   );
 }
