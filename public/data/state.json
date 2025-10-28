@@ -3,7 +3,7 @@
     "initialSupply": 1000000000,
     "burned": 6063610.17,
     "currentSupply": 993936389.83,
-    "buybackSol": 0.998,
+    "buybackSol": 1.06,
     "priceUsdPerSol": 204.8
   },
 "schedule": {
