@@ -2,7 +2,6 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import TreasuryLockCard from '@/components/TreasuryLockCard';
 
 /* =========================
    Config
@@ -430,19 +429,6 @@ useEffect(() => {
   <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
   <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
 </div>
-
-{/* Treasury Lock (full card) */}
-<div className="mt-6">
-  <TreasuryLockCard
-    tokenSymbol="BBURN"
-    lockedAmount={30000000}
-    lockedAtISO="2025-10-28T12:00:00Z"
-    unlockAtISO="2026-04-28T00:00:00Z"
-    escrowUrl="https://lock.jup.ag/escrow/7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
-    escrowAddress="7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
-    recipientAddress="FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE"
-  />
-</div>
     </div>
   </div>
 </section>
@@ -809,9 +795,7 @@ useEffect(() => {
 /* =========================
    Components
 ========================= */
-/* =========================
-   Countdown (no h/m/s labels)
-========================= */
+// At the bottom of page.tsx (where your components live)
 type CountdownProps = {
   label: React.ReactNode;
   value?: string;          // for 'plain' or 'glow'
@@ -820,6 +804,7 @@ type CountdownProps = {
 };
 
 function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
+  // Small formatter when using the 'segments' style
   const segs =
     typeof ms === 'number'
       ? (() => {
@@ -837,10 +822,12 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
 
   return (
     <div>
+      {/* Label */}
       <div className="text-[11px] uppercase tracking-[0.25em] text-white/55">
         {label}
       </div>
 
+      {/* Value */}
       {variant === 'segments' && segs ? (
         <div className="mt-2 flex items-center gap-[4px] md:gap-[6px]">
           <SegmentBox>{segs.h}</SegmentBox><Colon />
@@ -863,25 +850,17 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
   );
 }
 
-/* =========================
-   Segment Box (simple)
-========================= */
 function SegmentBox({ children }: { children: React.ReactNode }) {
   return (
-    <span
-      className="inline-flex items-center justify-center rounded-xl
+<span className="inline-flex items-center justify-center rounded-xl
                  border border-white/10 bg-white/[0.08] backdrop-blur
                  px-3.5 py-2 text-[24px] md:text-[28px] font-extrabold tracking-tight
-                 leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]"
-    >
-      {children}
-    </span>
+                 leading-none text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.30)]">
+  {children}
+</span>
   );
 }
 
-/* =========================
-   Colon Separator
-========================= */
 function Colon({ soon = false }: { soon?: boolean }) {
   return (
     <span
