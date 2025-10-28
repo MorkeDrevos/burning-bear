@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import TreasuryLockCard from '@/components/TreasuryLockCard';
 
 /* =========================
    Config
@@ -428,6 +429,19 @@ useEffect(() => {
 
   <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
   <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
+</div>
+
+{/* Treasury Lock (full card) */}
+<div className="mt-6">
+  <TreasuryLockCard
+    tokenSymbol="BBURN"
+    lockedAmount={30000000}
+    lockedAtISO="2025-10-28T12:00:00Z"
+    unlockAtISO="2026-04-28T00:00:00Z"
+    escrowUrl="https://lock.jup.ag/escrow/7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
+    escrowAddress="7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
+    recipientAddress="FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE"
+  />
 </div>
     </div>
   </div>
