@@ -100,7 +100,7 @@ export default function TreasuryLockCard(props: TreasuryLockCardProps) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 120, damping: 14 }}
-      className="w-full max-w-3xl rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-5 md:p-6 text-white shadow-[0_8px_40px_rgba(0,0,0,0.35)]"
+      className="w-full max-w-3xl rounded-2xl border border-white/10 bg-black/40 p-5 md:p-6 text-white shadow-[0_8px_40px_rgba(0,0,0,0.5)]"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-2">
