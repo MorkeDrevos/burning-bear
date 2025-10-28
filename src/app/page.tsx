@@ -571,14 +571,14 @@ useEffect(() => {
   </div>
 </section>
 
-{/* ===== Treasury Lock (Full-row + dark band) ===== */}
+{/* ===== Treasury Lock (aligned to site width + dark band) ===== */}
 <section id="treasury-lock" className="relative mt-10">
-  {/* dark background band */}
+  {/* dark background band behind the card */}
   <div className="absolute inset-0 bg-[#0b1712]/85" />
 
-  {/* pull section edges to viewport, then re-add padding inside */}
-  <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 py-8">
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+  {/* keep inner content EXACTLY the same width/padding as other sections */}
+  <div className="relative py-8">
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
       <div className="w-full rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.35)] p-2">
         <TreasuryLockCard
           tokenSymbol="BBURN"
