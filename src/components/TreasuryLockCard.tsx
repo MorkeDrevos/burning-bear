@@ -72,7 +72,7 @@ export default function TreasuryLockCard(props: TreasuryLockCardProps) {
       <motion.div
         initial={{ opacity: 0, y: -4 }}
         animate={{ opacity: 1, y: 0 }}
-        className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 border border-emerald-400/25 px-3 py-1 text-emerald-200 text-xs"
+        className="w-full rounded-2xl border border-white/10 bg-[#0B0F0C]/80 p-5 md:p-6 text-white shadow-[0_8px_40px_rgba(0,0,0,0.5)]"
       >
         <Lock className="w-3.5 h-3.5" />
         <span>
