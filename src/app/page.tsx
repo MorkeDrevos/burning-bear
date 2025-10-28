@@ -719,6 +719,18 @@ useEffect(() => {
   </div>
 </section>
 
+<section className="mt-10">
+  <TreasuryLockCard
+    tokenSymbol="BBURN"
+    lockedAmount={30000000}
+    lockedAtISO="2025-10-28T12:00:00Z"
+    unlockAtISO="2026-04-28T00:00:00Z"
+    escrowUrl="https://lock.jup.ag/escrow/7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
+    escrowAddress="7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
+    recipientAddress="FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE"
+  />
+</section>
+
     {/* ===== Contract Address (blended) ===== */}
 <section className="mx-auto max-w-5xl px-4 pt-8 pb-20 text-center">
   <h3 className="text-lg font-semibold text-amber-300 mb-3">
