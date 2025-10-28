@@ -719,7 +719,7 @@ useEffect(() => {
   </div>
 </section>
 
-<section className="mt-10">
+<div className="mx-auto max-w-6xl px-4 mt-10">
   <TreasuryLockCard
     tokenSymbol="BBURN"
     lockedAmount={30000000}
@@ -729,7 +729,7 @@ useEffect(() => {
     escrowAddress="7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
     recipientAddress="FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE"
   />
-</section>
+</div>
 
     {/* ===== Contract Address (blended) ===== */}
 <section className="mx-auto max-w-5xl px-4 pt-8 pb-20 text-center">
