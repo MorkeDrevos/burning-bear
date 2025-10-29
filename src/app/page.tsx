@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import TreasuryLockCard from '@/components/TreasuryLockCard';
-import CopyButton from "@/components/CopyButton";
+import CopyButton from "./components/CopyButton";
 
 /* =========================
    Config
