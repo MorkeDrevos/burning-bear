@@ -135,8 +135,6 @@ export default function Page() {
   const [data, setData] = useState<StateJson | null>(null);
   const [solUsd, setSolUsd] = useState<number | null>(null);
   const [now, setNow] = useState<number>(Date.now());
-  const [copied, setCopied] = useState(false);
-  const copyTimer = useRef<number | null>(null);
 
   // tick each second (drives countdowns)
   useEffect(() => {
@@ -303,13 +301,6 @@ useEffect(() => {
     const avgSol = count > 0 ? sol / count : 0;
     return { count, sol, usd, largest, avgSol };
   }, [burnsSorted, weekStart, priceUsdPerSol]);
-
-  const handleCopy = async () => {
-    try { await navigator.clipboard.writeText(FULL_TOKEN_ADDRESS); } catch {}
-    setCopied(true);
-    if (copyTimer.current) window.clearTimeout(copyTimer.current);
-    copyTimer.current = window.setTimeout(() => setCopied(false), 1400);
-  };
 
   return (
     <main id="top">
