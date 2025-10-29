@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Lock,
   CheckCircle2,
   Clock,
   Copy,
+  Check,
   ExternalLink,
   ShieldCheck,
-  HelpCircle,
 } from "lucide-react";
 
 type TreasuryLockCardProps = {
@@ -25,34 +25,67 @@ function fmt(num: number) {
   return num.toLocaleString(undefined, { maximumFractionDigits: 0 });
 }
 
+// ===========================================================
+// Address Row — includes copy + check icon animation
+// ===========================================================
 const Address = ({ label, value }: { label: string; value?: string }) => {
   if (!value) return null;
+
   const short =
     value.length > 12 ? `${value.slice(0, 6)}…${value.slice(-6)}` : value;
-  const copy = async () => {
+
+  // copy → show check → revert
+  const [copied, setCopied] = useState(false);
+  const timer = useRef<number | null>(null);
+
+  const onCopy = async () => {
     try {
       await navigator.clipboard.writeText(value);
-    } catch {}
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = value;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+    setCopied(true);
+    if (timer.current) window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setCopied(false), 1200);
   };
+
   return (
     <div className="flex items-center gap-2 text-white/70 text-xs">
       <span className="inline-flex items-center gap-1">
         <ShieldCheck className="w-3.5 h-3.5" /> {label}:
       </span>
+
       <code className="px-2 py-0.5 rounded bg-white/5 text-white/80">
         {short}
       </code>
+
       <button
-        onClick={copy}
-        className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded hover:bg-white/10"
+        onClick={onCopy}
         aria-label={`Copy ${label}`}
+        className={[
+          "inline-grid h-9 w-9 place-items-center rounded-lg border transition",
+          "focus:outline-none focus:ring-2 focus:ring-amber-300/30 active:scale-95",
+          copied
+            ? "border-emerald-400/40 bg-emerald-500/15 ring-1 ring-emerald-400/30 text-emerald-400"
+            : "border-white/12 bg-white/[0.06] hover:bg-white/[0.10] text-white/80",
+        ].join(" ")}
       >
-        <Copy className="w-3.5 h-3.5" />
+        {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
       </button>
     </div>
   );
 };
 
+// ===========================================================
+// Main TreasuryLockCard Component
+// ===========================================================
 export default function TreasuryLockCard(props: TreasuryLockCardProps) {
   const {
     tokenSymbol,
@@ -132,16 +165,16 @@ export default function TreasuryLockCard(props: TreasuryLockCardProps) {
       </div>
 
       {/* Actions */}
-<div className="mt-5">
-  <a
-    href={escrowUrl}
-    target="_blank"
-    rel="noreferrer"
-    className="w-full inline-flex justify-center items-center gap-2 rounded-xl px-4 py-3 bg-emerald-500/20 hover:bg-emerald-500/25 border border-emerald-400/30 text-base font-medium"
-  >
-    <CheckCircle2 className="w-5 h-5" /> Verify on Jupiter
-  </a>
-</div>
+      <div className="mt-5">
+        <a
+          href={escrowUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="w-full inline-flex justify-center items-center gap-2 rounded-xl px-4 py-3 bg-emerald-500/20 hover:bg-emerald-500/25 border border-emerald-400/30 text-base font-medium"
+        >
+          <CheckCircle2 className="w-5 h-5" /> Verify on Jupiter
+        </a>
+      </div>
     </motion.div>
   );
 }
