@@ -424,20 +424,20 @@ useEffect(() => {
     <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
   </div>
 
-{/* Right pill — Vault Lock (exact height match) */}
+{/* Right pill — Vault Lock (balanced height) */}
 <a
   href="#vault"
   className="group inline-flex items-center gap-2 rounded-xl
              border border-amber-400/30 bg-amber-500/10
-             px-3 py-[5px] text-[13px] leading-none font-semibold
+             px-3 py-[6px] text-[13.5px] leading-none font-semibold
              text-amber-200 hover:bg-amber-500/15 hover:text-amber-100
-             shadow-[0_1px_6px_rgba(0,0,0,0.25)] transition"
+             shadow-[0_1px_8px_rgba(0,0,0,0.25)] transition"
   title="View Treasury Lock details"
 >
-  {/* smaller lock icon */}
-  <span className="grid h-4.5 w-4.5 place-items-center rounded-md
+  {/* lock icon */}
+  <span className="grid h-[18px] w-[18px] place-items-center rounded-md
                    bg-amber-500/15 ring-1 ring-amber-400/30">
-    <svg viewBox="0 0 24 24" className="h-3 w-3 text-amber-300" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg viewBox="0 0 24 24" className="h-[13px] w-[13px] text-amber-300" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
