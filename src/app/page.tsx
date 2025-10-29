@@ -449,7 +449,7 @@ useEffect(() => {
 
   {/* text + chevron */}
   <span className="tracking-tight">
-    30M $BBURN locked until 28 Apr 2026.{' '}
+    30,000,000 $BBURN locked until 28 Apr, 2026.{' '}
     <span className="inline-flex items-center gap-1 text-amber-300/90 group-hover:text-amber-100 transition">
       View details
       <svg
