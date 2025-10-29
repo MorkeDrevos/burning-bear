@@ -83,3 +83,10 @@ html {
     transform: translateX(var(--marquee-translate));
   }
 }
+.boosted-badge {
+  animation: boostedPulse 2.6s ease-in-out infinite;
+}
+@keyframes boostedPulse {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(255,184,76,0.35)); opacity: 1; }
+  50%      { filter: drop-shadow(0 0 10px rgba(255,184,76,0.65)); opacity: 0.92; }
+}
