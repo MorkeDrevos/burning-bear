@@ -439,25 +439,24 @@ useEffect(() => {
 </div>
     </div>
   </div>
-    {/* Vault Lock Pill (trust badge) */}
-  <div className="mt-5 flex justify-center">
+  {/* Vault Lock Pill (trust badge) */}
+  <div className="mt-4 flex justify-center">
     <a
       href="#vault"
       className="group inline-flex items-center gap-2 rounded-2xl
-                 border border-amber-400/20 bg-amber-500/10 px-4 py-[7px]
-                 text-[15px] leading-none text-amber-300 backdrop-blur
-                 hover:bg-amber-500/15 hover:border-amber-400/30 transition
-                 shadow-[0_2px_18px_rgba(0,0,0,0.25)]"
+                 border border-amber-400/20 bg-amber-500/10
+                 px-4 py-[7px] text-[15px] leading-none text-amber-300
+                 backdrop-blur hover:bg-amber-500/15 hover:border-amber-400/30
+                 transition shadow-[0_2px_18px_rgba(0,0,0,0.25)]"
       title="View Treasury Lock details"
     >
       {/* lock icon */}
       <span className="inline-grid h-5 w-5 place-items-center rounded-md
                        bg-amber-500/25 ring-1 ring-amber-400/30">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-             className="h-3.5 w-3.5 text-amber-300" fill="none"
+        <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-amber-300" fill="none"
              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
         </svg>
       </span>
 
@@ -467,7 +466,7 @@ useEffect(() => {
       </span>
 
       {/* chevron */}
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+      <svg viewBox="0 0 24 24"
            className="h-4 w-4 text-amber-300/80 group-hover:translate-x-0.5 transition"
            fill="none" stroke="currentColor" strokeWidth="2"
            strokeLinecap="round" strokeLinejoin="round">
