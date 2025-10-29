@@ -677,7 +677,7 @@ useEffect(() => {
 </div>
 
     {/* ===== Contract Address (blended) ===== */}
-<section className="mx-auto max-w-5xl px-4 pt-8 pb-20 text-center">
+<section className="mx-auto max-w-5xl px-4 pt-10 pb-20 text-center">
   <h3 className="text-lg font-semibold text-amber-300 mb-3">
     Contract Address
   </h3>
