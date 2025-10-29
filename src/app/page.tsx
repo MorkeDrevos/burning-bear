@@ -499,35 +499,39 @@ useEffect(() => {
   <div className="flex items-baseline justify-between max-w-7xl mx-auto">
     <h2 className="text-2xl font-bold">Live Burn Log 🔥</h2>
 
-   {/* ⚡ Boosted badge (linked to DexScreener) */}
-<a
-  href="https://dexscreener.com/solana/9hvastjudavgznn4iauw6cb2nqxniesw7vr2pu6x32cq"
-  target="_blank"
-  rel="noopener noreferrer"
-  title="View live pair on DexScreener"
-  className="boosted-badge flex items-center gap-2 self-start translate-y-[-6px]
-             bg-gradient-to-r from-amber-600/20 to-amber-400/10
-             px-3 py-[5px] rounded-lg border border-amber-500/20
-             text-amber-200 font-semibold text-sm tracking-wide
-             shadow-[0_0_10px_rgba(255,184,76,0.25)]
-             hover:bg-amber-500/15 hover:text-amber-100
-             transition-all duration-200"
->
-  <span className="text-lg leading-none">⚡</span>
-  <span>Boosted 10x</span>
-</a>
+    {/* ⚡ Boosted badge (linked to DexScreener) */}
+    <a
+      href="https://dexscreener.com/solana/9hvastjudavgznn4iauw6cb2nqxniesw7vr2pu6x32cq"
+      target="_blank"
+      rel="noopener noreferrer"
+      title="View live pair on DexScreener"
+      className="boosted-badge flex items-center gap-2 self-start -translate-y-1.5
+                 bg-gradient-to-r from-amber-600/20 to-amber-400/10
+                 px-3 py-[5px] rounded-lg border border-amber-500/20
+                 text-amber-200 font-semibold text-sm tracking-wide
+                 shadow-[0_0_10px_rgba(255,184,76,0.25)]
+                 hover:bg-amber-500/15 hover:text-amber-100
+                 transition-all duration-200"
+    >
+      <span className="text-lg leading-none">⚡</span>
+      <span>Boosted 10x</span>
+    </a>
   </div>
 
-  {/** Build items: newest first, duplicate for seamless loop */}
+  {/* Build items: newest first, duplicate for seamless loop */}
   {(() => {
-    const visible = (burnsSorted ?? []).slice(0, Math.max(4, Math.min(6, (burnsSorted ?? []).length)));
+    const visible = (burnsSorted ?? []).slice(
+      0,
+      Math.max(4, Math.min(6, (burnsSorted ?? []).length))
+    );
     const items = visible.length > 1 ? [...visible, ...visible] : visible;
     const dur = Math.max(18, visible.length * 6); // seconds
 
     return (
       <div className="mt-6 relative overflow-hidden auto-marquee">
+        {/* Enable horizontal scroll with drag */}
         <div
-          className="marquee-track flex gap-6 will-change-transform px-1"
+          className="marquee-track flex gap-6 will-change-transform px-1 overflow-x-auto cursor-grab active:cursor-grabbing scroll-smooth"
           style={{ animationDuration: `${dur}s` as any }}
         >
           {items.map((b, i) => (
@@ -537,10 +541,11 @@ useEffect(() => {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`View TX for burn of ${b.amount.toLocaleString()} BBURN`}
-              className="group block flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded-3xl"
+              className="group block flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]
+                         focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded-3xl"
             >
               {/* Card */}
-              <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-transform">
+              <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-transform hover:scale-[1.02]">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-900/40">
@@ -611,34 +616,6 @@ useEffect(() => {
     );
   })()}
 </section>
-
-{/* ===== How It Works ===== */}
-<section
-  id="how"
-  className="mx-auto max-w-6xl px-4 pt-12 pb-16 md:pt-14 md:pb-20 scroll-mt-[88px] md:scroll-mt-[100px] lg:scroll-mt-[116px]"
->
-  <h3 className="text-2xl font-bold text-amber-300 mb-4">How It Works</h3>
-  <p className="text-white/70 max-w-3xl">
-    Every spark fuels the fire. Whether it’s a trade, a creator reward, or a network fee — every move
-    feeds the <span className="text-amber-300 font-semibold">BBURN Campfire Fund</span>, powering constant
-    buybacks, burns, and community rewards. The more the ecosystem moves, the hotter the fire burns.
-  </p>
-
-  <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
-    <HowCard
-      title="50% → Auto-Buy & Burn"
-      body="Half of every fee automatically buys $BBURN and sends it to the official burn wallet, where tokens are permanently destroyed on-chain."
-    />
-    <HowCard
-      title="30% → Treasury & Buybacks"
-      body="Reserved for strategic buybacks, ecosystem stability, and community-driven events that keep $BBURN’s fire burning long-term."
-    />
-    <HowCard
-      title="20% → Team, Creators & Growth"
-      body="Rewards creators, partners, and community builders — spreading the legend of $BBURN across Solana while fueling future innovation."
-    />
-  </div>
-</section>    
 
 {/* ===== Meet the Burning Bear ===== */}
   <section id="bear" className="relative w-full overflow-hidden pt-16 pb-16 md:pt-20 md:pb-20 text-center">
