@@ -529,11 +529,13 @@ useEffect(() => {
 
     return (
       <div className="mt-6 relative overflow-hidden auto-marquee">
-        {/* Enable horizontal scroll with drag */}
-        <div
-          className="marquee-track flex gap-6 will-change-transform px-1 overflow-x-auto cursor-grab active:cursor-grabbing scroll-smooth"
-          style={{ animationDuration: `${dur}s` as any }}
-        >
+  {/* inner scroll only */}
+  <div
+    className="marquee-track flex gap-6 will-change-transform px-1
+               cursor-grab active:cursor-grabbing scroll-smooth
+               overflow-x-auto"
+    style={{ animationDuration: `${dur}s` as any }}
+  >
           {items.map((b, i) => (
             <Link
               key={`${b.id}-${i}`}
