@@ -500,22 +500,22 @@ useEffect(() => {
     <h2 className="text-2xl font-bold">Live Burn Log 🔥</h2>
 
     {/* ⚡ Boosted badge (linked to DexScreener) */}
-    <a
-      href="https://dexscreener.com/solana/9hvastjudavgznn4iauw6cb2nqxniesw7vr2pu6x32cq"
-      target="_blank"
-      rel="noopener noreferrer"
-      title="View live pair on DexScreener"
-      className="boosted-badge flex items-center gap-2
-                 bg-gradient-to-r from-amber-600/20 to-amber-400/10
-                 px-3 py-1.5 rounded-lg border border-amber-500/20
-                 text-amber-200 font-semibold text-sm tracking-wide
-                 shadow-[0_0_10px_rgba(255,184,76,0.25)]
-                 hover:bg-amber-500/15 hover:text-amber-100
-                 transition-all duration-200"
-    >
-      <span className="text-lg leading-none">⚡</span>
-      <span>Boosted 10x</span>
-    </a>
+<a
+  href="https://dexscreener.com/solana/9hvastjudavgznn4iauw6cb2nqxniesw7vr2pu6x32cq"
+  target="_blank"
+  rel="noopener noreferrer"
+  title="View live pair on DexScreener"
+  className="boosted-badge flex items-center gap-2 self-start translate-y-[-2px]
+             bg-gradient-to-r from-amber-600/20 to-amber-400/10
+             px-3 py-[5px] rounded-lg border border-amber-500/20
+             text-amber-200 font-semibold text-sm tracking-wide
+             shadow-[0_0_10px_rgba(255,184,76,0.25)]
+             hover:bg-amber-500/15 hover:text-amber-100
+             transition-all duration-200"
+>
+  <span className="text-lg leading-none">⚡</span>
+  <span>Boosted 10x</span>
+</a>
   </div>
 
   {/** Build items: newest first, duplicate for seamless loop */}
