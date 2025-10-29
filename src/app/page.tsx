@@ -449,7 +449,7 @@ useEffect(() => {
 
   {/* text + chevron */}
   <span className="tracking-tight">
-    30,000,000 BBURN locked for 6 months.{' '}
+    30,000,000 $BBURN locked for 6 months.{' '}
     <span className="inline-flex items-center gap-1 text-amber-300/90 group-hover:text-amber-100 transition">
       View details
       <svg
@@ -498,7 +498,16 @@ useEffect(() => {
 >
   <div className="flex items-baseline justify-between max-w-7xl mx-auto">
     <h2 className="text-2xl font-bold">Live Burn Log 🔥</h2>
-    <p className="text-sm text-white/50">TX links open explorer.</p>
+
+    {/* ⚡ Boosted badge */}
+    <div className="boosted-badge flex items-center gap-2
+                    bg-gradient-to-r from-amber-600/20 to-amber-400/10
+                    px-3 py-1.5 rounded-lg border border-amber-500/20
+                    text-amber-200 font-semibold text-sm tracking-wide
+                    shadow-[0_0_10px_rgba(255,184,76,0.25)]">
+      <span className="text-lg leading-none">⚡</span>
+      <span>Boosted 10x</span>
+    </div>
   </div>
 
   {/** Build items: newest first, duplicate for seamless loop */}
