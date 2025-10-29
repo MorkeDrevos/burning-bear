@@ -424,71 +424,54 @@ useEffect(() => {
     <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
   </div>
 
-  {/* Right-side trust pill (Cool Steel) */}
-  <a
-    href="#vault"
-    className="
-      group inline-flex items-center gap-2
-      rounded-2xl border border-cyan-400/25 bg-cyan-500/10
-      px-3.5 py-[7px] text-[15px] leading-none font-semibold text-cyan-200
-      hover:bg-cyan-500/15 hover:text-cyan-100 transition
-      pill-shadow sm:ml-auto
-    "
-    title="View Treasury Lock details"
+  {/* Right-side trust pill */}
+<a
+  href="#vault"
+  className="
+    group inline-flex items-center gap-2
+    rounded-2xl border border-amber-400/20 bg-amber-500/10
+    px-3.5 py-[7px] text-[15px] leading-none font-semibold text-amber-200
+    hover:bg-amber-500/15 hover:text-amber-100 transition
+    pill-shadow sm:ml-auto
+  "
+  title="View Treasury Lock details"
+>
+  {/* small lock icon */}
+  <span
+    className="inline-grid h-5 w-5 place-items-center rounded-md
+               bg-amber-500/25 ring-1 ring-amber-400/30"
   >
-    {/* small lock icon */}
-    <span
-      className="inline-grid h-5 w-5 place-items-center rounded-md
-                 bg-cyan-500/20 ring-1 ring-cyan-400/30"
-    >
-      <svg viewBox="0 0 24 24" className="h-[14px] w-[14px]" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="3" y="11" width="18" height="10" rx="2" />
-        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    <svg viewBox="0 0 24 24" className="h-[14px] w-[14px]" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="3" y="11" width="18" height="10" rx="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  </span>
+
+  {/* text + chevron */}
+  <span className="tracking-tight">
+    30M $BBURN locked until 28 Apr 2026.{' '}
+    <span className="inline-flex items-center gap-1 text-amber-300/90 group-hover:text-amber-100 transition">
+      View details
+      <svg
+        viewBox="0 0 24 24"
+        className="h-[14px] w-[14px] link-chevron"
+        fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+      >
+        <path d="M5 12h14M13 5l7 7-7 7" />
       </svg>
     </span>
-
-    {/* text + chevron */}
-    <span className="tracking-tight">
-      30M $BBURN locked until 28 Apr 2026.{` `}
-      <span className="inline-flex items-center gap-1 text-cyan-300/90 group-hover:text-cyan-100 transition">
-        View details
-        <svg
-          viewBox="0 0 24 24"
-          className="h-[14px] w-[14px] link-chevron"
-          fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-        >
-          <path d="M5 12h14M13 5l7 7-7 7" />
-        </svg>
-      </span>
-    </span>
-  </a>
+  </span>
+</a>
 </div>
 
+
+    </div>
+  </div>
 </section>
 
       {/* Contract Address Pill — Cleaned */}
 <div className="mt-6 flex justify-center">
   <div className="inline-flex items-center gap-3 bg-[#0f1f19]/60 px-4 py-2 rounded-xl backdrop-blur-sm">
-    {/* Copy icon (left) */}
-    <button
-      onClick={handleCopy}
-      aria-label="Copy contract address"
-      className="text-white/60 hover:text-amber-200 transition"
-      title={copied ? 'Copied!' : 'Copy'}
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        className="h-4 w-4"
-      >
-        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-      </svg>
-    </button>
-
     {/* Token + Address */}
     <span className="text-sm font-semibold text-white/75">{TOKEN_SYMBOL}</span>
     <span className="text-white/50">•</span>
@@ -499,16 +482,12 @@ useEffect(() => {
       {truncateMiddle(FULL_TOKEN_ADDRESS, 6, 6)}
     </code>
 
-    {/* Copy button (right) */}
-    <button
-      onClick={handleCopy}
-      className={`ml-2 rounded-md px-3 py-1 text-[12px] font-semibold transition
-        ${copied
-          ? 'bg-[#ffedb3] text-black'
-          : 'bg-amber-300/10 text-amber-200 hover:bg-amber-300/20'}`}
-    >
-      {copied ? 'Copied!' : 'Copy CA'}
-    </button>
+    {/* ✅ New Copy Button goes here */}
+    <CopyButton
+      value={FULL_TOKEN_ADDRESS}
+      label="Copy contract address"
+      className="h-8 w-8 rounded-md bg-white/5 ring-1 ring-white/10 hover:bg-white/10"
+    />
   </div>
 </div>
 
