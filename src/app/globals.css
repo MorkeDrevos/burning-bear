@@ -107,3 +107,4 @@ html {
 .auto-marquee:hover .marquee-track {
   animation-play-state: paused;
 }
+html { scroll-behavior: smooth; }
