@@ -424,42 +424,31 @@ useEffect(() => {
     <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
   </div>
 
-  {/* Right-side trust pill */}
+{/* Right pill — Vault Lock (slimmer, same height as other pills) */}
 <a
   href="#vault"
-  className="
-    group inline-flex items-center gap-2
-    rounded-2xl border border-amber-400/20 bg-amber-500/10
-    px-3.5 py-[7px] text-[15px] leading-none font-semibold text-amber-200
-    hover:bg-amber-500/15 hover:text-amber-100 transition
-    pill-shadow sm:ml-auto
-  "
+  className="group inline-flex items-center gap-2 rounded-2xl
+             border border-amber-400/30 bg-amber-500/10
+             px-3 py-1.5 text-sm leading-none font-semibold
+             text-amber-200 hover:bg-amber-500/15 hover:text-amber-100
+             shadow-[0_2px_8px_rgba(0,0,0,0.25)] transition"
   title="View Treasury Lock details"
 >
-  {/* small lock icon */}
-  <span
-    className="inline-grid h-5 w-5 place-items-center rounded-md
-               bg-amber-500/25 ring-1 ring-amber-400/30"
-  >
-    <svg viewBox="0 0 24 24" className="h-[14px] w-[14px]" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="3" y="11" width="18" height="10" rx="2" />
+  {/* tiny lock icon */}
+  <span className="grid h-5 w-5 place-items-center rounded-md
+                   bg-amber-500/15 ring-1 ring-amber-400/30">
+    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-amber-300" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
   </span>
 
-  {/* text + chevron */}
-  <span className="tracking-tight">
-    30M $BBURN locked until 28 Apr 2026.{' '}
-    <span className="inline-flex items-center gap-1 text-amber-300/90 group-hover:text-amber-100 transition">
-      View details
-      <svg
-        viewBox="0 0 24 24"
-        className="h-[14px] w-[14px] link-chevron"
-        fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-      >
-        <path d="M5 12h14M13 5l7 7-7 7" />
-      </svg>
-    </span>
+  {/* text */}
+  <span className="tracking-tight">30M $BBURN locked until 28 Apr 2026.</span>
+
+  {/* “View details” */}
+  <span className="ml-2 hidden sm:inline text-amber-300/90 group-hover:text-amber-200">
+    View details →
   </span>
 </a>
 </div>
@@ -707,7 +696,10 @@ useEffect(() => {
   </div>
 </section>
 
-<section id="vault" className="mx-auto max-w-6xl px-4 anchor-offset">
+<section
+  id="vault"
+  className="scroll-mt-[88px] md:scroll-mt-[104px] lg:scroll-mt-[120px] mx-auto max-w-6xl px-4 mt-10"
+>
   <TreasuryLockCard
     tokenSymbol="BBURN"
     lockedAmount={30000000}
