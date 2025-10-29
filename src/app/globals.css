@@ -397,29 +397,30 @@ useEffect(() => {
         Meet The Burning Bear – the classiest arsonist in crypto.
       </h1>
 
-      {/* Trust pill: under H1 */}
-<a
-  href="#vault"
-  className="mt-3 inline-flex items-center gap-2 rounded-full
-             border border-emerald-400/30 bg-emerald-500/10
-             px-3.5 py-1.5 text-[13px] font-semibold text-emerald-100
-             shadow-[0_2px_14px_rgba(16,185,129,.12)]
-             hover:bg-emerald-500/15 hover:border-emerald-400/40
-             transition"
->
-  <span className="inline-grid h-5 w-5 place-items-center rounded-full
-                   bg-emerald-500/20 ring-1 ring-emerald-400/30">
-    {/* lock icon */}
-    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8">
+      {/* Wrap H1 + badge in a row */}
+<div className="mt-1 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+  <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
+    Meet The Burning Bear – the classiest arsonist in crypto.
+  </h1>
+
+  <a
+    href="#vault"
+    className="inline-flex items-center gap-2 rounded-xl
+               border border-emerald-400/30 bg-emerald-500/10
+               px-3.5 py-2 text-[13px] font-semibold text-emerald-100
+               shadow-[0_6px_24px_rgba(16,185,129,.12)]
+               hover:bg-emerald-500/15 hover:border-emerald-400/40
+               transition"
+    title="View treasury lock"
+  >
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
       <rect x="3" y="11" width="18" height="10" rx="2" />
       <path d="M7 11V8a5 5 0 0 1 10 0v3" />
     </svg>
-  </span>
-  <span className="tracking-tight">
-    30,000,000 BBURN locked — unlocks <span className="font-bold">28 Apr 2026</span>
-  </span>
-  <span className="ml-1.5 text-emerald-200/80">• View details →</span>
-</a>
+    <span className="font-bold">30,000,000</span> BBURN locked
+    <span className="opacity-80">• Unlocks 28 Apr 2026</span>
+  </a>
+</div>
 
       {/* Countdowns */}
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
