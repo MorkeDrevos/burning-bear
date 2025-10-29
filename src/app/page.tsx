@@ -397,6 +397,21 @@ useEffect(() => {
         Meet The Burning Bear – the classiest arsonist in crypto.
       </h1>
 
+      {/* 🔒 Vault lock callout */}
+<a
+  href="#vault"
+  className="group mt-4 inline-flex items-center gap-2 rounded-full
+             border border-emerald-400/30 bg-emerald-500/15
+             px-3.5 py-2 text-[13px] font-semibold text-emerald-200
+             hover:bg-emerald-500/25"
+>
+  <span className="text-[15px]">🔒</span>
+  <span>30,000,000 BBURN locked — unlocks 28 Apr 2026</span>
+  <span className="ml-1 hidden sm:inline text-emerald-300/80 group-hover:text-emerald-200">
+    View details →
+  </span>
+</a>
+
       {/* Countdowns */}
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
        {/*  <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />*/}
@@ -411,41 +426,54 @@ useEffect(() => {
         <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
       </div>
 
-{/* Right pill — Vault Lock (matches pill size) */}
-<a
-  href="#vault"
-  className="
-    group inline-flex items-center gap-2
-    rounded-2xl border border-amber-400/20 bg-amber-500/10
-    px-3.5 py-[7px] text-[15px] leading-none font-semibold text-amber-200
-    hover:bg-amber-500/15 hover:text-amber-100 transition
-    shadow-[0_2px_14px_rgba(0,0,0,0.25)]
-  "
-  title="View Treasury Lock details"
->
-  {/* lock icon */}
-  <span
-    className="inline-grid h-5 w-5 place-items-center rounded-md
-               bg-amber-500/25 ring-1 ring-amber-400/30"
+{/* Pills */}
+<div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+  {/* Left: existing pills */}
+  <div className="flex flex-wrap items-center gap-3">
+    <a href="#log">
+      <Pill className="cursor-pointer bg-orange-500/20 text-orange-400 font-semibold hover:bg-orange-500/25">
+        🔥 Total Burns: {data?.burns?.length ?? 0}
+      </Pill>
+    </a>
+    <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
+    <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
+  </div>
+
+  {/* Right: Vault Lock pill (same size as the others) */}
+  <a
+    href="#vault"
+    className="
+      group inline-flex items-center gap-2
+      rounded-2xl border border-amber-400/20 bg-amber-500/10
+      px-3.5 py-[7px] text-[15px] leading-none font-semibold text-amber-200
+      hover:bg-amber-500/15 hover:text-amber-100 transition
+      shadow-[0_2px_14px_rgba(0,0,0,0.25)]
+      sm:ml-auto
+    "
+    title="View Treasury Lock details"
   >
-    <svg viewBox="0 0 24 24" className="h-[14px] w-[14px]" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="3" y="11" width="18" height="10" rx="2" />
-      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    <span
+      className="inline-grid h-5 w-5 place-items-center rounded-md
+                 bg-amber-500/25 ring-1 ring-amber-400/30"
+    >
+      <svg viewBox="0 0 24 24" className="h-[14px] w-[14px]" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="3" y="11" width="18" height="10" rx="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </svg>
+    </span>
+
+    <span className="tracking-tight">
+      30M BBURN locked — unlocks 28 Apr 2026
+    </span>
+
+    <svg viewBox="0 0 24 24"
+         className="ml-1 h-4 w-4 text-amber-300/80 group-hover:translate-x-0.5 transition"
+         fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 18l6-6-6-6" />
     </svg>
-  </span>
+  </a>
+</div>
 
-  {/* text */}
-  <span className="tracking-tight">
-  30M BBURN locked — unlocks 28 Apr 2026
-</span>
-
-  {/* chevron */}
-  <svg viewBox="0 0 24 24"
-       className="ml-1 h-4 w-4 text-amber-300/80 group-hover:translate-x-0.5 transition"
-       fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M9 18l6-6-6-6" />
-  </svg>
-</a>
 
     </div>
   </div>
