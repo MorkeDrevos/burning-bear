@@ -90,3 +90,20 @@ html {
   0%, 100% { filter: drop-shadow(0 0 4px rgba(255,184,76,0.35)); opacity: 1; }
   50%      { filter: drop-shadow(0 0 10px rgba(255,184,76,0.65)); opacity: 0.92; }
 }
+/* Hide horizontal scrollbar for a cleaner look */
+.no-scrollbar {
+  scrollbar-width: none;           /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar { /* WebKit */
+  display: none;
+}
+
+/* Cursor feedback while dragging */
+.is-dragging {
+  cursor: grabbing !important;
+}
+
+/* (Optional) If you still animate the marquee-track, pause on hover */
+.auto-marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
