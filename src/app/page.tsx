@@ -639,7 +639,7 @@ useEffect(() => {
 </section>
 
 {/* ===== Campfire Wallets ===== */}
-<section id="wallets" className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
+<section id="wallets" className="scroll-mt-28 md:scroll-mt-22 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">Campfire Wallets</h3>
   <p className="text-white/60">
     The campfire burns in full view. Every wallet can be verified on Solana Explorer.
@@ -664,7 +664,7 @@ useEffect(() => {
   </div>
 </section>
 
-<div className="mx-auto max-w-6xl px-4 mt-8">
+<div className="mx-auto max-w-6xl px-4 mt-10">
   <TreasuryLockCard
     tokenSymbol="BBURN"
     lockedAmount={30000000}
