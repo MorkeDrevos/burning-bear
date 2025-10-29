@@ -424,27 +424,29 @@ useEffect(() => {
     <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
   </div>
 
-{/* Right pill — Vault Lock (slimmer, same height as other pills) */}
+{/* Right pill — Vault Lock (exact height match) */}
 <a
   href="#vault"
-  className="group inline-flex items-center gap-2 rounded-2xl
+  className="group inline-flex items-center gap-2 rounded-xl
              border border-amber-400/30 bg-amber-500/10
-             px-3 py-1.5 text-sm leading-none font-semibold
+             px-3 py-[5px] text-[13px] leading-none font-semibold
              text-amber-200 hover:bg-amber-500/15 hover:text-amber-100
-             shadow-[0_2px_8px_rgba(0,0,0,0.25)] transition"
+             shadow-[0_1px_6px_rgba(0,0,0,0.25)] transition"
   title="View Treasury Lock details"
 >
-  {/* tiny lock icon */}
-  <span className="grid h-5 w-5 place-items-center rounded-md
+  {/* smaller lock icon */}
+  <span className="grid h-4.5 w-4.5 place-items-center rounded-md
                    bg-amber-500/15 ring-1 ring-amber-400/30">
-    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-amber-300" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg viewBox="0 0 24 24" className="h-3 w-3 text-amber-300" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
   </span>
 
   {/* text */}
-  <span className="tracking-tight">30M $BBURN locked until 28 Apr 2026.</span>
+  <span className="tracking-tight whitespace-nowrap">
+    30M $BBURN locked until 28 Apr 2026.
+  </span>
 
   {/* “View details” */}
   <span className="ml-2 hidden sm:inline text-amber-300/90 group-hover:text-amber-200">
