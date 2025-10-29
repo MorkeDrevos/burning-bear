@@ -449,7 +449,7 @@ useEffect(() => {
 
   {/* text + chevron */}
   <span className="tracking-tight">
-    $BBURN Treasury Vault Lock - {' '}
+    BBURN Treasury Vault Lock - {' '}
     <span className="inline-flex items-center gap-1 text-amber-300/90 group-hover:text-amber-100 transition">
       View details
       <svg
