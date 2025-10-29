@@ -425,38 +425,41 @@ useEffect(() => {
   </div>
 
   {/* Right: Vault Lock pill (same size as the others) */}
-  <a
-    href="#vault"
-    className="
-      group inline-flex items-center gap-2
-      rounded-2xl border border-amber-400/20 bg-amber-500/10
-      px-3.5 py-[7px] text-[15px] leading-none font-semibold text-amber-200
-      hover:bg-amber-500/15 hover:text-amber-100 transition
-      shadow-[0_2px_14px_rgba(0,0,0,0.25)]
-      sm:ml-auto
-    "
-    title="View Treasury Lock details"
+<a
+  href="#vault"
+  className="
+    group inline-flex items-center gap-2
+    rounded-2xl border border-amber-400/20 bg-amber-500/10
+    px-3.5 py-[7px] text-[15px] leading-none font-semibold text-amber-200
+    hover:bg-amber-500/15 hover:text-amber-100 transition
+    shadow-[0_2px_14px_rgba(0,0,0,0.25)]
+    sm:ml-auto
+  "
+  title="View Treasury Lock details"
+>
+  <span
+    className="inline-grid h-5 w-5 place-items-center rounded-md
+               bg-amber-500/25 ring-1 ring-amber-400/30"
   >
-    <span
-      className="inline-grid h-5 w-5 place-items-center rounded-md
-                 bg-amber-500/25 ring-1 ring-amber-400/30"
+    <svg
+      viewBox="0 0 24 24"
+      className="h-[14px] w-[14px]"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
     >
-      <svg viewBox="0 0 24 24" className="h-[14px] w-[14px]" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="3" y="11" width="18" height="10" rx="2" />
-        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-      </svg>
-    </span>
-
-    <span className="tracking-tight">
-      30M BBURN locked — unlocks 28 Apr 2026
-    </span>
-
-    <svg viewBox="0 0 24 24"
-         className="ml-1 h-4 w-4 text-amber-300/80 group-hover:translate-x-0.5 transition"
-         fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 18l6-6-6-6" />
+      <rect x="3" y="11" width="18" height="10" rx="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
-  </a>
+  </span>
+
+  <span className="tracking-tight">
+    30M BBURN locked until 28 Apr 2026!{' '}
+    <span className="text-amber-300/90 group-hover:text-amber-100 transition">
+      View details →
+    </span>
+  </span>
+</a>
 </div>
 
 
