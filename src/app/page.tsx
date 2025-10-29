@@ -391,7 +391,7 @@ useEffect(() => {
     </div>
 
     {/* translucent stats panel */}
-    <div className="w-full rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
+    <div className="relative w-full rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
       {/* Headline */}
       <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
         Meet The Burning Bear – the classiest arsonist in crypto.
@@ -438,6 +438,42 @@ useEffect(() => {
   <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
 </div>
     </div>
+  </div>
+    {/* Vault Lock Pill (trust badge) */}
+  <div className="mt-5 flex justify-center">
+    <a
+      href="#vault"
+      className="group inline-flex items-center gap-2 rounded-2xl
+                 border border-amber-400/20 bg-amber-500/10 px-4 py-[7px]
+                 text-[15px] leading-none text-amber-300 backdrop-blur
+                 hover:bg-amber-500/15 hover:border-amber-400/30 transition
+                 shadow-[0_2px_18px_rgba(0,0,0,0.25)]"
+      title="View Treasury Lock details"
+    >
+      {/* lock icon */}
+      <span className="inline-grid h-5 w-5 place-items-center rounded-md
+                       bg-amber-500/25 ring-1 ring-amber-400/30">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+             className="h-3.5 w-3.5 text-amber-300" fill="none"
+             stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </span>
+
+      {/* text */}
+      <span className="tracking-tight">
+        🔒 30 M BBURN locked · Unlocks Apr 2026
+      </span>
+
+      {/* chevron */}
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+           className="h-4 w-4 text-amber-300/80 group-hover:translate-x-0.5 transition"
+           fill="none" stroke="currentColor" strokeWidth="2"
+           strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 18l6-6-6-6" />
+      </svg>
+    </a>
   </div>
 </section>
 
@@ -679,7 +715,7 @@ useEffect(() => {
   </div>
 </section>
 
-<div id="vault" className="mx-auto max-w-6xl px-4 mt-16 scroll-mt-24 md:scroll-mt-28">
+<section id="vault" className="mx-auto max-w-6xl px-4 mt-10">
   <TreasuryLockCard
     tokenSymbol="BBURN"
     lockedAmount={30000000}
@@ -689,7 +725,7 @@ useEffect(() => {
     escrowAddress="7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
     recipientAddress="FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE"
   />
-</div>
+</section>
 
     {/* ===== Contract Address (blended) ===== */}
 <section className="mx-auto max-w-5xl px-4 pt-16 pb-20 text-center">
