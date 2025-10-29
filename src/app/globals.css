@@ -30,3 +30,16 @@ html {
   animation: emberShimmer 8.5s linear infinite;
   filter: drop-shadow(0 0 4px rgba(251,191,36,0.14));
 }
+/* Nudge arrows on hover (used by the hero trust pill) */
+.link-chevron {
+  transition: transform 180ms ease;
+  will-change: transform;
+}
+.group:hover .link-chevron {
+  transform: translateX(2px);
+}
+
+/* Optional: a soft pill shadow (matches the hero style) */
+.pill-shadow {
+  box-shadow: 0 2px 14px rgba(0,0,0,0.25);
+}
