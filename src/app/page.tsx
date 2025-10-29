@@ -928,25 +928,25 @@ function HowCard({ title, body }: { title: string; body: string }) {
   );
 }
 
-function WalletCard({ title, address, note }: { title: string; address: string; note?: string }) {
-  const [copied, setCopied] = useState(false);
-  const timer = useRef<number | null>(null);
-
-  const handleCopy = async () => {
-    try { await navigator.clipboard.writeText(address); } catch {}
-    setCopied(true);
-    if (timer.current) window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => setCopied(false), 1200);
-  };
-
+function WalletCard({
+  title,
+  address,
+  note,
+}: {
+  title: string;
+  address: string;
+  note?: string;
+}) {
   return (
     <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
       <div className="text-base md:text-lg font-semibold">{title}</div>
       {note && <div className="mt-1 text-sm text-white/65">{note}</div>}
+
       <div className="mt-3 flex items-center justify-between gap-3">
         <code className="truncate rounded-md bg-white/5 px-2 py-1 text-sm md:text-[15px] text-white/85">
           {truncateMiddle(address, 8, 8)}
         </code>
+
         <div className="flex items-center gap-2">
           <a
             href={`${EXPLORER}/address/${address}`}
@@ -956,13 +956,13 @@ function WalletCard({ title, address, note }: { title: string; address: string; 
           >
             View
           </a>
-          <button
-            onClick={handleCopy}
-            className={`rounded-[10px] px-3.5 py-1.5 text-sm font-semibold text-black transition
-              ${copied ? 'bg-[#ffedb3] ring-2 ring-amber-300/40' : 'bg-[#ffedb3] hover:bg-[#ffe48d]'}`}
-          >
-            {copied ? 'Copied!' : 'Copy'}
-          </button>
+
+          {/* Icon-only copy button that flips to a check */}
+          <CopyButton
+            value={address}
+            label="Copy wallet address"
+            className="h-8 w-8 rounded-[10px] bg-white/5 ring-1 ring-white/10 hover:bg-white/10"
+          />
         </div>
       </div>
     </div>
