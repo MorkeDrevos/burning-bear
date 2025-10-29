@@ -43,3 +43,13 @@ html {
 .pill-shadow {
   box-shadow: 0 2px 14px rgba(0,0,0,0.25);
 }
+/* anchor offset for sticky header */
+.anchor-offset { scroll-margin-top: 88px; }
+
+@media (min-width: 768px) {
+  .anchor-offset { scroll-margin-top: 100px; }
+}
+
+@media (min-width: 1024px) {
+  .anchor-offset { scroll-margin-top: 116px; }
+}
