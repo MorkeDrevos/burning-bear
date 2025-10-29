@@ -397,30 +397,20 @@ useEffect(() => {
         Meet The Burning Bear – the classiest arsonist in crypto.
       </h1>
 
-      {/* Wrap H1 + badge in a row */}
-<div className="mt-1 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-  <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
-    Meet The Burning Bear – the classiest arsonist in crypto.
-  </h1>
-
-  <a
-    href="#vault"
-    className="inline-flex items-center gap-2 rounded-xl
-               border border-emerald-400/30 bg-emerald-500/10
-               px-3.5 py-2 text-[13px] font-semibold text-emerald-100
-               shadow-[0_6px_24px_rgba(16,185,129,.12)]
-               hover:bg-emerald-500/15 hover:border-emerald-400/40
-               transition"
-    title="View treasury lock"
-  >
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <rect x="3" y="11" width="18" height="10" rx="2" />
-      <path d="M7 11V8a5 5 0 0 1 10 0v3" />
-    </svg>
-    <span className="font-bold">30,000,000</span> BBURN locked
-    <span className="opacity-80">• Unlocks 28 Apr 2026</span>
-  </a>
-</div>
+      {/* 🔒 Vault lock callout */}
+<a
+  href="#vault"
+  className="group mt-4 inline-flex items-center gap-2 rounded-full
+             border border-emerald-400/30 bg-emerald-500/15
+             px-3.5 py-2 text-[13px] font-semibold text-emerald-200
+             hover:bg-emerald-500/25"
+>
+  <span className="text-[15px]">🔒</span>
+  <span>30,000,000 BBURN locked — unlocks 28 Apr 2026</span>
+  <span className="ml-1 hidden sm:inline text-emerald-300/80 group-hover:text-emerald-200">
+    View details →
+  </span>
+</a>
 
       {/* Countdowns */}
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
