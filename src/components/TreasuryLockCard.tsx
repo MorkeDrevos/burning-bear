@@ -34,7 +34,6 @@ const Address = ({ label, value }: { label: string; value?: string }) => {
   const short =
     value.length > 12 ? `${value.slice(0, 6)}…${value.slice(-6)}` : value;
 
-  // copy → show check → revert
   const [copied, setCopied] = useState(false);
   const timer = useRef<number | null>(null);
 
@@ -66,18 +65,19 @@ const Address = ({ label, value }: { label: string; value?: string }) => {
         {short}
       </code>
 
+      {/* ✅ Smaller version — same design, just tighter */}
       <button
         onClick={onCopy}
         aria-label={`Copy ${label}`}
         className={[
-          "inline-grid h-9 w-9 place-items-center rounded-lg border transition",
-          "focus:outline-none focus:ring-2 focus:ring-amber-300/30 active:scale-95",
+          "inline-grid h-7 w-7 place-items-center rounded-md border transition",
+          "focus:outline-none focus:ring-1 focus:ring-amber-300/20 active:scale-95",
           copied
-            ? "border-emerald-400/40 bg-emerald-500/15 ring-1 ring-emerald-400/30 text-emerald-400"
-            : "border-white/12 bg-white/[0.06] hover:bg-white/[0.10] text-white/80",
+            ? "border-emerald-400/40 bg-emerald-500/15 text-emerald-400"
+            : "border-white/10 bg-white/[0.05] hover:bg-white/[0.08] text-white/80",
         ].join(" ")}
       >
-        {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+        {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
       </button>
     </div>
   );
