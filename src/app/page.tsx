@@ -428,10 +428,11 @@ useEffect(() => {
 <a
   href="#vault"
   className="group inline-flex items-center gap-2 rounded-xl
-             border border-amber-400/30 bg-amber-500/10
+             border border-cyan-400/30 bg-cyan-500/10
              px-3 py-[6px] text-[13.5px] leading-none font-semibold
-             text-amber-200 hover:bg-amber-500/15 hover:text-amber-100
+             text-cyan-200 hover:bg-cyan-500/15 hover:text-cyan-100
              shadow-[0_1px_8px_rgba(0,0,0,0.25)] transition"
+>
   title="View Treasury Lock details"
 >
   {/* lock icon */}
