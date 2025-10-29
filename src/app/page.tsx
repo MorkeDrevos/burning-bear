@@ -501,85 +501,98 @@ useEffect(() => {
     <p className="text-sm text-white/50">TX links open explorer.</p>
   </div>
 
-  {/* Marquee wrapper */}
-  <div className="mt-6 relative overflow-hidden auto-marquee">
-    {/* Track (duplicated items for seamless loop) */}
-    <div className="marquee-track flex gap-6 will-change-transform px-1">
-      {[...burnsSorted.slice(0, 6), ...burnsSorted.slice(0, 6)].map((b, i) => (
-        <Link
-          key={`${b.id}-${i}`}
-          href={b.tx}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`View TX for burn of ${b.amount.toLocaleString()} BBURN`}
-          className="group block flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded-3xl"
+  {/** Build items: newest first, duplicate for seamless loop */}
+  {(() => {
+    const visible = (burnsSorted ?? []).slice(0, Math.max(4, Math.min(6, (burnsSorted ?? []).length)));
+    const items = visible.length > 1 ? [...visible, ...visible] : visible;
+    const dur = Math.max(18, visible.length * 6); // seconds
+
+    return (
+      <div className="mt-6 relative overflow-hidden auto-marquee">
+        <div
+          className="marquee-track flex gap-6 will-change-transform px-1"
+          style={{ animationDuration: `${dur}s` as any }}
         >
-          {/* Card */}
-          <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-transform">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-900/40">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6">
-                    <defs>
-                      <linearGradient id="flameGrad" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="0%" stopColor="#ffb347" />
-                        <stop offset="55%" stopColor="#ff6a00" />
-                        <stop offset="100%" stopColor="#c95500" />
-                      </linearGradient>
-                    </defs>
-                    <path
-                      fill="url(#flameGrad)"
-                      d="M12 2c2 2 3 4 3 6 0 1.6-.8 3-1.7 3.7 1.1-.3 2.4-1.3 3-2.9 .9 2.8-.8 7.7-4.3 9-3.9 1.4-6.8-2-5.8-6.4C7.2 6.3 10.6 3 12 2z"
-                    />
-                  </svg>
-                </span>
+          {items.map((b, i) => (
+            <Link
+              key={`${b.id}-${i}`}
+              href={b.tx}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`View TX for burn of ${b.amount.toLocaleString()} BBURN`}
+              className="group block flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded-3xl"
+            >
+              {/* Card */}
+              <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-transform">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-900/40">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6">
+                        <defs>
+                          <linearGradient id="flameGrad" x1="0" x2="0" y1="0" y2="1">
+                            <stop offset="0%" stopColor="#ffb347" />
+                            <stop offset="55%" stopColor="#ff6a00" />
+                            <stop offset="100%" stopColor="#c95500" />
+                          </linearGradient>
+                        </defs>
+                        <path
+                          fill="url(#flameGrad)"
+                          d="M12 2c2 2 3 4 3 6 0 1.6-.8 3-1.7 3.7 1.1-.3 2.4-1.3 3-2.9 .9 2.8-.8 7.7-4.3 9-3.9 1.4-6.8-2-5.8-6.4C7.2 6.3 10.6 3 12 2z"
+                        />
+                      </svg>
+                    </span>
 
-                <div>
-                  <div className="text-lg font-bold">
-                    Burn • {b.amount.toLocaleString()} BBURN
-                  </div>
-                  <div className="text-sm text-white/60">
-                    {new Date(b.timestamp).toLocaleString('en-US', {
-                      weekday: 'short',
-                      month: 'short',
-                      day: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: true,
-                    })}
-                  </div>
+                    <div>
+                      <div className="text-lg font-bold">
+                        Burn • {b.amount.toLocaleString()} BBURN
+                      </div>
+                      <div className="text-sm text-white/60">
+                        {new Date(b.timestamp).toLocaleString('en-US', {
+                          weekday: 'short',
+                          month: 'short',
+                          day: '2-digit',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: true,
+                        })}
+                      </div>
 
-                  {typeof b.sol === 'number' && (
-                    <div className="text-sm text-white/70">
-                      ≈ {b.sol.toFixed(4)} SOL (
-                      {(b.sol * priceUsdPerSol).toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                      })}
-                      )
+                      {typeof b.sol === 'number' && (
+                        <div className="text-sm text-white/70">
+                          ≈ {b.sol.toFixed(4)} SOL (
+                          {(b.sol * priceUsdPerSol).toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                          })}
+                          )
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
+                  <span className="text-sm font-semibold text-amber-300/80 opacity-80 group-hover:opacity-100">
+                    View TX →
+                  </span>
+                </div>
+
+                <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
+                  <div
+                    className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
+                    style={{ width: '100%' }}
+                  />
                 </div>
               </div>
-              {/* tiny hint that it's clickable */}
-              <span className="text-sm font-semibold text-amber-300/80 opacity-80 group-hover:opacity-100">
-                View TX →
-              </span>
-            </div>
+              {/* /Card */}
+            </Link>
+          ))}
+        </div>
 
-            <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
-              <div
-                className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
-                style={{ width: '100%' }}
-              />
-            </div>
-          </div>
-          {/* /Card */}
-        </Link>
-      ))}
-    </div>
-  </div>
+        {/* subtle fade edges */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#0d1a14] to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#0d1a14] to-transparent" />
+      </div>
+    );
+  })()}
 </section>
 
 {/* ===== How It Works ===== */}
