@@ -679,7 +679,7 @@ useEffect(() => {
   </div>
 </section>
 
-<div className="mx-auto max-w-6xl px-4 mt-10">
+<div id="vault" className="mx-auto max-w-6xl px-4 mt-16 scroll-mt-24 md:scroll-mt-28">
   <TreasuryLockCard
     tokenSymbol="BBURN"
     lockedAmount={30000000}
