@@ -397,21 +397,6 @@ useEffect(() => {
         Meet The Burning Bear – the classiest arsonist in crypto.
       </h1>
 
-      {/* 🔒 Vault lock callout */}
-<a
-  href="#vault"
-  className="group mt-4 inline-flex items-center gap-2 rounded-full
-             border border-emerald-400/30 bg-emerald-500/15
-             px-3.5 py-2 text-[13px] font-semibold text-emerald-200
-             hover:bg-emerald-500/25"
->
-  <span className="text-[15px]">🔒</span>
-  <span>30,000,000 BBURN locked — unlocks 28 Apr 2026</span>
-  <span className="ml-1 hidden sm:inline text-emerald-300/80 group-hover:text-emerald-200">
-    View details →
-  </span>
-</a>
-
       {/* Countdowns */}
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
        {/*  <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />*/}
