@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import TreasuryLockCard from '@/components/TreasuryLockCard';
+import CopyButton from "@/components/CopyButton";
 
 /* =========================
    Config
@@ -739,16 +740,13 @@ useEffect(() => {
       >
         View
       </a>
-      <button
-        onClick={handleCopy}
-        className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition
-          ${copied
-            ? 'bg-[#ffedb3] text-black shadow-[0_0_8px_rgba(255,184,76,0.35)]'
-            : 'bg-[#ffedb3]/90 text-black hover:bg-[#ffe48d]'
-          }`}
-      >
-        {copied ? 'Copied!' : 'Copy'}
-      </button>
+
+      {/* ← This replaces BOTH of your old copy buttons */}
+      <CopyButton
+        value={FULL_TOKEN_ADDRESS}
+        className="h-9 w-9 rounded-lg bg-white/5 ring-1 ring-white/10 hover:bg-white/10"
+        label="Copy contract address"
+      />
     </div>
   </div>
 
