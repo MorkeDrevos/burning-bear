@@ -499,13 +499,13 @@ useEffect(() => {
   <div className="flex items-baseline justify-between max-w-7xl mx-auto">
     <h2 className="text-2xl font-bold">Live Burn Log 🔥</h2>
 
-    {/* ⚡ Boosted badge (linked to DexScreener) */}
+   {/* ⚡ Boosted badge (linked to DexScreener) */}
 <a
   href="https://dexscreener.com/solana/9hvastjudavgznn4iauw6cb2nqxniesw7vr2pu6x32cq"
   target="_blank"
   rel="noopener noreferrer"
   title="View live pair on DexScreener"
-  className="boosted-badge flex items-center gap-2 self-start translate-y-[-2px]
+  className="boosted-badge flex items-center gap-2 self-start translate-y-[-6px]
              bg-gradient-to-r from-amber-600/20 to-amber-400/10
              px-3 py-[5px] rounded-lg border border-amber-500/20
              text-amber-200 font-semibold text-sm tracking-wide
