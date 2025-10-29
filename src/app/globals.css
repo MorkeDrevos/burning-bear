@@ -53,3 +53,33 @@ html {
 @media (min-width: 1024px) {
   .anchor-offset { scroll-margin-top: 116px; }
 }
+/* === Live Burn Log Marquee Animation === */
+.auto-marquee {
+  --marquee-translate: -50%;
+  overflow: hidden;
+  position: relative;
+}
+
+.auto-marquee .marquee-track {
+  display: flex;
+  gap: 1.5rem; /* spacing between cards */
+  animation-name: bburn-marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: 24s; /* overridden inline */
+  will-change: transform;
+}
+
+.auto-marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Keyframes for continuous scroll */
+@keyframes bburn-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(var(--marquee-translate));
+  }
+}
