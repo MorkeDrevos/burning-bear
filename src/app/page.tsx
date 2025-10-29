@@ -472,66 +472,92 @@ useEffect(() => {
           className="group block flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded-3xl"
         >
           {/* Card */}
-          <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-transform">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-900/40">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6">
-                    <defs>
-                      <linearGradient id="flameGrad" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="0%" stopColor="#ffb347" />
-                        <stop offset="55%" stopColor="#ff6a00" />
-                        <stop offset="100%" stopColor="#c95500" />
-                      </linearGradient>
-                    </defs>
-                    <path
-                      fill="url(#flameGrad)"
-                      d="M12 2c2 2 3 4 3 6 0 1.6-.8 3-1.7 3.7 1.1-.3 2.4-1.3 3-2.9 .9 2.8-.8 7.7-4.3 9-3.9 1.4-6.8-2-5.8-6.4C7.2 6.3 10.6 3 12 2z"
-                    />
-                  </svg>
-                </span>
+          /* Card */
+<div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-transform group hover:border-amber-400/20">
+  <div className="flex items-start justify-between gap-3">
+    <div className="flex items-center gap-3">
+      <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-900/40">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6">
+          <defs>
+            <linearGradient id="flameGrad" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stopColor="#ffb347" />
+              <stop offset="55%" stopColor="#ff6a00" />
+              <stop offset="100%" stopColor="#c95500" />
+            </linearGradient>
+          </defs>
+          <path
+            fill="url(#flameGrad)"
+            d="M12 2c2 2 3 4 3 6 0 1.6-.8 3-1.7 3.7 1.1-.3 2.4-1.3 3-2.9 .9 2.8-.8 7.7-4.3 9-3.9 1.4-6.8-2-5.8-6.4C7.2 6.3 10.6 3 12 2z"
+          />
+        </svg>
+      </span>
 
-                <div>
-                  <div className="text-lg font-bold">
-                    Burn • {b.amount.toLocaleString()} BBURN
-                  </div>
-                  <div className="text-sm text-white/60">
-                    {new Date(b.timestamp).toLocaleString('en-US', {
-                      weekday: 'short',
-                      month: 'short',
-                      day: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: true,
-                    })}
-                  </div>
+      <div>
+        <div className="text-lg font-bold">
+          Burn • {b.amount.toLocaleString()} BBURN
+        </div>
 
-                  {typeof b.sol === 'number' && (
-                    <div className="text-sm text-white/70">
-                      ≈ {b.sol.toFixed(4)} SOL (
-                      {(b.sol * priceUsdPerSol).toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                      })}
-                      )
-                    </div>
-                  )}
-                </div>
-              </div>
-              {/* tiny hint that it's clickable */}
-              <span className="text-sm font-semibold text-amber-300/80 opacity-80 group-hover:opacity-100">
-                View TX →
-              </span>
-            </div>
+        {/* Timestamp + 'time ago' */}
+        <div className="text-sm text-white/60 flex items-center gap-2">
+          <span>
+            {new Date(b.timestamp).toLocaleString('en-US', {
+              weekday: 'short',
+              month: 'short',
+              day: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true,
+            })}
+          </span>
+          <span className="text-white/35">•</span>
+          <span className="text-white/50">
+            {(() => {
+              const now = Date.now();
+              const t = typeof b.timestamp === 'number' ? b.timestamp : Date.parse(b.timestamp as any);
+              const diff = Math.max(0, Math.floor((now - t) / 1000));
+              const h = Math.floor(diff / 3600);
+              const m = Math.floor((diff % 3600) / 60);
+              if (h >= 24) {
+                const d = Math.floor(h / 24);
+                return `${d}d ago`;
+              }
+              if (h > 0) return `${h}h ${m.toString().padStart(2, '0')}m ago`;
+              return `${m}m ago`;
+            })()}
+          </span>
+        </div>
 
-            <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
-              <div
-                className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
-                style={{ width: '100%' }}
-              />
-            </div>
+        {typeof b.sol === 'number' && (
+          <div className="text-sm text-white/70">
+            ≈ {b.sol.toFixed(4)} SOL (
+            {(b.sol * priceUsdPerSol).toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+            })}
+            )
           </div>
+        )}
+      </div>
+    </div>
+
+    {/* Right-side hint (keeps whole card clickable) */}
+    <span
+      className="text-xs font-semibold text-amber-200/85 border border-amber-400/25 bg-amber-500/10
+                 px-3 py-1 rounded-full opacity-80 group-hover:opacity-100"
+    >
+      Open TX
+    </span>
+  </div>
+
+  {/* Progress bar (unchanged) */}
+  <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
+    <div
+      className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
+      style={{ width: '100%' }}
+    />
+  </div>
+</div>
           {/* /Card */}
         </Link>
       ))}
@@ -639,7 +665,7 @@ useEffect(() => {
 </section>
 
 {/* ===== Campfire Wallets ===== */}
-<section id="wallets" className="scroll-mt-28 md:scroll-mt-22 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
+<section id="wallets" className="scroll-mt-28 md:scroll-mt-32 lg:scroll-mt-36 mx-auto max-w-6xl px-4 py-10">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">Campfire Wallets</h3>
   <p className="text-white/60">
     The campfire burns in full view. Every wallet can be verified on Solana Explorer.
