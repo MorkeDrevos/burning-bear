@@ -30,6 +30,7 @@ html {
   animation: emberShimmer 8.5s linear infinite;
   filter: drop-shadow(0 0 4px rgba(251,191,36,0.14));
 }
+
 /* Nudge arrows on hover (used by the hero trust pill) */
 .link-chevron {
   transition: transform 180ms ease;
@@ -43,23 +44,22 @@ html {
 .pill-shadow {
   box-shadow: 0 2px 14px rgba(0,0,0,0.25);
 }
+
 /* anchor offset for sticky header */
 .anchor-offset { scroll-margin-top: 88px; }
-
 @media (min-width: 768px) {
   .anchor-offset { scroll-margin-top: 100px; }
 }
-
 @media (min-width: 1024px) {
   .anchor-offset { scroll-margin-top: 116px; }
 }
+
 /* === Live Burn Log Marquee Animation === */
 .auto-marquee {
   --marquee-translate: -50%;
   overflow: hidden;
   position: relative;
 }
-
 .auto-marquee .marquee-track {
   display: flex;
   gap: 1.5rem; /* spacing between cards */
@@ -69,20 +69,17 @@ html {
   animation-duration: 24s; /* overridden inline */
   will-change: transform;
 }
-
 .auto-marquee:hover .marquee-track {
   animation-play-state: paused;
 }
 
 /* Keyframes for continuous scroll */
 @keyframes bburn-marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(var(--marquee-translate));
-  }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(var(--marquee-translate)); }
 }
+
+/* Boosted badge pulse */
 .boosted-badge {
   animation: boostedPulse 2.6s ease-in-out infinite;
 }
@@ -90,23 +87,19 @@ html {
   0%, 100% { filter: drop-shadow(0 0 4px rgba(255,184,76,0.35)); opacity: 1; }
   50%      { filter: drop-shadow(0 0 10px rgba(255,184,76,0.65)); opacity: 0.92; }
 }
+
 /* Hide horizontal scrollbar for a cleaner look */
-.no-scrollbar {
-  scrollbar-width: none;           /* Firefox */
-}
-.no-scrollbar::-webkit-scrollbar { /* WebKit */
-  display: none;
-}
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
 
 /* Cursor feedback while dragging */
-.is-dragging {
-  cursor: grabbing !important;
-}
+.is-dragging { cursor: grabbing !important; }
 
 /* (Optional) If you still animate the marquee-track, pause on hover */
 .auto-marquee:hover .marquee-track {
   animation-play-state: paused;
 }
+
 html { scroll-behavior: smooth; }
 
 @keyframes fade-in-up {
