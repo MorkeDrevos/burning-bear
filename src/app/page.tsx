@@ -364,7 +364,7 @@ useEffect(() => {
 
       {/* ===== HERO with video + translucent text panel ===== */}
 <section className="relative">
-  
+
 {SHOW_GIVEAWAY && (
   <GiveawayTease
     title={GIVEAWAY_TITLE}
@@ -1069,6 +1069,48 @@ function MobileMenu() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ===== GiveawayTease Component =====
+function GiveawayTease({
+  title,
+  sub,
+  linkText,
+  linkUrl,
+  hideAfter,
+}: {
+  title: string;
+  sub: string;
+  linkText: string;
+  linkUrl: string;
+  hideAfter: number | null;
+}) {
+  const [visible, setVisible] = React.useState(true);
+
+  React.useEffect(() => {
+    if (hideAfter && Date.now() > hideAfter) setVisible(false);
+  }, [hideAfter]);
+
+  if (!visible) return null;
+
+  return (
+    <div
+      className="absolute top-6 right-6 z-50 px-5 py-3 rounded-xl
+                 bg-gradient-to-r from-amber-700/30 via-amber-500/20 to-amber-400/20
+                 text-amber-100 font-semibold text-[15px] leading-tight
+                 border border-amber-500/25 shadow-[0_0_15px_rgba(255,184,76,0.3)]
+                 backdrop-blur-md animate-fade-in-up cursor-pointer
+                 hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(255,184,76,0.45)]
+                 transition-all duration-300"
+      onClick={() => window.open(linkUrl, "_blank")}
+    >
+      <div className="flex flex-col items-start gap-0.5">
+        <span className="text-[17px] font-bold">{title}</span>
+        <span className="text-amber-200/80 text-sm">{sub}</span>
+        <span className="text-amber-300 text-xs mt-1 underline">{linkText} →</span>
+      </div>
     </div>
   );
 }
