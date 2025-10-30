@@ -1108,23 +1108,25 @@ function GiveawayTease({
         transition-transform duration-300 hover:scale-[1.03]
       "
       onClick={() => window.open(linkUrl, '_blank')}
+      role="button"
+      aria-label="Giveaway announcement"
     >
       <div className="flex flex-col items-center text-center px-1">
-        <div className="text-[17px] font-bold">
-          {title}
+        <div className="text-[17px] font-bold">{title}</div>
+
+        <div className="text-sm text-amber-200/85 mt-0.5 flex items-center justify-center gap-2 flex-wrap">
+          <span>{sub}</span>
+          <span className="text-amber-300/70">•</span>
+          <a
+            href={linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-amber-300 underline underline-offset-[3px] hover:text-amber-100 transition"
+          >
+            {linkText} →
+          </a>
         </div>
-<div className="text-sm text-amber-200/85 mt-0.5 flex items-center justify-center gap-2 flex-wrap">
-  <span>{sub}</span>
-  <span className="text-amber-300/70">•</span>
-  <a
-    href={linkUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-amber-300 underline underline-offset-[3px] hover:text-amber-100 transition"
-  >
-    {linkText} →
-  </a>
-</div>
+      </div>
     </div>
-    );
-} // ✅ closes the GiveawayTease function cleanly
+  );
+} // ✅ closes GiveawayTease function cleanly
