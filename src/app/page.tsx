@@ -1105,13 +1105,13 @@ function GiveawayTease({
   if (!mounted || !visible || dismissed) return null;
 
   const box = (
-    <div
-      aria-label="Giveaway announcement"
-      className="
-        fixed z-[70] pointer-events-auto
-        top-6 right-4 sm:top-8 sm:right-6 lg:top-10 lg:right-8
-      "
-    >
+<div
+  aria-label="Giveaway announcement"
+  className="
+    fixed z-[70] pointer-events-auto
+    top-[90px] right-4 sm:top-[100px] sm:right-6 lg:top-[110px] lg:right-8
+  "
+>
       <div
         className="
           relative rounded-xl px-5 py-3.5
