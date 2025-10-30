@@ -362,16 +362,15 @@ useEffect(() => {
         </div>
       </header>
 
-      {SHOW_GIVEAWAY && (
+{SHOW_GIVEAWAY && (
   <GiveawayTease
-    title="🎁 Giveaways Incoming"
-    sub="Announcement later today — stay on stream."
+    title={GIVEAWAY_TITLE}
+    sub="Stay near the flames — Exclusive drops for $BBURN holders"
     linkText="Follow updates"
-    linkUrl="https://x.com/i/communities/1980944446871966021"
-    hideAfter={null}
+    linkUrl={GIVEAWAY_LINK_URL}
+    hideAfter={GIVEAWAY_HIDE_AFTER}
   />
 )}
-
 
       {/* ===== HERO with video + translucent text panel ===== */}
 <section className="relative">
@@ -1074,7 +1073,7 @@ function MobileMenu() {
   );
 }
 
-// ===== GiveawayTease (fixed top-right announcement; optimized for OBS) =====
+// ===== GiveawayTease (fixed top-right, rendered via portal) =====
 import React from "react";
 import { createPortal } from "react-dom";
 
@@ -1093,41 +1092,34 @@ function GiveawayTease({
 }) {
   const [visible, setVisible] = React.useState(true);
   const [dismissed, setDismissed] = React.useState(false);
-  const [mounted, setMounted] = React.useState(false);
 
-  // Wait until mounted (needed for createPortal)
-  React.useEffect(() => setMounted(true), []);
-
-  // Hide after a given timestamp (optional)
+  // auto-hide after a timestamp (optional)
   React.useEffect(() => {
     if (hideAfter && Date.now() > hideAfter) setVisible(false);
   }, [hideAfter]);
 
-  if (!mounted || !visible || dismissed) return null;
+  if (!visible || dismissed) return null;
 
-  // The announcement box content
+  // The announcement box itself
   const box = (
     <div
-      className="
-        fixed z-[120]
-        top-[80px] md:top-[95px]
-        right-3 sm:right-6 md:right-8
-        max-w-[440px]
-        pointer-events-auto
-      "
-      role="region"
       aria-label="Giveaway announcement"
+      className="
+        fixed z-[70] pointer-events-auto
+        top-6 right-4 sm:top-8 sm:right-6 lg:top-10 lg:right-8
+      "
     >
       <div
         className="
           relative rounded-xl px-5 py-3.5
-          bg-gradient-to-r from-[#a56800]/45 via-[#ffb84d]/22 to-[#ffcc66]/28
+          bg-gradient-to-r from-[#a56800]/40 via-[#ffb84d]/22 to-[#ffcc66]/28
           border border-amber-400/30 backdrop-blur-md
-          text-amber-100 shadow-[0_8px_30px_rgba(0,0,0,0.35)]
+          shadow-[0_8px_30px_rgba(0,0,0,0.35)]
           animate-fade-in-up
         "
+        role="region"
       >
-        {/* Close button */}
+        {/* Close (small ×) */}
         <button
           onClick={() => setDismissed(true)}
           aria-label="Dismiss"
@@ -1146,15 +1138,15 @@ function GiveawayTease({
           <span>{title}</span>
         </div>
 
-        {/* Subtitle + link inline */}
-        <div className="mt-1.5 text-[13px] sm:text-[14px] text-amber-100/85 flex items-center flex-wrap gap-2">
+        {/* Subtitle + link on one line (wraps nicely if narrow) */}
+        <div className="mt-1.5 text-[13px] sm:text-[14px] text-amber-100/90 flex flex-wrap items-center gap-2">
           <span className="whitespace-pre">{sub}</span>
           <span className="opacity-60">•</span>
           <a
             href={linkUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="underline underline-offset-[3px] text-amber-200 hover:text-amber-100"
+            className="underline underline-offset-[3px] hover:text-amber-100 transition text-amber-200"
           >
             {linkText} →
           </a>
@@ -1163,11 +1155,8 @@ function GiveawayTease({
     </div>
   );
 
-    // Render outside of layout using a React portal
+  // Render outside layout so it’s fixed to the viewport, not the hero
   return createPortal(box, document.body);
-} // ✅ closes GiveawayTease
-
-export default function Page() {
-  // your main page component starts here
-  ...
 }
+
+export { GiveawayTease };
