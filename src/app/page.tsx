@@ -1121,4 +1121,5 @@ function GiveawayTease({
     </div>
   );
 }
-}
+
+export default GiveawayTease;
