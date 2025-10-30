@@ -1098,21 +1098,21 @@ function GiveawayTease({
 
   return (
     <div
-      className="
-        absolute top-6 right-6 z-20
-        flex flex-col gap-1 items-start
-        px-5 py-3.5 rounded-xl
-        bg-gradient-to-r from-[#a56800]/45 via-[#ffb84d]/25 to-[#ffcc66]/35
-        border border-amber-400/40 backdrop-blur-md
-        text-amber-50 shadow-[0_0_22px_rgba(255,184,76,0.35)]
-        animate-fade-in-up pulse-glow cursor-pointer
-        transition-all duration-300 hover:scale-[1.03]
-        max-w-sm
-      "
-      onClick={() => window.open(linkUrl, '_blank')}
-      role="button"
-      aria-label="Giveaway announcement"
-    >
+  className="
+    fixed top-6 right-6 z-50
+    flex flex-col gap-1 items-start
+    px-5 py-3.5 rounded-xl
+    bg-gradient-to-r from-[#a56800]/45 via-[#ffb84d]/25 to-[#ffcc66]/35
+    border border-amber-400/40 backdrop-blur-md
+    text-amber-50 shadow-[0_0_22px_rgba(255,184,76,0.35)]
+    animate-fade-in-up pulse-glow cursor-pointer
+    transition-all duration-300 hover:scale-[1.03]
+    max-w-sm
+  "
+  onClick={() => window.open(linkUrl, '_blank')}
+  role="button"
+  aria-label="Giveaway announcement"
+>
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-2 font-bold text-[16px]">
           🎁 {title}
