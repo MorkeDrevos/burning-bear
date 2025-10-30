@@ -500,7 +500,8 @@ useEffect(() => {
     <h2 className="text-2xl font-bold">Live Burn Log 🔥</h2>
 
     {/* ⚡ Boosted badge (linked to DexScreener) */}
-    <a
+    {false && ( 
+      <a
       href="https://dexscreener.com/solana/9hvastjudavgznn4iauw6cb2nqxniesw7vr2pu6x32cq"
       target="_blank"
       rel="noopener noreferrer"
@@ -516,6 +517,7 @@ useEffect(() => {
       <span className="text-lg leading-none">⚡</span>
       <span>Boosted 10x</span>
     </a>
+    )}
   </div>
 
   {/* Build items: newest first, duplicate for seamless loop */}
