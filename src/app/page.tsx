@@ -1114,9 +1114,8 @@ function GiveawayTease({
       <div className="flex flex-col items-center text-center px-1">
         <div className="text-[17px] font-bold">{title}</div>
 
-        <div className="text-sm text-amber-200/85 mt-0.5 flex items-center justify-center gap-2 flex-wrap">
-          <span>{sub}</span>
-          <span className="text-amber-300/70">•</span>
+        <div className="text-sm text-amber-200/85 mt-0.5 flex items-center justify-center flex-wrap gap-1">
+          <span>Stay near the flames — Exclusive drops for $BBURN holders</span>
           <a
             href={linkUrl}
             target="_blank"
