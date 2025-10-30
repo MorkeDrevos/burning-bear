@@ -1122,4 +1122,4 @@ function GiveawayTease({
   );
 }
 
-export default GiveawayTease;
+// no export here — GiveawayTease is local to this file
