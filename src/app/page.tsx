@@ -1073,7 +1073,7 @@ function MobileMenu() {
   );
 }
 
-// ===== GiveawayTease Component =====
+// ===== GiveawayTease (responsive for livestream/embed) =====
 function GiveawayTease({
   title,
   sub,
@@ -1088,28 +1088,59 @@ function GiveawayTease({
   hideAfter: number | null;
 }) {
   const [visible, setVisible] = React.useState(true);
+  const [dismissed, setDismissed] = React.useState(false);
 
   React.useEffect(() => {
     if (hideAfter && Date.now() > hideAfter) setVisible(false);
   }, [hideAfter]);
 
-  if (!visible) return null;
+  if (!visible || dismissed) return null;
 
   return (
     <div
-      className="absolute top-6 right-6 z-50 px-5 py-3 rounded-xl
-                 bg-gradient-to-r from-amber-700/30 via-amber-500/20 to-amber-400/20
-                 text-amber-100 font-semibold text-[15px] leading-tight
-                 border border-amber-500/25 shadow-[0_0_15px_rgba(255,184,76,0.3)]
-                 backdrop-blur-md animate-fade-in-up cursor-pointer
-                 hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(255,184,76,0.45)]
-                 transition-all duration-300"
-      onClick={() => window.open(linkUrl, "_blank")}
+      className="
+        absolute z-50
+        /* Default: embed/mobile = bottom-center */
+        left-1/2 -translate-x-1/2 bottom-4
+        /* Desktop: move to top-right */
+        md:bottom-auto md:left-auto md:right-6 md:top-6 md:translate-x-0
+
+        max-w-[92%] md:max-w-[420px]
+        px-4 md:px-5 py-2.5 md:py-3 rounded-xl
+        bg-gradient-to-r from-amber-700/30 via-amber-500/20 to-amber-400/20
+        border border-amber-500/25 backdrop-blur-md
+        shadow-[0_0_15px_rgba(255,184,76,0.30)]
+        animate-fade-in-up
+      "
+      role="button"
+      onClick={() => window.open(linkUrl, '_blank')}
     >
-      <div className="flex flex-col items-start gap-0.5">
-        <span className="text-[17px] font-bold">{title}</span>
-        <span className="text-amber-200/80 text-sm">{sub}</span>
-        <span className="text-amber-300 text-xs mt-1 underline">{linkText} →</span>
+      <div className="flex items-start gap-3">
+        <span className="text-xl md:text-2xl leading-none">🎁</span>
+        <div className="min-w-0">
+          <div className="text-amber-100 font-bold text-base md:text-[17px] truncate">
+            {title}
+          </div>
+          <div className="text-amber-200/80 text-xs md:text-sm line-clamp-2">
+            {sub}
+          </div>
+          <div className="text-amber-300 text-xs md:text-[13px] mt-1 underline">
+            {linkText} →
+          </div>
+        </div>
+
+        {/* Dismiss (doesn't navigate) */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setDismissed(true);
+          }}
+          aria-label="Dismiss"
+          className="ml-auto -mt-1 rounded-md px-2 py-1 text-amber-200/70 hover:text-amber-100 hover:bg-white/5"
+        >
+          ×
+        </button>
       </div>
     </div>
   );
