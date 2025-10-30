@@ -20,9 +20,9 @@ const EXPLORER = 'https://explorer.solana.com';
 
 // ===== Giveaway Tease Config =====
 const SHOW_GIVEAWAY = true;                 // toggle on/off
-const GIVEAWAY_TITLE = "🎁 Giveaways incoming";
-const GIVEAWAY_SUB = "Announcement later today — stay on stream.";
-const GIVEAWAY_LINK_TEXT = "Follow updates";
+const GIVEAWAY_TITLE = "🎁 Holder Giveaways Incoming";
+const GIVEAWAY_SUB = "Exclusive rewards for $BBURN holders — details later today on stream.";
+const GIVEAWAY_LINK_TEXT = "Stay tuned";
 const GIVEAWAY_LINK_URL = "https://x.com/i/communities/1980944446871966021";
 
 // Optional: hide after a point in time (ms since epoch). Set to null to disable.
