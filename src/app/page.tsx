@@ -1074,7 +1074,7 @@ function MobileMenu() {
   );
 }
 
-// ===== GiveawayTease (fixed top-right via portal; perfect for OBS) =====
+// ===== GiveawayTease (fixed top-right announcement; optimized for OBS) =====
 import React from "react";
 import { createPortal } from "react-dom";
 
@@ -1095,37 +1095,39 @@ function GiveawayTease({
   const [dismissed, setDismissed] = React.useState(false);
   const [mounted, setMounted] = React.useState(false);
 
+  // Wait until mounted (needed for createPortal)
   React.useEffect(() => setMounted(true), []);
 
+  // Hide after a given timestamp (optional)
   React.useEffect(() => {
     if (hideAfter && Date.now() > hideAfter) setVisible(false);
   }, [hideAfter]);
 
   if (!mounted || !visible || dismissed) return null;
 
+  // The announcement box content
   const box = (
     <div
-      // wrapper is FIXED to the viewport, not the hero
       className="
         fixed z-[120]
-        right-3 sm:right-5 md:right-8
-        top-[78px] md:top-[94px]      /* clears your sticky header in OBS */
+        top-[80px] md:top-[95px]
+        right-3 sm:right-6 md:right-8
+        max-w-[440px]
         pointer-events-auto
       "
-      style={{ maxWidth: "min(92vw, 520px)" }}
       role="region"
       aria-label="Giveaway announcement"
     >
       <div
         className="
-          relative rounded-xl px-4 py-3.5 sm:px-5
+          relative rounded-xl px-5 py-3.5
           bg-gradient-to-r from-[#a56800]/45 via-[#ffb84d]/22 to-[#ffcc66]/28
           border border-amber-400/30 backdrop-blur-md
           text-amber-100 shadow-[0_8px_30px_rgba(0,0,0,0.35)]
           animate-fade-in-up
         "
       >
-        {/* Close (small) */}
+        {/* Close button */}
         <button
           onClick={() => setDismissed(true)}
           aria-label="Dismiss"
@@ -1140,15 +1142,13 @@ function GiveawayTease({
 
         {/* Title */}
         <div className="flex items-center gap-2 text-[15px] sm:text-[16px] font-bold">
-          <span className="text-lg leading-none">🎁</span>
+          <span>🎁</span>
           <span>{title}</span>
         </div>
 
-        {/* Line under: holders + link on same line, wraps nicely if needed */}
+        {/* Subtitle + link inline */}
         <div className="mt-1.5 text-[13px] sm:text-[14px] text-amber-100/85 flex items-center flex-wrap gap-2">
-          <span className="whitespace-pre">
-            {sub}
-          </span>
+          <span className="whitespace-pre">{sub}</span>
           <span className="opacity-60">•</span>
           <a
             href={linkUrl}
@@ -1163,8 +1163,11 @@ function GiveawayTease({
     </div>
   );
 
-  // render outside layout so position is truly viewport-fixed
+    // Render outside of layout using a React portal
   return createPortal(box, document.body);
-}
+} // ✅ closes GiveawayTease
 
-export default GiveawayTease;
+export default function Page() {
+  // your main page component starts here
+  ...
+}
