@@ -362,6 +362,17 @@ useEffect(() => {
         </div>
       </header>
 
+      {SHOW_GIVEAWAY && (
+  <GiveawayTease
+    title="🎁 Giveaways Incoming"
+    sub="Announcement later today — stay on stream."
+    linkText="Follow updates"
+    linkUrl="https://x.com/i/communities/1980944446871966021"
+    hideAfter={null}
+  />
+)}
+
+
       {/* ===== HERO with video + translucent text panel ===== */}
 <section className="relative">
 
@@ -408,16 +419,6 @@ useEffect(() => {
       <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
         Meet The Burning Bear – the classiest arsonist in crypto.
       </h1>
-
-{SHOW_GIVEAWAY && (
-  <GiveawayTease
-    title="🎁 Giveaways Incoming"
-    sub="Announcement later today — stay on stream."
-    linkText="Follow updates"
-    linkUrl="https://x.com/i/communities/1980944446871966021"
-    hideAfter={null}
-  />
-)}
 
       {/* Countdowns */}
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -1072,8 +1073,7 @@ function MobileMenu() {
     </div>
   );
 }
-
-// ===== GiveawayTease (top-right floating announcement) =====
+// ===== GiveawayTease (fixed top-right overlay) =====
 function GiveawayTease({
   title,
   sub,
@@ -1098,21 +1098,21 @@ function GiveawayTease({
 
   return (
     <div
-  className="
-    fixed top-6 right-6 z-50
-    flex flex-col gap-1 items-start
-    px-5 py-3.5 rounded-xl
-    bg-gradient-to-r from-[#a56800]/45 via-[#ffb84d]/25 to-[#ffcc66]/35
-    border border-amber-400/40 backdrop-blur-md
-    text-amber-50 shadow-[0_0_22px_rgba(255,184,76,0.35)]
-    animate-fade-in-up pulse-glow cursor-pointer
-    transition-all duration-300 hover:scale-[1.03]
-    max-w-sm
-  "
-  onClick={() => window.open(linkUrl, '_blank')}
-  role="button"
-  aria-label="Giveaway announcement"
->
+      className="
+        fixed top-20 right-8 z-[70]
+        flex flex-col gap-1 items-start
+        px-5 py-3.5 rounded-xl
+        bg-gradient-to-r from-[#a56800]/45 via-[#ffb84d]/25 to-[#ffcc66]/35
+        border border-amber-400/40 backdrop-blur-md
+        text-amber-50 shadow-[0_0_22px_rgba(255,184,76,0.35)]
+        animate-fade-in-up pulse-glow cursor-pointer
+        transition-all duration-300 hover:scale-[1.03]
+        max-w-sm
+      "
+      onClick={() => window.open(linkUrl, '_blank')}
+      role="button"
+      aria-label="Giveaway announcement"
+    >
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-2 font-bold text-[16px]">
           🎁 {title}
@@ -1128,7 +1128,9 @@ function GiveawayTease({
         </button>
       </div>
 
-      <div className="text-sm text-amber-200/85 mt-0.5 leading-snug">{sub}</div>
+      <div className="text-sm text-amber-200/90 mt-0.5 leading-snug">
+        {sub}
+      </div>
       <div className="text-xs text-amber-300 mt-1 underline underline-offset-[3px]">
         {linkText} →
       </div>
