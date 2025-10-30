@@ -107,3 +107,11 @@ html { scroll-behavior: smooth; }
   to   { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; }
+.giveaway-pulse {
+  animation: giveawayPulse 4s ease-in-out infinite;
+}
+
+@keyframes giveawayPulse {
+  0%, 100% { box-shadow: 0 0 18px rgba(255, 184, 76, 0.35); }
+  50%      { box-shadow: 0 0 36px rgba(255, 184, 76, 0.55); }
+}
