@@ -1,116 +1,88 @@
+/* /src/app/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* =============== Custom site effects =============== */
-
-html {
-  scroll-behavior: smooth;
+/* -------- Base tweaks -------- */
+html, body {
+  @apply bg-[#0d1a14] text-white antialiased;
 }
 
-/* Subtle breathing animation for the bear */
-@keyframes bearBreath {
-  0%, 100% { transform: scale(1); filter: brightness(1); }
-  50% { transform: scale(1.02); filter: brightness(1.05); }
+/* -------- Hero video / vignette -------- */
+.hero-zoom { 
+  transform: scale(1.02);
+  animation: hero-zoom 22s ease-in-out infinite alternate;
 }
-.bear-breathe { animation: bearBreath 6s ease-in-out infinite; }
-
-/* Ember shimmer for dividers */
-@keyframes emberShimmer {
-  0% { background-position: 180% 0; opacity: 0.45; }
-  50% { background-position: 100% 0; opacity: 0.85; }
-  100% { background-position: -180% 0; opacity: 0.45; }
-}
-.ember-divider {
-  background-image: linear-gradient(90deg,
-    rgba(251,191,36,0) 0%,
-    rgba(251,191,36,0.22) 50%,
-    rgba(251,191,36,0) 100%);
-  background-size: 220% 100%;
-  animation: emberShimmer 8.5s linear infinite;
-  filter: drop-shadow(0 0 4px rgba(251,191,36,0.14));
-}
-/* Nudge arrows on hover (used by the hero trust pill) */
-.link-chevron {
-  transition: transform 180ms ease;
-  will-change: transform;
-}
-.group:hover .link-chevron {
-  transform: translateX(2px);
+@keyframes hero-zoom {
+  0%   { transform: scale(1.02); }
+  100% { transform: scale(1.045); }
 }
 
-/* Optional: a soft pill shadow (matches the hero style) */
-.pill-shadow {
-  box-shadow: 0 2px 14px rgba(0,0,0,0.25);
-}
-/* anchor offset for sticky header */
-.anchor-offset { scroll-margin-top: 88px; }
-
-@media (min-width: 768px) {
-  .anchor-offset { scroll-margin-top: 100px; }
+/* optional soft vignette mask (kept simple & safe) */
+.hero-vignette::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 70% at 50% 20%, transparent 40%, rgba(0,0,0,.45) 100%);
 }
 
-@media (min-width: 1024px) {
-  .anchor-offset { scroll-margin-top: 116px; }
+/* -------- “ember” particles -------- */
+.ember-dot {
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 30% 30%, #ffd27a 0%, #ffae45 45%, #d77315 80%);
+  box-shadow:
+    0 0 10px rgba(255, 184, 76, .45),
+    0 0 18px rgba(255, 150, 40, .25);
+  opacity: .9;
+  animation: ember-rise var(--rise, 6s) linear infinite;
 }
-/* === Live Burn Log Marquee Animation === */
-.auto-marquee {
-  --marquee-translate: -50%;
-  overflow: hidden;
-  position: relative;
-}
-
-.auto-marquee .marquee-track {
-  display: flex;
-  gap: 1.5rem; /* spacing between cards */
-  animation-name: bburn-marquee;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-duration: 24s; /* overridden inline */
-  will-change: transform;
-}
-
-.auto-marquee:hover .marquee-track {
-  animation-play-state: paused;
+@keyframes ember-rise {
+  0%   { transform: translate(0, 0); opacity: .0; }
+  10%  { opacity: .95; }
+  90%  { transform: translate(var(--drift-x, 0px), -140px); opacity: .9; }
+  100% { transform: translate(var(--drift-x, 0px), -160px); opacity: 0; }
 }
 
-/* Keyframes for continuous scroll */
-@keyframes bburn-marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(var(--marquee-translate));
-  }
+/* -------- Giveaway tease helpers -------- */
+.pulse-glow {
+  animation: pulse-glow 2.2s ease-in-out infinite;
 }
-.boosted-badge {
-  animation: boostedPulse 2.6s ease-in-out infinite;
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(255,184,76,.28), 0 0 40px rgba(255,170,60,.12); }
+  50%     { box-shadow: 0 0 26px rgba(255,184,76,.42), 0 0 60px rgba(255,170,60,.18); }
 }
-@keyframes boostedPulse {
-  0%, 100% { filter: drop-shadow(0 0 4px rgba(255,184,76,0.35)); opacity: 1; }
-  50%      { filter: drop-shadow(0 0 10px rgba(255,184,76,0.65)); opacity: 0.92; }
+.animate-fade-in-up {
+  animation: fade-in-up .4s ease-out both;
 }
-/* Hide horizontal scrollbar for a cleaner look */
-.no-scrollbar {
-  scrollbar-width: none;           /* Firefox */
-}
-.no-scrollbar::-webkit-scrollbar { /* WebKit */
-  display: none;
-}
-
-/* Cursor feedback while dragging */
-.is-dragging {
-  cursor: grabbing !important;
-}
-
-/* (Optional) If you still animate the marquee-track, pause on hover */
-.auto-marquee:hover .marquee-track {
-  animation-play-state: paused;
-}
-html { scroll-behavior: smooth; }
-
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; }
+
+/* -------- Marquee (burn cards) -------- */
+.auto-marquee .marquee-track {
+  animation-name: marquee-slide;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes marquee-slide {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); } /* you duplicate items in JS */
+}
+
+/* -------- Tiny UI details -------- */
+.colon-pulse { animation: colon-pulse var(--colon-speed, 2.6s) ease-in-out infinite; }
+@keyframes colon-pulse { 0%,100% { opacity:.45 } 50% { opacity:1 } }
+
+.colon-glow { text-shadow: 0 0 8px rgba(255,184,76,.35); }
+
+.link-chevron { transition: transform .2s ease; }
+a:hover .link-chevron { transform: translateX(2px); }
+
+.pill-shadow { box-shadow: 0 0 16px rgba(255, 184, 76, .15); }
+
+/* Ensure images and videos don’t exceed container width */
+img, video { max-width: 100%; height: auto; }
