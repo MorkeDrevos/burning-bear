@@ -20,9 +20,9 @@ const EXPLORER = 'https://explorer.solana.com';
 
 // ===== Giveaway Tease Config =====
 const SHOW_GIVEAWAY = true;                 // toggle on/off
-const GIVEAWAY_TITLE = "🎁 Holder Giveaways Incoming";
-const GIVEAWAY_SUB = "Exclusive rewards for $BBURN holders — details later today on stream.";
-const GIVEAWAY_LINK_TEXT = "Stay tuned";
+const GIVEAWAY_TITLE = "🎁 Holder Rewards Incoming";
+const GIVEAWAY_SUB = "Exclusive drops for $BBURN holders — stay tuned, it’s worth it.";
+const GIVEAWAY_LINK_TEXT = "";
 const GIVEAWAY_LINK_URL = "https://x.com/i/communities/1980944446871966021";
 
 // Optional: hide after a point in time (ms since epoch). Set to null to disable.
@@ -1097,30 +1097,27 @@ function GiveawayTease({
   if (!visible || dismissed) return null;
 
   return (
-    <div
-      className="
-        giveaway-pulse
-        relative mx-auto mt-10 w-full max-w-2xl
-        px-8 py-4 rounded-2xl
-        bg-gradient-to-r from-[#a56800]/45 via-[#ffb84d]/25 to-[#ffcc66]/30
-        border border-amber-400/30 backdrop-blur-md
-        text-amber-100 shadow-[0_0_25px_rgba(255,184,76,0.35)]
-        animate-fade-in-up cursor-pointer
-        transition-transform duration-300 hover:scale-[1.03]
-      "
-      onClick={() => window.open(linkUrl, '_blank')}
-      role="button"
-      aria-label="Exclusive giveaway announcement for $BBURN holders"
-    >
-      <div className="flex flex-col items-center text-center space-y-1">
-        <div className="flex items-center gap-2 text-[18px] font-extrabold tracking-wide">
-          🔒 {title}
-        </div>
-        <div className="text-sm text-amber-200/85">{sub}</div>
-        <div className="text-xs text-amber-300 mt-1 underline tracking-wide">
-          {linkText} →
-        </div>
-      </div>
+<div
+  className="
+    giveaway-pulse
+    relative mx-auto mt-6 w-fit
+    px-6 py-3 rounded-xl
+    bg-gradient-to-r from-[#a56800]/40 via-[#ffb84d]/25 to-[#ffcc66]/30
+    border border-amber-400/30 backdrop-blur-md
+    text-amber-100 shadow-[0_0_18px_rgba(255,184,76,0.35)]
+    animate-fade-in-up cursor-pointer
+    transition-transform duration-300 hover:scale-[1.02]
+  "
+  onClick={() => window.open(linkUrl, '_blank')}
+  role="button"
+  aria-label="Exclusive giveaway for $BBURN holders"
+>
+  <div className="flex flex-col items-center text-center leading-tight">
+    <div className="flex items-center gap-2 text-[16px] font-bold tracking-wide">
+      🔒 {title}
     </div>
+    <div className="text-[13px] text-amber-200/85 mt-0.5">{sub}</div>
+  </div>
+</div>
   );
 }
