@@ -1073,7 +1073,11 @@ function MobileMenu() {
     </div>
   );
 }
-// ===== GiveawayTease (fixed top-right overlay) =====
+
+// ===== GiveawayTease (fixed top-right via portal; perfect for OBS) =====
+import React from "react";
+import { createPortal } from "react-dom";
+
 function GiveawayTease({
   title,
   sub,
@@ -1089,51 +1093,78 @@ function GiveawayTease({
 }) {
   const [visible, setVisible] = React.useState(true);
   const [dismissed, setDismissed] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => setMounted(true), []);
 
   React.useEffect(() => {
     if (hideAfter && Date.now() > hideAfter) setVisible(false);
   }, [hideAfter]);
 
-  if (!visible || dismissed) return null;
+  if (!mounted || !visible || dismissed) return null;
 
-  return (
+  const box = (
     <div
+      // wrapper is FIXED to the viewport, not the hero
       className="
-        fixed top-20 right-8 z-[70]
-        flex flex-col gap-1 items-start
-        px-5 py-3.5 rounded-xl
-        bg-gradient-to-r from-[#a56800]/45 via-[#ffb84d]/25 to-[#ffcc66]/35
-        border border-amber-400/40 backdrop-blur-md
-        text-amber-50 shadow-[0_0_22px_rgba(255,184,76,0.35)]
-        animate-fade-in-up pulse-glow cursor-pointer
-        transition-all duration-300 hover:scale-[1.03]
-        max-w-sm
+        fixed z-[120]
+        right-3 sm:right-5 md:right-8
+        top-[78px] md:top-[94px]      /* clears your sticky header in OBS */
+        pointer-events-auto
       "
-      onClick={() => window.open(linkUrl, '_blank')}
-      role="button"
+      style={{ maxWidth: "min(92vw, 520px)" }}
+      role="region"
       aria-label="Giveaway announcement"
     >
-      <div className="flex items-center justify-between w-full">
-        <div className="flex items-center gap-2 font-bold text-[16px]">
-          🎁 {title}
-        </div>
+      <div
+        className="
+          relative rounded-xl px-4 py-3.5 sm:px-5
+          bg-gradient-to-r from-[#a56800]/45 via-[#ffb84d]/22 to-[#ffcc66]/28
+          border border-amber-400/30 backdrop-blur-md
+          text-amber-100 shadow-[0_8px_30px_rgba(0,0,0,0.35)]
+          animate-fade-in-up
+        "
+      >
+        {/* Close (small) */}
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setDismissed(true);
-          }}
-          className="text-amber-200/70 hover:text-amber-100 text-lg leading-none"
+          onClick={() => setDismissed(true)}
+          aria-label="Dismiss"
+          className="
+            absolute -right-2 -top-2 grid h-6 w-6 place-items-center
+            rounded-full bg-black/45 text-white/80 hover:text-white
+            border border-white/10
+          "
         >
           ×
         </button>
-      </div>
 
-      <div className="text-sm text-amber-200/90 mt-0.5 leading-snug">
-        {sub}
-      </div>
-      <div className="text-xs text-amber-300 mt-1 underline underline-offset-[3px]">
-        {linkText} →
+        {/* Title */}
+        <div className="flex items-center gap-2 text-[15px] sm:text-[16px] font-bold">
+          <span className="text-lg leading-none">🎁</span>
+          <span>{title}</span>
+        </div>
+
+        {/* Line under: holders + link on same line, wraps nicely if needed */}
+        <div className="mt-1.5 text-[13px] sm:text-[14px] text-amber-100/85 flex items-center flex-wrap gap-2">
+          <span className="whitespace-pre">
+            {sub}
+          </span>
+          <span className="opacity-60">•</span>
+          <a
+            href={linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-[3px] text-amber-200 hover:text-amber-100"
+          >
+            {linkText} →
+          </a>
+        </div>
       </div>
     </div>
   );
+
+  // render outside layout so position is truly viewport-fixed
+  return createPortal(box, document.body);
 }
+
+export default GiveawayTease;
