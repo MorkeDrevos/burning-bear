@@ -1126,7 +1126,5 @@ function GiveawayTease({
   </a>
 </div>
     </div>
-  );
-}
-
-// no export here — GiveawayTease is local to this file
+    );
+} // ✅ closes the GiveawayTease function cleanly
