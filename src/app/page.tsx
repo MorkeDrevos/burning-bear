@@ -1114,18 +1114,4 @@ function GiveawayTease({
       <div className="flex flex-col items-center text-center px-1">
         <div className="text-[17px] font-bold">{title}</div>
 
-        <div className="text-sm text-amber-200/85 mt-0.5 flex items-center justify-center flex-wrap gap-1">
-          <span>Stay near the flames — Exclusive drops for $BBURN holders</span>
-          <a
-            href={linkUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-amber-300 underline underline-offset-[3px] hover:text-amber-100 transition"
-          >
-            {linkText} →
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-} // ✅ closes GiveawayTease function cleanly
+        <div className="text-[15px] text-amber-100/90 mt-1 flex items-center justify-center flex-wrap gap-1 tracking-[0.015em] drop-shadow-[0_0_4px_rgba(255,180,80
