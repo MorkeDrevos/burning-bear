@@ -1139,18 +1139,17 @@ function GiveawayTease({
           <span>{title}</span>
         </div>
 
-        <div className="mt-1.5 text-[13px] sm:text-[14px] text-amber-100/90 flex flex-wrap items-center gap-2">
-          <span className="whitespace-pre">{sub}</span>
-          <span className="opacity-60">•</span>
-          <a
-            href={linkUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-[3px] hover:text-amber-100 transition text-amber-200"
-          >
-            {linkText} →
-          </a>
-        </div>
+<div className="mt-1.5 text-[13px] sm:text-[14px] text-amber-100/90">
+  <span className="block whitespace-pre">{sub}</span>
+  <a
+    href={linkUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="block underline underline-offset-[3px] hover:text-amber-100 transition text-amber-200 mt-1"
+  >
+    {linkText} →
+  </a>
+</div>
       </div>
     </div>
   );
