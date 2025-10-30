@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import TreasuryLockCard from '@/components/TreasuryLockCard';
-import CopyButton from "./components/CopyButton";
+import CopyButton from './components/CopyButton';
 
 /* =========================
    Config
@@ -1074,8 +1075,6 @@ function MobileMenu() {
 }
 
 // ===== GiveawayTease (fixed top-right, rendered via portal) =====
-import React from "react";
-import { createPortal } from "react-dom";
 
 function GiveawayTease({
   title,
@@ -1093,14 +1092,12 @@ function GiveawayTease({
   const [visible, setVisible] = React.useState(true);
   const [dismissed, setDismissed] = React.useState(false);
 
-  // auto-hide after a timestamp (optional)
   React.useEffect(() => {
     if (hideAfter && Date.now() > hideAfter) setVisible(false);
   }, [hideAfter]);
 
   if (!visible || dismissed) return null;
 
-  // The announcement box itself
   const box = (
     <div
       aria-label="Giveaway announcement"
@@ -1119,7 +1116,6 @@ function GiveawayTease({
         "
         role="region"
       >
-        {/* Close (small ×) */}
         <button
           onClick={() => setDismissed(true)}
           aria-label="Dismiss"
@@ -1132,13 +1128,11 @@ function GiveawayTease({
           ×
         </button>
 
-        {/* Title */}
         <div className="flex items-center gap-2 text-[15px] sm:text-[16px] font-bold">
           <span>🎁</span>
           <span>{title}</span>
         </div>
 
-        {/* Subtitle + link on one line (wraps nicely if narrow) */}
         <div className="mt-1.5 text-[13px] sm:text-[14px] text-amber-100/90 flex flex-wrap items-center gap-2">
           <span className="whitespace-pre">{sub}</span>
           <span className="opacity-60">•</span>
@@ -1155,7 +1149,6 @@ function GiveawayTease({
     </div>
   );
 
-  // Render outside layout so it’s fixed to the viewport, not the hero
   return createPortal(box, document.body);
 }
 
