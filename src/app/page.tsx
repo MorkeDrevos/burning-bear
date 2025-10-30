@@ -409,13 +409,13 @@ useEffect(() => {
         Meet The Burning Bear – the classiest arsonist in crypto.
       </h1>
 
-      {SHOW_GIVEAWAY && (
+{SHOW_GIVEAWAY && (
   <GiveawayTease
-    title={GIVEAWAY_TITLE}
-    sub={GIVEAWAY_SUB}
-    linkText={GIVEAWAY_LINK_TEXT}
-    linkUrl={GIVEAWAY_LINK_URL}
-    hideAfter={GIVEAWAY_HIDE_AFTER}
+    title="🎁 Giveaways Incoming"
+    sub="Announcement later today — stay on stream."
+    linkText="Follow updates"
+    linkUrl="https://x.com/i/communities/1980944446871966021"
+    hideAfter={null}
   />
 )}
 
@@ -1073,7 +1073,7 @@ function MobileMenu() {
   );
 }
 
-// ===== GiveawayTease (for livestream / hero overlay) =====
+// ===== GiveawayTease (top-right floating announcement) =====
 function GiveawayTease({
   title,
   sub,
@@ -1099,19 +1099,39 @@ function GiveawayTease({
   return (
     <div
       className="
-        relative mx-auto mt-10 w-fit
-        px-6 py-3.5 rounded-xl
-        bg-gradient-to-r from-[#a56800]/40 via-[#ffb84d]/25 to-[#ffcc66]/30
-        border border-amber-400/30 backdrop-blur-md
-        text-amber-100 shadow-[0_0_25px_rgba(255,184,76,0.35)]
+        absolute top-6 right-6 z-20
+        flex flex-col gap-1 items-start
+        px-5 py-3.5 rounded-xl
+        bg-gradient-to-r from-[#a56800]/45 via-[#ffb84d]/25 to-[#ffcc66]/35
+        border border-amber-400/40 backdrop-blur-md
+        text-amber-50 shadow-[0_0_22px_rgba(255,184,76,0.35)]
         animate-fade-in-up pulse-glow cursor-pointer
-        transition-transform duration-300 hover:scale-[1.03]
+        transition-all duration-300 hover:scale-[1.03]
+        max-w-sm
       "
       onClick={() => window.open(linkUrl, '_blank')}
       role="button"
       aria-label="Giveaway announcement"
     >
-      <div className="flex flex-col items-center text-center px-1">
-        <div className="text-[17px] font-bold">{title}</div>
+      <div className="flex items-center justify-between w-full">
+        <div className="flex items-center gap-2 font-bold text-[16px]">
+          🎁 {title}
+        </div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setDismissed(true);
+          }}
+          className="text-amber-200/70 hover:text-amber-100 text-lg leading-none"
+        >
+          ×
+        </button>
+      </div>
 
-        <div className="text-[15px] text-amber-100/90 mt-1 flex items-center justify-center flex-wrap gap-1 tracking-[0.015em] drop-shadow-[0_0_4px_rgba(255,180,80
+      <div className="text-sm text-amber-200/85 mt-0.5 leading-snug">{sub}</div>
+      <div className="text-xs text-amber-300 mt-1 underline underline-offset-[3px]">
+        {linkText} →
+      </div>
+    </div>
+  );
+}
