@@ -22,7 +22,7 @@ const EXPLORER = 'https://explorer.solana.com';
 // ===== Giveaway Tease Config =====
 const SHOW_GIVEAWAY = true;                 // toggle on/off
 const GIVEAWAY_TITLE = "🔥 Campfire Bonus Round 1";
-const GIVEAWAY_SUB = "Stay near the flames - Exclusive drops for $BBURN holders.";
+const GIVEAWAY_SUB = "Stay near the flames, coming up soon - Campfire Bonus Round 1 for the true $BBURN believers.";
 const GIVEAWAY_LINK_TEXT = "Follow updates";
 const GIVEAWAY_LINK_URL = "https://x.com/i/communities/1980944446871966021";
 
