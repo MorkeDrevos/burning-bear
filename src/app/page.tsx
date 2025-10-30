@@ -20,8 +20,8 @@ const EXPLORER = 'https://explorer.solana.com';
 
 // ===== Giveaway Tease Config =====
 const SHOW_GIVEAWAY = true;                 // toggle on/off
-const GIVEAWAY_TITLE = "🎁 Holder Rewards Incoming";
-const GIVEAWAY_SUB = "Exclusive drops for $BBURN holders — stay tuned, it’s worth it.";
+const GIVEAWAY_TITLE = "🔥 Campfire Bonus Round 1";
+const GIVEAWAY_SUB = "Stay near the flames — only $BBURN holders will feel the heat.";
 const GIVEAWAY_LINK_TEXT = "";
 const GIVEAWAY_LINK_URL = "https://x.com/i/communities/1980944446871966021";
 
