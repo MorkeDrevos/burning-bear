@@ -1089,14 +1089,20 @@ function GiveawayTease({
   linkUrl: string;
   hideAfter: number | null;
 }) {
+  const [mounted, setMounted] = React.useState(false);
   const [visible, setVisible] = React.useState(true);
   const [dismissed, setDismissed] = React.useState(false);
 
+  // mark as client-only to avoid SSR "document is not defined"
+  React.useEffect(() => setMounted(true), []);
+
+  // optional time-based auto-hide
   React.useEffect(() => {
     if (hideAfter && Date.now() > hideAfter) setVisible(false);
   }, [hideAfter]);
 
-  if (!visible || dismissed) return null;
+  // nothing during SSR / before mount
+  if (!mounted || !visible || dismissed) return null;
 
   const box = (
     <div
@@ -1149,7 +1155,8 @@ function GiveawayTease({
     </div>
   );
 
+  // extra safety: guard in case something calls this before mount
+  if (typeof document === 'undefined') return null;
+
   return createPortal(box, document.body);
 }
-
-export { GiveawayTease };
