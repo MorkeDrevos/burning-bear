@@ -1099,17 +1099,20 @@ function GiveawayTease({
   return (
     <div
       className="
+        giveaway-pulse
         relative mx-auto mt-5 w-fit
         px-5 py-3 rounded-xl
         bg-gradient-to-r from-[#a56800]/40 via-[#ffb84d]/20 to-[#ffcc66]/30
         border border-amber-400/30 backdrop-blur-md
         text-amber-100 shadow-[0_0_20px_rgba(255,184,76,0.35)]
-        animate-fade-in-up pulse-glow cursor-pointer
+        animate-fade-in-up cursor-pointer
         transition-transform duration-300 hover:scale-[1.03]
       "
       onClick={() => window.open(linkUrl, '_blank')}
+      role="button"
+      aria-label="Giveaways announcement — follow updates"
     >
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center text-center">
         <div className="flex items-center gap-2 text-[17px] font-bold">
           🎁 {title}
         </div>
