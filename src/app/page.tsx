@@ -18,6 +18,17 @@ const TREASURY_WALLET = 'FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE';
 const MARKETING_WALLET = '7k5rwpdSRyutEMek5tXuNuVVKQEQyubKC9VHEZ91SwZV';
 const EXPLORER = 'https://explorer.solana.com';
 
+// ===== Giveaway Tease Config =====
+const SHOW_GIVEAWAY = true;                 // toggle on/off
+const GIVEAWAY_TITLE = "🎁 Giveaways incoming";
+const GIVEAWAY_SUB = "Announcement later today — stay on stream.";
+const GIVEAWAY_LINK_TEXT = "Follow updates";
+const GIVEAWAY_LINK_URL = "https://x.com/i/communities/1980944446871966021";
+
+// Optional: hide after a point in time (ms since epoch). Set to null to disable.
+const GIVEAWAY_HIDE_AFTER = null as number | null;
+// e.g. schedule: Date.parse("2025-10-30T18:00:00Z")
+
 /* =========================
    Types
 ========================= */
@@ -353,6 +364,17 @@ useEffect(() => {
 
       {/* ===== HERO with video + translucent text panel ===== */}
 <section className="relative">
+  
+{SHOW_GIVEAWAY && (
+  <GiveawayTease
+    title={GIVEAWAY_TITLE}
+    sub={GIVEAWAY_SUB}
+    linkText={GIVEAWAY_LINK_TEXT}
+    linkUrl={GIVEAWAY_LINK_URL}
+    hideAfter={GIVEAWAY_HIDE_AFTER}
+  />
+)}
+
   {/* Background video + vignette */}
   <div className="absolute inset-0 -z-10 overflow-hidden hero-vignette">
     <video
