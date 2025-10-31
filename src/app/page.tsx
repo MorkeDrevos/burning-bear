@@ -6,6 +6,11 @@ import Link from 'next/link';
 import TreasuryLockCard from '@/components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
 
+// =========================
+// seasonal flag (top of file)
+// =========================
+const IS_HALLOWEEN = Date.now() < Date.parse("2025-11-03T00:00:00Z");
+
 /* =========================
    Config
 ========================= */
@@ -365,10 +370,6 @@ useEffect(() => {
 
       {IS_HALLOWEEN && <HalloweenBar />}
 
-// =========================
-// seasonal flag (top of file)
-// =========================
-const IS_HALLOWEEN = Date.now() < Date.parse("2025-11-03T00:00:00Z");
 
 {SHOW_GIVEAWAY && (
   <GiveawayTease
