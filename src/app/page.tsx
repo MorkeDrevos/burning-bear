@@ -7,9 +7,8 @@ import TreasuryLockCard from '@/components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
 
 // =========================
-// seasonal flag (top of file)
-// =========================
-const IS_HALLOWEEN = (Date.now() < Date.parse("2025-11-03T00:00:00Z"));
+// 🎃 Seasonal flag (disabled post-Halloween)
+// const IS_HALLOWEEN = Date.now() < Date.parse("2025-11-03T00:00:00Z");
 
 /* =========================
    Config
@@ -368,17 +367,22 @@ useEffect(() => {
         </div>
       </header>
 
-      {IS_HALLOWEEN && <HalloweenBar />}
-
+// 🎃 <HalloweenBar /> — Disabled post-Halloween
+// function HalloweenBar() { /* archived seasonal bar for October events */ }
 
 {SHOW_GIVEAWAY && (
   <GiveawayTease
-    title={IS_HALLOWEEN ? "🎃 🎃 Spooky Campfire Bonus" : GIVEAWAY_TITLE}
-    sub={
-      IS_HALLOWEEN
-        ? "Tonight only — surprise burns & treats for $BBURN holders."
-        : GIVEAWAY_SUB
-    }
+    // === Halloween variant (archived) ===
+    // title={IS_HALLOWEEN ? "🎃🔥 Spooky Campfire Bonus" : GIVEAWAY_TITLE}
+    // sub={
+    //   IS_HALLOWEEN
+    //     ? "Tonight only — surprise burns & treats for $BBURN holders. Stay near the flames."
+    //     : GIVEAWAY_SUB
+    // }
+
+    // === Active default ===
+    title={GIVEAWAY_TITLE}
+    sub={GIVEAWAY_SUB}
     linkText={GIVEAWAY_LINK_TEXT}
     linkUrl={GIVEAWAY_LINK_URL}
     hideAfter={GIVEAWAY_HIDE_AFTER}
