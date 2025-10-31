@@ -363,14 +363,23 @@ useEffect(() => {
         </div>
       </header>
 
+      {IS_HALLOWEEN && <HalloweenBar />}
+
+// seasonal flag (top of file)
+const IS_HALLOWEEN = Date.now() < Date.parse("2025-11-03T00:00:00Z");
+
 {SHOW_GIVEAWAY && (
   <GiveawayTease
-    title={GIVEAWAY_TITLE}
-    sub={GIVEAWAY_SUB}
-    linkText={GIVEAWAY_LINK_TEXT}
-    linkUrl={GIVEAWAY_LINK_URL}
-    hideAfter={GIVEAWAY_HIDE_AFTER}
-  />
+  title={IS_HALLOWEEN ? "🎃🔥 Spooky Campfire Bonus" : GIVEAWAY_TITLE}
+  sub={
+    IS_HALLOWEEN
+      ? "Tonight only — surprise burns & treats for $BBURN holders. Stay near the flames."
+      : GIVEAWAY_SUB
+  }
+  linkText={GIVEAWAY_LINK_TEXT}
+  linkUrl={GIVEAWAY_LINK_URL}
+  hideAfter={GIVEAWAY_HIDE_AFTER}
+/>
 )}
 
       {/* ===== HERO with video + translucent text panel ===== */}
@@ -1070,6 +1079,29 @@ function MobileMenu() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function HalloweenBar() {
+  return (
+    <div className="z-20 w-full bg-gradient-to-r from-[#1f1408]/90 via-[#2b1a0f]/90 to-[#1f1408]/90 border-b border-amber-500/25 backdrop-blur-sm shadow-[0_0_25px_rgba(255,136,0,0.12)]">
+      <div className="mx-auto max-w-6xl px-4 py-2 flex items-center justify-between text-[14px] text-amber-100">
+        <span className="font-semibold flex items-center gap-2">
+          <span className="animate-pulse-slow">🎃</span>
+          <span className="text-amber-200">Halloween Burn-a-thon</span>
+          <span className="opacity-70">•</span>
+          <span className="opacity-90">extra burns, surprise drops</span>
+        </span>
+        <a
+          href={GIVEAWAY_LINK_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline underline-offset-[4px] hover:text-amber-200 transition"
+        >
+          Follow updates →
+        </a>
+      </div>
     </div>
   );
 }
