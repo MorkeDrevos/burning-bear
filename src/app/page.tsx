@@ -9,7 +9,7 @@ import CopyButton from './components/CopyButton';
 // =========================
 // seasonal flag (top of file)
 // =========================
-const IS_HALLOWEEN = Date.now() < Date.parse("2025-11-03T00:00:00Z");
+const IS_HALLOWEEN = (Date.now() < Date.parse("2025-11-03T00:00:00Z"));
 
 /* =========================
    Config
