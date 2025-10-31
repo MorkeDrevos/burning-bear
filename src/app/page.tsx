@@ -373,7 +373,7 @@ useEffect(() => {
 
 {SHOW_GIVEAWAY && (
   <GiveawayTease
-    title={IS_HALLOWEEN ? "🎃🔥 Spooky Campfire Bonus" : GIVEAWAY_TITLE}
+    title={IS_HALLOWEEN ? "🎃 🔥 Spooky Campfire Bonus" : GIVEAWAY_TITLE}
     sub={
       IS_HALLOWEEN
         ? "Tonight only — surprise burns & treats for $BBURN holders. Stay near the flames."
@@ -385,7 +385,7 @@ useEffect(() => {
   />
 )}
 
-      {/* ===== HERO with video + translucent text panel ===== */}
+{/* ===== HERO with video + translucent text panel ===== */}
 <section className="relative">
 
   {/* Background video + vignette */}
@@ -424,6 +424,13 @@ useEffect(() => {
         />
       ))}
     </div>
+
+    {/* Seasonal bar (inside hero, above headline) */}
+    <div className="mb-4">
+      <HalloweenBar />
+    </div>
+
+    {/* ...rest of your hero (headline, countdowns, stats, pills, etc.) */}
 
     {/* translucent stats panel */}
     <div className="relative w-full rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
@@ -1088,23 +1095,21 @@ function MobileMenu() {
 
 function HalloweenBar() {
   return (
-    <div className="z-20 w-full bg-gradient-to-r from-[#1f1408]/90 via-[#2b1a0f]/90 to-[#1f1408]/90 border-b border-amber-500/25 backdrop-blur-sm shadow-[0_0_25px_rgba(255,136,0,0.12)]">
-      <div className="mx-auto max-w-6xl px-4 py-2 flex items-center justify-between text-[14px] text-amber-100">
-        <span className="font-semibold flex items-center gap-2">
-          <span className="animate-pulse-slow">🎃</span>
-          <span className="text-amber-200">Halloween Burn-a-thon</span>
-          <span className="opacity-70">•</span>
-          <span className="opacity-90">extra burns, surprise drops</span>
-        </span>
-        <a
-          href={GIVEAWAY_LINK_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline underline-offset-[4px] hover:text-amber-200 transition"
-        >
-          Follow updates →
-        </a>
-      </div>
+    <div className="rounded-xl border border-amber-500/25 bg-[#2b1a0f]/60 px-4 py-2 text-[14px] text-amber-100 font-semibold flex items-center justify-between shadow-[0_0_20px_rgba(255,136,0,0.15)]">
+      <span className="flex items-center gap-2">
+        <span className="animate-pulse-slow">🎃</span>
+        <span>Halloween Burn-a-thon</span>
+        <span className="opacity-70">•</span>
+        <span className="opacity-90">extra burns, surprise drops</span>
+      </span>
+      <a
+        href={GIVEAWAY_LINK_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline underline-offset-[3px] hover:text-amber-200 transition"
+      >
+        Follow updates →
+      </a>
     </div>
   );
 }
