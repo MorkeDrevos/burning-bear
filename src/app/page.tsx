@@ -1090,18 +1090,19 @@ function HalloweenBar() {
   return (
     <div
       className="
-        z-20 w-full bg-gradient-to-r from-[#2b1a0f]/90 via-[#150e08]/90 to-[#2b1a0f]/90
-        border-b border-amber-500/20 backdrop-blur
-        text-[14px] text-amber-100 font-semibold
-        flex items-center justify-center gap-2 py-2
-        shadow-[0_0_20px_rgba(255,140,0,0.15)]
+        z-20 w-full bg-gradient-to-r from-[#2b1a0f]/95 via-[#150e08]/90 to-[#2b1a0f]/95
+        border-b border-amber-500/30 backdrop-blur
+        text-amber-100 flex items-center justify-center gap-3 py-3
+        shadow-[0_0_25px_rgba(255,140,0,0.25)]
       "
     >
-      <span className="flex items-center gap-2">
-        <span className="animate-pulse text-[15px]">🎃🎃🎃</span>
-        <span className="text-amber-300">Halloween Burn-a-thon</span>
+      <span className="flex items-center gap-3 text-[16px] sm:text-[17px] font-semibold">
+        <span className="animate-pulse text-[18px]">🎃🎃🎃</span>
+        <span className="text-amber-300 drop-shadow-[0_0_5px_rgba(255,200,0,0.3)]">
+          Halloween Burn-a-thon
+        </span>
         <span className="opacity-70">•</span>
-        <span className="opacity-90">extra burns, surprise drops</span>
+        <span className="opacity-90 text-[15px]">extra burns, surprise drops</span>
       </span>
     </div>
   );
