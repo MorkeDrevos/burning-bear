@@ -6,10 +6,6 @@ import Link from 'next/link';
 import TreasuryLockCard from '@/components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
 
-// =========================
-// 🎃 Seasonal flag (disabled post-Halloween)
-// const IS_HALLOWEEN = Date.now() < Date.parse("2025-11-03T00:00:00Z");
-
 /* =========================
    Config
 ========================= */
@@ -366,28 +362,6 @@ useEffect(() => {
 </div>
         </div>
       </header>
-
-// 🎃 <HalloweenBar /> — Disabled post-Halloween
-// function HalloweenBar() { /* archived seasonal bar for October events */ }
-
-{SHOW_GIVEAWAY && (
-  <GiveawayTease
-    // === Halloween variant (archived) ===
-    // title={IS_HALLOWEEN ? "🎃🔥 Spooky Campfire Bonus" : GIVEAWAY_TITLE}
-    // sub={
-    //   IS_HALLOWEEN
-    //     ? "Tonight only — surprise burns & treats for $BBURN holders. Stay near the flames."
-    //     : GIVEAWAY_SUB
-    // }
-
-    // === Active default ===
-    title={GIVEAWAY_TITLE}
-    sub={GIVEAWAY_SUB}
-    linkText={GIVEAWAY_LINK_TEXT}
-    linkUrl={GIVEAWAY_LINK_URL}
-    hideAfter={GIVEAWAY_HIDE_AFTER}
-  />
-)}
 
       {/* ===== HERO with video + translucent text panel ===== */}
 <section className="relative">
@@ -1110,90 +1084,4 @@ function HalloweenBar() {
       </span>
     </div>
   );
-}
-
-// ===== GiveawayTease (fixed top-right, rendered via portal) =====
-
-function GiveawayTease({
-  title,
-  sub,
-  linkText,
-  linkUrl,
-  hideAfter,
-}: {
-  title: string;
-  sub: string;
-  linkText: string;
-  linkUrl: string;
-  hideAfter: number | null;
-}) {
-  const [mounted, setMounted] = React.useState(false);
-  const [visible, setVisible] = React.useState(true);
-  const [dismissed, setDismissed] = React.useState(false);
-
-  // mark as client-only to avoid SSR "document is not defined"
-  React.useEffect(() => setMounted(true), []);
-
-  // optional time-based auto-hide
-  React.useEffect(() => {
-    if (hideAfter && Date.now() > hideAfter) setVisible(false);
-  }, [hideAfter]);
-
-  // nothing during SSR / before mount
-  if (!mounted || !visible || dismissed) return null;
-
-  const box = (
-<div
-  aria-label="Giveaway announcement"
-  className="
-    fixed z-[70] pointer-events-auto
-    top-[90px] right-4 sm:top-[100px] sm:right-6 lg:top-[110px] lg:right-8
-  "
->
-      <div
-        className="
-          relative rounded-xl px-5 py-3.5
-          bg-gradient-to-r from-[#a56800]/40 via-[#ffb84d]/22 to-[#ffcc66]/28
-          border border-amber-400/30 backdrop-blur-md
-          shadow-[0_8px_30px_rgba(0,0,0,0.35)]
-          animate-fade-in-up
-        "
-        role="region"
-      >
-        <button
-          onClick={() => setDismissed(true)}
-          aria-label="Dismiss"
-          className="
-            absolute -right-2 -top-2 grid h-6 w-6 place-items-center
-            rounded-full bg-black/45 text-white/80 hover:text-white
-            border border-white/10
-          "
-        >
-          ×
-        </button>
-
-        <div className="flex items-center gap-2 text-[15px] sm:text-[16px] font-bold">
-          <span>🎁</span>
-          <span>{title}</span>
-        </div>
-
-<div className="mt-1.5 text-[13px] sm:text-[14px] text-amber-100/90">
-  <span className="block whitespace-pre">{sub}</span>
-  <a
-    href={linkUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="block underline underline-offset-[3px] hover:text-amber-100 transition text-amber-200 mt-1"
-  >
-    {linkText} →
-  </a>
-</div>
-      </div>
-    </div>
-  );
-
-  // extra safety: guard in case something calls this before mount
-  if (typeof document === 'undefined') return null;
-
-  return createPortal(box, document.body);
 }
