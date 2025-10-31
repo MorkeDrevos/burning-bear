@@ -115,3 +115,15 @@ html { scroll-behavior: smooth; }
   0%, 100% { box-shadow: 0 0 18px rgba(255, 184, 76, 0.35); }
   50%      { box-shadow: 0 0 36px rgba(255, 184, 76, 0.55); }
 }
+@keyframes flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    opacity: 0.6;
+  }
+}
+
+.flicker {
+  animation: flicker 2s infinite ease-in-out;
+}
