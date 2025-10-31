@@ -366,8 +366,8 @@ useEffect(() => {
 {SHOW_GIVEAWAY && (
   <GiveawayTease
     title={GIVEAWAY_TITLE}
-    sub="Stay near the flames — Exclusive drops for $BBURN holders"
-    linkText="Follow updates"
+    sub={GIVEAWAY_SUB}
+    linkText={GIVEAWAY_LINK_TEXT}
     linkUrl={GIVEAWAY_LINK_URL}
     hideAfter={GIVEAWAY_HIDE_AFTER}
   />
