@@ -365,21 +365,23 @@ useEffect(() => {
 
       {IS_HALLOWEEN && <HalloweenBar />}
 
+// =========================
 // seasonal flag (top of file)
+// =========================
 const IS_HALLOWEEN = Date.now() < Date.parse("2025-11-03T00:00:00Z");
 
 {SHOW_GIVEAWAY && (
   <GiveawayTease
-  title={IS_HALLOWEEN ? "🎃🔥 Spooky Campfire Bonus" : GIVEAWAY_TITLE}
-  sub={
-    IS_HALLOWEEN
-      ? "Tonight only — surprise burns & treats for $BBURN holders. Stay near the flames."
-      : GIVEAWAY_SUB
-  }
-  linkText={GIVEAWAY_LINK_TEXT}
-  linkUrl={GIVEAWAY_LINK_URL}
-  hideAfter={GIVEAWAY_HIDE_AFTER}
-/>
+    title={IS_HALLOWEEN ? "🎃🔥 Spooky Campfire Bonus" : GIVEAWAY_TITLE}
+    sub={
+      IS_HALLOWEEN
+        ? "Tonight only — surprise burns & treats for $BBURN holders. Stay near the flames."
+        : GIVEAWAY_SUB
+    }
+    linkText={GIVEAWAY_LINK_TEXT}
+    linkUrl={GIVEAWAY_LINK_URL}
+    hideAfter={GIVEAWAY_HIDE_AFTER}
+  />
 )}
 
       {/* ===== HERO with video + translucent text panel ===== */}
