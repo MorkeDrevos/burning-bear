@@ -1098,7 +1098,7 @@ function HalloweenBar() {
       "
     >
       <span className="flex items-center gap-2">
-        <span>🎃🎃🎃</span>
+        <span className="animate-pulse text-[15px]">🎃🎃🎃</span>
         <span className="text-amber-300">Halloween Burn-a-thon</span>
         <span className="opacity-70">•</span>
         <span className="opacity-90">extra burns, surprise drops</span>
