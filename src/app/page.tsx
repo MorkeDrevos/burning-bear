@@ -426,6 +426,7 @@ useEffect(() => {
 
 {/* Pills */}
 <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+
   {/* Left: existing pills */}
   <div className="flex flex-wrap items-center gap-3">
     <a href="#log">
@@ -437,36 +438,21 @@ useEffect(() => {
     <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
   </div>
 
-  {/* Right-side trust pill */}
-<a
-  href="#vault"
-  className="
-    group inline-flex items-center gap-2
-    rounded-2xl border border-amber-400/20 bg-amber-500/10
-    px-3.5 py-[7px] text-[15px] leading-none font-semibold text-amber-200
-    hover:bg-amber-500/15 hover:text-amber-100 transition
-    pill-shadow sm:ml-auto
-  "
-  title="View Treasury Lock details"
->
-  {/* small lock icon */}
-  <span
-    className="inline-grid h-5 w-5 place-items-center rounded-md
-               bg-amber-500/25 ring-1 ring-amber-400/30"
+  {/* Right: Powered by Solana (replaces old Treasury pill) */}
+  <div
+    className="
+      group inline-flex items-center gap-2
+      rounded-2xl border border-amber-400/20 bg-amber-500/10
+      px-3.5 py-[7px] text-[15px] leading-none font-semibold text-amber-200
+      hover:bg-amber-500/15 hover:text-amber-100 transition pill-shadow
+      sm:ml-auto
+    "
+    aria-label="Powered by the Solana blockchain"
   >
-    <svg viewBox="0 0 24 24" className="h-[14px] w-[14px]" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="3" y="11" width="18" height="10" rx="2" />
-      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-    </svg>
-  </span>
+    <SolanaMark className="h-4 w-4 text-amber-100/70 transition group-hover:drop-shadow-[0_0_8px_rgba(255,184,76,.3)]" />
+    <span className="text-amber-100/80">Powered by the Solana blockchain</span>
+  </div>
 
-  {/* Replaces old Treasury block with Powered by Solana */}
-<div className="flex items-center justify-center gap-2 text-sm text-amber-100/70 mt-3">
-  <SolanaMark className="h-4 w-4 text-amber-100/70 transition drop-shadow-[0_0_8px_rgba(255,184,76,.3)]" />
-  <span>Powered by the Solana blockchain</span>
-</div>
-  <SolanaMark className="h-4 w-4 text-amber-100/70 transition drop-shadow-[0_0_8px_rgba(255,184,76,.3)]" />
-  <span>Powered by the Solana blockchain</span>
 </div>
     <span className="inline-flex items-center gap-1 text-amber-300/90 group-hover:text-amber-100 transition">
       View details
