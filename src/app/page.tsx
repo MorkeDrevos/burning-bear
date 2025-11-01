@@ -410,13 +410,6 @@ useEffect(() => {
         Meet The Burning Bear – Solana’s deflation engine
       </h1>
 
-<div className="mt-3 group inline-flex items-center gap-2 text-sm text-amber-100/70">
-  <SolanaMark className="h-4 w-4 text-amber-100/70 transition group-hover:drop-shadow-[0_0_10px_rgba(255,184,76,.35)]" />
-  <span aria-hidden="true" className="transition group-hover:text-amber-100">
-    Powered by the Solana blockchain
-  </span>
-</div>
-
       {/* Countdowns */}
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
        {/*  <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />*/}
@@ -468,8 +461,10 @@ useEffect(() => {
   </span>
 
   {/* text + chevron */}
-  <span className="tracking-tight">
-    BBURN Treasury Vault Lock - {' '}
+  <div className="flex items-center justify-center gap-2 text-sm text-amber-100/70 mt-3">
+  <SolanaMark className="h-4 w-4 text-amber-100/70 transition drop-shadow-[0_0_8px_rgba(255,184,76,.3)]" />
+  <span>Powered by the Solana blockchain</span>
+</div>
     <span className="inline-flex items-center gap-1 text-amber-300/90 group-hover:text-amber-100 transition">
       View details
       <svg
@@ -489,12 +484,12 @@ useEffect(() => {
   </div>
 </section>
 
-      {/* Contract Address Pill — Cleaned */}
-<div className="mt-6 flex justify-center">
-  <div className="inline-flex items-center gap-3 bg-[#0f1f19]/60 px-4 py-2 rounded-xl backdrop-blur-sm">
-    {/* Token + Address */}
-    <span className="text-sm font-semibold text-white/75">{TOKEN_SYMBOL}</span>
-    <span className="text-white/50">•</span>
+{/* Contract + Treasury strip */}
+<div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm text-amber-100/80">
+
+  {/* $BBURN + CA + copy */}
+  <div className="inline-flex items-center gap-2 bg-[#0f191f]/60 px-4 py-2 rounded-xl backdrop-blur-sm">
+    <span className="font-semibold">$BBURN</span>
     <code
       className="font-mono text-[13px] text-white/70"
       title={FULL_TOKEN_ADDRESS}
@@ -502,13 +497,30 @@ useEffect(() => {
       {truncateMiddle(FULL_TOKEN_ADDRESS, 6, 6)}
     </code>
 
-    {/* ✅ New Copy Button goes here */}
+    {/* your existing copy button component */}
     <CopyButton
-      value={FULL_TOKEN_ADDRESS}
+      text={FULL_TOKEN_ADDRESS}
       label="Copy contract address"
       className="h-8 w-8 rounded-md bg-white/5 ring-1 ring-white/10 hover:bg-white/10"
     />
   </div>
+
+  {/* divider */}
+  <span className="opacity-60">|</span>
+
+  {/* Treasury lock link (replace URL) */}
+  <a
+    href={TREASURY_LOCK_URL /* e.g. "https://solscan.io/account/..." */}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="
+      inline-flex items-center gap-2 bg-[#0f191f]/60 px-4 py-2 rounded-xl
+      backdrop-blur-sm hover:text-amber-100 transition
+    "
+  >
+    <span role="img" aria-label="lock">🔒</span>
+    <span>BBURN Treasury Vault Lock</span>
+  </a>
 </div>
 
 {/* ===== Live Burn Log — marquee + full-click cards ===== */}
