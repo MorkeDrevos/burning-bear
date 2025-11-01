@@ -417,7 +417,7 @@ useEffect(() => {
   </span>
 </div>
 
-import SolanaMark from "@/components/SolanaMark";
+<SolanaMark className="h-4 w-4 text-amber-100/70 transition group-hover:drop-shadow-[0_0_10px_rgba(255,184,76,.35)]" />
 
       {/* Subtle Solana accent */}
 <div className="mt-3 flex items-center gap-2 text-sm text-white/70">
