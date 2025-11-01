@@ -424,7 +424,7 @@ useEffect(() => {
         <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
       </div>
 
-{/* Pills */}
+      {/* Pills */}
 <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
 
   {/* Left: existing pills */}
@@ -438,8 +438,7 @@ useEffect(() => {
     <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
   </div>
 
-  {/* Right: Powered by Solana (replaces old Treasury pill) */}
-  <div
+    <div
     className="
       group inline-flex items-center gap-2
       rounded-2xl border border-amber-400/20 bg-amber-500/10
@@ -451,25 +450,6 @@ useEffect(() => {
   >
     <SolanaMark className="h-4 w-4 text-amber-100/70 transition group-hover:drop-shadow-[0_0_8px_rgba(255,184,76,.3)]" />
     <span className="text-amber-100/80">Powered by the Solana blockchain</span>
-  </div>
-
-</div>
-    <span className="inline-flex items-center gap-1 text-amber-300/90 group-hover:text-amber-100 transition">
-      View details
-      <svg
-        viewBox="0 0 24 24"
-        className="h-[14px] w-[14px] link-chevron"
-        fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-      >
-        <path d="M5 12h14M13 5l7 7-7 7" />
-      </svg>
-    </span>
-  </span>
-</a>
-</div>
-
-
-    </div>
   </div>
 </section>
 
