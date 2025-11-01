@@ -410,6 +410,22 @@ useEffect(() => {
         Meet The Burning Bear – Solana’s deflation engine
       </h1>
 
+<div className="mt-3 group inline-flex items-center gap-2 text-sm text-amber-100/70">
+  <SolanaMark className="h-4 w-4 text-amber-100/70 transition group-hover:drop-shadow-[0_0_10px_rgba(255,184,76,.35)]" />
+  <span aria-hidden="true" className="transition group-hover:text-amber-100">
+    Powered by the Solana blockchain
+  </span>
+</div>
+
+import SolanaMark from "@/components/SolanaMark";
+
+      {/* Subtle Solana accent */}
+<div className="mt-3 flex items-center gap-2 text-sm text-white/70">
+  <SolanaMark className="h-4 w-4 opacity-70 drop-shadow-[0_0_6px_rgba(255,123,0,.25)]" />
+  <span className="sr-only">Powered by the Solana blockchain</span>
+  <span aria-hidden="true">Powered by the Solana blockchain</span>
+</div>
+
       {/* Countdowns */}
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
        {/*  <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} />*/}
@@ -1085,3 +1101,30 @@ function HalloweenBar() {
     </div>
   );
 }
+
+function SolanaMark({ className = "" }: { className?: string }) {
+  // Monochrome version (fits your warm palette). Swap to gradient version below if you prefer.
+  return (
+    <svg
+      viewBox="0 0 398 311"
+      role="img"
+      aria-label="Solana"
+      className={className}
+    >
+      <defs>
+        <linearGradient id="s" x1="0" x2="1" y1="0" y2="1">
+          {/* very subtle purple-green; kept muted so it doesn’t clash */}
+          <stop offset="0%" stopColor="#bca8ff" />
+          <stop offset="100%" stopColor="#a8ffdf" />
+        </linearGradient>
+      </defs>
+      {/* Use fill="currentColor" for monochrome via Tailwind text-* utilities */}
+      <g fill="currentColor">
+        <path d="M64 0h318c10 0 18 11 9 19l-68 60a20 20 0 0 1-13 5H0L64 0Z" />
+        <path d="M64 156h318c10 0 18 11 9 19l-68 60a20 20 0 0 1-13 5H0l64-84Z" />
+        <path d="M0 233h318c5 0 9 2 13 5l68 60c9 8 1 19-9 19H64L0 233Z" />
+      </g>
+    </svg>
+  );
+}
+export default SolanaMark;
