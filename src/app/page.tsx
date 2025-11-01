@@ -1127,4 +1127,3 @@ function SolanaMark({ className = "" }: { className?: string }) {
     </svg>
   );
 }
-export default SolanaMark;
