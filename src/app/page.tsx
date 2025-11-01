@@ -460,8 +460,11 @@ useEffect(() => {
     </svg>
   </span>
 
-  {/* text + chevron */}
-  <div className="flex items-center justify-center gap-2 text-sm text-amber-100/70 mt-3">
+  {/* Replaces old Treasury block with Powered by Solana */}
+<div className="flex items-center justify-center gap-2 text-sm text-amber-100/70 mt-3">
+  <SolanaMark className="h-4 w-4 text-amber-100/70 transition drop-shadow-[0_0_8px_rgba(255,184,76,.3)]" />
+  <span>Powered by the Solana blockchain</span>
+</div>
   <SolanaMark className="h-4 w-4 text-amber-100/70 transition drop-shadow-[0_0_8px_rgba(255,184,76,.3)]" />
   <span>Powered by the Solana blockchain</span>
 </div>
