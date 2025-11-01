@@ -19,6 +19,10 @@ const TREASURY_WALLET = 'FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE';
 const MARKETING_WALLET = '7k5rwpdSRyutEMek5tXuNuVVKQEQyubKC9VHEZ91SwZV';
 const EXPLORER = 'https://explorer.solana.com';
 
+// ✅ Add this new constant here
+const TREASURY_LOCK_URL =
+  'https://lock.jup.ag/escrow/7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77';
+
 // ===== Giveaway Tease Config =====
 const SHOW_GIVEAWAY = true;                 // toggle on/off
 const GIVEAWAY_TITLE = "Campfire Bonus Round 1";
@@ -426,11 +430,34 @@ useEffect(() => {
 
       {/* Pills */}
 <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-  {/* Left pills ... */}
-  {/* Right 'Powered by Solana' ... */}
+  {/* Left: existing pills */}
+  <div className="flex flex-wrap items-center gap-3">
+    <a href="#log">
+      <Pill className="cursor-pointer bg-orange-500/20 text-orange-400 font-semibold hover:bg-orange-500/25">
+        🔥 Total Burns: {data?.burns?.length ?? 0}
+      </Pill>
+    </a>
+    <Pill>Initial Supply: {fmtInt(INITIAL)}</Pill>
+    <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
+  </div>
+
+  {/* Right: Powered by Solana (replaces old Treasury pill) */}
+  <div
+    className="
+      group inline-flex items-center gap-2
+      rounded-2xl border border-amber-400/20 bg-amber-500/10
+      px-3.5 py-[7px] text-[15px] leading-none font-semibold text-amber-200
+      hover:bg-amber-500/15 hover:text-amber-100 transition pill-shadow
+      sm:ml-auto
+    "
+    aria-label="Powered by the Solana blockchain"
+  >
+    <SolanaMark className="h-4 w-4 text-amber-100/70 transition group-hover:drop-shadow-[0_0_8px_rgba(255,184,76,.3)]" />
+    <span className="text-amber-100/80">Powered by the Solana blockchain</span>
+  </div>
 </div>
 
-{/* Contract + Treasury strip (KEEP THIS INSIDE THE SECTION) */}
+{/* Contract + Treasury strip (inside the same section) */}
 <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm text-amber-100/80">
   {/* $BBURN + CA + copy */}
   <div className="inline-flex items-center gap-2 bg-[#0f191f]/60 px-4 py-2 rounded-xl backdrop-blur-sm">
@@ -458,47 +485,9 @@ useEffect(() => {
     <span>BBURN Treasury Vault Lock</span>
   </a>
 </div>
-
-</section> {/* ← close the section AFTER the strip */}
-
-{/* Contract + Treasury strip */}
-<div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm text-amber-100/80">
-
-  {/* $BBURN + CA + copy */}
-  <div className="inline-flex items-center gap-2 bg-[#0f191f]/60 px-4 py-2 rounded-xl backdrop-blur-sm">
-    <span className="font-semibold">$BBURN</span>
-    <code
-      className="font-mono text-[13px] text-white/70"
-      title={FULL_TOKEN_ADDRESS}
-    >
-      {truncateMiddle(FULL_TOKEN_ADDRESS, 6, 6)}
-    </code>
-
-    {/* your existing copy button component */}
-    <CopyButton
-      text={FULL_TOKEN_ADDRESS}
-      label="Copy contract address"
-      className="h-8 w-8 rounded-md bg-white/5 ring-1 ring-white/10 hover:bg-white/10"
-    />
-  </div>
-
-  {/* divider */}
-  <span className="opacity-60">|</span>
-
-  {/* Treasury lock link (replace URL) */}
-  <a
-    href={TREASURY_LOCK_URL /* e.g. "https://solscan.io/account/..." */}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="
-      inline-flex items-center gap-2 bg-[#0f191f]/60 px-4 py-2 rounded-xl
-      backdrop-blur-sm hover:text-amber-100 transition
-    "
-  >
-    <span role="img" aria-label="lock">🔒</span>
-    <span>BBURN Treasury Vault Lock</span>
-  </a>
-</div>
+</div>  {/* closes translucent stats panel */}
+</div>    {/* closes mx-auto container */}
+</section> {/* close the HERO section */}
 
 {/* ===== Live Burn Log — marquee + full-click cards ===== */}
 <section
