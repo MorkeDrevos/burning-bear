@@ -424,10 +424,13 @@ useEffect(() => {
         <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
       </div>
 
-      {/* Pills ... */}
-</div> {/* closes the mt-5 pills wrapper */}
+      {/* Pills */}
+<div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+  {/* Left pills ... */}
+  {/* Right 'Powered by Solana' ... */}
+</div>
 
-{/* Contract + Treasury strip */}
+{/* Contract + Treasury strip (KEEP THIS INSIDE THE SECTION) */}
 <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm text-amber-100/80">
   {/* $BBURN + CA + copy */}
   <div className="inline-flex items-center gap-2 bg-[#0f191f]/60 px-4 py-2 rounded-xl backdrop-blur-sm">
@@ -456,7 +459,7 @@ useEffect(() => {
   </a>
 </div>
 
-</section> {/* <-- close the section AFTER the strip */}
+</section> {/* ← close the section AFTER the strip */}
 
 {/* Contract + Treasury strip */}
 <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm text-amber-100/80">
