@@ -465,11 +465,11 @@ useEffect(() => {
     <code className="font-mono text-[13px] text-white/70" title={FULL_TOKEN_ADDRESS}>
       {truncateMiddle(FULL_TOKEN_ADDRESS, 6, 6)}
     </code>
-    <CopyButton
-      text={FULL_TOKEN_ADDRESS}
-      label="Copy contract address"
-      className="h-8 w-8 rounded-md bg-white/5 ring-1 ring-white/10 hover:bg-white/10"
-    />
+<CopyButton
+  value={FULL_TOKEN_ADDRESS}
+  label="Copy contract address"
+  className="h-8 w-8 rounded-md bg-white/5 ring-1 ring-white/10 hover:bg-white/10"
+/>
   </div>
 
   <span className="opacity-60">|</span>
