@@ -480,13 +480,24 @@ useEffect(() => {
     <span className="opacity-60">|</span>
 
     {/* Scroll to vault below */}
-    <a
-      href="#vault"
-      className="inline-flex items-center gap-2 bg-[#0f191f]/60 px-4 py-2 rounded-xl backdrop-blur-sm hover:text-amber-100 transition"
+<a
+  href="#vault"
+  className="group inline-flex items-center gap-2 text-white hover:text-amber-200 transition font-semibold tracking-wide"
+>
+  <span role="img" aria-label="lock" className="text-[18px]">🔒</span>
+  <span>BBURN Treasury Vault Lock</span>
+
+  <span className="inline-flex items-center gap-1">
+    <span className="opacity-80">– View details</span>
+    <svg
+      viewBox="0 0 24 24"
+      className="h-[14px] w-[14px] translate-x-0 transition-transform duration-200 group-hover:translate-x-0.5"
+      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
     >
-      <span role="img" aria-label="lock">🔒</span>
-      <span>BBURN Treasury Vault Lock</span>
-    </a>
+      <path d="M5 12h14M13 5l7 7-7 7" />
+    </svg>
+  </span>
+</a>
   </div>
 </section>
 
