@@ -479,27 +479,27 @@ useEffect(() => {
     <span className="opacity-50 text-[18px]">|</span>
 
     {/* Treasury vault scroll link */}
-    <a
-      href="#vault"
-      className="group inline-flex items-center gap-2 text-white/90 hover:text-amber-200 transition tracking-wide"
+<a
+  href="#vault"
+  className="group inline-flex items-center gap-2 text-[17px] md:text-[18px] text-white/90 hover:text-amber-200 transition tracking-wide"
+>
+  <span role="img" aria-label="lock" className="text-[20px]">🔒</span>
+  <span className="font-semibold">BBURN Treasury Vault Lock</span>
+  <span className="inline-flex items-center gap-1 text-white/80 group-hover:text-amber-200 transition text-[17px] md:text-[18px]">
+    – View details
+    <svg
+      viewBox="0 0 24 24"
+      className="h-[16px] w-[16px] translate-x-0 transition-transform duration-200 group-hover:translate-x-0.5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <span role="img" aria-label="lock" className="text-[10px]">🔒</span>
-      <span className="font-semibold">BBURN Treasury Vault Lock</span>
-      <span className="inline-flex items-center gap-1 text-white/80 group-hover:text-amber-200 transition">
-        – View details
-        <svg
-          viewBox="0 0 24 24"
-          className="h-[15px] w-[15px] translate-x-0 transition-transform duration-200 group-hover:translate-x-0.5"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M5 12h14M13 5l7 7-7 7" />
-        </svg>
-      </span>
-    </a>
+      <path d="M5 12h14M13 5l7 7-7 7" />
+    </svg>
+  </span>
+</a>
 
   </div>
 </section>
