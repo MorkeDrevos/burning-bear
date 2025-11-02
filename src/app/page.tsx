@@ -460,7 +460,6 @@ useEffect(() => {
 {/* ===== Contract + Treasury strip (below hero) ===== */}
 <div className="mx-auto max-w-6xl px-4">
   <div className="mt-8 md:mt-10 lg:mt-12 flex flex-wrap items-center justify-center gap-4 text-sm text-amber-100/80">
-    {/* $BBURN + CA + copy */}
     <div className="inline-flex items-center gap-2 bg-[#0f191f]/60 px-4 py-2 rounded-xl backdrop-blur-sm">
       <span className="font-semibold">$BBURN</span>
       <code className="font-mono text-[13px] text-white/70" title={FULL_TOKEN_ADDRESS}>
@@ -475,14 +474,13 @@ useEffect(() => {
 
     <span className="opacity-60">|</span>
 
-    {/* Treasury lock scroll link */}
-<a
-  href="#vault"
-  className="inline-flex items-center gap-2 bg-[#0f191f]/60 px-4 py-2 rounded-xl backdrop-blur-sm hover:text-amber-100 transition scroll-smooth"
->
-  <span role="img" aria-label="lock">🔒</span>
-  <span>BBURN Treasury Vault Lock</span>
-</a>
+    <a
+      href="#vault"
+      className="inline-flex items-center gap-2 bg-[#0f191f]/60 px-4 py-2 rounded-xl backdrop-blur-sm hover:text-amber-100 transition scroll-smooth"
+    >
+      <span role="img" aria-label="lock">🔒</span>
+      <span>BBURN Treasury Vault Lock</span>
+    </a>
   </div>
 </div>
 
