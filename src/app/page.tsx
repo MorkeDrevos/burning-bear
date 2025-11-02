@@ -455,13 +455,17 @@ useEffect(() => {
 </section> {/* close the HERO section */}
 
 
-{/* ===== Contract + Treasury strip (below hero, dark bg) ===== */}
-<section className="bg-[#0d1a14] border-t border-white/5 py-5">
-  <div className="mx-auto flex flex-wrap items-center justify-center gap-4 text-sm text-amber-100/80 max-w-6xl px-4">
-    {/* $BBURN + CA + copy */}
-    <div className="inline-flex items-center gap-2 bg-[#0f191f]/60 px-4 py-2 rounded-xl backdrop-blur-sm">
-      <span className="font-semibold">$BBURN</span>
-      <code className="font-mono text-[13px] text-white/70" title={FULL_TOKEN_ADDRESS}>
+{/* ↓↓↓ Contract + Treasury strip (clean, larger text) ↓↓↓ */}
+<section className="bg-[#0d1411] border-t border-white/5 py-5">
+  <div className="mx-auto flex flex-wrap items-center justify-center gap-5 text-[16px] md:text-[17px] text-white/90 font-medium px-4 max-w-6xl">
+
+    {/* $BBURN + CA + Copy */}
+    <div className="inline-flex items-center gap-2">
+      <span className="font-semibold text-amber-100">$BBURN</span>
+      <code
+        className="font-mono text-[15px] text-white/70"
+        title={FULL_TOKEN_ADDRESS}
+      >
         {truncateMiddle(FULL_TOKEN_ADDRESS, 6, 6)}
       </code>
       <CopyButton
@@ -471,29 +475,35 @@ useEffect(() => {
       />
     </div>
 
-    <span className="opacity-60">|</span>
+    {/* Divider */}
+    <span className="opacity-50 text-[18px]">|</span>
 
-    {/* Scroll to vault below */}
-<a
-  href="#vault"
-  className="group inline-flex items-center gap-2 text-white hover:text-amber-200 transition font-semibold tracking-wide"
->
-  <span role="img" aria-label="lock" className="text-[18px]">🔒</span>
-  <span>BBURN Treasury Vault Lock</span>
-
-  <span className="inline-flex items-center gap-1">
-    <span className="opacity-80">– View details</span>
-    <svg
-      viewBox="0 0 24 24"
-      className="h-[14px] w-[14px] translate-x-0 transition-transform duration-200 group-hover:translate-x-0.5"
-      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+    {/* Treasury vault scroll link */}
+    <a
+      href="#vault"
+      className="group inline-flex items-center gap-2 text-white/90 hover:text-amber-200 transition tracking-wide"
     >
-      <path d="M5 12h14M13 5l7 7-7 7" />
-    </svg>
-  </span>
-</a>
+      <span role="img" aria-label="lock" className="text-[20px]">🔒</span>
+      <span className="font-semibold">BBURN Treasury Vault Lock</span>
+      <span className="inline-flex items-center gap-1 text-white/80 group-hover:text-amber-200 transition">
+        – View details
+        <svg
+          viewBox="0 0 24 24"
+          className="h-[15px] w-[15px] translate-x-0 transition-transform duration-200 group-hover:translate-x-0.5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M5 12h14M13 5l7 7-7 7" />
+        </svg>
+      </span>
+    </a>
+
   </div>
 </section>
+{/* ↑↑↑ End Contract + Treasury strip */}
 
 {/* ===== Live Burn Log — marquee + full-click cards ===== */}
 <section
