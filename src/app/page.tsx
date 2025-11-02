@@ -456,35 +456,38 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* ↓↓↓ CA + Treasury strip LOWER in the hero panel ↓↓↓ */}
-<div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm text-amber-100/80">
-  {/* $BBURN + CA + copy */}
-  <div className="inline-flex items-center gap-2 bg-[#0f191f]/60 px-4 py-2 rounded-xl backdrop-blur-sm">
-    <span className="font-semibold">$BBURN</span>
-    <code className="font-mono text-[13px] text-white/70" title={FULL_TOKEN_ADDRESS}>
-      {truncateMiddle(FULL_TOKEN_ADDRESS, 6, 6)}
-    </code>
-    <CopyButton
-      value={FULL_TOKEN_ADDRESS}
-      label="Copy contract address"
-      className="h-8 w-8 rounded-md bg-white/5 ring-1 ring-white/10 hover:bg-white/10"
-    />
+      </div> {/* end translucent stats panel */}
+</div> {/* end max-w container */}
+</section> {/* close the HERO section */}
+
+
+{/* ===== Contract + Treasury strip (below hero, dark bg) ===== */}
+<section className="bg-[#0d1a14] border-t border-white/5 py-5">
+  <div className="mx-auto flex flex-wrap items-center justify-center gap-4 text-sm text-amber-100/80 max-w-6xl px-4">
+    {/* $BBURN + CA + copy */}
+    <div className="inline-flex items-center gap-2 bg-[#0f191f]/60 px-4 py-2 rounded-xl backdrop-blur-sm">
+      <span className="font-semibold">$BBURN</span>
+      <code className="font-mono text-[13px] text-white/70" title={FULL_TOKEN_ADDRESS}>
+        {truncateMiddle(FULL_TOKEN_ADDRESS, 6, 6)}
+      </code>
+      <CopyButton
+        value={FULL_TOKEN_ADDRESS}
+        label="Copy contract address"
+        className="h-8 w-8 rounded-md bg-white/5 ring-1 ring-white/10 hover:bg-white/10"
+      />
+    </div>
+
+    <span className="opacity-60">|</span>
+
+    {/* Scroll to vault below */}
+    <a
+      href="#vault"
+      className="inline-flex items-center gap-2 bg-[#0f191f]/60 px-4 py-2 rounded-xl backdrop-blur-sm hover:text-amber-100 transition"
+    >
+      <span role="img" aria-label="lock">🔒</span>
+      <span>BBURN Treasury Vault Lock</span>
+    </a>
   </div>
-
-  <span className="opacity-60">|</span>
-
-  {/* Scroll to vault below */}
-  <a
-    href="#vault"
-    className="inline-flex items-center gap-2 bg-[#0f191f]/60 px-4 py-2 rounded-xl backdrop-blur-sm hover:text-amber-100 transition"
-  >
-    <span role="img" aria-label="lock">🔒</span>
-    <span>BBURN Treasury Vault Lock</span>
-  </a>
-</div>
-{/* ↑↑↑ End CA & Treasury strip */}
-    </div>{/* end translucent stats panel */}
-  </div>{/* end max-w container */}
 </section>
 
 {/* ===== Live Burn Log — marquee + full-click cards ===== */}
