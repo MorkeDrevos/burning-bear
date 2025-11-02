@@ -485,7 +485,7 @@ useEffect(() => {
 >
   <span role="img" aria-label="lock" className="text-[20px]">🔒</span>
   <span className="font-semibold">BBURN Treasury Vault Lock</span>
-  <span className="inline-flex items-center gap-1 text-white/80 group-hover:text-amber-200 transition text-[15px] md:text-[18px]">
+  <span className="inline-flex items-center gap-1 text-white/80 group-hover:text-amber-200 transition text-[17px] md:text-[16px]">
     – View details
     <svg
       viewBox="0 0 24 24"
