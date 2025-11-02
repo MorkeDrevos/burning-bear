@@ -468,11 +468,17 @@ useEffect(() => {
       >
         {truncateMiddle(FULL_TOKEN_ADDRESS, 6, 6)}
       </code>
-      <CopyButton
-        value={FULL_TOKEN_ADDRESS}
-        label="Copy contract address"
-        className="h-8 w-8 rounded-md bg-white/5 ring-1 ring-white/10 hover:bg-white/10"
-      />
+      {/* CopyButton with hover tooltip */}
+<div className="relative group">
+  <CopyButton
+    value={FULL_TOKEN_ADDRESS}
+    label="Copy contract address"
+    className="h-8 w-8 rounded-md bg-white/5 ring-1 ring-white/10 hover:bg-white/10"
+  />
+  <span className="absolute left-1/2 -bottom-7 -translate-x-1/2 text-xs text-amber-200 bg-black/60 px-2 py-[2px] rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
+    Copy CA
+  </span>
+</div>
     </div>
 
     {/* Divider */}
