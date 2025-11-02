@@ -481,7 +481,7 @@ useEffect(() => {
     {/* Treasury vault scroll link */}
     <a
       href="#vault"
-      className="group inline-flex items-center gap-2 text-white/90 hover:text-amber-200 transition tracking-wide"
+      className="group inline-flex items-center gap-2 text-white/80 hover:text-amber-200 transition tracking-wide"
     >
       <span role="img" aria-label="lock" className="text-[20px]">🔒</span>
       <span className="font-semibold">BBURN Treasury Vault Lock</span>
