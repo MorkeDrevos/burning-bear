@@ -442,10 +442,10 @@ useEffect(() => {
 
         {/* Right: Powered by Solana (replaces old Treasury pill) */}
 <div
-  className="inline-flex items-center gap-2 text-white/85 hover:text-amber-200 transition font-semibold sm:ml-auto"
+  className="inline-flex items-center gap-2 text-amber-200 font-semibold sm:ml-auto select-none"
   aria-label="Powered by the Solana blockchain"
 >
-  <SolanaMark className="h-4 w-4 text-white/85" />
+  <SolanaMark className="h-4 w-4 text-amber-200" />
   <span>Powered by the Solana blockchain</span>
 </div>
       </div>
@@ -455,8 +455,8 @@ useEffect(() => {
 </section> {/* close the HERO section */}
 
 
-{/* ↓↓↓ Contract + Treasury strip (clean, larger text) ↓↓↓ */}
-<section className="bg-[#0d1411] border-t border-white/5 py-5">
+{/* ↓↓↓ Contract + Treasury strip (with more spacing above) ↓↓↓ */}
+<section className="bg-[#0d1411] border-t border-white/5 pt-8 pb-5">
   <div className="mx-auto flex flex-wrap items-center justify-center gap-5 text-[16px] md:text-[17px] text-white/90 font-medium px-4 max-w-6xl">
 
     {/* $BBURN + CA + Copy */}
