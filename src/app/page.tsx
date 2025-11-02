@@ -441,19 +441,13 @@ useEffect(() => {
         </div>
 
         {/* Right: Powered by Solana (replaces old Treasury pill) */}
-        <div
-          className="
-            group inline-flex items-center gap-2
-            rounded-2xl border border-amber-400/20 bg-amber-500/10
-            px-3.5 py-[7px] text-[15px] leading-none font-semibold text-amber-200
-            hover:bg-amber-500/15 hover:text-amber-100 transition pill-shadow
-            sm:ml-auto
-          "
-          aria-label="Powered by the Solana blockchain"
-        >
-          <SolanaMark className="h-4 w-4 text-amber-100/70 transition group-hover:drop-shadow-[0_0_8px_rgba(255,184,76,.3)]" />
-          <span className="text-amber-100/80">Powered by the Solana blockchain</span>
-        </div>
+<div
+  className="inline-flex items-center gap-2 text-white/85 hover:text-amber-200 transition font-semibold sm:ml-auto"
+  aria-label="Powered by the Solana blockchain"
+>
+  <SolanaMark className="h-4 w-4 text-white/85" />
+  <span>Powered by the Solana blockchain</span>
+</div>
       </div>
 
       </div> {/* end translucent stats panel */}
