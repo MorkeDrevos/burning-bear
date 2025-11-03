@@ -711,41 +711,46 @@ useEffect(() => {
     <div className="mx-auto mt-10 h-[3px] w-24 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 opacity-80" />
 
     {/* Why card (inside same section/background) */}
-    <div className="mx-auto mt-10 max-w-4xl">
-      <h3 className="text-2xl md:text-3xl font-bold text-amber-300 text-center">
-        Why The Burning Bear Exists
-      </h3>
+    {/* Why section — full-width translucent card */}
+<div className="mt-16 w-full px-0">
+  <h3 className="text-2xl md:text-3xl font-bold text-amber-300 text-center mb-6">
+    Why The Burning Bear Exists
+  </h3>
 
-      <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.05] backdrop-blur-md p-5 md:p-6">
-        <p className="text-white/80 leading-relaxed">
-          For anyone new here, here’s the purpose behind <span className="font-semibold text-amber-200">The Burning Bear</span>:
-        </p>
+  <div className="w-full border-t border-b border-white/10 bg-white/[0.04] backdrop-blur-md py-10 px-4 md:px-0">
+    <div className="mx-auto max-w-4xl text-white/80 leading-relaxed">
+      <p>
+        For anyone new here, here’s the purpose behind <span className="font-semibold text-amber-200">The Burning Bear</span>:
+      </p>
 
-        <p className="mt-4 text-white/80 leading-relaxed">
-          The Burning Bear is designed to be <span className="font-semibold">Solana’s deflation engine</span>.
-          He isn’t another dog or cat meme — he’s a symbol of value built through <span className="font-semibold">scarcity, not dilution</span>.
-          While governments print money and weaken purchasing power, we do the opposite.
-        </p>
+      <p className="mt-4">
+        The Burning Bear is designed to be <span className="font-semibold">Solana’s deflation engine</span>.
+        He isn’t another dog or cat meme — he’s a symbol of value built through <span className="font-semibold">scarcity, not dilution</span>.
+        While governments print money and weaken purchasing power, we do the opposite.
+      </p>
 
-        <p className="mt-4 text-white/80 leading-relaxed">
-          <span className="font-semibold">Buybacks, burns and rewards</span> literally fuel the fire. With every burn, the ecosystem strengthens
-          and holders benefit — because a token is only as strong as the people who stand behind it.
-        </p>
+      <p className="mt-4">
+        <span className="font-semibold">Buybacks, burns and rewards</span> literally fuel the fire. With every burn, the ecosystem strengthens
+        and holders benefit — because a token is only as strong as the people who stand behind it.
+      </p>
 
-        <p className="mt-4 text-white/80 leading-relaxed">
-          We’re building a legacy with <span className="font-semibold">organic growth, transparency,
-          traceable flows and long-term intent</span>.
-        </p>
+      <p className="mt-4">
+        We’re building a legacy with <span className="font-semibold">organic growth, transparency,
+        traceable flows and long-term intent</span>.
+      </p>
 
-        <p className="mt-6 text-amber-200 font-semibold">
-          And yes… the bear is just getting started. Big things are coming. 🔥
-        </p>
-      </div>
-
-      <div className="mt-4 inline-flex items-center rounded-2xl border border-white/15 bg-white/5 px-4 py-[7px] text-[15px] leading-none text-white/75">
-        TL;DR: Scarcity &gt; dilution • Real buybacks • Real burns • Real rewards
-      </div>
+      <p className="mt-6 text-amber-200 font-semibold">
+        And yes… the bear is just getting started. Big things are coming. 🔥
+      </p>
     </div>
+  </div>
+
+  <div className="mt-5 flex justify-center">
+    <span className="inline-flex items-center rounded-2xl border border-white/15 bg-white/5 px-4 py-[7px] text-[15px] leading-none text-white/75">
+      TL;DR: Scarcity &gt; Dilution • Real buybacks • Real burns • Real rewards
+    </span>
+  </div>
+</div>
   </div>
 </section>
 
