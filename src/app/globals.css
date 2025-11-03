@@ -127,3 +127,9 @@ html { scroll-behavior: smooth; }
 .flicker {
   animation: flicker 2s infinite ease-in-out;
 }
+
+@keyframes pulse-fast {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.75; transform: scale(1.05); }
+}
+.animate-pulse-fast { animation: pulse-fast 0.7s ease-in-out 2; }
