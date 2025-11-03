@@ -774,13 +774,13 @@ useEffect(() => {
   </div>
 </section>
 
-{/* ===== Roadmap — The Deflation Engine (aligned width) ===== */}
+{/* ===== Roadmap — The Deflation Engine (fixed width, no bleed) ===== */}
 <section
   id="roadmap"
-  className="w-full px-4 pt-16 pb-20 md:pt-20 md:pb-24 scroll-mt-[88px] md:scroll-mt-[100px] lg:scroll-mt-[116px]"
+  className="py-16 md:py-24 scroll-mt-[88px] md:scroll-mt-[100px] lg:scroll-mt-[116px]"
 >
-  <div className="mx-auto max-w-6xl">
-    {/* Heading (left-aligned) */}
+  {/* one container controls width */}
+  <div className="mx-auto w-full max-w-6xl px-4">
     <h3 className="text-2xl md:text-3xl font-bold text-amber-300">
       Roadmap — The Deflation Engine
     </h3>
@@ -788,7 +788,6 @@ useEffect(() => {
       Real burns, transparency, hype momentum. A clear path from first spark to a cultural deflation brand on Solana.
     </p>
 
-    {/* Phase cards (width-limited inside same container) */}
     <div className="mt-10 space-y-10">
       {[
         {
@@ -815,7 +814,8 @@ useEffect(() => {
             "Visibility flywheel: Dexscreener/Birdeye + creators",
             "Treasury-lock proofs & weekly summaries",
           ],
-          outcome: "🔥 Outcome: Consistent burns, rising liquidity & holder growth.",
+          outcome:
+            "🔥 Outcome: Consistent burns, rising liquidity & holder growth.",
         },
         {
           icon: "🧱",
@@ -849,21 +849,21 @@ useEffect(() => {
         <div
           key={i}
           className="
-            mx-auto max-w-6xl
+            w-full overflow-hidden
             rounded-2xl border border-white/10
             bg-gradient-to-b from-[#101c16] via-[#14251d] to-[#101c16]
             backdrop-blur-md p-8 md:p-10
-            transition-colors hover:border-white/20 hover:bg-white/[0.055]
+            hover:border-white/20 hover:bg-white/[0.055] transition-colors
           "
         >
-          <div className="flex items-center gap-3 mb-3">
+          <div className="mb-3 flex items-center gap-3">
             <span className="text-2xl">{phase.icon}</span>
             <h4 className="text-xl md:text-2xl font-semibold text-amber-200">
               {phase.title}
             </h4>
           </div>
 
-          <ul className="grid grid-cols-1 md:grid-cols-2 gap-1.5 text-sm text-white/75 mb-4">
+          <ul className="mb-4 grid grid-cols-1 gap-1.5 text-sm text-white/75 md:grid-cols-2">
             <li>• Goal: {phase.goal}</li>
             {phase.items.map((it, j) => (
               <li key={j}>• {it}</li>
