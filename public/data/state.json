@@ -3,7 +3,7 @@
     "initialSupply": 1000000000,
     "burned": 10032196.70,
     "currentSupply": 989967803.30,
-    "buybackSol": 3.41816,
+    "buybackSol": 3.4181,
     "priceUsdPerSol": 204.8
   },
 "schedule": {
@@ -194,7 +194,7 @@
     },
     {
       "id": "tx_025",
-      "amount": 248478.54
+      "amount": 248478.54,
       "sol": 0.015663154,
       "timestamp": "2025-11-03T06:07:06Z",
       "tx": "https://solscan.io/tx/4mEBfZQDeVALppqp8kNxEnaVxdbiaojom9Gq2Adac86J2LLNYXpv6VTz3kT5KLwVZ45umqkp1pejsoUwn7HmwCQH"
