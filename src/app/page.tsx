@@ -666,99 +666,86 @@ useEffect(() => {
   </div>
 </section>    
 
-{/* ===== Meet the Burning Bear ===== */}
-  <section id="bear" className="relative w-full overflow-hidden pt-16 pb-16 md:pt-20 md:pb-20 text-center">
-  {/* full-width dark background */}
-  <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0d1a14] via-[#141f1a] to-[#0d1a14]" />
-  <div className="absolute inset-x-0 bottom-0 h-[40vh] bg-gradient-to-t from-amber-600/10 via-amber-400/5 to-transparent blur-[80px]" />
+{/* ===== Meet + Why (merged, single section) ===== */}
+<section id="bear" className="relative w-full overflow-hidden py-20 md:py-24">
+  {/* Warm lighter background & soft fade */}
+  <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0f1a15] via-[#16231d] to-[#0f1a15]" />
+  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[180px] bg-gradient-to-t from-black/20 via-transparent to-transparent" />
 
-  {/* Animated Bear GIF */}
-  <div className="mx-auto mb-8 w-[260px] md:w-[320px] relative">
-    <img
-  src="/img/burning_bear_BBURN_v2.gif"
-  alt="The Burning Bear"
-  className="w-full h-auto rounded-2xl bear-breathe shadow-ember"
-/>
-    <div className="pointer-events-none absolute inset-0 rounded-2xl bg-amber-500/10 blur-[60px] animate-pulse" />
-  </div>
+  <div className="mx-auto max-w-6xl px-4">
+    {/* Bear image */}
+    <div className="mx-auto mb-8 w-[260px] md:w-[320px] relative">
+      <img
+        src="/img/burning_bear_BBURN_v2.gif"
+        alt="The Burning Bear"
+        className="w-full h-auto rounded-2xl shadow-ember"
+      />
+      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-amber-500/10 blur-[60px]" />
+    </div>
 
-  {/* Title */}
-  <h2 className="text-4xl md:text-5xl font-extrabold text-amber-300 drop-shadow-[0_0_10px_rgba(255,184,76,0.25)]">
-    Meet The Burning Bear
-  </h2>
+    {/* Title */}
+    <h2 className="text-4xl md:text-5xl font-extrabold text-amber-300 text-center">
+      Meet The Burning Bear
+    </h2>
 
-  {/* Underline */}
-  <div className="mx-auto mt-3 mb-6 h-[3px] w-24 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 drop-shadow-[0_0_6px_rgba(255,184,76,0.35)]" />
+    {/* Story */}
+    <div className="mx-auto mt-6 max-w-3xl text-white/80 leading-relaxed text-lg space-y-5 text-center">
+      <p>
+        Long before the campfire roared across Solana, a quiet bear walked the forests of forgotten chains,
+        collecting embers from every spark of belief. He wasn’t the kind that sleeps through winters.
+        He was the kind that builds warmth for everyone who dares to dream.
+      </p>
+      <p>
+        When markets turned cold and others ran, he stayed, feeding the flame, reminding us that even
+        in a bearish world, the fire can rise. Each burn he makes is a heartbeat of the community:
+        a symbol of resilience, humor and transparency.
+      </p>
+      <p className="text-amber-200 font-semibold tracking-wide">
+        The Burning Bear doesn’t burn alone — he keeps the fire alive for everyone who believes.
+        <br />
+        <span className="text-amber-100/90">Every spark counts. Every burn means something. 🔥</span>
+      </p>
+    </div>
 
-  {/* Story */}
-  <div className="mx-auto max-w-3xl text-white/80 leading-relaxed text-lg space-y-5">
-    <p>
-      Long before the campfire roared across Solana, a quiet bear walked the forests of forgotten
-      chains, collecting embers from every spark of belief. He wasn’t the kind that sleeps through
-      winters. He was the kind that builds warmth for everyone who dares to dream.
-    </p>
-    <p>
-      When markets turned cold and others ran, he stayed, feeding the flame, reminding us that even
-      in a bearish world, the fire can rise. Each burn he makes is a heartbeat of the community: a
-      symbol of resilience, humor and transparency.
-    </p>
-    <p className="text-amber-200 font-semibold tracking-wide">
-      The Burning Bear doesn’t burn alone, he keeps the fire alive for everyone who believes.<br />
-      <span className="text-amber-100/90">
-        Every spark counts. Every burn means something. 🔥
-      </span>
-    </p>
-  </div>
+    {/* Divider */}
+    <div className="mx-auto mt-10 h-[3px] w-24 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 opacity-80" />
 
-</section> 
+    {/* Why card (inside same section/background) */}
+    <div className="mx-auto mt-10 max-w-4xl">
+      <h3 className="text-2xl md:text-3xl font-bold text-amber-300 text-center">
+        Why The Burning Bear Exists
+      </h3>
 
-{/* Soft base glow (taller + softer) */}
-<div className="pointer-events-none absolute left-1/2 top-full mt-16 -translate-x-1/2 h-80 w-80 rounded-full bg-amber-400/10 blur-[110px]" />
+      <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.05] backdrop-blur-md p-5 md:p-6">
+        <p className="text-white/80 leading-relaxed">
+          For anyone new here, here’s the purpose behind <span className="font-semibold text-amber-200">The Burning Bear</span>:
+        </p>
 
-{/* Separator fade so next section starts clean */}
-<div className="pointer-events-none absolute inset-x-0 top-full h-10 bg-gradient-to-b from-[#141f1a]/40 to-transparent" />
+        <p className="mt-4 text-white/80 leading-relaxed">
+          The Burning Bear is designed to be <span className="font-semibold">Solana’s deflation engine</span>.
+          He isn’t another dog or cat meme — he’s a symbol of value built through <span className="font-semibold">scarcity, not dilution</span>.
+          While governments print money and weaken purchasing power, we do the opposite.
+        </p>
 
-{/* ===== Why The Burning Bear Exists ===== */}
-<section
-  id="purpose"
-  className="mx-auto max-w-6xl px-4 pt-20 md:pt-24 pb-10 md:pb-12 scroll-mt-[96px]"
->
-  <h3 className="text-2xl md:text-3xl font-bold text-amber-300 tracking-tight">
-    Why The Burning Bear Exists
-  </h3>
+        <p className="mt-4 text-white/80 leading-relaxed">
+          <span className="font-semibold">Buybacks, burns and rewards</span> literally fuel the fire. With every burn, the ecosystem strengthens
+          and holders benefit — because a token is only as strong as the people who stand behind it.
+        </p>
 
-  {/* centered, constrained card */}
-  <div className="mt-6 mx-auto max-w-3xl rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_0_30px_rgba(0,0,0,0.25)]">
-    <p className="text-white/80 leading-relaxed">
-      For anyone new here, here’s the purpose behind <span className="font-semibold text-amber-200">The Burning Bear</span>:
-    </p>
+        <p className="mt-4 text-white/80 leading-relaxed">
+          We’re building a legacy with <span className="font-semibold">organic growth, transparency,
+          traceable flows and long-term intent</span>.
+        </p>
 
-    <p className="mt-4 text-white/80 leading-relaxed">
-      The Burning Bear is designed to be <span className="font-semibold">Solana’s deflation engine</span>.
-      He isn’t another dog or cat meme — he’s a symbol of value built through <span className="font-semibold">scarcity, not dilution</span>.
-      While governments print money and weaken purchasing power, we do the opposite.
-    </p>
+        <p className="mt-6 text-amber-200 font-semibold">
+          And yes… the bear is just getting started. Big things are coming. 🔥
+        </p>
+      </div>
 
-    <p className="mt-4 text-white/80 leading-relaxed">
-      <span className="font-semibold">Buybacks, burns and rewards</span> literally fuel the fire. With every burn, the ecosystem strengthens
-      and holders benefit — because a token is only as strong as the people who stand behind it.
-    </p>
-
-    <p className="mt-4 text-white/80 leading-relaxed">
-      We’re building a legacy with <span className="font-semibold">organic growth, transparency,
-      traceable flows and long-term intent</span>.
-    </p>
-
-    <p className="mt-6 text-amber-200 font-semibold">
-      And yes… the bear is just getting started. Big things are coming. 🔥
-    </p>
-  </div>
-
-  {/* TL;DR pill centered */}
-  <div className="mt-5 flex justify-center">
-    <span className="inline-flex items-center rounded-2xl border border-white/15 bg-white/5 px-4 py-[7px] text-sm leading-none text-white/75">
-      TL;DR: Scarcity &gt; dilution • Real buybacks • Real burns • Real rewards
-    </span>
+      <div className="mt-4 inline-flex items-center rounded-2xl border border-white/15 bg-white/5 px-4 py-[7px] text-[15px] leading-none text-white/75">
+        TL;DR: Scarcity &gt; dilution • Real buybacks • Real burns • Real rewards
+      </div>
+    </div>
   </div>
 </section>
 
