@@ -772,26 +772,30 @@ useEffect(() => {
       </div>
     </div>
 
-    {/* Phase 2 — Wildfire */}
-    <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-7 backdrop-blur-md">
-      <div className="flex items-start gap-4">
-        <span className="text-2xl leading-none">🔥</span>
-        <div className="min-w-0">
-          <h4 className="text-xl font-semibold text-amber-200">Phase 2 – The Wildfire</h4>
-          <p className="mt-1 text-white/70">Goal: Create constant buzz and movement.</p>
-          <ul className="mt-4 grid grid-cols-1 gap-2 text-sm text-white/75 sm:grid-cols-2">
-            <li>• Automated or semi-automated burn loops</li>
-            <li>• “Campfire Bonus” rounds & community burn events</li>
-            <li>• Strategic collaborations with other Sol tokens</li>
-            <li>• Volume-boost campaigns (multi-wallet, adaptive buys)</li>
-            <li>• On-chain proof of Treasury Vault locks</li>
-          </ul>
-          <p className="mt-4 text-amber-300/90 font-semibold">
-            🔥 Outcome: Volume and engagement explode. BBURN trends on Birdeye / Dexscreener again.
-          </p>
-        </div>
-      </div>
+    {/* Phase 2 — The Expansion */}
+<div className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-7 backdrop-blur-md">
+  <div className="flex items-start gap-4">
+    <span className="text-2xl leading-none">⚡</span>
+    <div className="min-w-0">
+      <h4 className="text-xl font-semibold text-amber-200">Phase 2 — The Expansion</h4>
+      <p className="mt-1 text-white/70">
+        Goal: Scale momentum with disciplined, data-led growth.
+      </p>
+
+      <ul className="mt-4 grid grid-cols-1 gap-2 text-sm text-white/75 sm:grid-cols-2">
+        <li>• Scheduled auto-burn loops (3 daily windows)</li>
+        <li>• “Campfire Bonus” rounds & holder incentives</li>
+        <li>• Strategic collabs with quality Solana projects</li>
+        <li>• Visibility flywheel: Dexscreener/Birdeye + creator promos</li>
+        <li>• Public treasury-lock proofs & weekly burn summaries</li>
+      </ul>
+
+      <p className="mt-4 text-amber-300/90 font-semibold">
+        🔥 Outcome: Consistent burns, rising liquidity & holder growth — BBURN earns its “deflation engine” reputation.
+      </p>
     </div>
+  </div>
+</div>
 
     {/* Phase 3 — Campfire Network */}
     <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-7 backdrop-blur-md">
