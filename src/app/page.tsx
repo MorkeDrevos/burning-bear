@@ -246,7 +246,12 @@ useEffect(() => {
   }, [data]);
 
   const nextBuybackMs = targets.bb ? targets.bb - now : 0;
-  const nextBurnMs = targets.burn ? targets.burn - now : 0;
+let nextBurnMs = targets.burn ? targets.burn - now : 0;
+
+// 🔥 TEST MODE — simulate burn trigger (remove after testing)
+if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
+  nextBurnMs = 500; // triggers the burn moment after 0.5s
+}
 
   useEffect(() => {
   const nearZero = nextBurnMs <= 1000 && nextBurnMs >= -1500; // trigger window
