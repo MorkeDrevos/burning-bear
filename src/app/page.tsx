@@ -774,7 +774,7 @@ useEffect(() => {
   </div>
 </section>
 
-{/* ===== Roadmap — The Deflation Engine (clean timeline) ===== */}
+{/* ===== Roadmap — The Deflation Engine (clean, no timeline dots) ===== */}
 <section
   id="roadmap"
   className="w-full px-4 pt-16 pb-20 md:pt-20 md:pb-24 scroll-mt-[88px] md:scroll-mt-[100px] lg:scroll-mt-[116px]"
@@ -788,8 +788,8 @@ useEffect(() => {
       Real burns, transparency, hype momentum. A clear path from first spark to a cultural deflation brand on Solana.
     </p>
 
-    {/* Timeline */}
-    <ol className="relative mt-10 border-l border-white/12 pl-6 space-y-10">
+    {/* Phases (no timeline) */}
+    <div className="mt-10 space-y-10">
       {[
         {
           icon: "🪓",
@@ -846,49 +846,35 @@ useEffect(() => {
             "🔥 Outcome: BBURN becomes the first cultural deflation brand on Solana.",
         },
       ].map((phase, i) => (
-        <li key={i} className="relative">
-          {/* Milestone dot (behind the strip, sitting on the line) */}
-          <span
-            className="
-              pointer-events-none absolute -left-[9px] top-8
-              h-3.5 w-3.5 rounded-full bg-amber-400/90
-              ring-2 ring-[#0d1a14] shadow-[0_0_14px_rgba(255,184,76,0.45)]
-              -z-10
-            "
-            aria-hidden
-          />
-
-          {/* Phase strip */}
-          <div
-            className="
-              w-full rounded-2xl border border-white/10
-              bg-gradient-to-b from-[#101c16] via-[#14251d] to-[#101c16]
-              backdrop-blur-md p-6 md:p-8
-              hover:border-white/20 hover:bg-white/[0.055] transition-colors
-            "
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-2xl">{phase.icon}</span>
-              <h4 className="text-xl md:text-2xl font-semibold text-amber-200">
-                {phase.title}
-              </h4>
-            </div>
-
-            {/* Goal same size as items */}
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-1.5 text-sm text-white/75 mb-4">
-              <li>• Goal: {phase.goal}</li>
-              {phase.items.map((it, j) => (
-                <li key={j}>• {it}</li>
-              ))}
-            </ul>
-
-            <div className="inline-flex items-center rounded-lg border border-amber-400/25 bg-amber-500/10 px-3 py-1 text-sm font-semibold text-amber-200">
-              {phase.outcome}
-            </div>
+        <div
+          key={i}
+          className="
+            rounded-2xl border border-white/10
+            bg-gradient-to-b from-[#101c16] via-[#14251d] to-[#101c16]
+            backdrop-blur-md p-8 md:p-10
+            transition-colors hover:border-white/20 hover:bg-white/[0.055]
+          "
+        >
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-2xl">{phase.icon}</span>
+            <h4 className="text-xl md:text-2xl font-semibold text-amber-200">
+              {phase.title}
+            </h4>
           </div>
-        </li>
+
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-1.5 text-sm text-white/75 mb-4">
+            <li>• Goal: {phase.goal}</li>
+            {phase.items.map((it, j) => (
+              <li key={j}>• {it}</li>
+            ))}
+          </ul>
+
+          <div className="inline-flex items-center rounded-lg border border-amber-400/25 bg-amber-500/10 px-3 py-1 text-sm font-semibold text-amber-200">
+            {phase.outcome}
+          </div>
+        </div>
       ))}
-    </ol>
+    </div>
   </div>
 </section>
 
