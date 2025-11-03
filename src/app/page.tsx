@@ -774,11 +774,12 @@ useEffect(() => {
   </div>
 </section>
 
-{/* ===== Roadmap — The Deflation Engine (wide + left-aligned + balanced text) ===== */}
+{/* ===== Roadmap — The Deflation Engine (full-bleed, left-aligned) ===== */}
 <section
   id="roadmap"
   className="w-full px-4 pt-16 pb-20 md:pt-20 md:pb-24 scroll-mt-[88px] md:scroll-mt-[100px] lg:scroll-mt-[116px]"
 >
+  {/* Header (kept in max width, left-aligned) */}
   <div className="mx-auto max-w-6xl">
     <h3 className="text-2xl md:text-3xl font-bold text-amber-300">
       Roadmap — The Deflation Engine
@@ -786,8 +787,11 @@ useEffect(() => {
     <p className="mt-2 text-white/65 max-w-3xl">
       Real burns, transparency, hype momentum. A clear path from first spark to a cultural deflation brand on Solana.
     </p>
+  </div>
 
-    <ol className="relative mt-12 border-l border-white/10 pl-6 space-y-12">
+  {/* Full-bleed timeline + phase strips */}
+  <div className="mt-12 -mx-4 sm:-mx-6 lg:-mx-8">
+    <ol className="relative border-l border-white/12 pl-7 space-y-12 px-4 sm:px-6 lg:px-8">
       {[
         {
           icon: "🪓",
@@ -813,7 +817,8 @@ useEffect(() => {
             "Visibility flywheel: Dexscreener/Birdeye + creators",
             "Treasury-lock proofs & weekly summaries",
           ],
-          outcome: "🔥 Outcome: Consistent burns, rising liquidity & holder growth.",
+          outcome:
+            "🔥 Outcome: Consistent burns, rising liquidity & holder growth.",
         },
         {
           icon: "🧱",
@@ -845,9 +850,27 @@ useEffect(() => {
         },
       ].map((phase, i) => (
         <li key={i} className="relative">
-          <span className="absolute -left-[9px] top-1 inline-flex h-4 w-4 rounded-full bg-amber-400 shadow-[0_0_0_6px_rgba(255,184,76,0.15)]" />
+          {/* ember milestone — sits on the line, behind the strip */}
+          <span
+            className="
+              pointer-events-none absolute left-0 -translate-x-1/2 top-9
+              h-3.5 w-3.5 rounded-full bg-amber-400/90
+              ring-2 ring-[#0d1a14] shadow-[0_0_14px_rgba(255,184,76,0.45)]
+              -z-0
+            "
+            aria-hidden
+          />
 
-          <div className="rounded-none border-t border-b border-white/10 bg-gradient-to-b from-[#101c16] via-[#14251d] to-[#101c16] backdrop-blur-md p-8 md:p-10 w-full">
+          {/* full-width strip card */}
+          <div
+            className="
+              relative z-10 w-full rounded-none
+              border-t border-b border-white/10
+              bg-gradient-to-b from-[#101c16] via-[#14251d] to-[#101c16]
+              backdrop-blur-md p-8 md:p-10
+              transition-colors hover:border-white/20 hover:bg-white/[0.055]
+            "
+          >
             <div className="flex items-center gap-3 mb-3">
               <span className="text-2xl">{phase.icon}</span>
               <h4 className="text-xl md:text-2xl font-semibold text-amber-200">
@@ -855,6 +878,7 @@ useEffect(() => {
               </h4>
             </div>
 
+            {/* goal same size as items */}
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-sm text-white/75 mb-4">
               <li>• Goal: {phase.goal}</li>
               {phase.items.map((item, j) => (
