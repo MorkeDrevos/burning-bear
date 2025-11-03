@@ -777,119 +777,101 @@ useEffect(() => {
   </div>
 </section>
 
-{/* ===== Roadmap — The Deflation Engine (clean timeline) ===== */}
+{/* ===== Roadmap — The Deflation Engine (wide layout) ===== */}
 <section
   id="roadmap"
-  className="mx-auto max-w-6xl px-4 pt-16 pb-20 md:pt-20 md:pb-24 scroll-mt-[88px] md:scroll-mt-[100px] lg:scroll-mt-[116px]"
+  className="w-full px-0 pt-16 pb-20 md:pt-20 md:pb-24 scroll-mt-[88px] md:scroll-mt-[100px] lg:scroll-mt-[116px]"
 >
-  <div className="text-center">
+  <div className="text-center px-4">
     <h3 className="text-2xl md:text-3xl font-bold text-amber-300">Roadmap — The Deflation Engine</h3>
     <p className="mt-2 text-white/65 max-w-3xl mx-auto">
       Real burns, transparency, hype momentum. A clear path from first spark to a cultural deflation brand on Solana.
     </p>
   </div>
 
-  {/* timeline */}
-  <ol className="relative mt-10 md:mt-12 mx-auto max-w-3xl border-l border-white/10 pl-6 space-y-10">
-    {/* Phase 1 */}
-    <li className="relative">
-      {/* dot */}
-      <span className="absolute -left-[9px] top-1 inline-flex h-4 w-4 rounded-full bg-amber-400 shadow-[0_0_0_6px_rgba(255,184,76,0.15)]" />
-      {/* card */}
-      <div className="rounded-xl border border-white/10 bg-white/[0.04] backdrop-blur p-5">
-        <div className="flex items-center gap-3">
-          <span className="text-xl leading-none">🪓</span>
-          <h4 className="text-lg md:text-xl font-semibold text-amber-200">Phase 1 – The Ignition</h4>
+  <ol className="relative mt-12 border-l border-white/10 pl-6 space-y-12 max-w-6xl mx-auto">
+    {/* Phase Template */}
+    {[
+      {
+        icon: "🪓",
+        title: "Phase 1 – The Ignition",
+        goal: "Establish credibility and prove the deflation concept is real, not talk.",
+        items: [
+          "Launch site + live burn tracker",
+          "Transparent burns (Solscan links)",
+          "Dexscreener + Birdeye presence",
+          "Early community on X",
+          "Holder & wallet transparency",
+        ],
+        outcome: "🔥 Outcome: BBURN is known as “the real burning token.”",
+      },
+      {
+        icon: "⚡",
+        title: "Phase 2 — The Expansion",
+        goal: "Scale momentum with disciplined, data-led growth.",
+        items: [
+          "Scheduled auto-burn loops (3 daily)",
+          "“Campfire Bonus” rounds & incentives",
+          "Strategic collabs (quality Solana projects)",
+          "Visibility flywheel: Dexscreener/Birdeye + creators",
+          "Treasury-lock proofs & weekly summaries",
+        ],
+        outcome: "🔥 Outcome: Consistent burns, rising liquidity & holder growth.",
+      },
+      {
+        icon: "🧱",
+        title: "Phase 3 – The Campfire Network",
+        goal: "Build ecosystem credibility + longevity.",
+        items: [
+          "Holder dashboard & burn leaderboard",
+          "NFT badges & top-holder ranks",
+          "Real-time Burn Log API",
+          "Phase 3 site refresh",
+          "Community contests & airdrops",
+        ],
+        outcome:
+          "🔥 Outcome: From meme → movement — the culture of burning & proof of supply.",
+      },
+      {
+        icon: "🐻",
+        title: "Phase 4 – The Eternal Flame",
+        goal: "Long-term sustainability and symbolic permanence.",
+        items: [
+          "Perpetual burn vault (treasury-funded)",
+          "Cross-project “Burn Alliance”",
+          "Exchange / aggregator listings",
+          "Merch + IRL campaigns",
+          "DAO voting on next burn cycles",
+        ],
+        outcome:
+          "🔥 Outcome: BBURN becomes the first cultural deflation brand on Solana.",
+      },
+    ].map((phase, i) => (
+      <li key={i} className="relative">
+        <span className="absolute -left-[9px] top-1 inline-flex h-4 w-4 rounded-full bg-amber-400 shadow-[0_0_0_6px_rgba(255,184,76,0.15)]" />
+
+        <div className="rounded-none border-t border-b border-white/10 bg-gradient-to-b from-[#101c16] via-[#14251d] to-[#101c16] backdrop-blur-md p-8 md:p-10 w-full">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-2xl">{phase.icon}</span>
+            <h4 className="text-xl md:text-2xl font-semibold text-amber-200">
+              {phase.title}
+            </h4>
+          </div>
+
+          <p className="text-white/70 mb-4">Goal: {phase.goal}</p>
+
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-sm text-white/75 mb-4">
+            {phase.items.map((item, j) => (
+              <li key={j}>• {item}</li>
+            ))}
+          </ul>
+
+          <div className="inline-flex items-center rounded-lg border border-amber-400/25 bg-amber-500/10 px-3 py-1 text-sm font-semibold text-amber-200">
+            {phase.outcome}
+          </div>
         </div>
-        <p className="mt-1 text-white/70">
-          Goal: Establish credibility and prove the deflation concept is <em>real</em>, not talk.
-        </p>
-
-        <ul className="mt-3 grid grid-cols-1 gap-1.5 text-sm text-white/75 md:grid-cols-2">
-          <li>• Launch site + live burn tracker</li>
-          <li>• Transparent burns (Solscan links)</li>
-          <li>• Dexscreener + Birdeye presence</li>
-          <li>• Early community on X</li>
-          <li>• Holder & wallet transparency</li>
-        </ul>
-
-        <div className="mt-3 inline-flex items-center rounded-lg border border-amber-400/25 bg-amber-500/10 px-3 py-1 text-sm font-semibold text-amber-200">
-          🔥 Outcome: BBURN is known as “the real burning token.”
-        </div>
-      </div>
-    </li>
-
-    {/* Phase 2 */}
-    <li className="relative">
-      <span className="absolute -left-[9px] top-1 inline-flex h-4 w-4 rounded-full bg-amber-400 shadow-[0_0_0_6px_rgba(255,184,76,0.15)]" />
-      <div className="rounded-xl border border-white/10 bg-white/[0.04] backdrop-blur p-5">
-        <div className="flex items-center gap-3">
-          <span className="text-xl leading-none">⚡</span>
-          <h4 className="text-lg md:text-xl font-semibold text-amber-200">Phase 2 — The Expansion</h4>
-        </div>
-        <p className="mt-1 text-white/70">Goal: Scale momentum with disciplined, data-led growth.</p>
-
-        <ul className="mt-3 grid grid-cols-1 gap-1.5 text-sm text-white/75 md:grid-cols-2">
-          <li>• Scheduled auto-burn loops (3 daily)</li>
-          <li>• “Campfire Bonus” rounds & incentives</li>
-          <li>• Strategic collabs (quality Solana projects)</li>
-          <li>• Visibility flywheel: Dexscreener/Birdeye + creators</li>
-          <li>• Treasury-lock proofs & weekly summaries</li>
-        </ul>
-
-        <div className="mt-3 inline-flex items-center rounded-lg border border-amber-400/25 bg-amber-500/10 px-3 py-1 text-sm font-semibold text-amber-200">
-          🔥 Outcome: Consistent burns, rising liquidity & holder growth.
-        </div>
-      </div>
-    </li>
-
-    {/* Phase 3 */}
-    <li className="relative">
-      <span className="absolute -left-[9px] top-1 inline-flex h-4 w-4 rounded-full bg-amber-400 shadow-[0_0_0_6px_rgba(255,184,76,0.15)]" />
-      <div className="rounded-xl border border-white/10 bg-white/[0.04] backdrop-blur p-5">
-        <div className="flex items-center gap-3">
-          <span className="text-xl leading-none">🧱</span>
-          <h4 className="text-lg md:text-xl font-semibold text-amber-200">Phase 3 – The Campfire Network</h4>
-        </div>
-        <p className="mt-1 text-white/70">Goal: Build ecosystem credibility + longevity.</p>
-
-        <ul className="mt-3 grid grid-cols-1 gap-1.5 text-sm text-white/75 md:grid-cols-2">
-          <li>• Holder dashboard & burn leaderboard</li>
-          <li>• NFT badges & top-holder ranks</li>
-          <li>• Real-time Burn Log API</li>
-          <li>• Phase 3 site refresh</li>
-          <li>• Community contests & airdrops</li>
-        </ul>
-
-        <div className="mt-3 inline-flex items-center rounded-lg border border-amber-400/25 bg-amber-500/10 px-3 py-1 text-sm font-semibold text-amber-200">
-          🔥 Outcome: From meme → movement (culture of burning & proof of supply).
-        </div>
-      </div>
-    </li>
-
-    {/* Phase 4 */}
-    <li className="relative">
-      <span className="absolute -left-[9px] top-1 inline-flex h-4 w-4 rounded-full bg-amber-400 shadow-[0_0_0_6px_rgba(255,184,76,0.15)]" />
-      <div className="rounded-xl border border-white/10 bg-white/[0.04] backdrop-blur p-5">
-        <div className="flex items-center gap-3">
-          <span className="text-xl leading-none">🐻</span>
-          <h4 className="text-lg md:text-xl font-semibold text-amber-200">Phase 4 – The Eternal Flame</h4>
-        </div>
-        <p className="mt-1 text-white/70">Goal: Long-term sustainability and symbolic permanence.</p>
-
-        <ul className="mt-3 grid grid-cols-1 gap-1.5 text-sm text-white/75 md:grid-cols-2">
-          <li>• Perpetual burn vault (treasury-funded)</li>
-          <li>• Cross-project “Burn Alliance”</li>
-          <li>• Exchange / aggregator listings</li>
-          <li>• Merch + IRL campaigns</li>
-          <li>• DAO voting on next burn cycles</li>
-        </ul>
-
-        <div className="mt-3 inline-flex items-center rounded-lg border border-amber-400/25 bg-amber-500/10 px-3 py-1 text-sm font-semibold text-amber-200">
-          🔥 Outcome: BBURN becomes the first cultural deflation brand on Solana.
-        </div>
-      </div>
-    </li>
+      </li>
+    ))}
   </ol>
 </section>
 
