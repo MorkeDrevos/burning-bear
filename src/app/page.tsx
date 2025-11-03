@@ -774,7 +774,7 @@ useEffect(() => {
   </div>
 </section>
 
-{/* ===== Roadmap — The Deflation Engine (clean, no timeline dots) ===== */}
+{/* ===== Roadmap — The Deflation Engine (aligned width) ===== */}
 <section
   id="roadmap"
   className="w-full px-4 pt-16 pb-20 md:pt-20 md:pb-24 scroll-mt-[88px] md:scroll-mt-[100px] lg:scroll-mt-[116px]"
@@ -788,7 +788,7 @@ useEffect(() => {
       Real burns, transparency, hype momentum. A clear path from first spark to a cultural deflation brand on Solana.
     </p>
 
-    {/* Phases (no timeline) */}
+    {/* Phase cards (width-limited inside same container) */}
     <div className="mt-10 space-y-10">
       {[
         {
@@ -849,6 +849,7 @@ useEffect(() => {
         <div
           key={i}
           className="
+            mx-auto max-w-6xl
             rounded-2xl border border-white/10
             bg-gradient-to-b from-[#101c16] via-[#14251d] to-[#101c16]
             backdrop-blur-md p-8 md:p-10
