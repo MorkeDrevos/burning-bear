@@ -777,7 +777,7 @@ useEffect(() => {
   </div>
 </section>
 
-{/* ===== Roadmap — The Deflation Engine (wide + left-aligned) ===== */}
+{/* ===== Roadmap — The Deflation Engine (wide + left-aligned + balanced text) ===== */}
 <section
   id="roadmap"
   className="w-full px-4 pt-16 pb-20 md:pt-20 md:pb-24 scroll-mt-[88px] md:scroll-mt-[100px] lg:scroll-mt-[116px]"
@@ -791,7 +791,6 @@ useEffect(() => {
     </p>
 
     <ol className="relative mt-12 border-l border-white/10 pl-6 space-y-12">
-      {/* Phase Template */}
       {[
         {
           icon: "🪓",
@@ -852,16 +851,15 @@ useEffect(() => {
           <span className="absolute -left-[9px] top-1 inline-flex h-4 w-4 rounded-full bg-amber-400 shadow-[0_0_0_6px_rgba(255,184,76,0.15)]" />
 
           <div className="rounded-none border-t border-b border-white/10 bg-gradient-to-b from-[#101c16] via-[#14251d] to-[#101c16] backdrop-blur-md p-8 md:p-10 w-full">
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-3 mb-3">
               <span className="text-2xl">{phase.icon}</span>
               <h4 className="text-xl md:text-2xl font-semibold text-amber-200">
                 {phase.title}
               </h4>
             </div>
 
-            <p className="text-white/70 mb-4">Goal: {phase.goal}</p>
-
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-sm text-white/75 mb-4">
+              <li>• Goal: {phase.goal}</li>
               {phase.items.map((item, j) => (
                 <li key={j}>• {item}</li>
               ))}
