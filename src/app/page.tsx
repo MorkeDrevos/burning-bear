@@ -667,6 +667,54 @@ useEffect(() => {
   </div>
 </section>    
 
+<p className="text-amber-200 font-semibold tracking-wide">
+  The Burning Bear doesn’t burn alone, he keeps the fire alive for everyone who believes.<br />
+  <span className="text-amber-100/90">
+    Every spark counts. Every burn means something. 🔥
+  </span>
+</p>
+
+{/* Soft base glow */}
+<div className="pointer-events-none absolute left-1/2 top-full mt-12 translate-x-[-50%] h-64 w-64 rounded-full bg-amber-400/10 blur-[90px]" />
+
+{/* ===== Why The Burning Bear Exists ===== */}
+<section id="purpose" className="mx-auto max-w-6xl px-4 pt-10 pb-14 md:pt-12 md:pb-16">
+  <h3 className="text-2xl md:text-3xl font-bold text-amber-300">Why The Burning Bear Exists</h3>
+
+  <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6">
+    <p className="text-white/80 leading-relaxed">
+      For anyone new here, here’s the purpose behind <span className="font-semibold text-amber-200">The Burning Bear</span>:
+    </p>
+
+    <p className="mt-4 text-white/80 leading-relaxed">
+      The Burning Bear is designed to be <span className="font-semibold">Solana’s deflation engine</span>.
+      He isn’t another dog or cat meme — he’s a symbol of value built through <span className="font-semibold">scarcity, not dilution</span>.
+      While governments print money and weaken purchasing power, we do the opposite.
+    </p>
+
+    <p className="mt-4 text-white/80 leading-relaxed">
+      <span className="font-semibold">Buybacks, burns and rewards</span> literally fuel the fire. With every burn, the ecosystem strengthens
+      and holders benefit — because a token is only as strong as the people who stand behind it.
+    </p>
+
+    <p className="mt-4 text-white/80 leading-relaxed">
+      This isn’t a pump-and-dump. We’re building a legacy with <span className="font-semibold">organic growth, transparency,
+      traceable flows and long-term intent</span>.
+    </p>
+
+    <p className="mt-6 text-amber-200 font-semibold">
+      And yes… the bear is just getting started. Big things are coming. 🔥
+    </p>
+  </div>
+
+  <div className="mt-4 inline-flex items-center rounded-2xl border border-white/15 bg-white/5 px-4 py-[7px] text-[15px] leading-none text-white/75">
+    TL;DR: Scarcity &gt; dilution • Real buybacks • Real burns • Real rewards
+  </div>
+</section>
+
+{/* Existing next section */}
+<section id="week" className="...">
+
 {/* ===== Meet the Burning Bear ===== */}
   <section id="bear" className="relative w-full overflow-hidden pt-16 pb-16 md:pt-20 md:pb-20 text-center">
   {/* full-width dark background */}
