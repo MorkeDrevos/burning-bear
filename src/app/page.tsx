@@ -710,13 +710,6 @@ useEffect(() => {
     </p>
   </div>
 
-<p className="text-amber-200 font-semibold tracking-wide">
-  The Burning Bear doesn’t burn alone, he keeps the fire alive for everyone who believes.<br />
-  <span className="text-amber-100/90">
-    Every spark counts. Every burn means something. 🔥
-  </span>
-</p>
-
 {/* Soft base glow */}
 <div className="pointer-events-none absolute left-1/2 top-full mt-12 translate-x-[-50%] h-64 w-64 rounded-full bg-amber-400/10 blur-[90px]" />
 
@@ -915,14 +908,14 @@ useEffect(() => {
   <h3 className="mb-4 text-2xl font-bold text-amber-300">Treasury Vault Lock</h3>
 
   <TreasuryLockCard
-    tokenSymbol="BBURN"
-    lockedAmount={30_000_000}
-    lockedAtISO="2025-10-28T12:00:00Z"
-    unlockAtISO="2026-04-28T00:00:00Z"
-    escrowUrl={TREASURY_LOCK_URL}              {/* ← use your const */}
-    escrowAddress="7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
-    recipientAddress="FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE"
-  />
+  tokenSymbol="BBURN"
+  lockedAmount={30_000_000}
+  lockedAtISO="2025-10-28T12:00:00Z"
+  unlockAtISO="2026-04-28T00:00:00Z"
+  escrowUrl={TREASURY_LOCK_URL}
+  escrowAddress="7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
+  recipientAddress="FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE"
+/>
 
   {/* Optional: small subtext */}
   <p className="mt-3 text-sm text-white/55">
