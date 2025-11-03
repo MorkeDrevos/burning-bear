@@ -891,7 +891,7 @@ useEffect(() => {
             <div className="rounded-xl border border-white/10 bg-[#0f1f19]/70 p-4">
               <div className="text-xs uppercase tracking-wider text-white/55">KPIs</div>
               <ul className="mt-2 space-y-1 text-sm text-white/75">
-                <li>• <span className="font-semibold">>300M</span> BBURN total burned</li>
+                <li><span className="font-semibold">&gt;300M</span> BBURN total burned</li>
                 <li>• 10+ external integrations</li>
                 <li>• Quarterly community reports</li>
               </ul>
