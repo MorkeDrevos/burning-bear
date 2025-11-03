@@ -784,9 +784,9 @@ useEffect(() => {
     <h3 className="text-2xl md:text-3xl font-bold text-amber-300">
       Roadmap — The Deflation Engine
     </h3>
-    <p className="mt-2 text-white/65 max-w-3xl">
-      Real burns, transparency, hype momentum. A clear path from first spark to a cultural deflation brand on Solana.
-    </p>
+    <p className="mt-2 text-white/65 max-w-4xl md:max-w-5xl">
+  Real burns, transparency, hype momentum. A clear path from first spark to a cultural deflation brand on Solana.
+</p>
 
     <div className="mt-10 space-y-10">
       {[
