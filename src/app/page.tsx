@@ -810,13 +810,13 @@ useEffect(() => {
               </ul>
             </div>
             <div className="rounded-xl border border-white/10 bg-[#0f1f19]/70 p-4">
-              <div className="text-xs uppercase tracking-wider text-white/55">KPIs</div>
-              <ul className="mt-2 space-y-1 text-sm text-white/75">
-                <li>• <span className="font-semibold">>50M</span> BBURN total burned</li>
-                <li>• Sustained daily volume growth</li>
-                <li>• 2–3 creator collabs/mo</li>
-              </ul>
-            </div>
+  <div className="text-xs uppercase tracking-wider text-white/55">KPIs</div>
+  <ul className="mt-2 space-y-1 text-sm text-white/75">
+    <li>• <span className="font-semibold">&gt;50M</span> BBURN total burned</li>
+    <li>• Sustained daily volume growth</li>
+    <li>• 2–3 creator collabs/mo</li>
+  </ul>
+</div>
             <div className="rounded-xl border border-white/10 bg-[#0f1f19]/70 p-4">
               <div className="text-xs uppercase tracking-wider text-white/55">Risks & Mitigation</div>
               <ul className="mt-2 space-y-1 text-sm text-white/75">
