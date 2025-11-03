@@ -738,186 +738,103 @@ useEffect(() => {
   </div>
 </section>
 
-{/* ===== Roadmap — The Deflation Saga (business plan style) ===== */}
+{/* ===== Roadmap — The Deflation Engine ===== */}
 <section
   id="roadmap"
   className="mx-auto max-w-6xl px-4 pt-14 pb-20 md:pt-20 md:pb-24 scroll-mt-[88px] md:scroll-mt-[100px] lg:scroll-mt-[116px]"
 >
-  <h3 className="text-2xl md:text-3xl font-bold text-amber-300">Roadmap — The Deflation Saga</h3>
+  <h3 className="text-2xl md:text-3xl font-bold text-amber-300">Roadmap — The Deflation Engine</h3>
   <p className="mt-2 text-white/65 max-w-3xl">
-    Clear phases, public milestones, on-chain proof. This is $BBURN’s operating plan — how the campfire scales from
-    ignition to a self-sustaining deflation engine.
+    Real burns, transparency, hype momentum. A clear path from first spark to a cultural deflation brand on Solana.
   </p>
 
-  {/* Timeline */}
-  <div className="mt-10 space-y-7">
-    {/* Phase I */}
+  <div className="mt-8 h-px w-24 bg-white/10 rounded-full" />
+
+  <div className="mt-8 space-y-7">
+    {/* Phase 1 — Ignition */}
+    <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-7 backdrop-blur-md">
+      <div className="flex items-start gap-4">
+        <span className="text-2xl leading-none">🪓</span>
+        <div className="min-w-0">
+          <h4 className="text-xl font-semibold text-amber-200">Phase 1 – The Ignition</h4>
+          <p className="mt-1 text-white/70">Goal: Establish credibility and prove the deflation concept is <em>real</em>, not talk.</p>
+          <ul className="mt-4 grid grid-cols-1 gap-2 text-sm text-white/75 sm:grid-cols-2">
+            <li>• Launch site + live burn tracker</li>
+            <li>• Manual, transparent burns (with Solscan links)</li>
+            <li>• Dexscreener + Birdeye presence</li>
+            <li>• Early community building on X</li>
+            <li>• Holder visibility & wallet transparency</li>
+          </ul>
+          <p className="mt-4 text-amber-300/90 font-semibold">
+            🔥 Outcome: $BBURN is known as “the real burning token” — people see smoke, not promises.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {/* Phase 2 — Wildfire */}
     <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-7 backdrop-blur-md">
       <div className="flex items-start gap-4">
         <span className="text-2xl leading-none">🔥</span>
         <div className="min-w-0">
-          <h4 className="text-xl font-semibold text-amber-200">Phase I — Ignition</h4>
-          <p className="mt-1 text-white/70">
-            Launch, first burns, transparent wallets, and public proof. Establish trust with verifiable actions.
+          <h4 className="text-xl font-semibold text-amber-200">Phase 2 – The Wildfire</h4>
+          <p className="mt-1 text-white/70">Goal: Create constant buzz and movement.</p>
+          <ul className="mt-4 grid grid-cols-1 gap-2 text-sm text-white/75 sm:grid-cols-2">
+            <li>• Automated or semi-automated burn loops</li>
+            <li>• “Campfire Bonus” rounds & community burn events</li>
+            <li>• Strategic collaborations with other Sol tokens</li>
+            <li>• Volume-boost campaigns (multi-wallet, adaptive buys)</li>
+            <li>• On-chain proof of Treasury Vault locks</li>
+          </ul>
+          <p className="mt-4 text-amber-300/90 font-semibold">
+            🔥 Outcome: Volume and engagement explode. BBURN trends on Birdeye / Dexscreener again.
           </p>
-
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-[#0f1f19]/70 p-4">
-              <div className="text-xs uppercase tracking-wider text-white/55">Objectives</div>
-              <ul className="mt-2 space-y-1 text-sm text-white/75">
-                <li>• Publish wallets & lock treasury</li>
-                <li>• Ship Live Burn Log</li>
-                <li>• Complete 25 verified burns</li>
-              </ul>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-[#0f1f19]/70 p-4">
-              <div className="text-xs uppercase tracking-wider text-white/55">KPIs</div>
-              <ul className="mt-2 space-y-1 text-sm text-white/75">
-                <li>• <span className="font-semibold">&gt;10M</span> BBURN burned</li>
-                <li>• <span className="font-semibold">3.0+ SOL</span> buybacks logged</li>
-                <li>• 100% TX links on-chain</li>
-              </ul>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-[#0f1f19]/70 p-4">
-              <div className="text-xs uppercase tracking-wider text-white/55">Risks & Mitigation</div>
-              <ul className="mt-2 space-y-1 text-sm text-white/75">
-                <li>• Low liquidity → scheduled buybacks</li>
-                <li>• Trust gap → live proofs & public vault</li>
-              </ul>
-            </div>
-          </div>
         </div>
       </div>
     </div>
 
-   {/* Phase II */}
-<div className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-7 backdrop-blur-md">
-  <div className="flex items-start gap-4">
-    <span className="text-2xl leading-none">🌎</span>
-    <div className="min-w-0">
-      <h4 className="text-xl font-semibold text-amber-200">Phase II — Wildfire</h4>
-      <p className="mt-1 text-white/70">
-        Scale visibility and volume. World-tour burn campaign, creator partnerships, and consistent scheduling.
-      </p>
-
-      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        {/* Objectives */}
-        <div className="rounded-xl border border-white/10 bg-[#0f1f19]/70 p-4">
-          <div className="text-xs uppercase tracking-wider text-white/55">Objectives</div>
-          <ul className="mt-2 space-y-1 text-sm text-white/75">
-            <li>• 3 daily burn windows</li>
-            <li>• Creator/partner reward pool</li>
-            <li>• Dexscreener & Birdeye presence</li>
+    {/* Phase 3 — Campfire Network */}
+    <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-7 backdrop-blur-md">
+      <div className="flex items-start gap-4">
+        <span className="text-2xl leading-none">🧱</span>
+        <div className="min-w-0">
+          <h4 className="text-xl font-semibold text-amber-200">Phase 3 – The Campfire Network</h4>
+          <p className="mt-1 text-white/70">Goal: Build ecosystem credibility + longevity.</p>
+          <ul className="mt-4 grid grid-cols-1 gap-2 text-sm text-white/75 sm:grid-cols-2">
+            <li>• $BBURN utilities (holder dashboard, burn leaderboard)</li>
+            <li>• NFT badges for burners, top-holder ranks</li>
+            <li>• Real-time “Burn Log API” for partners</li>
+            <li>• Website redesign for Phase 3 branding</li>
+            <li>• Community contests & airdrops (e.g., “Ember Hunt”)</li>
           </ul>
+          <p className="mt-4 text-amber-300/90 font-semibold">
+            🔥 Outcome: BBURN turns from a meme into a movement — the culture of burning and proof of supply.
+          </p>
         </div>
+      </div>
+    </div>
 
-        {/* ✅ KPIs (fixed card) */}
-        <div className="rounded-xl border border-white/10 bg-[#0f1f19]/70 p-4">
-          <div className="text-xs uppercase tracking-wider text-white/55">KPIs</div>
-          <ul className="mt-2 space-y-1 text-sm text-white/75">
-            <li>• 90% burns auto-triggered</li>
-            <li>• <span className="font-semibold">&gt;150M</span> BBURN burned</li>
-            <li>• Zero missed schedule windows</li>
+    {/* Phase 4 — Eternal Flame */}
+    <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-7 backdrop-blur-md">
+      <div className="flex items-start gap-4">
+        <span className="text-2xl leading-none">🐻</span>
+        <div className="min-w-0">
+          <h4 className="text-xl font-semibold text-amber-200">Phase 4 – The Eternal Flame</h4>
+          <p className="mt-1 text-white/70">Goal: Long-term sustainability and symbolic permanence.</p>
+          <ul className="mt-4 grid grid-cols-1 gap-2 text-sm text-white/75 sm:grid-cols-2">
+            <li>• Treasury-funded perpetual burn vault</li>
+            <li>• Cross-project “Burn Alliance” with other tokens</li>
+            <li>• Exchange / aggregator listings</li>
+            <li>• Merch drops + IRL campaigns (Burning Bear World Tour)</li>
+            <li>• BBURN DAO voting on next burn cycles</li>
           </ul>
-        </div>
-
-        {/* Risks & Mitigation */}
-        <div className="rounded-xl border border-white/10 bg-[#0f1f19]/70 p-4">
-          <div className="text-xs uppercase tracking-wider text-white/55">Risks & Mitigation</div>
-          <ul className="mt-2 space-y-1 text-sm text-white/75">
-            <li>• Campaign fatigue → rotating themes</li>
-            <li>• Price shocks → staggered buybacks</li>
-          </ul>
+          <p className="mt-4 text-amber-300/90 font-semibold">
+            🔥 Outcome: $BBURN becomes the first cultural deflation brand on Solana.
+          </p>
         </div>
       </div>
     </div>
   </div>
-</div>
-
-    {/* Phase III */}
-    <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-7 backdrop-blur-md">
-      <div className="flex items-start gap-4">
-        <span className="text-2xl leading-none">⚙️</span>
-        <div className="min-w-0">
-          <h4 className="text-xl font-semibold text-amber-200">Phase III — Furnace Protocol</h4>
-          <p className="mt-1 text-white/70">
-            Automation of burns & buybacks. Audited escrow, predictable schedules, and public JSON/feeds powering the site.
-          </p>
-
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-[#0f1f19]/70 p-4">
-              <div className="text-xs uppercase tracking-wider text-white/55">Objectives</div>
-              <ul className="mt-2 space-y-1 text-sm text-white/75">
-                <li>• Smart-contract burn executor</li>
-                <li>• Multi-sig treasury upgrades</li>
-                <li>• Public burn/feed API</li>
-              </ul>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-[#0f1f19]/70 p-4">
-              <div className="text-xs uppercase tracking-wider text-white/55">KPIs</div>
-              <ul className="mt-2 space-y-1 text-sm text-white/75">
-                <li>• 90%+ burns auto-triggered</li>
-                <li>• <span className="font-semibold">&gt;150M</span> BBURN burned</li>
-                <li>• Zero missed schedule windows</li>
-              </ul>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-[#0f1f19]/70 p-4">
-              <div className="text-xs uppercase tracking-wider text-white/55">Risks & Mitigation</div>
-              <ul className="mt-2 space-y-1 text-sm text-white/75">
-                <li>• Contract bugs → audit & canary mode</li>
-                <li>• Wallet dependency → hot/cold rotation</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* Phase IV */}
-    <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-7 backdrop-blur-md">
-      <div className="flex items-start gap-4">
-        <span className="text-2xl leading-none">🏛️</span>
-        <div className="min-w-0">
-          <h4 className="text-xl font-semibold text-amber-200">Phase IV — Ashes to Glory</h4>
-          <p className="mt-1 text-white/70">
-            Expansion and permanence. Cross-project utilities, holder badges/NFTs, and treasury yield strategies to keep
-            the fire alive.
-          </p>
-
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-[#0f1f19]/70 p-4">
-              <div className="text-xs uppercase tracking-wider text-white/55">Objectives</div>
-              <ul className="mt-2 space-y-1 text-sm text-white/75">
-                <li>• Partner burns & co-marketing</li>
-                <li>• Holder collectibles (on-chain)</li>
-                <li>• Transparent treasury reporting</li>
-              </ul>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-[#0f1f19]/70 p-4">
-              <div className="text-xs uppercase tracking-wider text-white/55">KPIs</div>
-              <ul className="mt-2 space-y-1 text-sm text-white/75">
-  <li>90% burns auto-triggered</li>
-  <li><span className="font-semibold">&gt;150M</span> BBURN burned</li>
-  <li>Zero missed schedule windows</li>
-</ul>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-[#0f1f19]/70 p-4">
-              <div className="text-xs uppercase tracking-wider text-white/55">Risks & Mitigation</div>
-              <ul className="mt-2 space-y-1 text-sm text-white/75">
-                <li>• Over-extension → staged rollouts</li>
-                <li>• Market shocks → dynamic burn sizing</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {/* Footnote */}
-  <p className="mt-8 text-sm text-white/45">
-    Timeline adjusts with market conditions. All burns and buybacks remain provable on-chain and reflected in the Live Burn Log.
-  </p>
 </section>
 
 {/* ===== Campfire Wallets ===== */}
