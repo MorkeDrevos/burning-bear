@@ -711,10 +711,6 @@ useEffect(() => {
     </p>
   </div>
 
-  {/* Soft base glow */}
-  <div className="pointer-events-none absolute left-1/2 top-full mt-12 -translate-x-1/2 h-64 w-64 rounded-full bg-amber-400/10 blur-[90px]" />
-</section>
-
 <p className="text-amber-200 font-semibold tracking-wide">
   The Burning Bear doesn’t burn alone, he keeps the fire alive for everyone who believes.<br />
   <span className="text-amber-100/90">
@@ -759,9 +755,6 @@ useEffect(() => {
     TL;DR: Scarcity &gt; dilution • Real buybacks • Real burns • Real rewards
   </div>
 </section>
-
-{/* Existing next section */}
-<section id="week" className="...">
 
 {/* ===== This Week at the Campfire ===== */}
   <section id="week" className="mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-20 md:pb-14">
