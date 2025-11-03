@@ -151,6 +151,15 @@ export default function Page() {
   const [solUsd, setSolUsd] = useState<number | null>(null);
   const [now, setNow] = useState<number>(Date.now());
 
+  // 🔥 Burn overlay trigger state
+const [showBurnMoment, setShowBurnMoment] = useState(false);
+
+// Prevent double triggers when countdown hovers near zero
+const lastTriggerRef = useRef<number>(0);
+
+// (optional) Sound effect when burn hits
+const whooshRef = useRef<HTMLAudioElement | null>(null);
+
   // tick each second (drives countdowns)
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
@@ -238,6 +247,19 @@ useEffect(() => {
 
   const nextBuybackMs = targets.bb ? targets.bb - now : 0;
   const nextBurnMs = targets.burn ? targets.burn - now : 0;
+
+  useEffect(() => {
+  const nearZero = nextBurnMs <= 1000 && nextBurnMs >= -1500; // trigger window
+  if (nearZero) {
+    const nowTs = Date.now();
+    const last = lastTriggerRef.current || 0;
+    const tooSoon = nowTs - last < 15_000; // 15s cooldown
+    if (!tooSoon && !showBurnMoment) {
+      lastTriggerRef.current = nowTs;
+      setShowBurnMoment(true);
+    }
+  }
+}, [nextBurnMs, showBurnMoment]);
 
  // Auto-loop: seed if missing and roll forward with a small buffer
 useEffect(() => {
@@ -419,13 +441,13 @@ useEffect(() => {
         <Countdown label="Next burn in" ms={nextBurnMs} variant="segments" />
       </div>
 
-      {/* Stats */}
-      <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
-        <Stat label="Burned So Far" value={fmtInt(BURNED)} />
-        <Stat label="Current Supply" value={fmtInt(CURRENT)} />
-        <Stat label="Buyback Spent" value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} />
-        <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)} />
-      </div>
+     {/* Stats */}
+<div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
+  <Stat label="Burned So Far"       value={fmtInt(BURNED)}                               highlight={showBurnMoment} />
+  <Stat label="Current Supply"      value={fmtInt(CURRENT)}                              highlight={showBurnMoment} />
+  <Stat label="Buyback Spent"       value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} highlight={showBurnMoment} />
+  <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)}                           highlight={showBurnMoment} />
+</div>
 
       {/* Pills */}
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
@@ -1110,11 +1132,27 @@ function Colon({ soon = false }: { soon?: boolean }) {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({
+  label,
+  value,
+  highlight = false,
+}: {
+  label: string;
+  value: React.ReactNode;
+  highlight?: boolean;
+}) {
   return (
     <div className="rounded-2xl border border-white/10 bg-[#0f1f19]/70 p-5 md:p-6 backdrop-blur">
       <div className="text-[11px] uppercase tracking-wider text-white/55">{label}</div>
-      <div className="mt-1 text-2xl font-extrabold">{value}</div>
+      <div
+        className={`mt-1 text-2xl font-extrabold ${
+          highlight
+            ? 'animate-pulse-fast text-amber-300 drop-shadow-[0_0_8px_rgba(255,184,76,0.45)]'
+            : ''
+        }`}
+      >
+        {value}
+      </div>
     </div>
   );
 }
@@ -1271,5 +1309,126 @@ function SolanaMark({ className = "" }: { className?: string }) {
         <path d="M0 233h318c5 0 9 2 13 5l68 60c9 8 1 19-9 19H64L0 233Z" />
       </g>
     </svg>
+  );
+}
+
+/* =========================
+   BurnMoment overlay
+========================= */
+function BurnMoment({
+  show,
+  onDone,
+  sound = "/sounds/burn-whoosh.mp3", // put a short 2–3s whoosh here
+  durationMs = 4500,
+}: {
+  show: boolean;
+  onDone?: () => void;
+  sound?: string;
+  durationMs?: number;
+}) {
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
+
+  // play sound and auto-hide
+  React.useEffect(() => {
+    if (!show) return;
+    const t = window.setTimeout(() => onDone?.(), durationMs);
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(() => {});
+    }
+    return () => window.clearTimeout(t);
+  }, [show, durationMs, onDone]);
+
+  if (!show) return null;
+
+  return (
+    <div
+      className="
+        fixed inset-0 z-[60]
+        pointer-events-none
+        bg-black/40
+        animate-[fadeIn_300ms_ease-out_forwards]
+      "
+      aria-hidden="true"
+    >
+      {/* radial fire glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_60%,rgba(255,160,60,0.30),rgba(0,0,0,0.0))]" />
+
+      {/* vertical vignette */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-transparent" />
+
+      {/* ember particles */}
+      <div className="absolute inset-0 overflow-hidden">
+        {Array.from({ length: 36 }).map((_, i) => (
+          <span
+            key={i}
+            className="absolute block h-[3px] w-[3px] rounded-full bg-amber-300/90"
+            style={{
+              left: `${Math.random() * 100}%`,
+              bottom: `-10px`,
+              opacity: 0.9,
+              animation: `rise ${3 + Math.random() * 3}s linear ${Math.random() * 1.5}s forwards`,
+              boxShadow:
+                "0 0 6px rgba(255,180,80,.9), 0 0 12px rgba(255,160,60,.5)",
+            }}
+          />
+        ))}
+      </div>
+
+      {/* center label */}
+      <div className="absolute inset-0 grid place-items-center">
+        <div className="px-5 py-3 rounded-2xl border border-amber-400/30 bg-amber-500/10 backdrop-blur-md text-amber-100 font-extrabold text-2xl md:text-3xl tracking-wide shadow-[0_0_40px_rgba(255,170,60,.25)] animate-[pop_260ms_ease-out]">
+          🔥 Burn Executed — Supply Down
+        </div>
+      </div>
+
+      {/* subtle bottom flame sweep */}
+      <div className="absolute -bottom-20 left-0 right-0 h-60 bg-[radial-gradient(120%_100%_at_50%_100%,rgba(255,180,80,.35),rgba(0,0,0,0))] animate-[glow_1.6s_ease-in-out_infinite_alternate]" />
+
+      {/* sound (optional) */}
+      <audio ref={audioRef} src={sound} preload="auto" />
+      {/* keyframes */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        @keyframes pop {
+          0% {
+            transform: scale(0.92);
+            opacity: 0;
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+        @keyframes rise {
+          0% {
+            transform: translateY(0) translateX(0) scale(1);
+            opacity: 0.9;
+          }
+          70% {
+            opacity: 0.9;
+          }
+          100% {
+            transform: translateY(-110vh) translateX(12px) scale(0.6);
+            opacity: 0;
+          }
+        }
+        @keyframes glow {
+          from {
+            filter: blur(20px) brightness(1);
+          }
+          to {
+            filter: blur(26px) brightness(1.25);
+          }
+        }
+      `}</style>
+    </div>
   );
 }
