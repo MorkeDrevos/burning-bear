@@ -1079,6 +1079,7 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
       )}
     </div>
   );
+}
 
 /* =========================
    Segment Box (simple)
