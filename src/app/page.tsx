@@ -719,12 +719,9 @@ useEffect(() => {
 
   <div className="w-full border-t border-b border-white/10 bg-white/[0.04] backdrop-blur-md py-10 px-4 md:px-0">
     <div className="mx-auto max-w-4xl text-center text-white/80 leading-relaxed text-lg space-y-5">
-      <p>
-        Here’s the purpose behind <span className="font-semibold text-amber-200">The Burning Bear</span>:
-      </p>
 
       <p>
-        The Burning Bear was designed to be <span className="font-semibold">Solana’s deflation engine</span>.
+        <span className="font-semibold text-amber-200">The Burning Bear</span> was designed to be <span className="font-semibold">Solana’s deflation engine</span>.
         He isn’t another dog or cat meme — he’s a symbol of value built through <span className="font-semibold">scarcity, not dilution</span>.
         While governments print money and weaken purchasing power, we do the opposite.
       </p>
