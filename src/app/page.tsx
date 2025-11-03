@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import TreasuryLockCard from '@/components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
@@ -908,19 +907,27 @@ useEffect(() => {
   </div>
 </section>
 
+{/* ===== Treasury Vault Lock ===== */}
 <section
   id="vault"
   className="scroll-mt-[88px] md:scroll-mt-[104px] lg:scroll-mt-[120px] mx-auto max-w-6xl px-4 mt-10"
 >
+  <h3 className="mb-4 text-2xl font-bold text-amber-300">Treasury Vault Lock</h3>
+
   <TreasuryLockCard
     tokenSymbol="BBURN"
-    lockedAmount={30000000}
+    lockedAmount={30_000_000}
     lockedAtISO="2025-10-28T12:00:00Z"
     unlockAtISO="2026-04-28T00:00:00Z"
-    escrowUrl="https://lock.jup.ag/escrow/7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
+    escrowUrl={TREASURY_LOCK_URL}              {/* ← use your const */}
     escrowAddress="7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77"
     recipientAddress="FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE"
   />
+
+  {/* Optional: small subtext */}
+  <p className="mt-3 text-sm text-white/55">
+    Multisig escrow on Jupiter Lock. All details are verifiable on-chain.
+  </p>
 </section>
 
     {/* ===== Contract Address (blended) ===== */}
