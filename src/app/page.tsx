@@ -710,6 +710,8 @@ useEffect(() => {
     </p>
   </div>
 
+</section> 
+
 {/* Soft base glow */}
 <div className="pointer-events-none absolute left-1/2 top-full mt-12 translate-x-[-50%] h-64 w-64 rounded-full bg-amber-400/10 blur-[90px]" />
 
@@ -907,7 +909,7 @@ useEffect(() => {
 >
   <h3 className="mb-4 text-2xl font-bold text-amber-300">Treasury Vault Lock</h3>
 
-  <TreasuryLockCard
+<TreasuryLockCard
   tokenSymbol="BBURN"
   lockedAmount={30_000_000}
   lockedAtISO="2025-10-28T12:00:00Z"
