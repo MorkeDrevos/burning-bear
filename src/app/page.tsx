@@ -712,14 +712,23 @@ useEffect(() => {
 
 </section> 
 
-{/* Soft base glow */}
-<div className="pointer-events-none absolute left-1/2 top-full mt-12 translate-x-[-50%] h-64 w-64 rounded-full bg-amber-400/10 blur-[90px]" />
+{/* Soft base glow (taller + softer) */}
+<div className="pointer-events-none absolute left-1/2 top-full mt-16 -translate-x-1/2 h-80 w-80 rounded-full bg-amber-400/10 blur-[110px]" />
+
+{/* Separator fade so next section starts clean */}
+<div className="pointer-events-none absolute inset-x-0 top-full h-10 bg-gradient-to-b from-[#141f1a]/40 to-transparent" />
 
 {/* ===== Why The Burning Bear Exists ===== */}
-<section id="purpose" className="mx-auto max-w-6xl px-4 pt-10 pb-14 md:pt-12 md:pb-16">
-  <h3 className="text-2xl md:text-3xl font-bold text-amber-300">Why The Burning Bear Exists</h3>
+<section
+  id="purpose"
+  className="mx-auto max-w-6xl px-4 pt-20 md:pt-24 pb-10 md:pb-12 scroll-mt-[96px]"
+>
+  <h3 className="text-2xl md:text-3xl font-bold text-amber-300 tracking-tight">
+    Why The Burning Bear Exists
+  </h3>
 
-  <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6">
+  {/* centered, constrained card */}
+  <div className="mt-6 mx-auto max-w-3xl rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_0_30px_rgba(0,0,0,0.25)]">
     <p className="text-white/80 leading-relaxed">
       For anyone new here, here’s the purpose behind <span className="font-semibold text-amber-200">The Burning Bear</span>:
     </p>
@@ -736,7 +745,7 @@ useEffect(() => {
     </p>
 
     <p className="mt-4 text-white/80 leading-relaxed">
-      This isn’t a pump-and-dump. We’re building a legacy with <span className="font-semibold">organic growth, transparency,
+      We’re building a legacy with <span className="font-semibold">organic growth, transparency,
       traceable flows and long-term intent</span>.
     </p>
 
@@ -745,8 +754,11 @@ useEffect(() => {
     </p>
   </div>
 
-  <div className="mt-4 inline-flex items-center rounded-2xl border border-white/15 bg-white/5 px-4 py-[7px] text-[15px] leading-none text-white/75">
-    TL;DR: Scarcity &gt; dilution • Real buybacks • Real burns • Real rewards
+  {/* TL;DR pill centered */}
+  <div className="mt-5 flex justify-center">
+    <span className="inline-flex items-center rounded-2xl border border-white/15 bg-white/5 px-4 py-[7px] text-sm leading-none text-white/75">
+      TL;DR: Scarcity &gt; dilution • Real buybacks • Real burns • Real rewards
+    </span>
   </div>
 </section>
 
