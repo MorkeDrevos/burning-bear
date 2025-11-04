@@ -4,8 +4,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import TreasuryLockCard from '@/components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
-import LiveBurnProgress from '../components/LiveBurnProgress';
-
 
 /* =========================
    Config
@@ -30,9 +28,6 @@ const GIVEAWAY_TITLE = "Campfire Bonus Round 1";
 const GIVEAWAY_SUB = "Stay near the flames 🔥 Exclusive rewards for $BBURN holders soon.";
 const GIVEAWAY_LINK_TEXT = "Follow updates";
 const GIVEAWAY_LINK_URL = "https://x.com/i/communities/1980944446871966021";
-
-const JUP_URL =
-  'https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump';
 
 // Optional: hide after a point in time (ms since epoch). Set to null to disable.
 const GIVEAWAY_HIDE_AFTER = null as number | null;
@@ -473,16 +468,6 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
         {/* <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} /> */}
         <Countdown label="Next burn in" ms={nextBurnMs} variant="segments" />
       </div>
-
-<div className="mt-4 flex justify-center">
-  {data?.schedule && (
-    <LiveBurnProgress
-      nextBurnAt={data.schedule.nextBurnAt ?? (Date.now() + (data.schedule.burnIntervalMs ?? ((data.schedule.burnIntervalMinutes ?? 60) * 60_000)))}
-      burnIntervalMs={data.schedule.burnIntervalMs ?? ((data.schedule.burnIntervalMinutes ?? 60) * 60_000)}
-      width={24}
-    />
-  )}
-</div>
 
      {/* Stats */}
 <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
@@ -1094,29 +1079,6 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
           </div>
         </div>
       </footer>
-     {/* Sticky Buy button (bottom-right) */}
-<a
-  href={JUP_URL}
-  target="_blank"
-  rel="noopener noreferrer"
-  className="
-    fixed bottom-6 right-6 z-50
-    inline-flex items-center gap-3
-    rounded-full px-5 py-3 font-semibold
-    text-[#120d05]
-    bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400
-    ring-1 ring-amber-200/40 shadow-xl
-    hover:scale-[1.03] hover:brightness-110 active:scale-[0.99]
-    transition-transform duration-150
-  "
-  style={{
-    boxShadow:
-      '0 0 0 10px rgba(16,12,8,0.35), 0 10px 25px rgba(255,190,70,0.35), 0 0 40px rgba(255,180,60,0.25)',
-  }}
->
-  <JupiterMark className="h-6 w-6 text-amber-900/80 -ml-1" />
-  <span>Buy $BBURN on Jupiter</span>
-</a>
 </main>
 );
 }
@@ -1383,31 +1345,6 @@ function SolanaMark({ className = "" }: { className?: string }) {
         <path d="M64 0h318c10 0 18 11 9 19l-68 60a20 20 0 0 1-13 5H0L64 0Z" />
         <path d="M64 156h318c10 0 18 11 9 19l-68 60a20 20 0 0 1-13 5H0l64-84Z" />
         <path d="M0 233h318c5 0 9 2 13 5l68 60c9 8 1 19-9 19H64L0 233Z" />
-      </g>
-    </svg>
-  );
-}
-
-function JupiterMark({ className = '' }: { className?: string }) {
-  // High-contrast, brand-like swirl (no background circle)
-  return (
-    <svg
-      viewBox="0 0 64 64"
-      role="img"
-      aria-hidden="true"
-      className={className}
-    >
-      <defs>
-        <filter id="jupGlow" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="0" dy="0" stdDeviation="1.6" floodColor="rgba(0,0,0,0.35)" />
-        </filter>
-      </defs>
-      {/* Solid light mark so it stands out on the green→blue button */}
-      <g fill="#f2f8f7" filter="url(#jupGlow)">
-        {/* three shallow “swirl” bands */}
-        <path d="M8 27c9-6 23-9 36-8 5 .2 10 1.3 12 2.2-3 2.2-7 3.2-11 3.2C31.5 24.2 21 26.3 8 33z" />
-        <path d="M8 36c10-7 24-10.5 38-9.6 5 .3 9 1.1 12 2.3-3.4 2.7-8 4-12.6 4-15.2 0-27.5 2.6-37.4 8.9z" />
-        <path d="M11 46c8-4.8 20.5-7.4 31.5-7.4 5.2 0 9.4 .7 12.4 1.7-3.2 2.4-7.4 3.6-12.4 3.6-11 0-21.2 1.2-31.5 6.1z" />
       </g>
     </svg>
   );
