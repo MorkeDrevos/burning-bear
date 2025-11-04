@@ -1377,36 +1377,26 @@ function SolanaMark({ className = "" }: { className?: string }) {
 }
 
 function JupiterMark({ className = '' }: { className?: string }) {
-  // Inline SVG of Jupiter’s swirl (brand-ish green→blue gradient).
+  // High-contrast, brand-like swirl (no background circle)
   return (
     <svg
       viewBox="0 0 64 64"
+      role="img"
       aria-hidden="true"
       className={className}
-      role="img"
     >
       <defs>
-        <linearGradient id="jupGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#B3FFAB" />
-          <stop offset="100%" stopColor="#12D8FA" />
-        </linearGradient>
+        <filter id="jupGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="0" stdDeviation="1.6" floodColor="rgba(0,0,0,0.35)" />
+        </filter>
       </defs>
-      <circle cx="32" cy="32" r="30" fill="url(#jupGrad)" opacity="0.18" />
-      {/* swirl bands */}
-      <path
-        fill="url(#jupGrad)"
-        d="M10 30c8-6 20-10 32-9 4 .2 8 1 12 2-3 2-7 3-11 3-13-.2-22 3-30 8z"
-      />
-      <path
-        fill="url(#jupGrad)"
-        d="M8 38c9-7 22-11 36-10 4 .2 9 1 12 2-3 3-8 4-12 4-14 0-25 3-36 9z"
-        opacity="0.9"
-      />
-      <path
-        fill="url(#jupGrad)"
-        d="M12 46c8-5 20-8 31-8 5 0 9 .7 12 1.7-3 2.5-7 3.8-12 3.8-11 0-21 1.4-31 6.5z"
-        opacity="0.75"
-      />
+      {/* Solid light mark so it stands out on the green→blue button */}
+      <g fill="#f2f8f7" filter="url(#jupGlow)">
+        {/* three shallow “swirl” bands */}
+        <path d="M8 27c9-6 23-9 36-8 5 .2 10 1.3 12 2.2-3 2.2-7 3.2-11 3.2C31.5 24.2 21 26.3 8 33z" />
+        <path d="M8 36c10-7 24-10.5 38-9.6 5 .3 9 1.1 12 2.3-3.4 2.7-8 4-12.6 4-15.2 0-27.5 2.6-37.4 8.9z" />
+        <path d="M11 46c8-4.8 20.5-7.4 31.5-7.4 5.2 0 9.4 .7 12.4 1.7-3.2 2.4-7.4 3.6-12.4 3.6-11 0-21.2 1.2-31.5 6.1z" />
+      </g>
     </svg>
   );
 }
