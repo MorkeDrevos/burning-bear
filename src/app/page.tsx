@@ -290,8 +290,6 @@ useEffect(() => {
     return { bb, burn };
   }, [data]);
 
-  const nextBuybackMs = targets.bb ? targets.bb - now : 0;
-
 // Buyback countdown (safe fallback = +∞ so it never shows as "0")
 const nextBuybackMs =
   typeof targets.bb === 'number' ? targets.bb - now : Number.POSITIVE_INFINITY;
