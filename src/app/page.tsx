@@ -1350,11 +1350,11 @@ function SolanaMark({ className = "" }: { className?: string }) {
   );
 }
 
-/* BurnMoment — AFTER-BURN look (subtle, realistic) */
+/* BurnMoment — after-burn + subtle flames */
 function BurnMoment({
   show,
   onDone,
-  sound,            // ignored unless you pass it
+  sound,
   durationMs = 4200,
 }: {
   show: boolean;
@@ -1378,17 +1378,17 @@ function BurnMoment({
 
   return (
     <div className="fixed inset-0 z-[60] pointer-events-none" aria-hidden>
-      {/* 1) brief white-hot flash */}
-      <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_60%,rgba(255,255,255,0.90),rgba(255,210,130,0.35),rgba(0,0,0,0))] animate-[abFlash_220ms_ease-out] rounded-none" />
+      {/* quick white-hot flash */}
+      <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_60%,rgba(255,255,255,.9),rgba(255,210,130,.35),rgba(0,0,0,0))] animate-[abFlash_200ms_ease-out]" />
 
-      {/* 2) darkened scene + faint orange afterglow */}
-      <div className="absolute inset-0 bg-black/45 animate-[abFade_200ms_ease-out_forwards]" />
-      <div className="absolute inset-0 bg-[radial-gradient(55%_40%_at_50%_68%,rgba(255,180,90,.22),rgba(0,0,0,0))] animate-[abGlow_2.2s_ease-in-out_infinite_alternate]" />
+      {/* dim scene + warm afterglow */}
+      <div className="absolute inset-0 bg-black/45 animate-[abFade_180ms_ease-out_forwards]" />
+      <div className="absolute inset-0 bg-[radial-gradient(55%_40%_at_50%_68%,rgba(255,180,90,.20),rgba(0,0,0,0))] animate-[abGlow_2s_ease-in-out_infinite_alternate]" />
 
-      {/* 3) heat haze (very subtle shimmer) */}
-      <div className="absolute inset-x-[8%] bottom-[8%] top-[35%] mix-blend-screen opacity-60 animate-[abShimmer_1.6s_ease-in-out_infinite]" />
+      {/* heat haze (very subtle) */}
+      <div className="absolute inset-x-[8%] bottom-[8%] top-[35%] opacity-55 mix-blend-screen animate-[abShimmer_1.6s_ease-in-out_infinite]" />
 
-      {/* 4) thin smoke plumes (few, slow, grey) */}
+      {/* thin smoke plumes */}
       <div className="absolute inset-x-0 bottom-0 h-[55vh]">
         {[0,1,2,3].map((i) => (
           <span
@@ -1406,9 +1406,31 @@ function BurnMoment({
         ))}
       </div>
 
-      {/* 5) drifting ash (few, not sparkly) */}
+      {/* subtle flame tongues near ground */}
+      <div className="absolute inset-x-0 bottom-0 h-[42vh] pointer-events-none">
+        {[0,1,2,3,4].map((i) => (
+          <span
+            key={i}
+            className="absolute block rounded-[45%_45%_60%_60%/70%_70%_30%_30%] blur-[12px]"
+            style={{
+              left: `calc(50% + ${-80 + i*40}px)`,
+              bottom: `${-8 + (i%2)*4}px`,
+              width: `${36 + i*6}px`,
+              height: `${120 + i*10}px`,
+              background:
+                'linear-gradient(to top, rgba(255,155,60,.22), rgba(255,200,120,.10), rgba(255,240,200,0))',
+              transformOrigin: '50% 100%',
+              animation: `abFlame ${1.6 + Math.random()*0.6}s ease-in-out ${i*0.08}s infinite`,
+              opacity: 0.7,
+              filter: 'saturate(1.1)',
+            }}
+          />
+        ))}
+      </div>
+
+      {/* drifting ash (few, grey/white) */}
       <div className="absolute inset-0 overflow-hidden">
-        {Array.from({ length: 30 }).map((_, i) => (
+        {Array.from({ length: 22 }).map((_, i) => (
           <span
             key={i}
             className="absolute h-[2px] w-[2px] rounded-full bg-white/70"
@@ -1417,33 +1439,30 @@ function BurnMoment({
               bottom: `-6px`,
               opacity: 0.6,
               filter: 'blur(0.4px)',
-              animation: `abAsh ${3.2 + Math.random()*2.4}s linear ${Math.random()*0.9}s forwards`,
+              animation: `abAsh ${3 + Math.random()*2.2}s linear ${Math.random()*0.9}s forwards`,
             }}
           />
         ))}
       </div>
 
-      {/* 6) small confirmation pill (muted) */}
+      {/* minimal, system-style toast (no glow capsule) */}
       <div className="absolute inset-0 grid place-items-center">
-        <div className="px-4 py-2 rounded-xl border border-white/12 bg-black/35 backdrop-blur-md text-amber-100/90 font-semibold text-[15px] tracking-wide shadow-[0_0_24px_rgba(0,0,0,.35)] animate-[abPop_.22s_ease-out]">
+        <div className="px-3.5 py-1.5 rounded-md border border-white/10 bg-black/35 backdrop-blur-md text-white/90 text-[13px] font-medium tracking-wide shadow-[0_0_14px_rgba(0,0,0,.35)] animate-[abPop_.18s_ease-out]">
           Burn logged — supply reduced
         </div>
       </div>
 
-      {/* 7) ground warmth */}
-      <div className="absolute -bottom-24 left-0 right-0 h-56 bg-[radial-gradient(120%_100%_at_50%_100%,rgba(255,170,80,.20),rgba(0,0,0,0))]" />
+      {/* ground warmth */}
+      <div className="absolute -bottom-24 left-0 right-0 h-56 bg-[radial-gradient(120%_100%_at_50%_100%,rgba(255,170,80,.18),rgba(0,0,0,0))]" />
 
       {sound ? <audio ref={audioRef} src={sound} preload="auto" /> : null}
 
       <style jsx>{`
         @keyframes abFlash { from { opacity: 1 } to { opacity: 0 } }
         @keyframes abFade  { from { opacity: 0 } to { opacity: 1 } }
-        @keyframes abPop   { 0% { transform: scale(.95); opacity: 0 } 100% { transform: scale(1); opacity: 1 } }
-        @keyframes abGlow  { from { filter: blur(20px) brightness(1) } to { filter: blur(26px) brightness(1.12) } }
-        @keyframes abShimmer {
-          0%,100% { filter: contrast(1) saturate(1) }
-          50%     { filter: contrast(1.06) saturate(1.05) }
-        }
+        @keyframes abPop   { 0% { transform: scale(.96); opacity: 0 } 100% { transform: scale(1); opacity: 1 } }
+        @keyframes abGlow  { from { filter: blur(18px) brightness(1) } to { filter: blur(24px) brightness(1.1) } }
+        @keyframes abShimmer { 0%,100% { filter: contrast(1) } 50% { filter: contrast(1.05) } }
         @keyframes abSmoke {
           0%   { transform: translateY(0) translateX(0) scale(.9);   opacity:.16 }
           60%  { opacity:.22 }
@@ -1452,6 +1471,12 @@ function BurnMoment({
         @keyframes abAsh {
           0%   { transform: translateY(0) translateX(0)   scale(1);   opacity:.7 }
           100% { transform: translateY(-90vh) translateX(10px) scale(.7); opacity:0 }
+        }
+        /* gentle tongue flicker + sway */
+        @keyframes abFlame {
+          0%   { transform: translateX(0)   scaleY(.98) rotate(-1.2deg); opacity:.65 }
+          45%  { transform: translateX(2px) scaleY(1.02) rotate(1.2deg); opacity:.78 }
+          100% { transform: translateX(0)   scaleY(.98) rotate(-1deg);   opacity:.68 }
         }
       `}</style>
     </div>
