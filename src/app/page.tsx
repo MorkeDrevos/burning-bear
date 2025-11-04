@@ -291,11 +291,15 @@ useEffect(() => {
   }, [data]);
 
   const nextBuybackMs = targets.bb ? targets.bb - now : 0;
-let nextBurnMs = targets.burn ? targets.burn - now : 0;
 
 // 🧪 TEST MODE — simulate burn trigger (remove after testing)
 const hasBurn = typeof targets.burn === 'number' && isFinite(targets.burn);
 let nextBurnMs = hasBurn ? targets.burn - now : Number.POSITIVE_INFINITY;
+
+// keep your test hook
+if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
+  nextBurnMs = 500; // simulate after 0.5s only when you visit with #testburn
+}
 
 // keep your test hook
 if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
