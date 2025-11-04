@@ -1350,12 +1350,12 @@ function SolanaMark({ className = "" }: { className?: string }) {
   );
 }
 
-/* BurnMoment — V2 cinematic overlay (no sound) */
+/* BurnMoment — AFTER-BURN look (subtle, realistic) */
 function BurnMoment({
   show,
   onDone,
-  sound,            // ignored unless you choose to pass it later
-  durationMs = 4500,
+  sound,            // ignored unless you pass it
+  durationMs = 4200,
 }: {
   show: boolean;
   onDone?: () => void;
@@ -1367,8 +1367,6 @@ function BurnMoment({
   React.useEffect(() => {
     if (!show) return;
     const t = window.setTimeout(() => onDone?.(), durationMs);
-
-    // keep silent by default; only plays if a sound url is provided
     if (sound && audioRef.current) {
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch(() => {});
@@ -1379,104 +1377,81 @@ function BurnMoment({
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] pointer-events-none" aria-hidden="true">
-      {/* dark tint */}
-      <div className="absolute inset-0 bg-black/45 animate-[bmFadeIn_.25s_ease-out_forwards]" />
+    <div className="fixed inset-0 z-[60] pointer-events-none" aria-hidden>
+      {/* 1) brief white-hot flash */}
+      <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_60%,rgba(255,255,255,0.90),rgba(255,210,130,0.35),rgba(0,0,0,0))] animate-[abFlash_220ms_ease-out] rounded-none" />
 
-      {/* global ember glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(55%_45%_at_50%_60%,rgba(255,170,80,.28),rgba(0,0,0,0))]" />
+      {/* 2) darkened scene + faint orange afterglow */}
+      <div className="absolute inset-0 bg-black/45 animate-[abFade_200ms_ease-out_forwards]" />
+      <div className="absolute inset-0 bg-[radial-gradient(55%_40%_at_50%_68%,rgba(255,180,90,.22),rgba(0,0,0,0))] animate-[abGlow_2.2s_ease-in-out_infinite_alternate]" />
 
-      {/* heat shimmer */}
-      <div className="absolute inset-0 mix-blend-screen opacity-80 animate-[bmShimmer_1.8s_ease-in-out_infinite]" />
+      {/* 3) heat haze (very subtle shimmer) */}
+      <div className="absolute inset-x-[8%] bottom-[8%] top-[35%] mix-blend-screen opacity-60 animate-[abShimmer_1.6s_ease-in-out_infinite]" />
 
-      {/* expanding shockwave */}
-      <div className="absolute left-1/2 top-[58%] -translate-x-1/2 -translate-y-1/2 h-24 w-24 rounded-full border border-amber-300/60 shadow-[0_0_35px_rgba(255,184,76,.45)] animate-[bmShock_1.2s_ease-out]" />
-
-      {/* flame tongues (layered) */}
-      <div className="absolute inset-x-0 bottom-0 h-[42vh]">
-        <div className="absolute bottom-[-6%] left-1/2 w-[120vw] -translate-x-1/2">
-          <div className="mx-auto h-[34vh] w-[90vw] rounded-[50%] blur-[40px] opacity-90 bg-[conic-gradient(from_200deg,rgba(255,210,120,.65),rgba(255,140,60,.8),rgba(255,90,0,.75),rgba(255,210,120,.65))] animate-[bmFlame1_2.2s_ease-in-out_infinite]" />
-        </div>
-        <div className="absolute bottom-[-6%] left-1/2 w-[120vw] -translate-x-1/2">
-          <div className="mx-auto h-[28vh] w-[80vw] rounded-[50%] blur-[34px] opacity-80 bg-[conic-gradient(from_210deg,rgba(255,230,160,.55),rgba(255,120,40,.8),rgba(255,70,0,.75),rgba(255,230,160,.55))] animate-[bmFlame2_2.6s_ease-in-out_infinite]" />
-        </div>
-      </div>
-
-      {/* smoke wisps */}
+      {/* 4) thin smoke plumes (few, slow, grey) */}
       <div className="absolute inset-x-0 bottom-0 h-[55vh]">
-        {Array.from({ length: 7 }).map((_, i) => (
+        {[0,1,2,3].map((i) => (
           <span
             key={i}
-            className="absolute block h-[26vh] w-[26vh] rounded-full opacity-20 blur-[28px] bg-[radial-gradient(closest-side,rgba(200,200,200,.35),rgba(200,200,200,0))]"
+            className="absolute block h-[28vh] w-[28vh] rounded-full blur-[30px]"
             style={{
-              left: `${10 + i * 12}%`,
-              bottom: `${-4 + (i % 3) * 4}%`,
-              animation: `bmSmoke ${5 + i * 0.5}s ease-in ${i * 0.15}s infinite`,
+              left: `${22 + i * 14}%`,
+              bottom: `${-6 + (i%2)*2}%`,
+              background:
+                'radial-gradient(closest-side, rgba(180,180,180,.28), rgba(180,180,180,0))',
+              animation: `abSmoke ${5 + i*0.7}s ease-in ${i*0.25}s forwards`,
+              opacity: 0.18,
             }}
           />
         ))}
       </div>
 
-      {/* golden sparks */}
+      {/* 5) drifting ash (few, not sparkly) */}
       <div className="absolute inset-0 overflow-hidden">
-        {Array.from({ length: 80 }).map((_, i) => (
+        {Array.from({ length: 30 }).map((_, i) => (
           <span
             key={i}
-            className="absolute h-[2px] w-[2px] rounded-full bg-amber-200"
+            className="absolute h-[2px] w-[2px] rounded-full bg-white/70"
             style={{
-              left: `${Math.random() * 100}%`,
-              bottom: `-8px`,
-              opacity: 0.9,
-              boxShadow: '0 0 6px rgba(255,200,120,.95), 0 0 12px rgba(255,160,60,.55)',
-              animation: `bmRise ${2.8 + Math.random() * 2.6}s linear ${Math.random() * 1.3}s forwards`,
+              left: `${Math.random()*100}%`,
+              bottom: `-6px`,
+              opacity: 0.6,
+              filter: 'blur(0.4px)',
+              animation: `abAsh ${3.2 + Math.random()*2.4}s linear ${Math.random()*0.9}s forwards`,
             }}
           />
         ))}
       </div>
 
-      {/* center badge */}
+      {/* 6) small confirmation pill (muted) */}
       <div className="absolute inset-0 grid place-items-center">
-        <div className="px-5 py-3 rounded-2xl border border-amber-400/35 bg-amber-500/12 backdrop-blur-md text-amber-100 font-extrabold text-2xl md:text-3xl tracking-wide shadow-[0_0_36px_rgba(255,176,68,.28)] animate-[bmPop_.26s_ease-out]">
-          🔥 Burn Executed — Supply Down
+        <div className="px-4 py-2 rounded-xl border border-white/12 bg-black/35 backdrop-blur-md text-amber-100/90 font-semibold text-[15px] tracking-wide shadow-[0_0_24px_rgba(0,0,0,.35)] animate-[abPop_.22s_ease-out]">
+          Burn logged — supply reduced
         </div>
       </div>
 
-      {/* ground glow */}
-      <div className="absolute -bottom-24 left-0 right-0 h-64 bg-[radial-gradient(120%_100%_at_50%_100%,rgba(255,190,90,.35),rgba(0,0,0,0))] animate-[bmGlow_1.6s_ease-in-out_infinite_alternate]" />
+      {/* 7) ground warmth */}
+      <div className="absolute -bottom-24 left-0 right-0 h-56 bg-[radial-gradient(120%_100%_at_50%_100%,rgba(255,170,80,.20),rgba(0,0,0,0))]" />
 
       {sound ? <audio ref={audioRef} src={sound} preload="auto" /> : null}
 
       <style jsx>{`
-        @keyframes bmFadeIn { from { opacity: 0 } to { opacity: 1 } }
-        @keyframes bmPop { 0% { transform: scale(.92); opacity: 0 } 100% { transform: scale(1); opacity:1 } }
-        @keyframes bmRise {
-          0% { transform: translateY(0) translateX(0) scale(1); opacity:.95 }
-          70%{ opacity:.9 }
-          100%{ transform: translateY(-110vh) translateX(12px) scale(.6); opacity:0 }
-        }
-        @keyframes bmGlow { from { filter: blur(20px) brightness(1) } to { filter: blur(26px) brightness(1.25) } }
-        @keyframes bmFlame1 {
-          0% { transform: translateY(8px) scaleX(1) rotate(-1deg) }
-          50%{ transform: translateY(0)   scaleX(1.03) rotate(1deg) }
-          100%{transform: translateY(8px) scaleX(1) rotate(-1deg)}
-        }
-        @keyframes bmFlame2 {
-          0% { transform: translateY(4px) scaleX(.98) rotate(1deg) }
-          50%{ transform: translateY(0)   scaleX(1.01) rotate(-.5deg) }
-          100%{transform: translateY(4px) scaleX(.98) rotate(1deg)}
-        }
-        @keyframes bmSmoke {
-          0% { transform: translateY(0) translateX(0) scale(.85); opacity:.18 }
-          60%{ opacity:.22 }
-          100%{ transform: translateY(-42vh) translateX(16px) scale(1.05); opacity:0 }
-        }
-        @keyframes bmShimmer {
+        @keyframes abFlash { from { opacity: 1 } to { opacity: 0 } }
+        @keyframes abFade  { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes abPop   { 0% { transform: scale(.95); opacity: 0 } 100% { transform: scale(1); opacity: 1 } }
+        @keyframes abGlow  { from { filter: blur(20px) brightness(1) } to { filter: blur(26px) brightness(1.12) } }
+        @keyframes abShimmer {
           0%,100% { filter: contrast(1) saturate(1) }
-          50%     { filter: contrast(1.08) saturate(1.06) }
+          50%     { filter: contrast(1.06) saturate(1.05) }
         }
-        @keyframes bmShock {
-          0% { transform: translate(-50%, -50%) scale(.9); opacity:.75 }
-          100%{ transform: translate(-50%, -50%) scale(8);  opacity:0 }
+        @keyframes abSmoke {
+          0%   { transform: translateY(0) translateX(0) scale(.9);   opacity:.16 }
+          60%  { opacity:.22 }
+          100% { transform: translateY(-45vh) translateX(14px) scale(1.06); opacity:0 }
+        }
+        @keyframes abAsh {
+          0%   { transform: translateY(0) translateX(0)   scale(1);   opacity:.7 }
+          100% { transform: translateY(-90vh) translateX(10px) scale(.7); opacity:0 }
         }
       `}</style>
     </div>
