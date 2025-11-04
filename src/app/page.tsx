@@ -300,13 +300,11 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
 
 // fire overlay (and optional sound) once when countdown hits ~0
 useEffect(() => {
-  // guard: don't do anything unless we're right about to hit zero
-  const nearZero = nextBurnMs >= 0 && nextBurnMs <= 800; // only the last 0.8s before zero
+  const nearZero = nextBurnMs >= 0 && nextBurnMs <= 800; // last 0.8s
   if (!nearZero) return;
 
   const nowTs = Date.now();
-  const COOLDOWN = 60_000; // 60s cooldown to avoid repeat pops
-
+  const COOLDOWN = 60_000; // 60s
   const last = lastTriggerRef.current || 0;
   const tooSoon = nowTs - last < COOLDOWN;
   if (tooSoon || showBurnMoment) return;
@@ -314,16 +312,14 @@ useEffect(() => {
   lastTriggerRef.current = nowTs;
   setShowBurnMoment(true);
 
-  // play whoosh if ref is mounted
-if (audioUnlocked) {
-  if (whooshRef.current) {
+  // play whoosh if unlocked
+  if (audioUnlocked && whooshRef.current) {
     try {
       whooshRef.current.currentTime = 0;
-      await whooshRef.current.play();
-    } catch { /* ignore */ }
+      void whooshRef.current.play(); // no await inside effect
+    } catch {}
   }
-}
-}, [nextBurnMs, showBurnMoment]);
+}, [nextBurnMs, showBurnMoment, audioUnlocked]);
 
  // Auto-loop: seed if missing and roll forward with a small buffer
 useEffect(() => {
