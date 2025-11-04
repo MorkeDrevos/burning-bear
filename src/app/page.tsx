@@ -53,8 +53,13 @@ type StateJson = {
     priceUsdPerSol?: number;
   };
   schedule?: {
+    // allow either minutes or ms (or both)
+    burnIntervalMinutes?: number;
+    buybackIntervalMinutes?: number;
+
     burnIntervalMs?: number;
     buybackIntervalMs?: number;
+
     nextBurnAt?: number;
     nextBuybackAt?: number;
     lastBurnAt?: number;
@@ -173,31 +178,37 @@ useEffect(() => {
   fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
     .then((r) => r.json())
     .then((d) => {
-      if (!alive) return;
+      if (!alive || !d) return;
 
-      // Convert schedule: minutes → milliseconds (works with burnIntervalMinutes / buybackIntervalMinutes)
-      if (d.schedule) {
-        const burnMins = d.schedule.burnIntervalMinutes ?? 60;
-        const buybackMins = d.schedule.buybackIntervalMinutes ?? 20;
+      // Make a shallow copy so we can mutate safely
+      const s = { ...(d.schedule ?? {}) } as any;
 
-        d.schedule.burnIntervalMs = burnMins * 60 * 1000;
-        d.schedule.buybackIntervalMs = buybackMins * 60 * 1000;
+      // Accept either minutes or ms in incoming JSON
+      const burnMins   = typeof s.burnIntervalMinutes === 'number' ? s.burnIntervalMinutes : 60;
+      const buybackMins= typeof s.buybackIntervalMinutes === 'number' ? s.buybackIntervalMinutes : 20;
 
-        // If next times are missing, seed them from now + minutes
-        const now = Date.now();
-        if (!d.schedule.nextBurnAt) d.schedule.nextBurnAt = now + burnMins * 60 * 1000;
-        if (!d.schedule.nextBuybackAt) d.schedule.nextBuybackAt = now + buybackMins * 60 * 1000;
-      }
+      // Ensure ms fields exist (if minutes exist)
+      if (s.burnIntervalMs == null && burnMins != null)   s.burnIntervalMs   = burnMins * 60 * 1000;
+      if (s.buybackIntervalMs == null && buybackMins != null) s.buybackIntervalMs = buybackMins * 60 * 1000;
 
-      // Normalize burns (make timestamps numeric) and drop invalid rows
+      // Seed next times if missing
+      const nowTs = Date.now();
+      if (s.nextBurnAt == null && s.burnIntervalMs)   s.nextBurnAt   = nowTs + s.burnIntervalMs;
+      if (s.nextBuybackAt == null && s.buybackIntervalMs) s.nextBuybackAt = nowTs + s.buybackIntervalMs;
+
+      // Normalize burns: coerce timestamp to ms and drop invalid rows
       const burns = (d?.burns ?? [])
         .map((b: any) => ({ ...b, timestamp: toMs(b.timestamp) }))
         .filter((b: any) => Number.isFinite(b.timestamp as number));
 
-      setData({ ...d, burns });
+      setData({
+        ...d,
+        schedule: s,
+        burns,
+      });
     })
     .catch(() => {
-      alive = false;
+      // keep previous data on fetch failure
     });
 
   return () => {
@@ -587,102 +598,103 @@ useEffect(() => {
     )}
   </div>
 
-  {/* Build items: newest first, duplicate for seamless loop */}
-  {(() => {
-    const visible = (burnsSorted ?? []).slice(
-      0,
-      Math.max(4, Math.min(6, (burnsSorted ?? []).length))
-    );
-    const items = visible.length > 1 ? [...visible, ...visible] : visible;
-    const dur = Math.max(18, visible.length * 6); // seconds
+{/* Build items: newest first, duplicate for seamless loop */}
+{(() => {
+  const visible = (burnsSorted ?? []).slice(
+    0,
+    Math.max(4, Math.min(6, (burnsSorted ?? []).length))
+  );
+  const items = visible.length > 1 ? [...visible, ...visible] : visible;
+  const dur = Math.max(18, visible.length * 6); // seconds
 
-    return (
-      <div className="mt-6 relative overflow-hidden auto-marquee">
-        <div
-          className="marquee-track flex gap-6 will-change-transform px-1"
-          style={{ animationDuration: `${dur}s` as any }}
-        >
-          {items.map((b, i) => (
-            <Link
-              key={`${b.id}-${i}`}
-              href={b.tx}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`View TX for burn of ${b.amount.toLocaleString()} BBURN`}
-              className="group block flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]
-                         focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded-3xl"
-            >
-              {/* Card */}
-              <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-transform">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-900/40">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6">
-                        <defs>
-                          <linearGradient id="flameGrad" x1="0" x2="0" y1="0" y2="1">
-                            <stop offset="0%" stopColor="#ffb347" />
-                            <stop offset="55%" stopColor="#ff6a00" />
-                            <stop offset="100%" stopColor="#c95500" />
-                          </linearGradient>
-                        </defs>
-                        <path
-                          fill="url(#flameGrad)"
-                          d="M12 2c2 2 3 4 3 6 0 1.6-.8 3-1.7 3.7 1.1-.3 2.4-1.3 3-2.9 .9 2.8-.8 7.7-4.3 9-3.9 1.4-6.8-2-5.8-6.4C7.2 6.3 10.6 3 12 2z"
-                        />
-                      </svg>
-                    </span>
-
-                    <div>
-                      <div className="text-lg font-bold">
-                        Burn • {b.amount.toLocaleString()} BBURN
-                      </div>
-                      <div className="text-sm text-white/60">
-                        {new Date(b.timestamp).toLocaleString('en-US', {
-                          weekday: 'short',
-                          month: 'short',
-                          day: '2-digit',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          hour12: true,
-                        })}
-                      </div>
-
-                      {typeof b.sol === 'number' && (
-                        <div className="text-sm text-white/70">
-                          ≈ {b.sol.toFixed(4)} SOL (
-                          {(b.sol * priceUsdPerSol).toLocaleString('en-US', {
-                            style: 'currency',
-                            currency: 'USD',
-                          })}
-                          )
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <span className="text-sm font-semibold text-amber-300/80 opacity-80 group-hover:opacity-100">
-                    View TX →
+  return (
+    <div className="mt-6 relative overflow-hidden auto-marquee">
+      <div
+        className="marquee-track flex gap-6 will-change-transform px-1"
+        style={{ animationDuration: `${dur}s` as React.CSSProperties['animationDuration'] }}
+      >
+        {items.map((b, i) => (
+          <a
+            key={`${b.id}-${i}`}
+            href={b.tx}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`View TX for burn of ${b.amount.toLocaleString()} BBURN`}
+            className="group block flex-shrink-0 w-[520px] sm:w-[560px] md:w-[580px] lg:w-[600px]
+                       focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded-3xl"
+          >
+            {/* Card */}
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-transform">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="inline-grid h-12 w-12 place-items-center rounded-full bg-gradient-to-b from-[#2b1a0f] to-[#3a2012] border border-amber-900/40">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6">
+                      <defs>
+                        <linearGradient id="flameGrad" x1="0" x2="0" y1="0" y2="1">
+                          <stop offset="0%" stopColor="#ffb347" />
+                          <stop offset="55%" stopColor="#ff6a00" />
+                          <stop offset="100%" stopColor="#c95500" />
+                        </linearGradient>
+                      </defs>
+                      <path
+                        fill="url(#flameGrad)"
+                        d="M12 2c2 2 3 4 3 6 0 1.6-.8 3-1.7 3.7 1.1-.3 2.4-1.3 3-2.9 .9 2.8-.8 7.7-4.3 9-3.9 1.4-6.8-2-5.8-6.4C7.2 6.3 10.6 3 12 2z"
+                      />
+                    </svg>
                   </span>
-                </div>
 
-                <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
-                  <div
-                    className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
-                    style={{ width: '100%' }}
-                  />
+                  <div>
+                    <div className="text-lg font-bold">
+                      Burn • {b.amount.toLocaleString()} BBURN
+                    </div>
+                    <div className="text-sm text-white/60">
+                      {new Date(b.timestamp).toLocaleString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true,
+                      })}
+                    </div>
+
+                    {typeof b.sol === 'number' && (
+                      <div className="text-sm text-white/70">
+                        ≈ {b.sol.toFixed(4)} SOL (
+                        {(b.sol * priceUsdPerSol).toLocaleString('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                        })}
+                        )
+                      </div>
+                    )}
+                  </div>
                 </div>
+                <span className="text-sm font-semibold text-amber-300/80 opacity-80 group-hover:opacity-100">
+                  View TX →
+                </span>
               </div>
-              {/* /Card */}
-            </Link>
-          ))}
-        </div>
 
-        {/* subtle fade edges */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#0d1a14] to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#0d1a14] to-transparent" />
+              <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-white/10">
+                <div
+                  className="h-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
+                  style={{ width: '100%' }}
+                />
+              </div>
+            </div>
+            {/* /Card */}
+          </a>
+        ))}
       </div>
-    );
-  })()}
+
+      {/* subtle fade edges */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#0d1a14] to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#0d1a14] to-transparent" />
+    </div>
+  );
+})()}
+  
 </section>
 
 {/* ===== How It Works ===== */}
@@ -1343,117 +1355,36 @@ function SolanaMark({ className = "" }: { className?: string }) {
 function BurnMoment({
   show,
   onDone,
-  sound = "/sounds/burn-whoosh.mp3", // put a short 2–3s whoosh here
+  sound,                 // <-- no default here
   durationMs = 4500,
 }: {
   show: boolean;
   onDone?: () => void;
-  sound?: string;
+  sound?: string;        // optional
   durationMs?: number;
 }) {
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
-  // play sound and auto-hide
   React.useEffect(() => {
     if (!show) return;
     const t = window.setTimeout(() => onDone?.(), durationMs);
-    if (audioRef.current) {
+    if (sound && audioRef.current) {               // guard on sound
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch(() => {});
     }
     return () => window.clearTimeout(t);
-  }, [show, durationMs, onDone]);
+  }, [show, durationMs, onDone, sound]);
 
   if (!show) return null;
 
   return (
-    <div
-      className="
-        fixed inset-0 z-[60]
-        pointer-events-none
-        bg-black/40
-        animate-[fadeIn_300ms_ease-out_forwards]
-      "
-      aria-hidden="true"
-    >
-      {/* radial fire glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_60%,rgba(255,160,60,0.30),rgba(0,0,0,0.0))]" />
+    <div className="fixed inset-0 z-[60] pointer-events-none bg-black/40 animate-[fadeIn_300ms_ease-out_forwards]" aria-hidden="true">
+      {/* ...overlay visuals... */}
 
-      {/* vertical vignette */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-transparent" />
+      {/* only render audio if provided */}
+      {sound ? <audio ref={audioRef} src={sound} preload="auto" /> : null}
 
-      {/* ember particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        {Array.from({ length: 36 }).map((_, i) => (
-          <span
-            key={i}
-            className="absolute block h-[3px] w-[3px] rounded-full bg-amber-300/90"
-            style={{
-              left: `${Math.random() * 100}%`,
-              bottom: `-10px`,
-              opacity: 0.9,
-              animation: `rise ${3 + Math.random() * 3}s linear ${Math.random() * 1.5}s forwards`,
-              boxShadow:
-                "0 0 6px rgba(255,180,80,.9), 0 0 12px rgba(255,160,60,.5)",
-            }}
-          />
-        ))}
-      </div>
-
-      {/* center label */}
-      <div className="absolute inset-0 grid place-items-center">
-        <div className="px-5 py-3 rounded-2xl border border-amber-400/30 bg-amber-500/10 backdrop-blur-md text-amber-100 font-extrabold text-2xl md:text-3xl tracking-wide shadow-[0_0_40px_rgba(255,170,60,.25)] animate-[pop_260ms_ease-out]">
-          🔥 Burn Executed — Supply Down
-        </div>
-      </div>
-
-      {/* subtle bottom flame sweep */}
-      <div className="absolute -bottom-20 left-0 right-0 h-60 bg-[radial-gradient(120%_100%_at_50%_100%,rgba(255,180,80,.35),rgba(0,0,0,0))] animate-[glow_1.6s_ease-in-out_infinite_alternate]" />
-
-      {/* sound (optional) */}
-      <audio ref={audioRef} src={sound} preload="auto" />
-      {/* keyframes */}
-      <style jsx>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-        @keyframes pop {
-          0% {
-            transform: scale(0.92);
-            opacity: 0;
-          }
-          100% {
-            transform: scale(1);
-            opacity: 1;
-          }
-        }
-        @keyframes rise {
-          0% {
-            transform: translateY(0) translateX(0) scale(1);
-            opacity: 0.9;
-          }
-          70% {
-            opacity: 0.9;
-          }
-          100% {
-            transform: translateY(-110vh) translateX(12px) scale(0.6);
-            opacity: 0;
-          }
-        }
-        @keyframes glow {
-          from {
-            filter: blur(20px) brightness(1);
-          }
-          to {
-            filter: blur(26px) brightness(1.25);
-          }
-        }
-      `}</style>
+      <style jsx>{/* keyframes */}</style>
     </div>
   );
 }
