@@ -1428,7 +1428,7 @@ function BurnMoment({
           100% { transform: scale(1);    opacity: 1; }
         }
         @keyframes bm-rise {
-          0%   { transform: translateY(0) translateX(0) scale(1); opacity: .9; }
+          0%   { transform: translateY(0) translateX(0)   scale(1);   opacity: .9; }
           70%  { opacity: .9; }
           100% { transform: translateY(-110vh) translateX(12px) scale(.6); opacity: 0; }
         }
