@@ -156,101 +156,71 @@ export default function Page() {
   const [solUsd, setSolUsd] = useState<number | null>(null);
   const [now, setNow] = useState<number>(Date.now());
 
-  // 🔥 Burn overlay trigger state
-const [showBurnMoment, setShowBurnMoment] = useState(false);
+  // 🔥 Burn overlay trigger state (visual only)
+  const [showBurnMoment, setShowBurnMoment] = useState(false);
 
-useEffect(() => {
-  if (!showBurnMoment) return;
-  const t = window.setTimeout(() => setShowBurnMoment(false), 4500);
-  return () => window.clearTimeout(t);
-}, [showBurnMoment]);
+  // Hide overlay after 4.5s
+  useEffect(() => {
+    if (!showBurnMoment) return;
+    const t = window.setTimeout(() => setShowBurnMoment(false), 4500);
+    return () => window.clearTimeout(t);
+  }, [showBurnMoment]);
 
-// Prevent double triggers when countdown hovers near zero
-const lastTriggerRef = useRef<number>(0);
+  // Prevent double triggers when countdown hovers near zero
+  const lastTriggerRef = useRef<number>(0);
 
-// (optional) Sound effect when burn hits
-const whooshRef = useRef<HTMLAudioElement | null>(null);
-
-// Allow audio after first user gesture (autoplay policy)
-const [audioUnlocked, setAudioUnlocked] = useState(false);
-
-useEffect(() => {
-  const unlock = () => {
-    const el = whooshRef.current;
-    if (!el) return;
-    el.play()
-      .then(() => {
-        el.pause();
-        el.currentTime = 0;
-        setAudioUnlocked(true);
-        window.removeEventListener('pointerdown', unlock);
-        window.removeEventListener('keydown', unlock);
-        window.removeEventListener('touchstart', unlock);
-      })
-      .catch(() => {});
-  };
-  window.addEventListener('pointerdown', unlock);
-  window.addEventListener('keydown', unlock);
-  window.addEventListener('touchstart', unlock);
-  return () => {
-    window.removeEventListener('pointerdown', unlock);
-    window.removeEventListener('keydown', unlock);
-    window.removeEventListener('touchstart', unlock);
-  };
-}, []);
-
-  // tick each second (drives countdowns)
+  // Tick each second (drives countdowns)
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  // load JSON data (cache-busted) and normalize timestamps
-useEffect(() => {
-  let alive = true;
+  // Load JSON data (cache-busted) and normalize timestamps
+  useEffect(() => {
+    let alive = true;
 
-  fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
-    .then((r) => r.json())
-    .then((d) => {
-      if (!alive || !d) return;
+    fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((d) => {
+        if (!alive || !d) return;
 
-      // Make a shallow copy so we can mutate safely
-      const s = { ...(d.schedule ?? {}) } as any;
+        // Make a shallow copy so we can mutate safely
+        const s = { ...(d.schedule ?? {}) } as any;
 
-      // Accept either minutes or ms in incoming JSON
-      const burnMins   = typeof s.burnIntervalMinutes === 'number' ? s.burnIntervalMinutes : 60;
-      const buybackMins= typeof s.buybackIntervalMinutes === 'number' ? s.buybackIntervalMinutes : 20;
+        // Accept either minutes or ms in incoming JSON
+        const burnMins = typeof s.burnIntervalMinutes === 'number' ? s.burnIntervalMinutes : 60;
+        const buybackMins = typeof s.buybackIntervalMinutes === 'number' ? s.buybackIntervalMinutes : 20;
 
-      // Ensure ms fields exist (if minutes exist)
-      if (s.burnIntervalMs == null && burnMins != null)   s.burnIntervalMs   = burnMins * 60 * 1000;
-      if (s.buybackIntervalMs == null && buybackMins != null) s.buybackIntervalMs = buybackMins * 60 * 1000;
+        // Ensure ms fields exist (if minutes exist)
+        if (s.burnIntervalMs == null && burnMins != null) s.burnIntervalMs = burnMins * 60 * 1000;
+        if (s.buybackIntervalMs == null && buybackMins != null) s.buybackIntervalMs = buybackMins * 60 * 1000;
 
-      // Seed next times if missing
-      const nowTs = Date.now();
-      if (s.nextBurnAt == null && s.burnIntervalMs)   s.nextBurnAt   = nowTs + s.burnIntervalMs;
-      if (s.nextBuybackAt == null && s.buybackIntervalMs) s.nextBuybackAt = nowTs + s.buybackIntervalMs;
+        // Seed next times if missing
+        const nowTs = Date.now();
+        if (s.nextBurnAt == null && s.burnIntervalMs) s.nextBurnAt = nowTs + s.burnIntervalMs;
+        if (s.nextBuybackAt == null && s.buybackIntervalMs) s.nextBuybackAt = nowTs + s.buybackIntervalMs;
 
-      // Normalize burns: coerce timestamp to ms and drop invalid rows
-      const burns = (d?.burns ?? [])
-        .map((b: any) => ({ ...b, timestamp: toMs(b.timestamp) }))
-        .filter((b: any) => Number.isFinite(b.timestamp as number));
+        // Normalize burns: coerce timestamp to ms and drop invalid rows
+        const burns = (d?.burns ?? [])
+          .map((b: any) => ({ ...b, timestamp: toMs(b.timestamp) }))
+          .filter((b: any) => Number.isFinite(b.timestamp as number));
 
-      setData({
-        ...d,
-        schedule: s,
-        burns,
+        setData({
+          ...d,
+          schedule: s,
+          burns,
+        });
+      })
+      .catch(() => {
+        // keep previous data on fetch failure
       });
-    })
-    .catch(() => {
-      // keep previous data on fetch failure
-    });
 
-  return () => {
-    alive = false;
-  };
-}, []);
+    return () => {
+      alive = false;
+    };
+  }, []);
 
-  // live SOL price (falls back to stats.priceUsdPerSol)
+  // Live SOL price (falls back to stats.priceUsdPerSol)
   useEffect(() => {
     let alive = true;
     const fetchPrice = () =>
@@ -263,12 +233,15 @@ useEffect(() => {
         .catch(() => {});
     fetchPrice();
     const id = window.setInterval(fetchPrice, 60_000);
-    return () => { alive = false; clearInterval(id); };
+    return () => {
+      alive = false;
+      clearInterval(id);
+    };
   }, []);
 
   const priceUsdPerSol = solUsd ?? data?.stats?.priceUsdPerSol ?? 0;
 
-  // sorted burns (new → old)
+  // Sorted burns (new → old)
   const burnsSorted = useMemo(() => {
     const arr = (data?.burns ?? []) as Array<Burn & { timestamp: number }>;
     return arr.slice().sort((a, b) => b.timestamp - a.timestamp);
@@ -279,106 +252,90 @@ useEffect(() => {
     const s = data?.schedule ?? {};
     const bb =
       s.nextBuybackAt ??
-      (s.lastBuybackAt && s.buybackIntervalMs
-        ? s.lastBuybackAt + s.buybackIntervalMs
-        : undefined);
+      (s.lastBuybackAt && s.buybackIntervalMs ? s.lastBuybackAt + s.buybackIntervalMs : undefined);
     const burn =
       s.nextBurnAt ??
-      (s.lastBurnAt && s.burnIntervalMs
-        ? s.lastBurnAt + s.burnIntervalMs
-        : undefined);
+      (s.lastBurnAt && s.burnIntervalMs ? s.lastBurnAt + s.burnIntervalMs : undefined);
     return { bb, burn };
   }, [data]);
 
-// Buyback countdown (safe fallback = +∞ so it never shows as "0")
-const nextBuybackMs =
-  typeof targets?.bb === 'number' && isFinite(targets.bb)
-    ? targets.bb - now
-    : Number.POSITIVE_INFINITY;
+  // Buyback countdown (safe fallback = +∞ so it never shows as "0")
+  const nextBuybackMs =
+    typeof targets?.bb === 'number' && isFinite(targets.bb) ? targets.bb - now : Number.POSITIVE_INFINITY;
 
-// Burn countdown (single definition; safe fallback = +∞)
-const burnAt =
-  typeof targets?.burn === 'number' && isFinite(targets.burn)
-    ? targets.burn
-    : null;
-let nextBurnMs =
-  burnAt !== null ? burnAt - now : Number.POSITIVE_INFINITY;
+  // Burn countdown (safe fallback = +∞)
+  const burnAt =
+    typeof targets?.burn === 'number' && isFinite(targets.burn) ? targets.burn : null;
+  let nextBurnMs = burnAt !== null ? burnAt - now : Number.POSITIVE_INFINITY;
 
-// Test hook (only triggers if you open the page with #testburn)
-if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
-  nextBurnMs = 500; // 0.5s for manual testing only
-}
-
-// Fire overlay (and optional sound) once when countdown hits ~0
-useEffect(() => {
-  const nearZero = nextBurnMs >= 0 && nextBurnMs <= 800; // last 0.8s
-  if (!nearZero) return;
-
-  const nowTs = Date.now();
-  const COOLDOWN = 60_000; // 60s
-  const last = lastTriggerRef.current || 0;
-  const tooSoon = nowTs - last < COOLDOWN;
-  if (tooSoon || showBurnMoment) return;
-
-  lastTriggerRef.current = nowTs;
-  setShowBurnMoment(true);
-
-  // play whoosh if unlocked
-  if (audioUnlocked && whooshRef.current) {
-    try {
-      whooshRef.current.currentTime = 0;
-      void whooshRef.current.play(); // no await inside effect
-    } catch {}
+  // Test hook (only triggers if you open the page with #testburn)
+  if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
+    nextBurnMs = 500; // 0.5s for manual testing only
   }
-}, [nextBurnMs, showBurnMoment, audioUnlocked]);
 
- // Auto-loop: seed if missing and roll forward with a small buffer
-useEffect(() => {
-  setData((prev) => {
-    if (!prev?.schedule) return prev;
+  // Fire overlay once when countdown hits ~0 (no sound)
+  useEffect(() => {
+    const nearZero = nextBurnMs >= 0 && nextBurnMs <= 800; // last 0.8s
+    if (!nearZero) return;
 
-    const s = prev.schedule as any;
     const nowTs = Date.now();
+    const COOLDOWN = 60_000; // 60s
+    const last = lastTriggerRef.current || 0;
+    const tooSoon = nowTs - last < COOLDOWN;
+    if (tooSoon || showBurnMoment) return;
 
-    // accept minutes or ms
-    const toMs = (v?: number) =>
-      typeof v === 'number' ? (v >= 10_000 ? v : v * 60_000) : undefined;
+    lastTriggerRef.current = nowTs;
+    setShowBurnMoment(true);
+  }, [nextBurnMs, showBurnMoment]);
 
-    const burnI = s.burnIntervalMs ?? toMs(s.burnIntervalMinutes);
-    const buyI  = s.buybackIntervalMs ?? toMs(s.buybackIntervalMinutes);
-    if (!burnI && !buyI) return prev;
+  // Auto-loop: seed if missing and roll forward with a small buffer
+  useEffect(() => {
+    setData((prev) => {
+      if (!prev?.schedule) return prev;
 
-    // seed if missing
-    let nextBurnAt     = s.nextBurnAt     ?? (burnI ? nowTs + burnI : undefined);
-    let nextBuybackAt  = s.nextBuybackAt  ?? (buyI  ? nowTs + buyI  : undefined);
+      const s = prev.schedule as any;
+      const nowTs = Date.now();
 
-    // only advance after a tiny buffer past the target
-    const BUFFER = 15_000; // 15s
+      // accept minutes or ms
+      const toMs = (v?: number) => (typeof v === 'number' ? (v >= 10_000 ? v : v * 60_000) : undefined);
 
-    if (nextBurnAt && burnI && nowTs > nextBurnAt + BUFFER) {
-      const k = Math.ceil((nowTs - (nextBurnAt + BUFFER)) / burnI);
-      nextBurnAt = nextBurnAt + k * burnI;
-    }
-    if (nextBuybackAt && buyI && nowTs > nextBuybackAt + BUFFER) {
-      const k = Math.ceil((nowTs - (nextBuybackAt + BUFFER)) / buyI);
-      nextBuybackAt = nextBuybackAt + k * buyI;
-    }
+      const burnI = s.burnIntervalMs ?? toMs(s.burnIntervalMinutes);
+      const buyI = s.buybackIntervalMs ?? toMs(s.buybackIntervalMinutes);
+      if (!burnI && !buyI) return prev;
 
-    // no change? keep previous object
-    if (nextBurnAt === s.nextBurnAt && nextBuybackAt === s.nextBuybackAt) return prev;
+      // seed if missing
+      let nextBurnAt = s.nextBurnAt ?? (burnI ? nowTs + burnI : undefined);
+      let nextBuybackAt = s.nextBuybackAt ?? (buyI ? nowTs + buyI : undefined);
 
-    return {
-      ...prev,
-      schedule: {
-        ...s,
-        burnIntervalMs: burnI ?? s.burnIntervalMs,
-        buybackIntervalMs: buyI ?? s.buybackIntervalMs,
-        nextBurnAt,
-        nextBuybackAt,
-      },
-    };
-  });
-}, [now]);
+      // only advance after a tiny buffer past the target
+      const BUFFER = 15_000; // 15s
+
+      if (nextBurnAt && burnI && nowTs > nextBurnAt + BUFFER) {
+        const k = Math.ceil((nowTs - (nextBurnAt + BUFFER)) / burnI);
+        nextBurnAt = nextBurnAt + k * burnI;
+      }
+      if (nextBuybackAt && buyI && nowTs > nextBuybackAt + BUFFER) {
+        const k = Math.ceil((nowTs - (nextBuybackAt + BUFFER)) / buyI);
+        nextBuybackAt = nextBuybackAt + k * buyI;
+      }
+
+      // no change? keep previous object
+      if (nextBurnAt === s.nextBurnAt && nextBuybackAt === s.nextBuybackAt) return prev;
+
+      return {
+        ...prev,
+        schedule: {
+          ...s,
+          burnIntervalMs: burnI ?? s.burnIntervalMs,
+          buybackIntervalMs: buyI ?? s.buybackIntervalMs,
+          nextBurnAt,
+          nextBuybackAt,
+        },
+      };
+    });
+  }, [now]);
+
+  // ...rest of your component (render) continues below
  
   // Stats
   const INITIAL = data?.stats?.initialSupply ?? 0;
