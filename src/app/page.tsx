@@ -294,8 +294,12 @@ useEffect(() => {
 let nextBurnMs = targets.burn ? targets.burn - now : 0;
 
 // 🔥 TEST MODE — simulate burn trigger (remove after testing)
+const hasBurn = typeof targets.burn === 'number' && isFinite(targets.burn);
+let nextBurnMs = hasBurn ? targets.burn - now : Number.POSITIVE_INFINITY;
+
+// keep your test hook
 if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
-  nextBurnMs = 500; // triggers the burn moment after 0.5s
+  nextBurnMs = 500; // simulate after 0.5s only when you visit with #testburn
 }
 
 // fire overlay (and optional sound) once when countdown hits ~0
