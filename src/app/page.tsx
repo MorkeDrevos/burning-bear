@@ -29,6 +29,9 @@ const GIVEAWAY_SUB = "Stay near the flames 🔥 Exclusive rewards for $BBURN hol
 const GIVEAWAY_LINK_TEXT = "Follow updates";
 const GIVEAWAY_LINK_URL = "https://x.com/i/communities/1980944446871966021";
 
+const JUP_URL =
+  'https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump';
+
 // Optional: hide after a point in time (ms since epoch). Set to null to disable.
 const GIVEAWAY_HIDE_AFTER = null as number | null;
 // e.g. schedule: Date.parse("2025-10-30T18:00:00Z")
@@ -1079,21 +1082,27 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
           </div>
         </div>
       </footer>
-{/* Sticky Buy Button with Jupiter logo */}
+{/* Sticky Buy button (bottom-right) */}
 <a
-  href="https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump"
+  href={JUP_URL}
   target="_blank"
   rel="noopener noreferrer"
-  className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full
-             bg-gradient-to-r from-[#00ffb7] to-[#00b3ff] px-5 py-2.5 font-semibold text-black
-             shadow-[0_0_25px_rgba(0,255,200,0.3)] hover:shadow-[0_0_35px_rgba(0,255,200,0.45)]
-             hover:scale-[1.04] transition-all duration-300 backdrop-blur-md"
+  className="
+    fixed bottom-6 right-6 z-50
+    inline-flex items-center gap-2.5
+    rounded-full px-5 py-3 font-semibold
+    text-[#0b1612] shadow-xl
+    bg-gradient-to-r from-emerald-300 to-sky-400
+    ring-1 ring-white/30
+    hover:scale-[1.03] hover:brightness-105 active:scale-[0.99]
+    transition-transform duration-150
+  "
+  style={{
+    boxShadow:
+      '0 0 0 10px rgba(16,24,20,0.35), 0 12px 30px rgba(0,0,0,0.35), 0 0 40px rgba(72, 255, 210, 0.20)',
+  }}
 >
-  <img
-    src="/img/jupiter-logo.svg"
-    alt="Jupiter"
-    className="h-5 w-5 rounded-full"
-  />
+  <JupiterMark className="h-5 w-5" />
   <span>Buy $BBURN</span>
 </a>
 </main>
@@ -1363,6 +1372,41 @@ function SolanaMark({ className = "" }: { className?: string }) {
         <path d="M64 156h318c10 0 18 11 9 19l-68 60a20 20 0 0 1-13 5H0l64-84Z" />
         <path d="M0 233h318c5 0 9 2 13 5l68 60c9 8 1 19-9 19H64L0 233Z" />
       </g>
+    </svg>
+  );
+}
+
+function JupiterMark({ className = '' }: { className?: string }) {
+  // Inline SVG of Jupiter’s swirl (brand-ish green→blue gradient).
+  return (
+    <svg
+      viewBox="0 0 64 64"
+      aria-hidden="true"
+      className={className}
+      role="img"
+    >
+      <defs>
+        <linearGradient id="jupGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#B3FFAB" />
+          <stop offset="100%" stopColor="#12D8FA" />
+        </linearGradient>
+      </defs>
+      <circle cx="32" cy="32" r="30" fill="url(#jupGrad)" opacity="0.18" />
+      {/* swirl bands */}
+      <path
+        fill="url(#jupGrad)"
+        d="M10 30c8-6 20-10 32-9 4 .2 8 1 12 2-3 2-7 3-11 3-13-.2-22 3-30 8z"
+      />
+      <path
+        fill="url(#jupGrad)"
+        d="M8 38c9-7 22-11 36-10 4 .2 9 1 12 2-3 3-8 4-12 4-14 0-25 3-36 9z"
+        opacity="0.9"
+      />
+      <path
+        fill="url(#jupGrad)"
+        d="M12 46c8-5 20-8 31-8 5 0 9 .7 12 1.7-3 2.5-7 3.8-12 3.8-11 0-21 1.4-31 6.5z"
+        opacity="0.75"
+      />
     </svg>
   );
 }
