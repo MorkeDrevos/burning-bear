@@ -1440,13 +1440,3 @@ function BurnMoment({
     </div>
   );
 }
-
-/* BurnMoment component defined *after* Page */
-function BurnMoment({ show, onDone, sound, durationMs = 4500 }: { 
-  show: boolean;
-  onDone?: () => void;
-  sound?: string;
-  durationMs?: number;
-}) {
-  ...
-}
