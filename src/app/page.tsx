@@ -171,6 +171,34 @@ const lastTriggerRef = useRef<number>(0);
 // (optional) Sound effect when burn hits
 const whooshRef = useRef<HTMLAudioElement | null>(null);
 
+// Allow audio after first user gesture (autoplay policy)
+const [audioUnlocked, setAudioUnlocked] = useState(false);
+
+useEffect(() => {
+  const unlock = () => {
+    const el = whooshRef.current;
+    if (!el) return;
+    el.play()
+      .then(() => {
+        el.pause();
+        el.currentTime = 0;
+        setAudioUnlocked(true);
+        window.removeEventListener('pointerdown', unlock);
+        window.removeEventListener('keydown', unlock);
+        window.removeEventListener('touchstart', unlock);
+      })
+      .catch(() => {});
+  };
+  window.addEventListener('pointerdown', unlock);
+  window.addEventListener('keydown', unlock);
+  window.addEventListener('touchstart', unlock);
+  return () => {
+    window.removeEventListener('pointerdown', unlock);
+    window.removeEventListener('keydown', unlock);
+    window.removeEventListener('touchstart', unlock);
+  };
+}, []);
+
   // tick each second (drives countdowns)
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
@@ -1151,36 +1179,6 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
     </div>
   );
 }
-
-// put near your other state/refs
-const [audioUnlocked, setAudioUnlocked] = useState(false);
-
-// one-time unlock on first user interaction
-useEffect(() => {
-  const unlock = () => {
-    const el = whooshRef.current;
-    if (!el) return;
-    // try a tiny play/pause to satisfy gesture requirement
-    el.play().then(() => {
-      el.pause();
-      el.currentTime = 0;
-      setAudioUnlocked(true);
-      window.removeEventListener('pointerdown', unlock);
-      window.removeEventListener('keydown', unlock);
-      window.removeEventListener('touchstart', unlock);
-    }).catch(() => {
-      // ignore; user might block autoplay; we’ll try again next gesture
-    });
-  };
-  window.addEventListener('pointerdown', unlock, { once: false });
-  window.addEventListener('keydown', unlock, { once: false });
-  window.addEventListener('touchstart', unlock, { once: false });
-  return () => {
-    window.removeEventListener('pointerdown', unlock);
-    window.removeEventListener('keydown', unlock);
-    window.removeEventListener('touchstart', unlock);
-  };
-}, []);
 
 /* =========================
    Segment Box (simple)
