@@ -133,3 +133,8 @@ html { scroll-behavior: smooth; }
   50%      { opacity: 0.75; transform: scale(1.05); }
 }
 .animate-pulse-fast { animation: pulse-fast 0.7s ease-in-out 2; }
+
+@keyframes warmPulse {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(255,180,60,0.4)); }
+  50% { filter: drop-shadow(0 0 12px rgba(255,200,90,0.65)); }
+}
