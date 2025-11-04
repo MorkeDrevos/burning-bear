@@ -812,27 +812,31 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
 </section>
 
 {/* ===== This Week at the Campfire ===== */}
-  <section id="week" className="mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-20 md:pb-14">
-  <h3 className="text-2xl font-bold text-amber-300 mb-4">
-    This Week at the Campfire
-  </h3>
-  <p className="text-white/60">
-    Activity in the last 7 days. Auto-updated from the live logs.
-  </p>
-
-  <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-    <StatBig label="Burns" value={fmtInt(weekStats.count)} />
-    <StatBig label="SOL Spent" value={`${weekStats.sol.toFixed(3)} SOL`} />
-    <StatBig label="USD Value" value={fmtMoney(weekStats.usd)} />
-    <StatBig label="Largest Burn (BBURN)" value={fmtInt(weekStats.largest)} />
+  <section
+  id="week"
+  className="relative mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-20 md:pb-14"
+>
+  {/* subtle campfire backdrop */}
+  <div
+    aria-hidden
+    className="
+      pointer-events-none absolute inset-0 -z-10
+      opacity-20 sm:opacity-15
+    "
+  >
+    {/* campfire image (provide a soft PNG/SVG silhouette) */}
+    <img
+      src="/img/bg-campfire.png"   /* add this asset */
+      alt=""
+      className="
+        mx-auto mt-[-32px]
+        w-[520px] max-w-[85%]
+        blur-[1px] contrast-125
+      "
+    />
+    {/* gentle dark gradient so content stays readable */}
+    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0f1a15]/35 to-[#0f1a15]" />
   </div>
-
-  <div className="mt-4">
-    <Pill>
-      Avg per burn: {weekStats.avgSol ? `${weekStats.avgSol.toFixed(3)} SOL` : '—'}
-    </Pill>
-  </div>
-</section>
 
 {/* ===== Roadmap — The Deflation Engine (fixed width, no bleed) ===== */}
 <section
