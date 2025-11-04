@@ -1079,20 +1079,22 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
           </div>
         </div>
       </footer>
-      {/* Sticky Buy Button */}
+{/* Sticky Buy Button with Jupiter logo */}
 <a
   href="https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump"
   target="_blank"
   rel="noopener noreferrer"
-  className="fixed bottom-6 right-6 z-50
-             inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-600 to-orange-500
-             px-5 py-3 font-semibold text-white shadow-[0_0_20px_rgba(255,150,50,0.3)]
-             hover:from-amber-500 hover:to-orange-400 hover:shadow-[0_0_30px_rgba(255,180,80,0.45)]
-             transition-all duration-300
-             backdrop-blur-md bg-opacity-80
-             md:bottom-8 md:right-8"
+  className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full
+             bg-gradient-to-r from-[#00ffb7] to-[#00b3ff] px-5 py-2.5 font-semibold text-black
+             shadow-[0_0_25px_rgba(0,255,200,0.3)] hover:shadow-[0_0_35px_rgba(0,255,200,0.45)]
+             hover:scale-[1.04] transition-all duration-300 backdrop-blur-md"
 >
-  🚀 Buy $BBURN on 
+  <img
+    src="/img/jupiter-logo.svg"
+    alt="Jupiter"
+    className="h-5 w-5 rounded-full"
+  />
+  <span>Buy $BBURN</span>
 </a>
 </main>
 );
