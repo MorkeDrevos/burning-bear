@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import TreasuryLockCard from '@/components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
+import LiveBurnProgress from "@/components/LiveBurnProgress";
 
 /* =========================
    Config
@@ -473,10 +474,13 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
       </div>
 
 <div className="mt-4 flex justify-center">
-  <LiveBurnProgress
-    nextBurnAt={data.schedule.nextBurnAt}
-    burnIntervalMs={data.schedule.burnIntervalMs}
-  />
+  {data?.schedule && (
+    <LiveBurnProgress
+      nextBurnAt={data.schedule.nextBurnAt ?? (Date.now() + (data.schedule.burnIntervalMs ?? ((data.schedule.burnIntervalMinutes ?? 60) * 60_000)))}
+      burnIntervalMs={data.schedule.burnIntervalMs ?? ((data.schedule.burnIntervalMinutes ?? 60) * 60_000)}
+      width={24}
+    />
+  )}
 </div>
 />
 
@@ -580,8 +584,6 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
   </div>
 </section>
 {/* ↑↑↑ End Contract + Treasury strip */}
-
-import LiveBurnProgress from "@/components/LiveBurnProgress";
 
 {/* ===== Live Burn Log — marquee + full-click cards ===== */}
 <section
