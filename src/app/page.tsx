@@ -482,7 +482,6 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
     />
   )}
 </div>
-/>
 
      {/* Stats */}
 <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
