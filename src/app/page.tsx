@@ -812,27 +812,7 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
 </section>
 
 {/* ===== This Week at the Campfire ===== */}
-<section
-  id="week"
-  className="relative mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-20 md:pb-14"
->
-  {/* Campfire background */}
-  <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-    <div
-      className="
-        absolute inset-0
-        bg-[url('/img/bg-campfire.png')] bg-cover bg-center
-        opacity-[0.14] md:opacity-[0.18]
-        contrast-[0.95] saturate-[0.9]
-      "
-      style={{ backgroundPosition: '50% 70%' }}
-    />
-    {/* Warm glow + vignette for legibility */}
-    <div className="absolute inset-0 bg-[radial-gradient(70%_55%_at_50%_75%,rgba(255,170,80,0.22),rgba(0,0,0,0.85))] mix-blend-soft-light" />
-    {/* Tiny blur so text stays crisp */}
-    <div className="absolute inset-0 backdrop-blur-[1px]" />
-  </div>
-
+  <section id="week" className="mx-auto max-w-6xl px-4 pt-12 pb-10 md:pt-20 md:pb-14">
   <h3 className="text-2xl font-bold text-amber-300 mb-4">
     This Week at the Campfire
   </h3>
