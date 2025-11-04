@@ -477,21 +477,6 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
   <Stat label="Total Buyback Value" value={fmtMoney(totalUsd)}                           highlight={showBurnMoment} />
 </div>
 
-{/* ===== Buy $BBURN Button ===== */}
-<div className="mt-8 flex justify-center">
-  <a
-    href="https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-600 to-orange-500
-               px-6 py-3 font-semibold text-lg text-white shadow-[0_0_20px_rgba(255,150,50,0.3)]
-               hover:from-amber-500 hover:to-orange-400 hover:shadow-[0_0_30px_rgba(255,180,80,0.45)]
-               transition-all duration-200"
-  >
-    🚀 Buy $BBURN on Jupiter
-  </a>
-</div>
-
       {/* Pills */}
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
         {/* Left: existing pills */}
@@ -1107,7 +1092,7 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
              backdrop-blur-md bg-opacity-80
              md:bottom-8 md:right-8"
 >
-  🚀 Buy $BBURN
+  🚀 Buy $BBURN on 
 </a>
 </main>
 );
@@ -1325,15 +1310,6 @@ function MobileMenu() {
 
             {/* ✅ Add this new line */}
             <a href="#roadmap" className="py-2 text-[#ffe48d]" onClick={() => setOpen(false)}>Roadmap</a>
-            <a
-  href="https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="py-2 text-[#ffe48d]"
-  onClick={() => setOpen(false)}
->
-  🚀 Buy $BBURN
-</a>
           </div>
         </div>
       )}
