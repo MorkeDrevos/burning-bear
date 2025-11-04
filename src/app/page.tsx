@@ -1083,6 +1083,33 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
           </div>
         </div>
       </footer>
+
+{/* Sticky Buy button (bottom-right) */}
+<a
+  href={JUP_URL}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Buy $BBURN on Jupiter"
+  className="
+    fixed z-50
+    right-6 bottom-[calc(1.25rem+env(safe-area-inset-bottom,0))]
+    inline-flex items-center gap-2.5
+    rounded-full px-5 py-3 font-semibold
+    text-[#120d05]
+    bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400
+    ring-1 ring-amber-200/40 shadow-xl
+    hover:scale-[1.04] hover:brightness-110 active:scale-[0.98]
+    transition-transform duration-150
+  "
+  style={{
+    boxShadow:
+      '0 0 0 10px rgba(16,12,8,0.35), 0 10px 25px rgba(255,190,70,0.35), 0 0 40px rgba(255,180,60,0.25)',
+  }}
+>
+  <JupiterMark className="h-6 w-6 text-amber-900/80" />
+  <span>Buy on Jupiter</span>
+</a>
+      
 </main>
 );
 }
