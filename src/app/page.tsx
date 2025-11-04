@@ -1350,11 +1350,13 @@ function SolanaMark({ className = "" }: { className?: string }) {
   );
 }
 
-/* BurnMoment component defined *after* Page */
+/* =========================
+   BurnMoment — cinematic overlay (no audio)
+========================= */
 function BurnMoment({
   show,
   onDone,
-  sound,
+  sound,           // ignored unless you pass a URL
   durationMs = 4500,
 }: {
   show: boolean;
@@ -1367,6 +1369,7 @@ function BurnMoment({
   React.useEffect(() => {
     if (!show) return;
     const t = window.setTimeout(() => onDone?.(), durationMs);
+
     if (sound && audioRef.current) {
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch(() => {});
@@ -1378,63 +1381,125 @@ function BurnMoment({
 
   return (
     <div
-      className="fixed inset-0 z-[60] pointer-events-none bg-black/40 animate-[bm-fadeIn_300ms_ease-out_forwards]"
+      className="fixed inset-0 z-[60] pointer-events-none"
       aria-hidden="true"
     >
-      {/* radial fire glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_60%,rgba(255,160,60,0.30),rgba(0,0,0,0.0))]" />
+      {/* backdrop dim + subtle heat shimmer */}
+      <div className="absolute inset-0 bg-black/45 animate-[bm-fadeIn_.28s_ease-out_forwards]" />
+      <div className="absolute inset-0 [background:radial-gradient(60%_45%_at_50%_60%,rgba(255,175,80,.20),rgba(0,0,0,0))] animate-[bm-breathe_1.6s_ease-in-out_infinite_alternate]" />
 
-      {/* vertical vignette */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-transparent" />
+      {/* FLAME BED (layered tongues that rise) */}
+      <div className="absolute left-1/2 bottom-[-14vh] -translate-x-1/2 w-[120vw] h-[55vh] overflow-visible">
+        {/* base glow */}
+        <div className="absolute inset-x-0 bottom-0 h-[36vh] blur-[40px] opacity-80
+                        bg-[radial-gradient(70%_120%_at_50%_100%,rgba(255,180,90,.55),rgba(255,120,40,.25)_60%,rgba(0,0,0,0)_80%)]
+                        animate-[bm-flicker_1.9s_ease-in-out_infinite_alternate]" />
+        {/* tongues */}
+        {[...Array(8)].map((_, i) => {
+          const delay = 40 * i;
+          const s = 0.75 + Math.random() * 0.7;
+          const x = -48 + i * 14 + (Math.random() * 10 - 5);
+          return (
+            <span
+              key={i}
+              className="absolute bottom-0 left-1/2 h-[48vh] w-[20vw] -translate-x-1/2
+                         bg-[radial-gradient(60%_100%_at_50%_100%,rgba(255,210,120,.9),rgba(255,165,70,.85)_35%,rgba(255,110,30,.75)_60%,rgba(0,0,0,0)_85%)]
+                         mix-blend-screen origin-bottom blur-[2px] opacity-0"
+              style={{
+                transform: `translateX(${x}vw) scale(${s})`,
+                animation: `bm-flame 1.25s ease-out ${delay}ms forwards, bm-waver ${
+                  2 + Math.random() * 1.6
+                }s ease-in-out ${delay + 300}ms infinite`,
+              } as React.CSSProperties}
+            />
+          );
+        })}
+      </div>
 
-      {/* ember particles */}
+      {/* SMOKE WISPS */}
       <div className="absolute inset-0 overflow-hidden">
-        {Array.from({ length: 36 }).map((_, i) => (
+        {[...Array(6)].map((_, i) => {
+          const left = 40 + Math.random() * 20;
+          const d = 2200 + Math.random() * 1800;
+          const delay = i * 180;
+          const scale = 0.8 + Math.random() * 0.7;
+          return (
+            <span
+              key={i}
+              className="absolute bottom-[-6vh] h-[22vh] w-[22vh] rounded-full
+                         bg-[radial-gradient(50%_50%_at_50%_50%,rgba(180,180,180,.22),rgba(180,180,180,.12)_45%,rgba(0,0,0,0)_70%)]
+                         blur-[14px] opacity-0"
+              style={{
+                left: `${left}%`,
+                animation: `bm-smoke ${d}ms ease-out ${delay}ms forwards`,
+                transform: `scale(${scale})`,
+              } as React.CSSProperties}
+            />
+          );
+        })}
+      </div>
+
+      {/* EMBERS (denser + slower) */}
+      <div className="absolute inset-0 overflow-hidden">
+        {Array.from({ length: 42 }).map((_, i) => (
           <span
             key={i}
-            className="absolute block h-[3px] w-[3px] rounded-full bg-amber-300/90"
+            className="absolute block h-[3px] w-[3px] rounded-full bg-amber-300/95"
             style={{
               left: `${Math.random() * 100}%`,
               bottom: `-10px`,
-              opacity: 0.9,
-              animation: `bm-rise ${3 + Math.random() * 3}s linear ${Math.random() * 1.5}s forwards`,
-              boxShadow:
-                '0 0 6px rgba(255,180,80,.9), 0 0 12px rgba(255,160,60,.5)',
-            }}
+              opacity: 0.95,
+              filter: 'drop-shadow(0 0 6px rgba(255,180,80,.9))',
+              animation: `bm-ember ${2800 + Math.random() * 2200}ms linear ${
+                Math.random() * 900
+              }ms forwards`,
+              transform: `translateX(${(Math.random() * 30 - 15).toFixed(1)}px)`,
+            } as React.CSSProperties}
           />
         ))}
       </div>
 
-      {/* center label */}
+      {/* TITLE CHIP */}
       <div className="absolute inset-0 grid place-items-center">
-        <div className="px-5 py-3 rounded-2xl border border-amber-400/30 bg-amber-500/10 backdrop-blur-md text-amber-100 font-extrabold text-2xl md:text-3xl tracking-wide shadow-[0_0_40px_rgba(255,170,60,.25)] animate-[bm-pop_260ms_ease-out]">
+        <div className="px-5 py-3 rounded-2xl border border-amber-400/30 bg-amber-500/12 backdrop-blur-md
+                        text-amber-100 font-extrabold text-2xl md:text-3xl tracking-wide
+                        shadow-[0_0_40px_rgba(255,170,60,.25)] animate-[bm-pop_.26s_ease-out_forwards]">
           🔥 Burn Executed — Supply Down
         </div>
       </div>
 
-      {/* subtle bottom flame sweep */}
-      <div className="absolute -bottom-20 left-0 right-0 h-60 bg-[radial-gradient(120%_100%_at_50%_100%,rgba(255,180,80,.35),rgba(0,0,0,0))] animate-[bm-glow_1.6s_ease-in-out_infinite_alternate]" />
-
-      {/* only render audio if provided */}
+      {/* optional audio (kept for parity; not used unless you pass `sound`) */}
       {sound ? <audio ref={audioRef} src={sound} preload="auto" /> : null}
 
+      {/* Local styles */}
       <style jsx>{`
-        @keyframes bm-fadeIn {
-          from { opacity: 0; }
-          to   { opacity: 1; }
+        @keyframes bm-fadeIn { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes bm-pop   { 0% { transform: scale(.92); opacity: 0 } 100% { transform: scale(1); opacity: 1 } }
+        @keyframes bm-breathe { from { filter: blur(18px) brightness(1); } to { filter: blur(24px) brightness(1.2); } }
+        @keyframes bm-flicker {
+          0% { opacity: .7; transform: scale(1) }
+          100% { opacity: .95; transform: scale(1.03) }
         }
-        @keyframes bm-pop {
-          0%   { transform: scale(0.92); opacity: 0; }
-          100% { transform: scale(1);    opacity: 1; }
+        @keyframes bm-flame {
+          0%   { transform: translateY(12vh) scaleY(.6) scaleX(.95); opacity: 0 }
+          60%  { opacity: 1 }
+          100% { transform: translateY(0)    scaleY(1)   scaleX(1);    opacity: .95 }
         }
-        @keyframes bm-rise {
-          0%   { transform: translateY(0) translateX(0)   scale(1);   opacity: .9; }
-          70%  { opacity: .9; }
-          100% { transform: translateY(-110vh) translateX(12px) scale(.6); opacity: 0; }
+        @keyframes bm-waver {
+          0%   { transform: translateX(-6px) translateY(0)   rotate(-1.2deg) }
+          50%  { transform: translateX( 6px) translateY(-2px) rotate( 1.2deg) }
+          100% { transform: translateX(-6px) translateY(0)   rotate(-1.2deg) }
         }
-        @keyframes bm-glow {
-          from { filter: blur(20px) brightness(1); }
-          to   { filter: blur(26px) brightness(1.25); }
+        @keyframes bm-smoke {
+          0%   { transform: translate(-10px, 8vh) scale(.9); opacity: 0 }
+          20%  { opacity: .28 }
+          60%  { opacity: .22 }
+          100% { transform: translate(25px, -46vh) scale(1.2); opacity: 0 }
+        }
+        @keyframes bm-ember {
+          0%   { transform: translateY(0) translateX(0) scale(1); opacity: .95 }
+          70%  { opacity: .9 }
+          100% { transform: translateY(-110vh) translateX(12px) scale(.65); opacity: 0 }
         }
       `}</style>
     </div>
