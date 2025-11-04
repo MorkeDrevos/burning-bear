@@ -1094,6 +1094,21 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
           </div>
         </div>
       </footer>
+      {/* Sticky Buy Button */}
+<a
+  href="https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="fixed bottom-6 right-6 z-50
+             inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-600 to-orange-500
+             px-5 py-3 font-semibold text-white shadow-[0_0_20px_rgba(255,150,50,0.3)]
+             hover:from-amber-500 hover:to-orange-400 hover:shadow-[0_0_30px_rgba(255,180,80,0.45)]
+             transition-all duration-300
+             backdrop-blur-md bg-opacity-80
+             md:bottom-8 md:right-8"
+>
+  🚀 Buy $BBURN
+</a>
 </main>
 );
 }
