@@ -1445,12 +1445,30 @@ function BurnMoment({
         ))}
       </div>
 
-      {/* minimal, system-style toast (no glow capsule) */}
-      <div className="absolute inset-0 grid place-items-center">
-        <div className="px-3.5 py-1.5 rounded-md border border-white/10 bg-black/35 backdrop-blur-md text-white/90 text-[13px] font-medium tracking-wide shadow-[0_0_14px_rgba(0,0,0,.35)] animate-[abPop_.18s_ease-out]">
-          Burn logged — supply reduced
-        </div>
-      </div>
+{/* center badge (refined "burn executed" look) */}
+<div className="absolute inset-0 grid place-items-center">
+  <div
+    className="
+      px-6 py-3
+      rounded-2xl
+      border border-amber-400/20
+      bg-[rgba(22,15,0,0.45)]
+      backdrop-blur-md
+      text-amber-100
+      font-bold
+      text-[18px] md:text-[20px]
+      tracking-wide
+      shadow-[0_0_40px_rgba(255,160,60,.25)]
+      animate-[abPop_.22s_ease-out]
+    "
+    style={{
+      boxShadow:
+        '0 0 12px rgba(255,160,60,.4), inset 0 0 20px rgba(255,150,40,.1)',
+    }}
+  >
+    🔥 Burn executed — supply reduced
+  </div>
+</div>
 
       {/* ground warmth */}
       <div className="absolute -bottom-24 left-0 right-0 h-56 bg-[radial-gradient(120%_100%_at_50%_100%,rgba(255,170,80,.18),rgba(0,0,0,0))]" />
@@ -1458,27 +1476,20 @@ function BurnMoment({
       {sound ? <audio ref={audioRef} src={sound} preload="auto" /> : null}
 
       <style jsx>{`
-        @keyframes abFlash { from { opacity: 1 } to { opacity: 0 } }
-        @keyframes abFade  { from { opacity: 0 } to { opacity: 1 } }
-        @keyframes abPop   { 0% { transform: scale(.96); opacity: 0 } 100% { transform: scale(1); opacity: 1 } }
-        @keyframes abGlow  { from { filter: blur(18px) brightness(1) } to { filter: blur(24px) brightness(1.1) } }
-        @keyframes abShimmer { 0%,100% { filter: contrast(1) } 50% { filter: contrast(1.05) } }
-        @keyframes abSmoke {
-          0%   { transform: translateY(0) translateX(0) scale(.9);   opacity:.16 }
-          60%  { opacity:.22 }
-          100% { transform: translateY(-45vh) translateX(14px) scale(1.06); opacity:0 }
-        }
-        @keyframes abAsh {
-          0%   { transform: translateY(0) translateX(0)   scale(1);   opacity:.7 }
-          100% { transform: translateY(-90vh) translateX(10px) scale(.7); opacity:0 }
-        }
-        /* gentle tongue flicker + sway */
-        @keyframes abFlame {
-          0%   { transform: translateX(0)   scaleY(.98) rotate(-1.2deg); opacity:.65 }
-          45%  { transform: translateX(2px) scaleY(1.02) rotate(1.2deg); opacity:.78 }
-          100% { transform: translateX(0)   scaleY(.98) rotate(-1deg);   opacity:.68 }
-        }
-      `}</style>
+  @keyframes abFlash { from { opacity: 1 } to { opacity: 0 } }
+  @keyframes abFade  { from { opacity: 0 } to { opacity: 1 } }
+
+  @keyframes abPop {
+    0%   { transform: scale(.92); opacity: 0; }
+    100% { transform: scale(1);   opacity: 1; }
+  }
+
+  @keyframes abGlow {
+    from { filter: blur(18px) brightness(1) }
+    to   { filter: blur(24px) brightness(1.1) }
+  }
+  ...
+`}</style>
     </div>
   );
 }
