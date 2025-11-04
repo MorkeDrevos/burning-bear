@@ -292,20 +292,20 @@ useEffect(() => {
 
   const nextBuybackMs = targets.bb ? targets.bb - now : 0;
 
-// 🧪 TEST MODE — simulate burn trigger (remove after testing)
+// Buyback countdown (safe fallback = +∞ so it never shows as "0")
+const nextBuybackMs =
+  typeof targets.bb === 'number' ? targets.bb - now : Number.POSITIVE_INFINITY;
+
+// Burn countdown (single definition; safe fallback = +∞)
 const hasBurn = typeof targets.burn === 'number' && isFinite(targets.burn);
 let nextBurnMs = hasBurn ? targets.burn - now : Number.POSITIVE_INFINITY;
 
-// keep your test hook
+// Test hook (only triggers if you open the page with #testburn)
 if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
-  nextBurnMs = 500; // simulate after 0.5s only when you visit with #testburn
+  nextBurnMs = 500; // 0.5s
 }
 
-// keep your test hook
-if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
-  nextBurnMs = 500; // simulate after 0.5s only when you visit with #testburn
-}
-// fire overlay (and optional sound) once when countdown hits ~0
+// Fire overlay (and optional sound) once when countdown hits ~0
 useEffect(() => {
   const nearZero = nextBurnMs >= 0 && nextBurnMs <= 800; // last 0.8s
   if (!nearZero) return;
