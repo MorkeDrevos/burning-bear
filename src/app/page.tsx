@@ -26,6 +26,9 @@ const EXPLORER = 'https://explorer.solana.com';
 const TREASURY_LOCK_URL =
   'https://lock.jup.ag/escrow/7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77';
 
+// Add below EXPLORER or near other constants
+const JUP_URL = `https://jup.ag/swap/SOL-${FULL_TOKEN_ADDRESS}`;
+
 // ===== Giveaway Tease Config =====
 const SHOW_GIVEAWAY = true;                 // toggle on/off
 const GIVEAWAY_TITLE = "Campfire Bonus Round 1";
@@ -1109,7 +1112,7 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
   <JupiterMark className="h-6 w-6 text-amber-900/80" />
   <span>Buy on Jupiter</span>
 </a>
-      
+
 </main>
 );
 }
@@ -1377,6 +1380,43 @@ function SolanaMark({ className = "" }: { className?: string }) {
         <path d="M64 156h318c10 0 18 11 9 19l-68 60a20 20 0 0 1-13 5H0l64-84Z" />
         <path d="M0 233h318c5 0 9 2 13 5l68 60c9 8 1 19-9 19H64L0 233Z" />
       </g>
+    </svg>
+  );
+}
+
+function JupiterMark({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} role="img" aria-label="Jupiter">
+      <defs>
+        <linearGradient id="j" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stopColor="#F2B33A" />
+          <stop offset="100%" stopColor="#FAD96E" />
+        </linearGradient>
+      </defs>
+      <circle cx="16" cy="16" r="16" fill="url(#j)" />
+      <path
+        d="M7.5 17.25c5.8-1.95 10.9-1.95 16.7 0"
+        stroke="#5b3a0a"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <path
+        d="M9 12.5c4.8-1.4 9.2-1.4 14 0"
+        stroke="#5b3a0a"
+        strokeWidth="2"
+        strokeLinecap="round"
+        fill="none"
+        opacity=".9"
+      />
+      <path
+        d="M9 21.5c4.8 1.4 9.2 1.4 14 0"
+        stroke="#5b3a0a"
+        strokeWidth="2"
+        strokeLinecap="round"
+        fill="none"
+        opacity=".9"
+      />
     </svg>
   );
 }
