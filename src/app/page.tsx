@@ -268,10 +268,10 @@ export default function Page() {
     typeof targets?.burn === 'number' && isFinite(targets.burn) ? targets.burn : null;
   let nextBurnMs = burnAt !== null ? burnAt - now : Number.POSITIVE_INFINITY;
 
-// // Test hook (only triggers if you open the page with #testburn)
-// // if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
-// //   nextBurnMs = 500; // 0.5s for manual testing only
-// // }
+// Test hook (only triggers if you open the page with #testburn)
+if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
+  nextBurnMs = 500; // 0.5s for manual testing only
+}
 
   // Fire overlay once when countdown hits ~0 (no sound)
   useEffect(() => {
