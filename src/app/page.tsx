@@ -27,7 +27,7 @@ const TREASURY_LOCK_URL =
   'https://lock.jup.ag/escrow/7ZXVVqndPktLXQ5FsmLMniwhUGvNFVJyKgVKR8tVpx77';
 
 // Add below EXPLORER or near other constants
-const JUP_URL = `https://jup.ag/swap/SOL-${FULL_TOKEN_ADDRESS}`;
+const JUP_URL = `https://jup.ag/swap?sell=So11111111111111111111111111111111111111112&buy=BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump`;
 
 // ===== Giveaway Tease Config =====
 const SHOW_GIVEAWAY = true;                 // toggle on/off
