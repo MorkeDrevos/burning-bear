@@ -159,6 +159,12 @@ export default function Page() {
   // 🔥 Burn overlay trigger state
 const [showBurnMoment, setShowBurnMoment] = useState(false);
 
+useEffect(() => {
+  if (!showBurnMoment) return;
+  const t = window.setTimeout(() => setShowBurnMoment(false), 4500);
+  return () => window.clearTimeout(t);
+}, [showBurnMoment]);
+
 // Prevent double triggers when countdown hovers near zero
 const lastTriggerRef = useRef<number>(0);
 
@@ -1356,13 +1362,6 @@ function SolanaMark({ className = "" }: { className?: string }) {
     </svg>
   );
 }
-
-useEffect(() => {
-  if (!showBurnMoment) return;
-  const t = window.setTimeout(() => setShowBurnMoment(false), 4500);
-  return () => window.clearTimeout(t);
-}, [showBurnMoment]);
-
 
 /* =========================
    BurnMoment overlay
