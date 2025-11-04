@@ -472,6 +472,14 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
         <Countdown label="Next burn in" ms={nextBurnMs} variant="segments" />
       </div>
 
+<div className="mt-4 flex justify-center">
+  <LiveBurnProgress
+    nextBurnAt={data.schedule.nextBurnAt}
+    burnIntervalMs={data.schedule.burnIntervalMs}
+  />
+</div>
+/>
+
      {/* Stats */}
 <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
   <Stat label="Burned So Far"       value={fmtInt(BURNED)}                               highlight={showBurnMoment} />
@@ -572,6 +580,8 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
   </div>
 </section>
 {/* ↑↑↑ End Contract + Treasury strip */}
+
+import LiveBurnProgress from "@/components/LiveBurnProgress";
 
 {/* ===== Live Burn Log — marquee + full-click cards ===== */}
 <section
