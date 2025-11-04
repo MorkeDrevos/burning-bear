@@ -292,15 +292,21 @@ useEffect(() => {
 
 // Buyback countdown (safe fallback = +∞ so it never shows as "0")
 const nextBuybackMs =
-  typeof targets.bb === 'number' ? targets.bb - now : Number.POSITIVE_INFINITY;
+  typeof targets?.bb === 'number' && isFinite(targets.bb)
+    ? targets.bb - now
+    : Number.POSITIVE_INFINITY;
 
 // Burn countdown (single definition; safe fallback = +∞)
-const hasBurn = typeof targets.burn === 'number' && isFinite(targets.burn);
-let nextBurnMs = hasBurn ? targets.burn - now : Number.POSITIVE_INFINITY;
+const burnAt =
+  typeof targets?.burn === 'number' && isFinite(targets.burn)
+    ? targets.burn
+    : null;
+let nextBurnMs =
+  burnAt !== null ? burnAt - now : Number.POSITIVE_INFINITY;
 
 // Test hook (only triggers if you open the page with #testburn)
 if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
-  nextBurnMs = 500; // 0.5s
+  nextBurnMs = 500; // 0.5s for manual testing only
 }
 
 // Fire overlay (and optional sound) once when countdown hits ~0
