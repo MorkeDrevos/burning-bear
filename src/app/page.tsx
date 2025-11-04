@@ -253,15 +253,22 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
   nextBurnMs = 500; // triggers the burn moment after 0.5s
 }
 
-  useEffect(() => {
-  const nearZero = nextBurnMs <= 1000 && nextBurnMs >= -1500; // trigger window
+// fire overlay (and optional sound) once when countdown hits ~0
+useEffect(() => {
+  const nowTs = Date.now();
+  // window: from -1.5s to +1.0s around zero; adjust as you like
+  const nearZero = nextBurnMs <= 1000 && nextBurnMs >= -1500;
+
   if (nearZero) {
-    const nowTs = Date.now();
-    const last = lastTriggerRef.current || 0;
+    const last = lastTriggerRef.current ?? 0;
     const tooSoon = nowTs - last < 15_000; // 15s cooldown
     if (!tooSoon && !showBurnMoment) {
       lastTriggerRef.current = nowTs;
       setShowBurnMoment(true);
+
+      // play whoosh if ref is mounted
+      whooshRef.current?.currentTime && (whooshRef.current.currentTime = 0);
+      whooshRef.current?.play?.().catch(() => {});
     }
   }
 }, [nextBurnMs, showBurnMoment]);
@@ -478,8 +485,21 @@ useEffect(() => {
       </div>
 
       </div> {/* end translucent stats panel */}
+
+{/* Whoosh sound (optional) */}
+<audio ref={whooshRef} src="/sounds/burn-whoosh.mp3" preload="auto" />
+
 </div> {/* end max-w container */}
 </section> {/* close the HERO section */}
+
+
+{/* Burn overlay */}
+<BurnMoment
+  show={showBurnMoment}
+  onDone={() => setShowBurnMoment(false)}
+  sound={undefined}          // keep undefined here since the whoosh is handled above
+  durationMs={4500}
+/>
 
 
 {/* ↓↓↓ Contract + Treasury strip (with more spacing above) ↓↓↓ */}
