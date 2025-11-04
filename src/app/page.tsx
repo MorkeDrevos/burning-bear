@@ -1350,11 +1350,11 @@ function SolanaMark({ className = "" }: { className?: string }) {
   );
 }
 
-/* BurnMoment component defined *after* Page */
+/* BurnMoment — V2 cinematic overlay (no sound) */
 function BurnMoment({
   show,
   onDone,
-  sound,
+  sound,            // ignored unless you choose to pass it later
   durationMs = 4500,
 }: {
   show: boolean;
@@ -1367,6 +1367,8 @@ function BurnMoment({
   React.useEffect(() => {
     if (!show) return;
     const t = window.setTimeout(() => onDone?.(), durationMs);
+
+    // keep silent by default; only plays if a sound url is provided
     if (sound && audioRef.current) {
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch(() => {});
@@ -1377,64 +1379,104 @@ function BurnMoment({
   if (!show) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[60] pointer-events-none bg-black/40 animate-[bm-fadeIn_300ms_ease-out_forwards]"
-      aria-hidden="true"
-    >
-      {/* radial fire glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_60%,rgba(255,160,60,0.30),rgba(0,0,0,0.0))]" />
+    <div className="fixed inset-0 z-[60] pointer-events-none" aria-hidden="true">
+      {/* dark tint */}
+      <div className="absolute inset-0 bg-black/45 animate-[bmFadeIn_.25s_ease-out_forwards]" />
 
-      {/* vertical vignette */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-transparent" />
+      {/* global ember glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(55%_45%_at_50%_60%,rgba(255,170,80,.28),rgba(0,0,0,0))]" />
 
-      {/* ember particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        {Array.from({ length: 36 }).map((_, i) => (
+      {/* heat shimmer */}
+      <div className="absolute inset-0 mix-blend-screen opacity-80 animate-[bmShimmer_1.8s_ease-in-out_infinite]" />
+
+      {/* expanding shockwave */}
+      <div className="absolute left-1/2 top-[58%] -translate-x-1/2 -translate-y-1/2 h-24 w-24 rounded-full border border-amber-300/60 shadow-[0_0_35px_rgba(255,184,76,.45)] animate-[bmShock_1.2s_ease-out]" />
+
+      {/* flame tongues (layered) */}
+      <div className="absolute inset-x-0 bottom-0 h-[42vh]">
+        <div className="absolute bottom-[-6%] left-1/2 w-[120vw] -translate-x-1/2">
+          <div className="mx-auto h-[34vh] w-[90vw] rounded-[50%] blur-[40px] opacity-90 bg-[conic-gradient(from_200deg,rgba(255,210,120,.65),rgba(255,140,60,.8),rgba(255,90,0,.75),rgba(255,210,120,.65))] animate-[bmFlame1_2.2s_ease-in-out_infinite]" />
+        </div>
+        <div className="absolute bottom-[-6%] left-1/2 w-[120vw] -translate-x-1/2">
+          <div className="mx-auto h-[28vh] w-[80vw] rounded-[50%] blur-[34px] opacity-80 bg-[conic-gradient(from_210deg,rgba(255,230,160,.55),rgba(255,120,40,.8),rgba(255,70,0,.75),rgba(255,230,160,.55))] animate-[bmFlame2_2.6s_ease-in-out_infinite]" />
+        </div>
+      </div>
+
+      {/* smoke wisps */}
+      <div className="absolute inset-x-0 bottom-0 h-[55vh]">
+        {Array.from({ length: 7 }).map((_, i) => (
           <span
             key={i}
-            className="absolute block h-[3px] w-[3px] rounded-full bg-amber-300/90"
+            className="absolute block h-[26vh] w-[26vh] rounded-full opacity-20 blur-[28px] bg-[radial-gradient(closest-side,rgba(200,200,200,.35),rgba(200,200,200,0))]"
             style={{
-              left: `${Math.random() * 100}%`,
-              bottom: `-10px`,
-              opacity: 0.9,
-              animation: `bm-rise ${3 + Math.random() * 3}s linear ${Math.random() * 1.5}s forwards`,
-              boxShadow:
-                '0 0 6px rgba(255,180,80,.9), 0 0 12px rgba(255,160,60,.5)',
+              left: `${10 + i * 12}%`,
+              bottom: `${-4 + (i % 3) * 4}%`,
+              animation: `bmSmoke ${5 + i * 0.5}s ease-in ${i * 0.15}s infinite`,
             }}
           />
         ))}
       </div>
 
-      {/* center label */}
+      {/* golden sparks */}
+      <div className="absolute inset-0 overflow-hidden">
+        {Array.from({ length: 80 }).map((_, i) => (
+          <span
+            key={i}
+            className="absolute h-[2px] w-[2px] rounded-full bg-amber-200"
+            style={{
+              left: `${Math.random() * 100}%`,
+              bottom: `-8px`,
+              opacity: 0.9,
+              boxShadow: '0 0 6px rgba(255,200,120,.95), 0 0 12px rgba(255,160,60,.55)',
+              animation: `bmRise ${2.8 + Math.random() * 2.6}s linear ${Math.random() * 1.3}s forwards`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* center badge */}
       <div className="absolute inset-0 grid place-items-center">
-        <div className="px-5 py-3 rounded-2xl border border-amber-400/30 bg-amber-500/10 backdrop-blur-md text-amber-100 font-extrabold text-2xl md:text-3xl tracking-wide shadow-[0_0_40px_rgba(255,170,60,.25)] animate-[bm-pop_260ms_ease-out]">
+        <div className="px-5 py-3 rounded-2xl border border-amber-400/35 bg-amber-500/12 backdrop-blur-md text-amber-100 font-extrabold text-2xl md:text-3xl tracking-wide shadow-[0_0_36px_rgba(255,176,68,.28)] animate-[bmPop_.26s_ease-out]">
           🔥 Burn Executed — Supply Down
         </div>
       </div>
 
-      {/* subtle bottom flame sweep */}
-      <div className="absolute -bottom-20 left-0 right-0 h-60 bg-[radial-gradient(120%_100%_at_50%_100%,rgba(255,180,80,.35),rgba(0,0,0,0))] animate-[bm-glow_1.6s_ease-in-out_infinite_alternate]" />
+      {/* ground glow */}
+      <div className="absolute -bottom-24 left-0 right-0 h-64 bg-[radial-gradient(120%_100%_at_50%_100%,rgba(255,190,90,.35),rgba(0,0,0,0))] animate-[bmGlow_1.6s_ease-in-out_infinite_alternate]" />
 
-      {/* only render audio if provided */}
       {sound ? <audio ref={audioRef} src={sound} preload="auto" /> : null}
 
       <style jsx>{`
-        @keyframes bm-fadeIn {
-          from { opacity: 0; }
-          to   { opacity: 1; }
+        @keyframes bmFadeIn { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes bmPop { 0% { transform: scale(.92); opacity: 0 } 100% { transform: scale(1); opacity:1 } }
+        @keyframes bmRise {
+          0% { transform: translateY(0) translateX(0) scale(1); opacity:.95 }
+          70%{ opacity:.9 }
+          100%{ transform: translateY(-110vh) translateX(12px) scale(.6); opacity:0 }
         }
-        @keyframes bm-pop {
-          0%   { transform: scale(0.92); opacity: 0; }
-          100% { transform: scale(1);    opacity: 1; }
+        @keyframes bmGlow { from { filter: blur(20px) brightness(1) } to { filter: blur(26px) brightness(1.25) } }
+        @keyframes bmFlame1 {
+          0% { transform: translateY(8px) scaleX(1) rotate(-1deg) }
+          50%{ transform: translateY(0)   scaleX(1.03) rotate(1deg) }
+          100%{transform: translateY(8px) scaleX(1) rotate(-1deg)}
         }
-        @keyframes bm-rise {
-          0%   { transform: translateY(0) translateX(0) scale(1); opacity: .9; }
-          70%  { opacity: .9; }
-          100% { transform: translateY(-110vh) translateX(12px) scale(.6); opacity: 0; }
+        @keyframes bmFlame2 {
+          0% { transform: translateY(4px) scaleX(.98) rotate(1deg) }
+          50%{ transform: translateY(0)   scaleX(1.01) rotate(-.5deg) }
+          100%{transform: translateY(4px) scaleX(.98) rotate(1deg)}
         }
-        @keyframes bm-glow {
-          from { filter: blur(20px) brightness(1); }
-          to   { filter: blur(26px) brightness(1.25); }
+        @keyframes bmSmoke {
+          0% { transform: translateY(0) translateX(0) scale(.85); opacity:.18 }
+          60%{ opacity:.22 }
+          100%{ transform: translateY(-42vh) translateX(16px) scale(1.05); opacity:0 }
+        }
+        @keyframes bmShimmer {
+          0%,100% { filter: contrast(1) saturate(1) }
+          50%     { filter: contrast(1.08) saturate(1.06) }
+        }
+        @keyframes bmShock {
+          0% { transform: translate(-50%, -50%) scale(.9); opacity:.75 }
+          100%{ transform: translate(-50%, -50%) scale(8);  opacity:0 }
         }
       `}</style>
     </div>
