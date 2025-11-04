@@ -287,15 +287,14 @@ useEffect(() => {
   setShowBurnMoment(true);
 
   // play whoosh if ref is mounted
-  const audio = whooshRef.current;
-  if (audio) {
+if (audioUnlocked) {
+  if (whooshRef.current) {
     try {
-      audio.currentTime = 0;
-      void audio.play();
-    } catch {
-      /* ignore autoplay errors */
-    }
+      whooshRef.current.currentTime = 0;
+      await whooshRef.current.play();
+    } catch { /* ignore */ }
   }
+}
 }, [nextBurnMs, showBurnMoment]);
 
  // Auto-loop: seed if missing and roll forward with a small buffer
@@ -1152,6 +1151,36 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
     </div>
   );
 }
+
+// put near your other state/refs
+const [audioUnlocked, setAudioUnlocked] = useState(false);
+
+// one-time unlock on first user interaction
+useEffect(() => {
+  const unlock = () => {
+    const el = whooshRef.current;
+    if (!el) return;
+    // try a tiny play/pause to satisfy gesture requirement
+    el.play().then(() => {
+      el.pause();
+      el.currentTime = 0;
+      setAudioUnlocked(true);
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+      window.removeEventListener('touchstart', unlock);
+    }).catch(() => {
+      // ignore; user might block autoplay; we’ll try again next gesture
+    });
+  };
+  window.addEventListener('pointerdown', unlock, { once: false });
+  window.addEventListener('keydown', unlock, { once: false });
+  window.addEventListener('touchstart', unlock, { once: false });
+  return () => {
+    window.removeEventListener('pointerdown', unlock);
+    window.removeEventListener('keydown', unlock);
+    window.removeEventListener('touchstart', unlock);
+  };
+}, []);
 
 /* =========================
    Segment Box (simple)
