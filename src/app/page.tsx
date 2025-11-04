@@ -266,20 +266,28 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
 
 // fire overlay (and optional sound) once when countdown hits ~0
 useEffect(() => {
+  // guard: don't do anything unless we're right about to hit zero
+  const nearZero = nextBurnMs >= 0 && nextBurnMs <= 800; // only the last 0.8s before zero
+  if (!nearZero) return;
+
   const nowTs = Date.now();
-  // window: from -1.5s to +1.0s around zero; adjust as you like
-  const nearZero = nextBurnMs <= 1000 && nextBurnMs >= -1500;
+  const COOLDOWN = 60_000; // 60s cooldown to avoid repeat pops
 
-  if (nearZero) {
-    const last = lastTriggerRef.current ?? 0;
-    const tooSoon = nowTs - last < 15_000; // 15s cooldown
-    if (!tooSoon && !showBurnMoment) {
-      lastTriggerRef.current = nowTs;
-      setShowBurnMoment(true);
+  const last = lastTriggerRef.current || 0;
+  const tooSoon = nowTs - last < COOLDOWN;
+  if (tooSoon || showBurnMoment) return;
 
-      // play whoosh if ref is mounted
-      whooshRef.current?.currentTime && (whooshRef.current.currentTime = 0);
-      whooshRef.current?.play?.().catch(() => {});
+  lastTriggerRef.current = nowTs;
+  setShowBurnMoment(true);
+
+  // play whoosh if ref is mounted
+  const audio = whooshRef.current;
+  if (audio) {
+    try {
+      audio.currentTime = 0;
+      void audio.play();
+    } catch {
+      /* ignore autoplay errors */
     }
   }
 }, [nextBurnMs, showBurnMoment]);
@@ -1348,6 +1356,13 @@ function SolanaMark({ className = "" }: { className?: string }) {
     </svg>
   );
 }
+
+useEffect(() => {
+  if (!showBurnMoment) return;
+  const t = window.setTimeout(() => setShowBurnMoment(false), 4500);
+  return () => window.clearTimeout(t);
+}, [showBurnMoment]);
+
 
 /* =========================
    BurnMoment overlay
