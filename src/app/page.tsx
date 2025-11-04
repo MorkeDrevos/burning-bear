@@ -1355,36 +1355,93 @@ function SolanaMark({ className = "" }: { className?: string }) {
 function BurnMoment({
   show,
   onDone,
-  sound,                 // <-- no default here
+  sound,                 // optional: pass a URL string to enable audio
   durationMs = 4500,
 }: {
   show: boolean;
   onDone?: () => void;
-  sound?: string;        // optional
+  sound?: string;
   durationMs?: number;
 }) {
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
   React.useEffect(() => {
     if (!show) return;
+
     const t = window.setTimeout(() => onDone?.(), durationMs);
-    if (sound && audioRef.current) {               // guard on sound
+
+    // play sound only if provided
+    if (sound && audioRef.current) {
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch(() => {});
     }
+
     return () => window.clearTimeout(t);
   }, [show, durationMs, onDone, sound]);
 
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] pointer-events-none bg-black/40 animate-[fadeIn_300ms_ease-out_forwards]" aria-hidden="true">
-      {/* ...overlay visuals... */}
+    <div
+      className="fixed inset-0 z-[60] pointer-events-none bg-black/40 animate-[fadeIn_300ms_ease-out_forwards]"
+      aria-hidden="true"
+    >
+      {/* radial fire glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_60%,rgba(255,160,60,0.30),rgba(0,0,0,0.0))]" />
+
+      {/* vertical vignette */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-transparent" />
+
+      {/* ember particles */}
+      <div className="absolute inset-0 overflow-hidden">
+        {Array.from({ length: 36 }).map((_, i) => (
+          <span
+            key={i}
+            className="absolute block h-[3px] w-[3px] rounded-full bg-amber-300/90"
+            style={{
+              left: `${Math.random() * 100}%`,
+              bottom: `-10px`,
+              opacity: 0.9,
+              animation: `rise ${3 + Math.random() * 3}s linear ${Math.random() * 1.5}s forwards`,
+              boxShadow:
+                '0 0 6px rgba(255,180,80,.9), 0 0 12px rgba(255,160,60,.5)',
+            }}
+          />
+        ))}
+      </div>
+
+      {/* center label */}
+      <div className="absolute inset-0 grid place-items-center">
+        <div className="px-5 py-3 rounded-2xl border border-amber-400/30 bg-amber-500/10 backdrop-blur-md text-amber-100 font-extrabold text-2xl md:text-3xl tracking-wide shadow-[0_0_40px_rgba(255,170,60,.25)] animate-[pop_260ms_ease-out]">
+          🔥 Burn Executed — Supply Down
+        </div>
+      </div>
+
+      {/* subtle bottom flame sweep */}
+      <div className="absolute -bottom-20 left-0 right-0 h-60 bg-[radial-gradient(120%_100%_at_50%_100%,rgba(255,180,80,.35),rgba(0,0,0,0))] animate-[glow_1.6s_ease-in-out_infinite_alternate]" />
 
       {/* only render audio if provided */}
       {sound ? <audio ref={audioRef} src={sound} preload="auto" /> : null}
 
-      <style jsx>{/* keyframes */}</style>
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes pop {
+          0%   { transform: scale(0.92); opacity: 0; }
+          100% { transform: scale(1);    opacity: 1; }
+        }
+        @keyframes rise {
+          0%   { transform: translateY(0) translateX(0)   scale(1);   opacity: .9; }
+          70%  { opacity: .9; }
+          100% { transform: translateY(-110vh) translateX(12px) scale(.6); opacity: 0; }
+        }
+        @keyframes glow {
+          from { filter: blur(20px) brightness(1); }
+          to   { filter: blur(26px) brightness(1.25); }
+        }
+      `}</style>
     </div>
   );
 }
