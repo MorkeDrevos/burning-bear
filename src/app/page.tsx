@@ -837,6 +837,7 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
     {/* gentle dark gradient so content stays readable */}
     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0f1a15]/35 to-[#0f1a15]" />
   </div>
+</section>
 
 {/* ===== Roadmap — The Deflation Engine (fixed width, no bleed) ===== */}
 <section
