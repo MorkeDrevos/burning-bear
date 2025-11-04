@@ -1096,6 +1096,7 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
     ring-1 ring-amber-200/40 shadow-xl
     hover:scale-[1.03] hover:brightness-110 active:scale-[0.99]
     transition-transform duration-150
+    animate-[warmPulse_2.8s_ease-in-out_infinite]
   "
   style={{
     boxShadow:
