@@ -502,9 +502,6 @@ export default function Page() {
 
       </div> {/* end translucent stats panel */}
 
-{/* Whoosh sound (optional) */}
-<audio ref={whooshRef} src="/sounds/burn-whoosh.mp3" preload="auto" />
-
 </div> {/* end max-w container */}
 </section> {/* close the HERO section */}
 
@@ -513,7 +510,6 @@ export default function Page() {
 <BurnMoment
   show={showBurnMoment}
   onDone={() => setShowBurnMoment(false)}
-  sound={undefined}          // keep undefined here since the whoosh is handled above
   durationMs={4500}
 />
 
