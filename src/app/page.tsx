@@ -1091,18 +1091,18 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
     fixed bottom-6 right-6 z-50
     inline-flex items-center gap-2.5
     rounded-full px-5 py-3 font-semibold
-    text-[#0b1612] shadow-xl
-    bg-gradient-to-r from-emerald-300 to-sky-400
-    ring-1 ring-white/30
-    hover:scale-[1.03] hover:brightness-105 active:scale-[0.99]
+    text-[#120d05]
+    bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400
+    ring-1 ring-amber-200/40 shadow-xl
+    hover:scale-[1.03] hover:brightness-110 active:scale-[0.99]
     transition-transform duration-150
   "
   style={{
     boxShadow:
-      '0 0 0 10px rgba(16,24,20,0.35), 0 12px 30px rgba(0,0,0,0.35), 0 0 40px rgba(72, 255, 210, 0.20)',
+      '0 0 0 10px rgba(16,12,8,0.35), 0 10px 25px rgba(255,190,70,0.35), 0 0 40px rgba(255,180,60,0.25)',
   }}
 >
-  <JupiterMark className="h-5 w-5" />
+  <JupiterMark className="h-5 w-5 text-amber-900/80" />
   <span>Buy $BBURN on Jupiter</span>
 </a>
 </main>
