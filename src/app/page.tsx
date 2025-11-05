@@ -1272,7 +1272,8 @@ function LowerThird({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <div
       className="pointer-events-none fixed left-4 z-[86] max-w-[60vw]"
-      style={{ bottom: 'calc(var(--safe-bottom, 0px) + 1rem)' }} // ← sits above ticker
+      // ⬇️ was bottom: ... ; now top using the header-safe area
+      style={{ top: 'calc(var(--safe-top, 0px) + 8px)' }}
     >
       <div className="rounded-2xl border border-amber-400/25 bg-black/55 backdrop-blur-md px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
         <div className="text-amber-200 font-extrabold text-lg leading-tight">{title}</div>
@@ -1304,7 +1305,8 @@ function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number
   return (
     <div
       className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[80]"
-      style={{ top: 'var(--safe-top, 1rem)' }}
+      // ⬇️ was top: ... ; move it lower so it sits above the bottom safe area
+      style={{ bottom: 'calc(var(--safe-bottom, 0px) + 16px)' }}
     >
       <div className={[
         "rounded-full px-4 py-2 border backdrop-blur text-amber-100",
