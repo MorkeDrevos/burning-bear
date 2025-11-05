@@ -457,6 +457,40 @@ useEffect(() => {
         </div>
       </header>
 
+      function LiveBug({ className = "" }: { className?: string }) {
+  return (
+    <div
+      className={"pointer-events-none fixed left-4 z-[80] " + className}
+      style={{ top: 'calc(var(--safe-top, 8px) - 6px)' }}   // ⬅️ was var(--safe-top)
+    >
+      ...
+    </div>
+  );
+}
+
+function NowPlaying({ track, artist }: { track: string; artist?: string }) {
+  return (
+    <div
+      className="pointer-events-none fixed right-4 z-[80]"
+      style={{ top: 'calc(var(--safe-top, 8px) - 6px)' }}   // ⬅️ was var(--safe-top)
+    >
+      ...
+    </div>
+  );
+}
+
+function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }) {
+  const soon = msToBurn >= 0 && msToBurn <= 5 * 60_000;
+  return (
+    <div
+      className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[80]"
+      style={{ top: 'calc(var(--safe-top, 8px) + 48px)' }}  // ⬅️ push it down
+    >
+      ...
+    </div>
+  );
+}
+
      {/* ===== HERO with video + translucent text panel ===== */}
 <section className="relative">
   {/* Background video + vignette */}
@@ -1248,21 +1282,6 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
    Broadcast UI — Live TV vibe
 ========================= */
 
-function LiveBug({ className = "" }: { className?: string }) {
-  return (
-    <div
-  className={"pointer-events-none fixed z-[80] left-4 " + className}
-  style={{ top: 'var(--safe-top, 12px)' }}
->
-      <div className="inline-flex items-center gap-2 rounded-lg bg-red-600/90 px-3 py-1.5 shadow-lg">
-        <span className="h-2.5 w-2.5 rounded-full bg-white animate-[blink_1.2s_infinite]" />
-        <span className="text-xs font-extrabold tracking-widest text-white">LIVE</span>
-        <span className="text-xs font-semibold text-white/90">• ON AIR</span>
-      </div>
-    </div>
-  );
-}
-
 function LowerThird({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <div
@@ -1272,42 +1291,6 @@ function LowerThird({ title, subtitle }: { title: string; subtitle?: string }) {
       <div className="rounded-2xl border border-amber-400/25 bg-black/55 backdrop-blur-md px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
         <div className="text-amber-200 font-extrabold text-lg leading-tight">{title}</div>
         {subtitle ? <div className="text-white/75 text-sm mt-0.5">{subtitle}</div> : null}
-      </div>
-    </div>
-  );
-}
-
-function NowPlaying({ track, artist }: { track: string; artist?: string }) {
-  return (
-    <div
-  className="pointer-events-none fixed z-[80] right-4"
-  style={{ top: 'var(--safe-top, 12px)' }}
->
-      <div className="flex items-center gap-2 rounded-xl border border-white/12 bg-white/8 backdrop-blur px-3 py-1.5">
-        <span className="h-[10px] w-[10px] rounded-[2px] bg-amber-300 animate-[levels_1.6s_ease-in-out_infinite]" />
-        <div className="text-[12px] text-white/85">
-          <span className="font-semibold text-amber-100">Now Playing:</span> {track}
-          {artist ? <span className="text-white/65"> — {artist}</span> : null}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }) {
-  const soon = msToBurn >= 0 && msToBurn <= 5 * 60_000;
-  return (
-    <div
-  className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[82]"
-  style={{ bottom: 'calc(var(--safe-bottom, 16px) + 110px)' }}
->
-      <div className={[
-        "rounded-full px-4 py-2 border backdrop-blur text-amber-100",
-        "border-amber-400/25 bg-amber-500/10",
-        soon ? "animate-[warmPulse_2.4s_ease-in-out_infinite]" : "",
-      ].join(" ")}>
-        <span className="font-semibold">Campfire Reward:</span>{" "}
-        <span className="font-extrabold">{potBBURN.toLocaleString()} BBURN</span>
       </div>
     </div>
   );
@@ -1603,11 +1586,14 @@ function useBroadcast() {
   React.useEffect(() => {
     const applySafeAreas = () => {
       const header = document.querySelector('header') as HTMLElement | null;
-      const top = (header?.getBoundingClientRect().height ?? 0) + 12; // gap below header
-      const bottom = 18; // stable padding above ticker/lower-third
 
-      document.documentElement.style.setProperty('--safe-top', `${Math.max(8, top)}px`);
-      document.documentElement.style.setProperty('--safe-bottom', `${bottom}px`);
+      // Measure header height and add a tiny cushion
+      const headerH = Math.round(header?.getBoundingClientRect().height ?? 0);
+      const safeTop = Math.max(8, headerH + 2);      // tighter than before
+      const safeBottom = 18;                          // stable padding above ticker/lower-third
+
+      document.documentElement.style.setProperty('--safe-top', `${safeTop}px`);
+      document.documentElement.style.setProperty('--safe-bottom', `${safeBottom}px`);
     };
 
     const clearSafeAreas = () => {
@@ -1625,7 +1611,12 @@ function useBroadcast() {
       setParams(qs);
 
       if (isBroadcast) {
+        // 1) next frame (after DOM paints)
         requestAnimationFrame(applySafeAreas);
+        // 2) after fonts/layout settle
+        (document as any).fonts?.ready?.then?.(() => applySafeAreas());
+        // 3) final safety re-measure
+        window.setTimeout(applySafeAreas, 150);
       } else {
         clearSafeAreas();
       }
@@ -1635,12 +1626,17 @@ function useBroadcast() {
       if (onRef.current) applySafeAreas();
     };
 
-    // initial parse + listeners
+    const onVisibility = () => {
+      if (onRef.current && !document.hidden) applySafeAreas();
+    };
+
+    // Initial run + listeners
     parse();
     window.addEventListener('hashchange', parse);
     window.addEventListener('resize', onResize);
+    document.addEventListener('visibilitychange', onVisibility);
 
-    // observe header size only (no Buy button)
+    // Observe header size only (no dependency on Buy button)
     const ro = new ResizeObserver(() => onResize());
     const header = document.querySelector('header') as HTMLElement | null;
     if (header) ro.observe(header);
@@ -1648,6 +1644,7 @@ function useBroadcast() {
     return () => {
       window.removeEventListener('hashchange', parse);
       window.removeEventListener('resize', onResize);
+      document.removeEventListener('visibilitychange', onVisibility);
       ro.disconnect();
       clearSafeAreas();
     };
