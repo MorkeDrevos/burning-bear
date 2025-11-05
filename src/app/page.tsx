@@ -408,7 +408,7 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
 <div className="flex items-center gap-2 md:gap-3">
   {/* removed CA chip + Copy CA */}
   <a
-  href="https://x.com/i/communities/1980944446871966021"
+  href="https://x.com/burningbearcamp"
   target="_blank"
   rel="noopener noreferrer"
   className="inline-flex items-center gap-2 text-sm font-semibold text-white/80
@@ -1052,7 +1052,7 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
 
           <div className="flex justify-center gap-8 text-white/70 text-sm pt-2">
             <a
-              href="https://x.com/i/communities/1980944446871966021"
+              href="https://x.com/burningbearcamp"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-amber-300 transition"
