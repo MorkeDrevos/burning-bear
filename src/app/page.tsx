@@ -281,7 +281,7 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
 }
 
 // ========= Toggle (near other config at top) =========
-const ENABLE_BURN_OVERLAY = true; // set false to disable the banner entirely
+const ENABLE_BURN_OVERLAY = false; // set false to disable the banner entirely
 
 // ========= Fire overlay once when countdown crosses ~0 (no sound) =========
 const prevMsRef = useRef<number | null>(null);
