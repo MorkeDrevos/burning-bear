@@ -1110,7 +1110,7 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
   }}
 >
   <JupiterMark className="h-6 w-6 text-amber-900/80" />
-  <span>Buy BBURN on Jupiter</span>
+  <span>Buy $BBURN on Jupiter</span>
 </a>
 
 </main>
