@@ -182,50 +182,54 @@ export default function Page() {
     return () => clearInterval(id);
   }, []);
 
-  // Load JSON data (cache-busted) and normalize timestamps
-  useEffect(() => {
-    let alive = true;
+  // Load JSON data (cache-busted), normalize, and persist a last-good copy
+useEffect(() => {
+  let alive = true;
 
-    fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
-      .then((r) => r.json())
-      .then((d) => {
-        if (!alive || !d) return;
+  (async () => {
+    try {
+      const res = await fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`state.json HTTP ${res.status}`);
+      const d = await res.json();
 
-        // Make a shallow copy so we can mutate safely
-        const s = { ...(d.schedule ?? {}) } as any;
+      if (!alive || !d) return;
 
-        // Accept either minutes or ms in incoming JSON
-        const burnMins = typeof s.burnIntervalMinutes === 'number' ? s.burnIntervalMinutes : 60;
-        const buybackMins = typeof s.buybackIntervalMinutes === 'number' ? s.buybackIntervalMinutes : 20;
+      // --- schedule normalization ---
+      const s = { ...(d.schedule ?? {}) } as any;
+      const burnMins    = typeof s.burnIntervalMinutes === 'number' ? s.burnIntervalMinutes : 60;
+      const buybackMins = typeof s.buybackIntervalMinutes === 'number' ? s.buybackIntervalMinutes : 20;
 
-        // Ensure ms fields exist (if minutes exist)
-        if (s.burnIntervalMs == null && burnMins != null) s.burnIntervalMs = burnMins * 60 * 1000;
-        if (s.buybackIntervalMs == null && buybackMins != null) s.buybackIntervalMs = buybackMins * 60 * 1000;
+      if (s.burnIntervalMs == null && burnMins != null)    s.burnIntervalMs = burnMins * 60_000;
+      if (s.buybackIntervalMs == null && buybackMins != null) s.buybackIntervalMs = buybackMins * 60_000;
 
-        // Seed next times if missing
-        const nowTs = Date.now();
-        if (s.nextBurnAt == null && s.burnIntervalMs) s.nextBurnAt = nowTs + s.burnIntervalMs;
-        if (s.nextBuybackAt == null && s.buybackIntervalMs) s.nextBuybackAt = nowTs + s.buybackIntervalMs;
+      const nowTs = Date.now();
+      if (s.nextBurnAt == null && s.burnIntervalMs)    s.nextBurnAt = nowTs + s.burnIntervalMs;
+      if (s.nextBuybackAt == null && s.buybackIntervalMs) s.nextBuybackAt = nowTs + s.buybackIntervalMs;
 
-        // Normalize burns: coerce timestamp to ms and drop invalid rows
-        const burns = (d?.burns ?? [])
-          .map((b: any) => ({ ...b, timestamp: toMs(b.timestamp) }))
-          .filter((b: any) => Number.isFinite(b.timestamp as number));
+      // --- burns normalization ---
+      const burns = (d?.burns ?? [])
+        .map((b: any) => ({ ...b, timestamp: typeof b.timestamp === 'number' ? b.timestamp : Date.parse(b.timestamp) }))
+        .filter((b: any) => Number.isFinite(b.timestamp));
 
-        setData({
-          ...d,
-          schedule: s,
-          burns,
-        });
-      })
-      .catch(() => {
-        // keep previous data on fetch failure
-      });
+      const nextState: StateJson = { ...d, schedule: s, burns };
 
-    return () => {
-      alive = false;
-    };
-  }, []);
+      setData(nextState);
+
+      // persist last good copy for offline/404 fallback
+      try { sessionStorage.setItem('bburn_last_state', JSON.stringify(nextState)); } catch {}
+    } catch (err) {
+      console.error('Failed to load /data/state.json:', err);
+
+      // try fallback to last good state
+      try {
+        const cached = sessionStorage.getItem('bburn_last_state');
+        if (cached) setData(JSON.parse(cached));
+      } catch {}
+    }
+  })();
+
+  return () => { alive = false; };
+}, []);
 
   // Live SOL price (falls back to stats.priceUsdPerSol)
   useEffect(() => {
