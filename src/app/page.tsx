@@ -34,7 +34,7 @@ const SHOW_GIVEAWAY = true;                 // toggle on/off
 const GIVEAWAY_TITLE = "Campfire Bonus Round 1";
 const GIVEAWAY_SUB = "Stay near the flames 🔥 Exclusive rewards for $BBURN holders soon.";
 const GIVEAWAY_LINK_TEXT = "Follow updates";
-const GIVEAWAY_LINK_URL = "https://x.com/i/communities/1980944446871966021";
+const GIVEAWAY_LINK_URL = "https://x.com/burningbearcamp";
 
 // Optional: hide after a point in time (ms since epoch). Set to null to disable.
 const GIVEAWAY_HIDE_AFTER = null as number | null;
