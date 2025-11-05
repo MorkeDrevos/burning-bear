@@ -1152,31 +1152,30 @@ useEffect(() => {
   </a>
 )}
 
-{broadcast.on && <LiveBug />}
-
-{broadcast.on && (
-  <LowerThird
-    title={(broadcast.params.get('lower') || '').split('|')[0] || 'Live Campfire'}
-    subtitle={(broadcast.params.get('lower') || '').split('|')[1] || undefined}
-  />
-)}
-
-{broadcast.on && Boolean(broadcast.params.get('reward')) && (
-  <RewardPill
-    msToBurn={nextBurnMs}
-    potBBURN={Number(broadcast.params.get('reward')) || 0}
-  />
-)}
-
+{/* --- Top Overlays (above everything) --- */}
+{broadcast.on && <LiveBug />} 
 {broadcast.on && broadcast.params.get('now') && (
   <NowPlaying
     track={(broadcast.params.get('now') || '').split('|')[0]}
     artist={(broadcast.params.get('now') || '').split('|')[1]}
   />
 )}
-
+{broadcast.on && (
+  <LowerThird
+    title={(broadcast.params.get('lower') || '').split('|')[0] || 'Live Campfire'}
+    subtitle={(broadcast.params.get('lower') || '').split('|')[1] || undefined}
+  />
+)}
 {broadcast.on && broadcast.params.get('ticker') && (
   <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
+)}
+
+{/* --- Keep this lower --- */}
+{broadcast.on && broadcast.params.get('reward') && (
+  <RewardPill
+    msToBurn={nextBurnMs}
+    potBBURN={Number(broadcast.params.get('reward')) || 0}
+  />
 )}
 
 </main>
