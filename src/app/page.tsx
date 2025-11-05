@@ -500,7 +500,11 @@ useEffect(() => {
       {/* Countdowns */}
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
         {/* <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} /> */}
-        <Countdown label="Next burn in" ms={nextBurnMs} variant="segments" />
+        <Countdown
+  label="Next burn in"
+  ms={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined}
+  variant="segments"
+/>
       </div>
 
      {/* Stats */}
@@ -1158,20 +1162,21 @@ type CountdownProps = {
 };
 
 function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
-  const segs =
-    typeof ms === 'number'
-      ? (() => {
-          const t = Math.max(0, Math.floor(ms / 1000));
-          const h = Math.floor(t / 3600);
-          const m = Math.floor((t % 3600) / 60);
-          const s = t % 60;
-          return {
-            h: String(h),
-            m: m.toString().padStart(2, '0'),
-            s: s.toString().padStart(2, '0'),
-          };
-        })()
-      : null;
+  const hasFiniteMs = typeof ms === 'number' && Number.isFinite(ms);
+
+  const segs = hasFiniteMs
+    ? (() => {
+        const t = Math.max(0, Math.floor(ms! / 1000));
+        const h = Math.floor(t / 3600);
+        const m = Math.floor((t % 3600) / 60);
+        const s = t % 60;
+        return {
+          h: String(h),
+          m: m.toString().padStart(2, '0'),
+          s: s.toString().padStart(2, '0'),
+        };
+      })()
+    : null;
 
   return (
     <div>
@@ -1179,12 +1184,21 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
         {label}
       </div>
 
-      {variant === 'segments' && segs ? (
-        <div className="mt-2 flex items-center gap-[4px] md:gap-[6px]">
-          <SegmentBox>{segs.h}</SegmentBox><Colon />
-          <SegmentBox>{segs.m}</SegmentBox><Colon />
-          <SegmentBox>{segs.s}</SegmentBox>
-        </div>
+      {variant === 'segments' ? (
+        segs ? (
+          <div className="mt-2 flex items-center gap-[4px] md:gap-[6px]">
+            <SegmentBox>{segs.h}</SegmentBox><Colon />
+            <SegmentBox>{segs.m}</SegmentBox><Colon />
+            <SegmentBox>{segs.s}</SegmentBox>
+          </div>
+        ) : (
+          // Placeholder when no valid countdown target yet
+          <div className="mt-2 flex items-center gap-[4px] md:gap-[6px] opacity-70">
+            <SegmentBox>--</SegmentBox><Colon />
+            <SegmentBox>--</SegmentBox><Colon />
+            <SegmentBox>--</SegmentBox>
+          </div>
+        )
       ) : variant === 'glow' ? (
         <div
           className="mt-1 text-3xl font-extrabold bg-gradient-to-r from-amber-200 via-amber-100 to-white bg-clip-text text-transparent md:text-[36px]"
