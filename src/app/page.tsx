@@ -457,40 +457,6 @@ useEffect(() => {
         </div>
       </header>
 
-      function LiveBug({ className = "" }: { className?: string }) {
-  return (
-    <div
-      className={"pointer-events-none fixed left-4 z-[80] " + className}
-      style={{ top: 'calc(var(--safe-top, 8px) - 6px)' }}   // ⬅️ was var(--safe-top)
-    >
-      ...
-    </div>
-  );
-}
-
-function NowPlaying({ track, artist }: { track: string; artist?: string }) {
-  return (
-    <div
-      className="pointer-events-none fixed right-4 z-[80]"
-      style={{ top: 'calc(var(--safe-top, 8px) - 6px)' }}   // ⬅️ was var(--safe-top)
-    >
-      ...
-    </div>
-  );
-}
-
-function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }) {
-  const soon = msToBurn >= 0 && msToBurn <= 5 * 60_000;
-  return (
-    <div
-      className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[80]"
-      style={{ top: 'calc(var(--safe-top, 8px) + 48px)' }}  // ⬅️ push it down
-    >
-      ...
-    </div>
-  );
-}
-
      {/* ===== HERO with video + translucent text panel ===== */}
 <section className="relative">
   {/* Background video + vignette */}
@@ -1187,24 +1153,38 @@ function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number
 )}
 
 {/* --- Top Overlays (above everything) --- */}
-{broadcast.on && <LiveBug />}
-{broadcast.on && broadcast.params.get('lower') && (
-  <LowerThird
-    title={(broadcast.params.get('lower') || '').split('|')[0] || 'Live Campfire'}
-    subtitle={(broadcast.params.get('lower') || '').split('|')[1] || undefined}
-  />
-)}
-{broadcast.on && broadcast.params.get('reward') && (
-  <RewardPill msToBurn={nextBurnMs} potBBURN={Number(broadcast.params.get('reward')) || 0} />
-)}
-{broadcast.on && broadcast.params.get('now') && (
-  <NowPlaying
-    track={(broadcast.params.get('now') || '').split('|')[0]}
-    artist={(broadcast.params.get('now') || '').split('|')[1]}
-  />
-)}
-{broadcast.on && broadcast.params.get('ticker') && (
-  <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
+{broadcast.on && (
+  <>
+    {/* 🔴 LIVE badge (top-left) */}
+    <LiveBug />
+
+    {/* 🎵 Now Playing (top-right) */}
+    <NowPlaying
+      track={(broadcast.params.get('now') || '').split('|')[0] || ''}
+      artist={(broadcast.params.get('now') || '').split('|')[1] || ''}
+    />
+
+    {/* 🪙 Reward Pill — always show, fallback to 100,000 BBURN */}
+    <RewardPill
+      msToBurn={nextBurnMs}
+      potBBURN={Number(broadcast.params.get('reward') || 100000)}
+    />
+
+    {/* 📢 Lower-third banner (optional) */}
+    {broadcast.params.get('lower') && (
+      <LowerThird
+        title={(broadcast.params.get('lower') || '').split('|')[0] || 'Live Campfire'}
+        subtitle={(broadcast.params.get('lower') || '').split('|')[1] || undefined}
+      />
+    )}
+
+    {/* 🗞️ Ticker messages (bottom) */}
+    {broadcast.params.get('ticker') && (
+      <NewsTicker
+        items={(broadcast.params.get('ticker') || '').split(';').filter(Boolean)}
+      />
+    )}
+  </>
 )}
 
 </main>
@@ -1274,6 +1254,57 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
           {value}
         </div>
       )}
+    </div>
+  );
+}
+
+function LiveBug({ className = "" }: { className?: string }) {
+  return (
+    <div
+      className={"pointer-events-none fixed left-4 z-[80] " + className}
+      style={{ top: 'calc(var(--safe-top, 8px) - 6px)' }}
+    >
+      <div className="inline-flex items-center gap-2 rounded-full bg-red-600/90 px-3.5 py-1.5 shadow-lg">
+        <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
+        <span className="text-[13px] font-bold text-white tracking-wide">LIVE • ON AIR</span>
+      </div>
+    </div>
+  );
+}
+
+function NowPlaying({ track, artist }: { track: string; artist?: string }) {
+  return (
+    <div
+      className="pointer-events-none fixed right-4 z-[80]"
+      style={{ top: 'calc(var(--safe-top, 8px) - 6px)' }}
+    >
+      <div className="inline-flex max-w-[66vw] items-center gap-2 rounded-full border border-amber-400/25 bg-black/55 px-3.5 py-1.5 backdrop-blur shadow-lg">
+        <span className="h-2 w-2 rounded-full bg-amber-300" />
+        <span className="text-[13px] font-semibold text-amber-100 truncate">
+          Now Playing: {track}{artist ? ` — ${artist}` : ''}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }) {
+  const soon = msToBurn >= 0 && msToBurn <= 5 * 60_000;
+  const pretty = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(potBBURN);
+
+  return (
+    <div
+      className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[80]"
+      style={{ top: 'calc(var(--safe-top, 8px) + 48px)' }}
+    >
+      <div className="inline-flex items-center gap-3 rounded-2xl border border-amber-400/30 bg-amber-500/10 px-4 py-2 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
+        <span className={`text-[13px] font-extrabold ${soon ? 'text-amber-200' : 'text-amber-100'}`}>
+          Campfire Reward:
+        </span>
+        <span className={`text-[15px] font-extrabold ${soon ? 'animate-pulse text-amber-200' : 'text-amber-100'}`}>
+          {pretty} $BBURN
+        </span>
+      </div>
     </div>
   );
 }
