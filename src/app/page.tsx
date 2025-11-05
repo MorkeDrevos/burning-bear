@@ -1151,10 +1151,6 @@ useEffect(() => {
     <span>Buy $BBURN on Jupiter</span>
   </a>
 )}
->
-  <JupiterMark className="h-6 w-6 text-amber-900/80" />
-  <span>Buy $BBURN on Jupiter</span>
-</a>
 
 {broadcast.on && <LiveBug />}
 
@@ -1165,7 +1161,7 @@ useEffect(() => {
   />
 )}
 
-{broadcast.on && broadcast.params.get('reward') && (
+{broadcast.on && Boolean(broadcast.params.get('reward')) && (
   <RewardPill
     msToBurn={nextBurnMs}
     potBBURN={Number(broadcast.params.get('reward')) || 0}
