@@ -410,7 +410,7 @@ useEffect(() => {
   return (
     <main id="top">
       {/* ===== Header ===== */}
-      <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
+      <header className="sticky top-0 z-[90] w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
           {/* Left: Logo + Title */}
           <Link href="#top" className="flex items-center gap-3 md:gap-4 min-w-0">
