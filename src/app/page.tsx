@@ -1316,10 +1316,10 @@ function MobileMenu() {
   onClick={() => setOpen((v) => !v)}
   aria-label="Menu"
   className="
-    ml-1 text-amber-200/80 text-[22px]
-    hover:text-amber-100 transition
-    focus:outline-none active:scale-95
-  "
+  ml-1 text-amber-200/80 text-[22px]
+  hover:text-amber-100 hover:drop-shadow-[0_0_6px_rgba(255,200,100,0.6)]
+  transition active:scale-95
+"
 >
   ☰
 </button>
