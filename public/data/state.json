@@ -23,6 +23,23 @@
     "fullTokenAddress": "BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump",
     "explorer": "https://explorer.solana.com"
   },
+  "jackpot": {
+  "active": true,
+  "pot": {
+    "currentBBURN": 1500000,
+    "baseSeed": 500000,
+    "bonusPerRound": 250000,
+    "rolloverAll": true,
+    "eligibilityMinSol": 0.02
+  },
+  "window": {
+    "roundId": "2025-11-05-am",
+    "startAt": 1762314000000,
+    "drawAt": 1762357200000
+  },
+  "unclaimedRounds": 3,
+  "lastWinner": null
+}
   "burns": [
     {
       "id": "tx_001",
