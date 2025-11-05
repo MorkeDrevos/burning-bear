@@ -1255,9 +1255,8 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
 function LiveBug({ className = "" }: { className?: string }) {
   return (
     <div
-      className={
-        "pointer-events-none fixed top-4 left-4 z-[70] " + className
-      }
+      className={"pointer-events-none fixed left-4 z-[80] " + className}
+      style={{ top: 'var(--safe-top, 1rem)' }}
     >
       <div className="inline-flex items-center gap-2 rounded-lg bg-red-600/90 px-3 py-1.5 shadow-lg">
         <span className="h-2.5 w-2.5 rounded-full bg-white animate-[blink_1.2s_infinite]" />
@@ -1268,41 +1267,30 @@ function LiveBug({ className = "" }: { className?: string }) {
   );
 }
 
-function LowerThird({
-  title,
-  subtitle,
-}: {
-  title: string;
-  subtitle?: string;
-}) {
+function LowerThird({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
-    <div className="pointer-events-none fixed bottom-24 left-4 z-[70] max-w-[60vw]">
+    <div
+      className="pointer-events-none fixed left-4 z-[80] max-w-[60vw]"
+      style={{ bottom: 'calc(var(--safe-bottom, 0px) + 1.5rem)' }}
+    >
       <div className="rounded-2xl border border-amber-400/25 bg-black/55 backdrop-blur-md px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
-        <div className="text-amber-200 font-extrabold text-lg leading-tight">
-          {title}
-        </div>
-        {subtitle ? (
-          <div className="text-white/75 text-sm mt-0.5">{subtitle}</div>
-        ) : null}
+        <div className="text-amber-200 font-extrabold text-lg leading-tight">{title}</div>
+        {subtitle ? <div className="text-white/75 text-sm mt-0.5">{subtitle}</div> : null}
       </div>
     </div>
   );
 }
 
-function NowPlaying({
-  track,
-  artist,
-}: {
-  track: string;
-  artist?: string;
-}) {
+function NowPlaying({ track, artist }: { track: string; artist?: string }) {
   return (
-    <div className="pointer-events-none fixed top-4 right-4 z-[70]">
+    <div
+      className="pointer-events-none fixed right-4 z-[80]"
+      style={{ top: 'var(--safe-top, 1rem)' }}
+    >
       <div className="flex items-center gap-2 rounded-xl border border-white/12 bg-white/8 backdrop-blur px-3 py-1.5">
         <span className="h-[10px] w-[10px] rounded-[2px] bg-amber-300 animate-[levels_1.6s_ease-in-out_infinite]" />
         <div className="text-[12px] text-white/85">
-          <span className="font-semibold text-amber-100">Now Playing:</span>{" "}
-          {track}
+          <span className="font-semibold text-amber-100">Now Playing:</span> {track}
           {artist ? <span className="text-white/65"> — {artist}</span> : null}
         </div>
       </div>
@@ -1310,23 +1298,18 @@ function NowPlaying({
   );
 }
 
-function RewardPill({
-  msToBurn,
-  potBBURN,
-}: {
-  msToBurn: number;
-  potBBURN: number;
-}) {
-  const soon = msToBurn >= 0 && msToBurn <= 5 * 60_000; // last 5 min pulse
+function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }) {
+  const soon = msToBurn >= 0 && msToBurn <= 5 * 60_000;
   return (
-    <div className="pointer-events-none fixed top-4 left-1/2 -translate-x-1/2 z-[70]">
-      <div
-        className={[
-          "rounded-full px-4 py-2 border backdrop-blur text-amber-100",
-          "border-amber-400/25 bg-amber-500/10",
-          soon ? "animate-[warmPulse_2.4s_ease-in-out_infinite]" : "",
-        ].join(" ")}
-      >
+    <div
+      className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[80]"
+      style={{ top: 'var(--safe-top, 1rem)' }}
+    >
+      <div className={[
+        "rounded-full px-4 py-2 border backdrop-blur text-amber-100",
+        "border-amber-400/25 bg-amber-500/10",
+        soon ? "animate-[warmPulse_2.4s_ease-in-out_infinite]" : "",
+      ].join(" ")}>
         <span className="font-semibold">Campfire Reward:</span>{" "}
         <span className="font-extrabold">{potBBURN.toLocaleString()} BBURN</span>
       </div>
@@ -1336,19 +1319,17 @@ function RewardPill({
 
 function NewsTicker({ items }: { items: string[] }) {
   const loop = items.length ? [...items, ...items] : [];
-  const dur = Math.max(20, items.length * 7); // seconds
+  const dur = Math.max(20, items.length * 7);
   return (
-    <div className="pointer-events-none fixed bottom-0 left-0 right-0 z-[70]">
+    <div
+      className="pointer-events-none fixed left-0 right-0 z-[80]"
+      style={{ bottom: 'var(--safe-bottom, 0px)' }}
+    >
       <div className="relative border-t border-white/10 bg-black/55 backdrop-blur">
-        <div
-          className="whitespace-nowrap will-change-transform animate-[ticker_linear_infinite]"
-          style={{ animationDuration: `${dur}s` as any }}
-        >
+        <div className="whitespace-nowrap will-change-transform animate-[ticker_linear_infinite]"
+             style={{ animationDuration: `${dur}s` as any }}>
           {loop.map((t, i) => (
-            <span
-              key={i}
-              className="inline-flex items-center gap-2 px-6 py-3 text-[14px] text-white/85"
-            >
+            <span key={i} className="inline-flex items-center gap-2 px-6 py-3 text-[14px] text-white/85">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-300" />
               <span>{t}</span>
             </span>
