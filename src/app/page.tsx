@@ -1613,18 +1613,69 @@ function JupiterMark({ className = '' }: { className?: string }) {
 function useBroadcast() {
   const [on, setOn] = React.useState(false);
   const [params, setParams] = React.useState<URLSearchParams>(new URLSearchParams());
+  const onRef = React.useRef(false);
 
   React.useEffect(() => {
+    const applySafeAreas = () => {
+      // header height → top safe zone
+      const header = document.querySelector('header') as HTMLElement | null;
+      const safeTop = (header?.offsetHeight ?? 0) + 10;
+
+      // sticky Buy button height → bottom safe zone
+      const buyBtn = document.querySelector(
+        'a[aria-label="Buy $BBURN on Jupiter"]'
+      ) as HTMLElement | null;
+      const safeBottom = (buyBtn?.offsetHeight ?? 0) + 18;
+
+      document.documentElement.style.setProperty('--safe-top', `${safeTop}px`);
+      document.documentElement.style.setProperty('--safe-bottom', `${safeBottom}px`);
+    };
+
+    const clearSafeAreas = () => {
+      document.documentElement.style.removeProperty('--safe-top');
+      document.documentElement.style.removeProperty('--safe-bottom');
+    };
+
     const parse = () => {
       const h = window.location.hash || '';
       const isBroadcast = h.startsWith('#broadcast');
       const qs = new URLSearchParams(h.split('?')[1] || '');
+
       setOn(isBroadcast);
+      onRef.current = isBroadcast;
       setParams(qs);
+
+      if (isBroadcast) {
+        // wait a tick so header/buy button are measured correctly
+        requestAnimationFrame(applySafeAreas);
+      } else {
+        clearSafeAreas();
+      }
     };
+
+    const onResize = () => {
+      if (onRef.current) applySafeAreas();
+    };
+
     parse();
     window.addEventListener('hashchange', parse);
-    return () => window.removeEventListener('hashchange', parse);
+    window.addEventListener('resize', onResize);
+
+    // also observe header/buy button size changes
+    const ro = new ResizeObserver(() => onResize());
+    const header = document.querySelector('header') as HTMLElement | null;
+    const buyBtn = document.querySelector(
+      'a[aria-label="Buy $BBURN on Jupiter"]'
+    ) as HTMLElement | null;
+    if (header) ro.observe(header);
+    if (buyBtn) ro.observe(buyBtn);
+
+    return () => {
+      window.removeEventListener('hashchange', parse);
+      window.removeEventListener('resize', onResize);
+      ro.disconnect();
+      clearSafeAreas();
+    };
   }, []);
 
   return { on, params };
