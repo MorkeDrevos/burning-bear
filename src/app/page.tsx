@@ -163,6 +163,8 @@ export default function Page() {
   const [solUsd, setSolUsd] = useState<number | null>(null);
   const [now, setNow] = useState<number>(Date.now());
 
+  const broadcast = useBroadcast();
+
   // 🔥 Burn overlay trigger state (visual only)
   const [showBurnMoment, setShowBurnMoment] = useState(false);
 
@@ -1607,8 +1609,6 @@ function JupiterMark({ className = '' }: { className?: string }) {
     </svg>
   );
 }
-
-const broadcast = useBroadcast();
 
 function useBroadcast() {
   const [on, setOn] = React.useState(false);
