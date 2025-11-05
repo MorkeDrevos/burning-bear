@@ -4,21 +4,19 @@
 
 /* =============== Custom site effects =============== */
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 /* Subtle breathing animation for the bear */
 @keyframes bearBreath {
   0%, 100% { transform: scale(1); filter: brightness(1); }
-  50% { transform: scale(1.02); filter: brightness(1.05); }
+  50%      { transform: scale(1.02); filter: brightness(1.05); }
 }
 .bear-breathe { animation: bearBreath 6s ease-in-out infinite; }
 
 /* Ember shimmer for dividers */
 @keyframes emberShimmer {
-  0% { background-position: 180% 0; opacity: 0.45; }
-  50% { background-position: 100% 0; opacity: 0.85; }
+  0%   { background-position: 180% 0; opacity: 0.45; }
+  50%  { background-position: 100% 0; opacity: 0.85; }
   100% { background-position: -180% 0; opacity: 0.45; }
 }
 .ember-divider {
@@ -32,27 +30,16 @@ html {
 }
 
 /* Nudge arrows on hover (used by the hero trust pill) */
-.link-chevron {
-  transition: transform 180ms ease;
-  will-change: transform;
-}
-.group:hover .link-chevron {
-  transform: translateX(2px);
-}
+.link-chevron { transition: transform 180ms ease; will-change: transform; }
+.group:hover .link-chevron { transform: translateX(2px); }
 
 /* Optional: a soft pill shadow (matches the hero style) */
-.pill-shadow {
-  box-shadow: 0 2px 14px rgba(0,0,0,0.25);
-}
+.pill-shadow { box-shadow: 0 2px 14px rgba(0,0,0,0.25); }
 
-/* anchor offset for sticky header */
+/* Anchor offset for sticky header */
 .anchor-offset { scroll-margin-top: 88px; }
-@media (min-width: 768px) {
-  .anchor-offset { scroll-margin-top: 100px; }
-}
-@media (min-width: 1024px) {
-  .anchor-offset { scroll-margin-top: 116px; }
-}
+@media (min-width: 768px)  { .anchor-offset { scroll-margin-top: 100px; } }
+@media (min-width: 1024px) { .anchor-offset { scroll-margin-top: 116px; } }
 
 /* === Live Burn Log Marquee Animation === */
 .auto-marquee {
@@ -69,20 +56,15 @@ html {
   animation-duration: 24s; /* overridden inline */
   will-change: transform;
 }
-.auto-marquee:hover .marquee-track {
-  animation-play-state: paused;
-}
+.auto-marquee:hover .marquee-track { animation-play-state: paused; }
 
-/* Keyframes for continuous scroll */
 @keyframes bburn-marquee {
-  0% { transform: translateX(0); }
+  0%   { transform: translateX(0); }
   100% { transform: translateX(var(--marquee-translate)); }
 }
 
 /* Boosted badge pulse */
-.boosted-badge {
-  animation: boostedPulse 2.6s ease-in-out infinite;
-}
+.boosted-badge { animation: boostedPulse 2.6s ease-in-out infinite; }
 @keyframes boostedPulse {
   0%, 100% { filter: drop-shadow(0 0 4px rgba(255,184,76,0.35)); opacity: 1; }
   50%      { filter: drop-shadow(0 0 10px rgba(255,184,76,0.65)); opacity: 0.92; }
@@ -95,65 +77,83 @@ html {
 /* Cursor feedback while dragging */
 .is-dragging { cursor: grabbing !important; }
 
-/* (Optional) If you still animate the marquee-track, pause on hover */
-.auto-marquee:hover .marquee-track {
-  animation-play-state: paused;
-}
-
-html { scroll-behavior: smooth; }
-
+/* Simple fade-in-up utility */
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; }
-.giveaway-pulse {
-  animation: giveawayPulse 4s ease-in-out infinite;
-}
 
+/* Giveaway pulse */
+.giveaway-pulse { animation: giveawayPulse 4s ease-in-out infinite; }
 @keyframes giveawayPulse {
   0%, 100% { box-shadow: 0 0 18px rgba(255, 184, 76, 0.35); }
   50%      { box-shadow: 0 0 36px rgba(255, 184, 76, 0.55); }
 }
+
+/* Flicker (for spooky/ambient UI bits) */
 @keyframes flicker {
-  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-    opacity: 1;
-  }
-  20%, 24%, 55% {
-    opacity: 0.6;
-  }
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 24%, 55%                          { opacity: 0.6; }
 }
+.flicker { animation: flicker 2s infinite ease-in-out; }
 
-.flicker {
-  animation: flicker 2s infinite ease-in-out;
-}
-
+/* Fast pulse highlight (used on stats after a burn) */
 @keyframes pulse-fast {
   0%, 100% { opacity: 1; transform: scale(1); }
   50%      { opacity: 0.75; transform: scale(1.05); }
 }
 .animate-pulse-fast { animation: pulse-fast 0.7s ease-in-out 2; }
 
+/* === Reusable keyframes used with Tailwind's arbitrary animate-[...] === */
+/* Keep ONLY this warmPulse version (box-shadow ripple) */
 @keyframes warmPulse {
-  0%, 100% { filter: drop-shadow(0 0 6px rgba(255,180,60,0.4)); }
-  50% { filter: drop-shadow(0 0 12px rgba(255,200,90,0.65)); }
-}
-@keyframes blink {
-  0%, 60% { opacity: 1; }
-  61%, 100% { opacity: 0.2; }
-}
-
-@keyframes levels {
-  0%, 100% { transform: scaleY(0.6); }
-  50% { transform: scaleY(1.2); }
-}
-
-@keyframes ticker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-@keyframes warmPulse {
-  0% { box-shadow: 0 0 0 0 rgba(255, 185, 80, 0.35); }
+  0%   { box-shadow: 0 0 0 0 rgba(255, 185, 80, 0.35); }
   100% { box-shadow: 0 0 0 18px rgba(255, 185, 80, 0); }
 }
+
+/* Blink + levels for live bug / now playing meter */
+@keyframes blink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: 0.2; } }
+@keyframes levels { 0%, 100% { transform: scaleY(0.6); } 50% { transform: scaleY(1.2); } }
+
+/* Generic ticker (unused by marquee, but kept for reuse) */
+@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* Colon glow/pulse used by Countdown segments */
+.colon-glow  { text-shadow: 0 0 8px rgba(255,184,76,.6); }
+.colon-pulse { animation: colonPulse var(--colon-speed,2.6s) ease-in-out infinite; }
+@keyframes colonPulse { 0%,100% { opacity:.35 } 50% { opacity:1 } }
+
+/* ===== Hero video helpers ===== */
+.hero-vignette::after {
+  content:""; position:absolute; inset:0;
+  background: radial-gradient(120% 100% at 50% 10%, rgba(0,0,0,0) 0%, rgba(0,0,0,.45) 70%);
+  pointer-events:none;
+}
+.hero-zoom { transform: scale(1.04); }
+
+/* Floating embers used in the hero */
+.ember-dot{
+  position:absolute; width:3px; height:3px; border-radius:9999px;
+  background:rgba(255,196,120,.95);
+  box-shadow:0 0 6px rgba(255,180,60,.9), 0 0 12px rgba(255,160,60,.5);
+  animation: ember-rise var(--rise,6s) linear infinite;
+  opacity:.9;
+}
+@keyframes ember-rise{
+  0%   { transform: translate3d(0,0,0); opacity:.9; }
+  100% { transform: translate3d(var(--drift-x,12px), -110vh, 0); opacity:0; }
+}
+
+/* Soft ember shadow on the bear GIF */
+.shadow-ember {
+  box-shadow: 0 20px 50px rgba(255,170,60,.15), 0 0 80px rgba(255,140,0,.12);
+}
+
+/* Fade edges for the marquee track */
+.auto-marquee::before,
+.auto-marquee::after{
+  content:""; position:absolute; top:0; bottom:0; width:64px; pointer-events:none;
+}
+.auto-marquee::before{ left:0;  background:linear-gradient(90deg,#0d1a14,transparent); }
+.auto-marquee::after { right:0; background:linear-gradient(270deg,#0d1a14,transparent); }
