@@ -1313,12 +1313,16 @@ function MobileMenu() {
   return (
     <div className="md:hidden">
       <button
-        onClick={() => setOpen((v) => !v)}
-        aria-label="Menu"
-        className="ml-1 rounded-full border border-white/15 bg-white/5 px-3 py-2 text-white/80"
-      >
-        ☰
-      </button>
+  onClick={() => setOpen((v) => !v)}
+  aria-label="Menu"
+  className="
+    ml-1 text-amber-200/80 text-[22px]
+    hover:text-amber-100 transition
+    focus:outline-none active:scale-95
+  "
+>
+  ☰
+</button>
 
       {open && (
         <div className="absolute left-0 right-0 top-full z-40 border-b border-white/10 bg-[#0d1a14]/95 backdrop-blur">
