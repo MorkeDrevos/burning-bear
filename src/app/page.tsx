@@ -280,67 +280,94 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
   nextBurnMs = 500; // 0.5s for manual testing only
 }
 
-  // Fire overlay once when countdown hits ~0 (no sound)
-  useEffect(() => {
-    const nearZero = nextBurnMs >= 0 && nextBurnMs <= 800; // last 0.8s
-    if (!nearZero) return;
+// ========= Toggle (near other config at top) =========
+const ENABLE_BURN_OVERLAY = true; // set false to disable the banner entirely
 
-    const nowTs = Date.now();
-    const COOLDOWN = 60_000; // 60s
-    const last = lastTriggerRef.current || 0;
-    const tooSoon = nowTs - last < COOLDOWN;
-    if (tooSoon || showBurnMoment) return;
+// ========= Fire overlay once when countdown crosses ~0 (no sound) =========
+const prevMsRef = useRef<number | null>(null);
 
-    lastTriggerRef.current = nowTs;
-    setShowBurnMoment(true);
-  }, [nextBurnMs, showBurnMoment]);
+useEffect(() => {
+  if (!ENABLE_BURN_OVERLAY) return;
+
+  // Not a number or not yet initialized
+  if (!Number.isFinite(nextBurnMs)) return;
+
+  // Support manual testing: if URL has #testburn, allow tiny negative drift
+  const forceTest =
+    typeof window !== 'undefined' && window.location.hash === '#testburn';
+
+  const prev = prevMsRef.current;
+  prevMsRef.current = nextBurnMs;
+
+  // Show in the last 0.8s, allow short negative grace for timer drift
+  const THRESHOLD = 800;   // ms before zero
+  const NEG_GRACE = forceTest ? 3500 : 2500;
+
+  // Only trigger once when we cross from >THRESHOLD down into the window
+  const crossed =
+    (prev == null || prev > THRESHOLD) &&
+    nextBurnMs <= THRESHOLD &&
+    nextBurnMs >= -NEG_GRACE;
+
+  if (!crossed) return;
+
+  // Prevent double-flash if React re-renders around zero
+  const nowTs = Date.now();
+  const COOLDOWN = 10_000; // ms
+  const last = lastTriggerRef.current || 0;
+
+  if (nowTs - last < COOLDOWN || showBurnMoment) return;
+
+  lastTriggerRef.current = nowTs;
+  setShowBurnMoment(true);
+}, [nextBurnMs, showBurnMoment]);
 
   // Auto-loop: seed if missing and roll forward with a small buffer
-  useEffect(() => {
-    setData((prev) => {
-      if (!prev?.schedule) return prev;
+useEffect(() => {
+  setData((prev) => {
+    if (!prev?.schedule) return prev;
 
-      const s = prev.schedule as any;
-      const nowTs = Date.now();
+    const s = prev.schedule as any;
+    const nowTs = Date.now();
 
-      // accept minutes or ms
-      const toMs = (v?: number) => (typeof v === 'number' ? (v >= 10_000 ? v : v * 60_000) : undefined);
+    // accept minutes or ms
+    const toMs = (v?: number) => (typeof v === 'number' ? (v >= 10_000 ? v : v * 60_000) : undefined);
 
-      const burnI = s.burnIntervalMs ?? toMs(s.burnIntervalMinutes);
-      const buyI = s.buybackIntervalMs ?? toMs(s.buybackIntervalMinutes);
-      if (!burnI && !buyI) return prev;
+    const burnI = s.burnIntervalMs ?? toMs(s.burnIntervalMinutes);
+    const buyI  = s.buybackIntervalMs ?? toMs(s.buybackIntervalMinutes);
+    if (!burnI && !buyI) return prev;
 
-      // seed if missing
-      let nextBurnAt = s.nextBurnAt ?? (burnI ? nowTs + burnI : undefined);
-      let nextBuybackAt = s.nextBuybackAt ?? (buyI ? nowTs + buyI : undefined);
+    // seed if missing
+    let nextBurnAt    = s.nextBurnAt    ?? (burnI ? nowTs + burnI : undefined);
+    let nextBuybackAt = s.nextBuybackAt ?? (buyI  ? nowTs + buyI  : undefined);
 
-      // only advance after a tiny buffer past the target
-      const BUFFER = 15_000; // 15s
+    // only advance after a tiny buffer past the target (handles sleeping tabs)
+    const BUFFER = 15_000; // 15s
 
-      if (nextBurnAt && burnI && nowTs > nextBurnAt + BUFFER) {
-        const k = Math.ceil((nowTs - (nextBurnAt + BUFFER)) / burnI);
-        nextBurnAt = nextBurnAt + k * burnI;
-      }
-      if (nextBuybackAt && buyI && nowTs > nextBuybackAt + BUFFER) {
-        const k = Math.ceil((nowTs - (nextBuybackAt + BUFFER)) / buyI);
-        nextBuybackAt = nextBuybackAt + k * buyI;
-      }
+    if (nextBurnAt && burnI && nowTs > nextBurnAt + BUFFER) {
+      const k = Math.ceil((nowTs - (nextBurnAt + BUFFER)) / burnI);
+      nextBurnAt = nextBurnAt + k * burnI;
+    }
+    if (nextBuybackAt && buyI && nowTs > nextBuybackAt + BUFFER) {
+      const k = Math.ceil((nowTs - (nextBuybackAt + BUFFER)) / buyI);
+      nextBuybackAt = nextBuybackAt + k * buyI;
+    }
 
-      // no change? keep previous object
-      if (nextBurnAt === s.nextBurnAt && nextBuybackAt === s.nextBuybackAt) return prev;
+    // no change? keep previous object to avoid re-render churn
+    if (nextBurnAt === s.nextBurnAt && nextBuybackAt === s.nextBuybackAt) return prev;
 
-      return {
-        ...prev,
-        schedule: {
-          ...s,
-          burnIntervalMs: burnI ?? s.burnIntervalMs,
-          buybackIntervalMs: buyI ?? s.buybackIntervalMs,
-          nextBurnAt,
-          nextBuybackAt,
-        },
-      };
-    });
-  }, [now]);
+    return {
+      ...prev,
+      schedule: {
+        ...s,
+        burnIntervalMs: burnI ?? s.burnIntervalMs,
+        buybackIntervalMs: buyI ?? s.buybackIntervalMs,
+        nextBurnAt,
+        nextBuybackAt,
+      },
+    };
+  });
+}, [now]);
 
   // ...rest of your component (render) continues below
  
@@ -1170,6 +1197,117 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
           {value}
         </div>
       )}
+    </div>
+  );
+}
+
+/* =========================
+   Broadcast UI — Live TV vibe
+========================= */
+
+function LiveBug({ className = "" }: { className?: string }) {
+  return (
+    <div
+      className={
+        "pointer-events-none fixed top-4 left-4 z-[70] " + className
+      }
+    >
+      <div className="inline-flex items-center gap-2 rounded-lg bg-red-600/90 px-3 py-1.5 shadow-lg">
+        <span className="h-2.5 w-2.5 rounded-full bg-white animate-[blink_1.2s_infinite]" />
+        <span className="text-xs font-extrabold tracking-widest text-white">LIVE</span>
+        <span className="text-xs font-semibold text-white/90">• ON AIR</span>
+      </div>
+    </div>
+  );
+}
+
+function LowerThird({
+  title,
+  subtitle,
+}: {
+  title: string;
+  subtitle?: string;
+}) {
+  return (
+    <div className="pointer-events-none fixed bottom-24 left-4 z-[70] max-w-[60vw]">
+      <div className="rounded-2xl border border-amber-400/25 bg-black/55 backdrop-blur-md px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
+        <div className="text-amber-200 font-extrabold text-lg leading-tight">
+          {title}
+        </div>
+        {subtitle ? (
+          <div className="text-white/75 text-sm mt-0.5">{subtitle}</div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function NowPlaying({
+  track,
+  artist,
+}: {
+  track: string;
+  artist?: string;
+}) {
+  return (
+    <div className="pointer-events-none fixed top-4 right-4 z-[70]">
+      <div className="flex items-center gap-2 rounded-xl border border-white/12 bg-white/8 backdrop-blur px-3 py-1.5">
+        <span className="h-[10px] w-[10px] rounded-[2px] bg-amber-300 animate-[levels_1.6s_ease-in-out_infinite]" />
+        <div className="text-[12px] text-white/85">
+          <span className="font-semibold text-amber-100">Now Playing:</span>{" "}
+          {track}
+          {artist ? <span className="text-white/65"> — {artist}</span> : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RewardPill({
+  msToBurn,
+  potBBURN,
+}: {
+  msToBurn: number;
+  potBBURN: number;
+}) {
+  const soon = msToBurn >= 0 && msToBurn <= 5 * 60_000; // last 5 min pulse
+  return (
+    <div className="pointer-events-none fixed top-4 left-1/2 -translate-x-1/2 z-[70]">
+      <div
+        className={[
+          "rounded-full px-4 py-2 border backdrop-blur text-amber-100",
+          "border-amber-400/25 bg-amber-500/10",
+          soon ? "animate-[warmPulse_2.4s_ease-in-out_infinite]" : "",
+        ].join(" ")}
+      >
+        <span className="font-semibold">Campfire Reward:</span>{" "}
+        <span className="font-extrabold">{potBBURN.toLocaleString()} BBURN</span>
+      </div>
+    </div>
+  );
+}
+
+function NewsTicker({ items }: { items: string[] }) {
+  const loop = items.length ? [...items, ...items] : [];
+  const dur = Math.max(20, items.length * 7); // seconds
+  return (
+    <div className="pointer-events-none fixed bottom-0 left-0 right-0 z-[70]">
+      <div className="relative border-t border-white/10 bg-black/55 backdrop-blur">
+        <div
+          className="whitespace-nowrap will-change-transform animate-[ticker_linear_infinite]"
+          style={{ animationDuration: `${dur}s` as any }}
+        >
+          {loop.map((t, i) => (
+            <span
+              key={i}
+              className="inline-flex items-center gap-2 px-6 py-3 text-[14px] text-white/85"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-300" />
+              <span>{t}</span>
+            </span>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
