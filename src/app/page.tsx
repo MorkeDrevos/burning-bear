@@ -1153,29 +1153,24 @@ useEffect(() => {
 )}
 
 {/* --- Top Overlays (above everything) --- */}
-{broadcast.on && <LiveBug />} 
+{broadcast.on && <LiveBug />}
+{broadcast.on && broadcast.params.get('lower') && (
+  <LowerThird
+    title={(broadcast.params.get('lower') || '').split('|')[0] || 'Live Campfire'}
+    subtitle={(broadcast.params.get('lower') || '').split('|')[1] || undefined}
+  />
+)}
+{broadcast.on && broadcast.params.get('reward') && (
+  <RewardPill msToBurn={nextBurnMs} potBBURN={Number(broadcast.params.get('reward')) || 0} />
+)}
 {broadcast.on && broadcast.params.get('now') && (
   <NowPlaying
     track={(broadcast.params.get('now') || '').split('|')[0]}
     artist={(broadcast.params.get('now') || '').split('|')[1]}
   />
 )}
-{broadcast.on && (
-  <LowerThird
-    title={(broadcast.params.get('lower') || '').split('|')[0] || 'Live Campfire'}
-    subtitle={(broadcast.params.get('lower') || '').split('|')[1] || undefined}
-  />
-)}
 {broadcast.on && broadcast.params.get('ticker') && (
   <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
-)}
-
-{/* --- Keep this lower --- */}
-{broadcast.on && broadcast.params.get('reward') && (
-  <RewardPill
-    msToBurn={nextBurnMs}
-    potBBURN={Number(broadcast.params.get('reward')) || 0}
-  />
 )}
 
 </main>
@@ -1256,9 +1251,9 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
 function LiveBug({ className = "" }: { className?: string }) {
   return (
     <div
-      className={"pointer-events-none fixed left-4 z-[80] " + className}
-      style={{ top: 'var(--safe-top, 1rem)' }}
-    >
+  className={"pointer-events-none fixed z-[80] left-4 " + className}
+  style={{ top: 'var(--safe-top, 12px)' }}
+>
       <div className="inline-flex items-center gap-2 rounded-lg bg-red-600/90 px-3 py-1.5 shadow-lg">
         <span className="h-2.5 w-2.5 rounded-full bg-white animate-[blink_1.2s_infinite]" />
         <span className="text-xs font-extrabold tracking-widest text-white">LIVE</span>
@@ -1271,10 +1266,9 @@ function LiveBug({ className = "" }: { className?: string }) {
 function LowerThird({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <div
-      className="pointer-events-none fixed left-4 z-[86] max-w-[60vw]"
-      // ⬇️ was bottom: ... ; now top using the header-safe area
-      style={{ top: 'calc(var(--safe-top, 0px) + 8px)' }}
-    >
+  className="pointer-events-none fixed left-4 z-[86] max-w-[60vw]"
+  style={{ bottom: 'calc(var(--safe-bottom, 16px) + 60px)' }}
+>
       <div className="rounded-2xl border border-amber-400/25 bg-black/55 backdrop-blur-md px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
         <div className="text-amber-200 font-extrabold text-lg leading-tight">{title}</div>
         {subtitle ? <div className="text-white/75 text-sm mt-0.5">{subtitle}</div> : null}
@@ -1286,9 +1280,9 @@ function LowerThird({ title, subtitle }: { title: string; subtitle?: string }) {
 function NowPlaying({ track, artist }: { track: string; artist?: string }) {
   return (
     <div
-      className="pointer-events-none fixed right-4 z-[80]"
-      style={{ top: 'var(--safe-top, 1rem)' }}
-    >
+  className="pointer-events-none fixed z-[80] right-4"
+  style={{ top: 'var(--safe-top, 12px)' }}
+>
       <div className="flex items-center gap-2 rounded-xl border border-white/12 bg-white/8 backdrop-blur px-3 py-1.5">
         <span className="h-[10px] w-[10px] rounded-[2px] bg-amber-300 animate-[levels_1.6s_ease-in-out_infinite]" />
         <div className="text-[12px] text-white/85">
@@ -1304,10 +1298,9 @@ function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number
   const soon = msToBurn >= 0 && msToBurn <= 5 * 60_000;
   return (
     <div
-      className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[80]"
-      // ⬇️ was top: ... ; move it lower so it sits above the bottom safe area
-      style={{ bottom: 'calc(var(--safe-bottom, 0px) + 16px)' }}
-    >
+  className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[82]"
+  style={{ bottom: 'calc(var(--safe-bottom, 16px) + 110px)' }}
+>
       <div className={[
         "rounded-full px-4 py-2 border backdrop-blur text-amber-100",
         "border-amber-400/25 bg-amber-500/10",
@@ -1326,9 +1319,9 @@ function NewsTicker({ items }: { items: string[] }) {
 
   return (
     <div
-      className="pointer-events-none fixed left-0 right-0 z-[84]"
-      style={{ bottom: 'var(--safe-bottom, 0px)' }}
-    >
+  className="pointer-events-none fixed left-0 right-0 z-[84]"
+  style={{ bottom: 'var(--safe-bottom, 16px)' }}
+>
       <div className="mx-auto max-w-6xl px-3">
         <div className="relative rounded-xl border border-white/10 bg-black/45 backdrop-blur px-1">
           <div
@@ -1609,19 +1602,13 @@ function useBroadcast() {
 
   React.useEffect(() => {
     const applySafeAreas = () => {
-  const header = document.querySelector('header') as HTMLElement | null;
-  const safeTop = (header?.getBoundingClientRect().height ?? 0) + 10;
+      const header = document.querySelector('header') as HTMLElement | null;
+      const top = (header?.getBoundingClientRect().height ?? 0) + 12; // gap below header
+      const bottom = 18; // stable padding above ticker/lower-third
 
-  const buyBtn = document.querySelector(
-    'a[aria-label="Buy $BBURN on Jupiter"]'
-  ) as HTMLElement | null;
-  // clamp to avoid oversized bottom bars on small screens / zoom
-  const btnH = buyBtn?.getBoundingClientRect().height ?? 0;
-  const safeBottom = Math.min(btnH + 18, 88);  // ← clamp to 88px max
-
-  document.documentElement.style.setProperty('--safe-top', `${safeTop}px`);
-  document.documentElement.style.setProperty('--safe-bottom', `${safeBottom}px`);
-};
+      document.documentElement.style.setProperty('--safe-top', `${Math.max(8, top)}px`);
+      document.documentElement.style.setProperty('--safe-bottom', `${bottom}px`);
+    };
 
     const clearSafeAreas = () => {
       document.documentElement.style.removeProperty('--safe-top');
@@ -1638,7 +1625,6 @@ function useBroadcast() {
       setParams(qs);
 
       if (isBroadcast) {
-        // wait a tick so header/buy button are measured correctly
         requestAnimationFrame(applySafeAreas);
       } else {
         clearSafeAreas();
@@ -1649,18 +1635,15 @@ function useBroadcast() {
       if (onRef.current) applySafeAreas();
     };
 
+    // initial parse + listeners
     parse();
     window.addEventListener('hashchange', parse);
     window.addEventListener('resize', onResize);
 
-    // also observe header/buy button size changes
+    // observe header size only (no Buy button)
     const ro = new ResizeObserver(() => onResize());
     const header = document.querySelector('header') as HTMLElement | null;
-    const buyBtn = document.querySelector(
-      'a[aria-label="Buy $BBURN on Jupiter"]'
-    ) as HTMLElement | null;
     if (header) ro.observe(header);
-    if (buyBtn) ro.observe(buyBtn);
 
     return () => {
       window.removeEventListener('hashchange', parse);
