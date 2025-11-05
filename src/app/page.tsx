@@ -1270,8 +1270,8 @@ function LiveBug({ className = "" }: { className?: string }) {
 function LowerThird({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <div
-      className="pointer-events-none fixed left-4 z-[80] max-w-[60vw]"
-      style={{ bottom: 'calc(var(--safe-bottom, 0px) + 1.5rem)' }}
+      className="pointer-events-none fixed left-4 z-[86] max-w-[60vw]"
+      style={{ bottom: 'calc(var(--safe-bottom, 0px) + 1rem)' }} // ← sits above ticker
     >
       <div className="rounded-2xl border border-amber-400/25 bg-black/55 backdrop-blur-md px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
         <div className="text-amber-200 font-extrabold text-lg leading-tight">{title}</div>
@@ -1320,20 +1320,28 @@ function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number
 function NewsTicker({ items }: { items: string[] }) {
   const loop = items.length ? [...items, ...items] : [];
   const dur = Math.max(20, items.length * 7);
+
   return (
     <div
-      className="pointer-events-none fixed left-0 right-0 z-[80]"
+      className="pointer-events-none fixed left-0 right-0 z-[84]"
       style={{ bottom: 'var(--safe-bottom, 0px)' }}
     >
-      <div className="relative border-t border-white/10 bg-black/55 backdrop-blur">
-        <div className="whitespace-nowrap will-change-transform animate-[ticker_linear_infinite]"
-             style={{ animationDuration: `${dur}s` as any }}>
-          {loop.map((t, i) => (
-            <span key={i} className="inline-flex items-center gap-2 px-6 py-3 text-[14px] text-white/85">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-300" />
-              <span>{t}</span>
-            </span>
-          ))}
+      <div className="mx-auto max-w-6xl px-3">
+        <div className="relative rounded-xl border border-white/10 bg-black/45 backdrop-blur px-1">
+          <div
+            className="whitespace-nowrap will-change-transform animate-[ticker_linear_infinite]"
+            style={{ animationDuration: `${dur}s` as any }}
+          >
+            {loop.map((t, i) => (
+              <span
+                key={i}
+                className="inline-flex items-center gap-2 px-5 py-2 text-[13px] text-white/85"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-300" />
+                <span>{t}</span>
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -1598,19 +1606,19 @@ function useBroadcast() {
 
   React.useEffect(() => {
     const applySafeAreas = () => {
-      // header height → top safe zone
-      const header = document.querySelector('header') as HTMLElement | null;
-      const safeTop = (header?.offsetHeight ?? 0) + 10;
+  const header = document.querySelector('header') as HTMLElement | null;
+  const safeTop = (header?.getBoundingClientRect().height ?? 0) + 10;
 
-      // sticky Buy button height → bottom safe zone
-      const buyBtn = document.querySelector(
-        'a[aria-label="Buy $BBURN on Jupiter"]'
-      ) as HTMLElement | null;
-      const safeBottom = (buyBtn?.offsetHeight ?? 0) + 18;
+  const buyBtn = document.querySelector(
+    'a[aria-label="Buy $BBURN on Jupiter"]'
+  ) as HTMLElement | null;
+  // clamp to avoid oversized bottom bars on small screens / zoom
+  const btnH = buyBtn?.getBoundingClientRect().height ?? 0;
+  const safeBottom = Math.min(btnH + 18, 88);  // ← clamp to 88px max
 
-      document.documentElement.style.setProperty('--safe-top', `${safeTop}px`);
-      document.documentElement.style.setProperty('--safe-bottom', `${safeBottom}px`);
-    };
+  document.documentElement.style.setProperty('--safe-top', `${safeTop}px`);
+  document.documentElement.style.setProperty('--safe-bottom', `${safeBottom}px`);
+};
 
     const clearSafeAreas = () => {
       document.documentElement.style.removeProperty('--safe-top');
