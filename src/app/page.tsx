@@ -1148,6 +1148,33 @@ useEffect(() => {
   <span>Buy $BBURN on Jupiter</span>
 </a>
 
+{broadcast.on && <LiveBug />}
+
+{broadcast.on && (
+  <LowerThird
+    title={(broadcast.params.get('lower') || '').split('|')[0] || 'Live Campfire'}
+    subtitle={(broadcast.params.get('lower') || '').split('|')[1] || undefined}
+  />
+)}
+
+{broadcast.on && broadcast.params.get('reward') && (
+  <RewardPill
+    msToBurn={nextBurnMs}
+    potBBURN={Number(broadcast.params.get('reward')) || 0}
+  />
+)}
+
+{broadcast.on && broadcast.params.get('now') && (
+  <NowPlaying
+    track={(broadcast.params.get('now') || '').split('|')[0]}
+    artist={(broadcast.params.get('now') || '').split('|')[1]}
+  />
+)}
+
+{broadcast.on && broadcast.params.get('ticker') && (
+  <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
+)}
+
 </main>
 );
 }
@@ -1579,6 +1606,28 @@ function JupiterMark({ className = '' }: { className?: string }) {
       />
     </svg>
   );
+}
+
+const broadcast = useBroadcast();
+
+function useBroadcast() {
+  const [on, setOn] = React.useState(false);
+  const [params, setParams] = React.useState<URLSearchParams>(new URLSearchParams());
+
+  React.useEffect(() => {
+    const parse = () => {
+      const h = window.location.hash || '';
+      const isBroadcast = h.startsWith('#broadcast');
+      const qs = new URLSearchParams(h.split('?')[1] || '');
+      setOn(isBroadcast);
+      setParams(qs);
+    };
+    parse();
+    window.addEventListener('hashchange', parse);
+    return () => window.removeEventListener('hashchange', parse);
+  }, []);
+
+  return { on, params };
 }
 
 /* =========================
