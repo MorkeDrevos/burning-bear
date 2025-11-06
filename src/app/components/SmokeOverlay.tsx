@@ -13,37 +13,38 @@ export default function SmokeOverlay({
 }: {
   density?: Density;
   area?: Area;
-  plumes?: number;           // how many puffs
-  className?: string;        // ✅ allow callers to position/stack
+  plumes?: number;
+  className?: string;
   style?: React.CSSProperties;
 }) {
-  // map density → overall opacity multiplier
+  // Stronger by default so it’s clearly visible on stream
   const baseOpacity =
-    density === 'light' ? 0.14 : density === 'medium' ? 0.22 : 0.32;
+    density === 'light' ? 0.35 :
+    density === 'medium' ? 0.50 :
+    0.70;
 
-  // map area → vertical coverage
   const areaClass =
-    area === 'top' ? 'top-0 h-1/2' : area === 'bottom' ? 'bottom-0 h-1/2' : 'inset-0';
+    area === 'top' ? 'top-0 h-1/2' :
+    area === 'bottom' ? 'bottom-0 h-1/2' :
+    'inset-0';
 
-  // deterministic plumes per render
   const items = Array.from({ length: plumes });
 
   return (
     <div
-      className={`smoke-overlay absolute ${areaClass} ${className}`}
+      className={`smoke-overlay absolute ${areaClass} pointer-events-none ${className}`}
       aria-hidden="true"
       style={{ opacity: baseOpacity, ...style }}
     >
       {items.map((_, i) => {
-        // stylized randomness
-        const delay = (i * 0.6) % 5;                    // 0..5s stagger
-        const size = 120 + ((i * 37) % 80);             // 120..200px
-        const leftPct = 20 + ((i * 17) % 60);           // 20%..80%
-        const bottom = area === 'top' ? 0 : 6 + ((i * 13) % 24); // start height
-        const rise = 9 + ((i * 7) % 6);                 // 9..15s
-        const sway = 5 + ((i * 5) % 5);                 // 5..10s
-        const blur = 14 + ((i * 9) % 10);               // 14..24px
-        const driftX = -18 + ((i * 11) % 36);           // -18..18px
+        const delay = (i * 0.6) % 5;              // 0..5s
+        const size = 140 + ((i * 37) % 120);      // 140..260px
+        const leftPct = 12 + ((i * 17) % 76);     // 12%..88%
+        const bottom = area === 'top' ? 0 : 6 + ((i * 13) % 24);
+        const rise = 10 + ((i * 7) % 7);          // 10..17s
+        const sway = 5 + ((i * 5) % 6);           // 5..11s
+        const blur = 16 + ((i * 9) % 12);         // 16..28px
+        const driftX = -22 + ((i * 11) % 44);     // -22..22px
 
         return (
           <span
@@ -51,19 +52,55 @@ export default function SmokeOverlay({
             className="smoke-plume"
             style={
               {
-                '--delay': `${delay}s`,
-                '--size': `${size}px`,
-                '--left': `${leftPct}%`,
-                '--bottom': `${bottom}px`,
-                '--rise': `${rise}s`,
-                '--sway': `${sway}s`,
-                '--blur': `${blur}px`,
-                '--drift-x': `${driftX}px`,
+                // CSS vars for the keyframed styles below
+                ['--delay' as any]: `${delay}s`,
+                ['--size' as any]: `${size}px`,
+                ['--left' as any]: `${leftPct}%`,
+                ['--bottom' as any]: `${bottom}px`,
+                ['--rise' as any]: `${rise}s`,
+                ['--sway' as any]: `${sway}s`,
+                ['--blur' as any]: `${blur}px`,
+                ['--drift-x' as any]: `${driftX}px`,
               } as React.CSSProperties
             }
           />
         );
       })}
+
+      <style jsx>{`
+        .smoke-overlay { position: absolute; left: 0; right: 0; }
+        .smoke-plume {
+          position: absolute;
+          left: var(--left);
+          bottom: var(--bottom);
+          width: var(--size);
+          height: var(--size);
+          border-radius: 9999px;
+          filter: blur(var(--blur));
+          opacity: 0.95;
+          background: radial-gradient(
+            circle at 50% 60%,
+            rgba(255, 230, 200, 0.15),
+            rgba(220, 170, 110, 0.10) 35%,
+            rgba(40, 30, 20, 0.00) 70%
+          );
+          animation:
+            rise var(--rise) linear var(--delay) infinite,
+            sway var(--sway) ease-in-out var(--delay) infinite;
+        }
+
+        @keyframes rise {
+          0%   { transform: translate3d(0, 0, 0) scale(1);   opacity: .0; }
+          8%   { opacity: .8; }
+          75%  { opacity: .8; }
+          100% { transform: translate3d(var(--drift-x), -90vh, 0) scale(1.15); opacity: 0; }
+        }
+        @keyframes sway {
+          0%   { transform: translateX(0); }
+          50%  { transform: translateX(calc(var(--drift-x) * 0.6)); }
+          100% { transform: translateX(0); }
+        }
+      `}</style>
     </div>
   );
 }
