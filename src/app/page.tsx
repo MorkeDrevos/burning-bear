@@ -1256,7 +1256,7 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
    (Lowered overlays + bigger reward pill)
 ========================= */
 
-const OVERLAY_TOP = 72;         // px from very top (under navbar/H1 area)
+const OVERLAY_TOP = 96;         // px from very top (under navbar/H1 area)
 const TICKER_GAP  = 56;         // px the LowerThird sits above bottom ticker
 
 function LiveBug({ className = "" }: { className?: string }) {
@@ -1312,13 +1312,12 @@ function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number
       className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[82]"
       style={{ top: `calc(var(--safe-top, 0px) + ${OVERLAY_TOP - 6}px)` }} // slightly centered between Live & NowPlaying
     >
-      <div
-        className={[
-          "rounded-full border backdrop-blur shadow-lg",
-          "px-5 py-2.5 text-amber-100 text-sm sm:text-base",
-          "border-amber-400/25 bg-amber-500/10",
-          soon ? "animate-[warmPulse_2.4s_ease-in-out_infinite]" : "",
-        ].join(" ")}
+      <div className={[
+  "rounded-full border backdrop-blur shadow-lg",
+  "px-6 py-3 text-amber-100 text-base sm:text-lg",
+  "border-amber-400/25 bg-amber-500/10",
+  soon ? "animate-[warmPulse_2.4s_ease-in-out_infinite]" : "",
+].join(" ")}>
       >
         <span className="font-semibold">Campfire Reward:</span>{" "}
         <span className="font-extrabold">{potBBURN.toLocaleString()} BBURN</span>
