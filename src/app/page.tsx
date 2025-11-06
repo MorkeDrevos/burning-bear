@@ -1253,13 +1253,17 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
 
 /* =========================
    Broadcast UI — Live TV vibe
+   (Lowered overlays + bigger reward pill)
 ========================= */
+
+const OVERLAY_TOP = 72;         // px from very top (under navbar/H1 area)
+const TICKER_GAP  = 56;         // px the LowerThird sits above bottom ticker
 
 function LiveBug({ className = "" }: { className?: string }) {
   return (
     <div
       className={"pointer-events-none fixed left-4 z-[80] " + className}
-      style={{ top: 'var(--safe-top, 1rem)' }}
+      style={{ top: `calc(var(--safe-top, 0px) + ${OVERLAY_TOP}px)` }}
     >
       <div className="inline-flex items-center gap-2 rounded-lg bg-red-600/90 px-3 py-1.5 shadow-lg">
         <span className="h-2.5 w-2.5 rounded-full bg-white animate-[blink_1.2s_infinite]" />
@@ -1274,7 +1278,7 @@ function LowerThird({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <div
       className="pointer-events-none fixed left-4 z-[86] max-w-[60vw]"
-      style={{ bottom: 'calc(var(--safe-bottom, 0px) + 1rem)' }} // ← sits above ticker
+      style={{ bottom: `calc(var(--safe-bottom, 0px) + ${TICKER_GAP}px)` }} // sits above ticker
     >
       <div className="rounded-2xl border border-amber-400/25 bg-black/55 backdrop-blur-md px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
         <div className="text-amber-200 font-extrabold text-lg leading-tight">{title}</div>
@@ -1288,7 +1292,7 @@ function NowPlaying({ track, artist }: { track: string; artist?: string }) {
   return (
     <div
       className="pointer-events-none fixed right-4 z-[80]"
-      style={{ top: 'var(--safe-top, 1rem)' }}
+      style={{ top: `calc(var(--safe-top, 0px) + ${OVERLAY_TOP}px)` }}
     >
       <div className="flex items-center gap-2 rounded-xl border border-white/12 bg-white/8 backdrop-blur px-3 py-1.5">
         <span className="h-[10px] w-[10px] rounded-[2px] bg-amber-300 animate-[levels_1.6s_ease-in-out_infinite]" />
@@ -1305,14 +1309,17 @@ function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number
   const soon = msToBurn >= 0 && msToBurn <= 5 * 60_000;
   return (
     <div
-      className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[80]"
-      style={{ top: 'var(--safe-top, 1rem)' }}
+      className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[82]"
+      style={{ top: `calc(var(--safe-top, 0px) + ${OVERLAY_TOP - 6}px)` }} // slightly centered between Live & NowPlaying
     >
-      <div className={[
-        "rounded-full px-4 py-2 border backdrop-blur text-amber-100",
-        "border-amber-400/25 bg-amber-500/10",
-        soon ? "animate-[warmPulse_2.4s_ease-in-out_infinite]" : "",
-      ].join(" ")}>
+      <div
+        className={[
+          "rounded-full border backdrop-blur shadow-lg",
+          "px-5 py-2.5 text-amber-100 text-sm sm:text-base",
+          "border-amber-400/25 bg-amber-500/10",
+          soon ? "animate-[warmPulse_2.4s_ease-in-out_infinite]" : "",
+        ].join(" ")}
+      >
         <span className="font-semibold">Campfire Reward:</span>{" "}
         <span className="font-extrabold">{potBBURN.toLocaleString()} BBURN</span>
       </div>
