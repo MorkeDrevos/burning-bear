@@ -3,13 +3,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 
-// 👉 TreasuryLockCard is in src/components/
-// ✅ correct path from src/app/page.tsx → src/app/components/*
+// ✅ Components (all inside src/app/components/)
 import TreasuryLockCard from './components/TreasuryLockCard';
-
-// 👉 CopyButton is in src/app/components/
 import CopyButton from './components/CopyButton';
-
 import BroadcastOverlays from './components/BroadcastOverlays';
 
 /* =========================
