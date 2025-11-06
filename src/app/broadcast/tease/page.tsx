@@ -185,3 +185,15 @@ export default function Tease() {
     </div>
   );
 }
+
+{/* global transparency + reset for OBS */}
+<style jsx global>{`
+  html, body, #__next, :root {
+    background: transparent !important;
+  }
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden; /* avoids scrollbars in Browser Source */
+  }
+`}</style>
