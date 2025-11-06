@@ -1152,7 +1152,7 @@ useEffect(() => {
 
 {/* --- Broadcast overlays (top-most) --- */}
 {broadcast.on && <LiveBug />}
-/* If you added the bonus banner component, keep it right under LiveBug */
+
 {broadcast.on && <BonusBanner msToBurn={nextBurnMs} />}
 
 {broadcast.on && Boolean(broadcast.params.get('lower')) && (
