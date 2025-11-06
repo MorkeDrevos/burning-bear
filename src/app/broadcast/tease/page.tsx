@@ -2,246 +2,131 @@
 
 import React from 'react';
 
-type Schedule = {
-  burnIntervalMinutes?: number;
-  burnIntervalMs?: number;
-  nextBurnAt?: number;
-  lastBurnAt?: number;
-};
-type StateJson = { schedule?: Schedule };
-
 export default function Tease() {
-  // ---- runtime query params (guarded for SSR)
-  const [params, setParams] = React.useState<URLSearchParams | null>(null);
-  React.useEffect(() => {
-    setParams(new URLSearchParams(window.location.search));
-  }, []);
+  // Guard window for Next prerender
+  const [qs, setQs] = React.useState<URLSearchParams | null>(null);
+  React.useEffect(() => setQs(new URLSearchParams(window.location.search)), []);
 
-  // defaults; hydrated after params is set
-  const mode  = (params?.get('mode')  || 'hero') as 'hero' | 'banner'; // teaser only
-  const y     = Number(params?.get('y') || 26);       // vh anchor for hero
-  const w     = Number(params?.get('w') || 1100);     // max card width (px)
-  const scale = Number(params?.get('scale') || 1.05); // slight size tweak
-  const glass = (params?.get('glass') || 'dark') as 'soft' | 'dark';
-  const title = params?.get('title') || "Something’s heating up at the Campfire…";
+  // URL params (all optional)
+  const y      = Number(qs?.get('y') ?? 26);                    // vertical anchor in vh (over your H1)
+  const w      = Number(qs?.get('w') ?? 1100);                  // max width (px)
+  const scale  = Number(qs?.get('scale') ?? 1.05);              // size tweak
+  const align  = (qs?.get('align') ?? 'center') as 'left'|'center'|'right';
+  const title  = qs?.get('title') ?? "Something’s heating up at the Campfire…";
+  const sub    = qs?.get('sub') ?? "";                          // optional small subline
+  const live   = (qs?.get('live') ?? '1') === '1';              // show 🔴 LIVE pill
+  const glow   = (qs?.get('glow') ?? '1') === '1';              // text glow on/off
+  const mode   = (qs?.get('mode') ?? 'strip') as 'strip'|'tag'; // 'strip' = wide bar, 'tag' = compact pill
 
-  // ---- clocks
-  const [now, setNow] = React.useState<number>(Date.now());
-  React.useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  // ---- find the next burn from /data/state.json
-  const [target, setTarget] = React.useState<number | null>(null);
-
-  React.useEffect(() => {
-    let alive = true;
-    const rollForward = (next: number, intervalMs: number, nowTs: number) => {
-      if (!(Number.isFinite(next) && Number.isFinite(intervalMs)) || intervalMs <= 0) return null;
-      if (nowTs <= next) return next;
-      const k = Math.ceil((nowTs - next) / intervalMs);
-      return next + k * intervalMs;
-    };
-
-    const load = async () => {
-      try {
-        const r = await fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' });
-        const d: StateJson = await r.json();
-        if (!alive) return;
-        const s = d?.schedule ?? {};
-        const intervalMs =
-          typeof s.burnIntervalMs === 'number'
-            ? s.burnIntervalMs
-            : typeof s.burnIntervalMinutes === 'number'
-            ? s.burnIntervalMinutes * 60_000
-            : undefined;
-
-        const nowTs = Date.now();
-        let next: number | null = typeof s.nextBurnAt === 'number' ? s.nextBurnAt : null;
-        if (next == null && typeof s.lastBurnAt === 'number' && intervalMs) {
-          next = s.lastBurnAt + intervalMs;
-        }
-        if (next != null && intervalMs) {
-          setTarget(rollForward(next, intervalMs, nowTs) ?? next);
-        } else {
-          setTarget(next);
-        }
-      } catch {
-        /* keep previous target */
-      }
-    };
-
-    load();
-    const id = setInterval(load, 15_000);
-    return () => {
-      alive = false;
-      clearInterval(id);
-    };
-  }, []);
-
-  const remaining = target != null ? Math.max(0, target - now) : Number.POSITIVE_INFINITY;
-  const segs = (() => {
-    const t = Math.floor(remaining / 1000);
-    const h = Math.floor(t / 3600);
-    const m = Math.floor((t % 3600) / 60);
-    const s = t % 60;
-    return { h, m: String(m).padStart(2, '0'), s: String(s).padStart(2, '0') };
-  })();
-
-  // ---- small building blocks
-  const Chip = ({ children }: { children: React.ReactNode }) => (
-    <span
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: '8px 12px',
-        borderRadius: 999,
-        border: '1px solid rgba(255,235,200,.20)',
-        background: 'rgba(0,0,0,.28)',
-        fontWeight: 800,
-        fontSize: 14,
-        color: '#ffe8c7',
-        lineHeight: 1,
-      }}
-    >
-      {children}
-    </span>
-  );
-
-  const Seg = ({ children }: { children: React.ReactNode }) => (
-    <span
-      style={{
-        display: 'inline-flex',
-        minWidth: 34,
-        height: 34,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '0 6px',
-        borderRadius: 10,
-        border: '1px solid rgba(255,235,200,.22)',
-        background: 'rgba(16,12,8,.45)',
-        fontWeight: 900,
-        fontSize: 16,
-        color: '#fff4dc',
-      }}
-    >
-      {children}
-    </span>
-  );
-
-  // ---- outer wrappers (transparent page)
-  const Card: React.CSSProperties = {
-    maxWidth: w,
-    margin: '0 auto',
-    borderRadius: 18,
-    border: '1px solid rgba(255,230,190,0.22)',
-    background:
-      glass === 'dark'
-        ? 'linear-gradient(180deg, rgba(18,12,8,0.86), rgba(14,10,7,0.82))'
-        : 'linear-gradient(180deg, rgba(22,16,10,0.78), rgba(16,12,8,0.74))',
-    boxShadow:
-      '0 14px 40px rgba(0,0,0,0.48), 0 0 70px rgba(255,180,70,0.10), inset 0 0 54px rgba(255,200,140,0.08)',
-    backdropFilter: 'blur(12px)',
+  const container: React.CSSProperties = {
+    position: 'fixed',
+    left: '50%',
+    top: `${y}vh`,
+    transform: `translate(-50%,-50%) scale(${scale})`,
+    width: 'min(94vw, 1400px)',
     pointerEvents: 'none',
+    zIndex: 999999,
+    background: 'transparent',
   };
 
-  const rowStyle: React.CSSProperties = {
+  const row: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
     gap: 14,
-    padding: '14px 16px',
+    justifyContent: align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center',
   };
 
+  const strip: React.CSSProperties = {
+    maxWidth: w,
+    margin: '0 auto',
+    borderRadius: 16,
+    border: '1px solid rgba(255,235,200,.20)',
+    background: 'linear-gradient(180deg, rgba(16,12,8,.80), rgba(14,10,7,.78))',
+    boxShadow: '0 16px 40px rgba(0,0,0,.45), inset 0 0 48px rgba(255,200,140,.06)',
+    backdropFilter: 'blur(10px)',
+    padding: '14px 18px',
+  };
+
+  const livePill: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+    padding: '7px 12px',
+    borderRadius: 999,
+    border: '1px solid rgba(255,120,120,.35)',
+    background: 'rgba(30,12,12,.55)',
+    color: '#ffd7c9',
+    fontWeight: 800,
+    fontSize: 13,
+    lineHeight: 1,
+    whiteSpace: 'nowrap',
+  };
+
+  const dot: React.CSSProperties = {
+    width: 8, height: 8, borderRadius: 999,
+    background: '#ff4747', boxShadow: '0 0 10px #ff4747',
+  };
+
+  const h: React.CSSProperties = {
+    fontWeight: 900,
+    fontSize: 20,
+    color: '#ffe8c7',
+    letterSpacing: '.2px',
+    textShadow: glow ? '0 0 24px rgba(255,200,120,.25)' : 'none',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  };
+
+  const subTxt: React.CSSProperties = {
+    marginLeft: 10,
+    fontWeight: 700,
+    fontSize: 13,
+    color: 'rgba(255,240,210,.85)',
+    opacity: sub ? 1 : 0,
+  };
+
+  // Compact “tag” mode (if you want even smaller)
+  if (mode === 'tag') {
+    return (
+      <>
+        <div style={{...container, width: 'auto'}}>
+          <div style={{...strip, padding: '10px 14px'}}>
+            <div style={row}>
+              {live && (
+                <span style={livePill}><span style={dot} /> LIVE</span>
+              )}
+              <div style={{...h, fontSize: 18}} title={title}>🔥 {title}</div>
+            </div>
+          </div>
+        </div>
+
+        <style jsx global>{`
+          html,body,#__next,:root{background:transparent!important}
+          html,body{margin:0!important;padding:0!important;overflow:hidden!important}
+        `}</style>
+      </>
+    );
+  }
+
+  // Default: wide strip
   return (
     <>
-      {mode === 'hero' ? (
-        <div
-          style={{
-            position: 'fixed',
-            left: '50%',
-            top: `${y}vh`,
-            transform: `translate(-50%,-50%) scale(${scale})`,
-            width: 'min(92vw, 1400px)',
-            background: 'transparent',
-            pointerEvents: 'none',
-          }}
-        >
-          <div style={Card}>
-            {/* Row: LIVE + Title + Countdown */}
-            <div style={rowStyle}>
-              <Chip>
-                <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 999, background: '#ff4d4d', boxShadow: '0 0 10px #ff4d4d' }} />
-                LIVE
-              </Chip>
-
-              <div
-                style={{
-                  fontWeight: 900,
-                  fontSize: 20,
-                  color: '#ffe7b8',
-                  textShadow: '0 0 22px rgba(255,200,120,.25)',
-                  letterSpacing: '.2px',
-                  marginRight: 'auto',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-                title={title}
-              >
-                🔥 {title}
-              </div>
-
-              <Chip>
-                Next burn in
-                <span style={{ display: 'inline-flex', gap: 6, marginLeft: 6 }}>
-                  <Seg>{segs.h}</Seg> : <Seg>{segs.m}</Seg> : <Seg>{segs.s}</Seg>
-                </span>
-              </Chip>
-            </div>
+      <div style={container}>
+        <div style={strip}>
+          <div style={row}>
+            {live && (
+              <span style={livePill}><span style={dot} /> LIVE</span>
+            )}
+            <div style={h} title={title}>🔥 {title}</div>
+            {sub && <span style={subTxt}>{sub}</span>}
           </div>
         </div>
-      ) : (
-        // banner fallback if ever used
-        <div
-          style={{
-            position: 'fixed', inset: 0, display: 'flex',
-            alignItems: 'flex-start', justifyContent: 'center',
-            padding: 24, background: 'transparent', pointerEvents: 'none',
-          }}
-        >
-          <div style={{ ...Card, transform: `scale(${scale})` }}>
-            <div style={rowStyle}>
-              <Chip>
-                <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 999, background: '#ff4d4d', boxShadow: '0 0 10px #ff4d4d' }} />
-                LIVE
-              </Chip>
-              <div
-                style={{
-                  fontWeight: 900, fontSize: 20, color: '#ffe7b8',
-                  textShadow: '0 0 22px rgba(255,200,120,.25)', letterSpacing: '.2px',
-                  marginRight: 'auto', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                }}
-                title={title}
-              >
-                🔥 {title}
-              </div>
-              <Chip>
-                Next burn in
-                <span style={{ display: 'inline-flex', gap: 6, marginLeft: 6 }}>
-                  <Seg>{segs.h}</Seg> : <Seg>{segs.m}</Seg> : <Seg>{segs.s}</Seg>
-                </span>
-              </Chip>
-            </div>
-          </div>
-        </div>
-      )}
+      </div>
 
-      {/* Force transparent page for OBS */}
       <style jsx global>{`
-        html, body, #__next, :root { background: transparent !important; }
-        html, body { margin: 0 !important; padding: 0 !important; overflow: hidden !important; }
+        html,body,#__next,:root{background:transparent!important}
+        html,body{margin:0!important;padding:0!important;overflow:hidden!important}
       `}</style>
     </>
   );
