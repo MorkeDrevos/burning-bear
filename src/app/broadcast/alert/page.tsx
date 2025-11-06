@@ -5,7 +5,11 @@ import { useEffect, useMemo, useState } from 'react';
 export default function AlertToast() {
   const [visible, setVisible] = useState(false);
 
-  const params = useMemo(() => new URLSearchParams(window.location.search), []);
+  const params = useMemo(() => {
+    if (typeof window === 'undefined') return new URLSearchParams();
+    return new URLSearchParams(window.location.search);
+  }, []);
+
   const show = params.get('show') === '1';
   const seconds = Math.max(1, Number(params.get('sec') ?? 4));
   const msg = params.get('msg') ?? '🔥 Burn Executed — Supply Down';
@@ -13,7 +17,7 @@ export default function AlertToast() {
   useEffect(() => {
     if (!show) return;
     setVisible(true);
-    const t = setTimeout(() => setVisible(false), seconds * 1000 + 300); // +exit anim
+    const t = setTimeout(() => setVisible(false), seconds * 1000 + 300);
     return () => clearTimeout(t);
   }, [show, seconds]);
 
