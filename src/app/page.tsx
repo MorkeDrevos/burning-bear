@@ -1337,17 +1337,15 @@ function NewsTicker({ items }: { items: string[] }) {
       style={{ bottom: 'var(--safe-bottom, 0px)' }}
     >
       <div className="mx-auto max-w-6xl px-3">
-        {/* ⬇️ overflow-hidden keeps the text inside the rounded box */}
-        <div className="relative rounded-xl border border-white/10 bg-black/45 backdrop-blur px-1 overflow-hidden">
+        <div className="relative rounded-xl border border-white/10 bg-black/45 backdrop-blur overflow-hidden">
           <div
-            className="whitespace-nowrap will-change-transform animate-[ticker_linear_infinite] leading-[1] py-2"
+            className="whitespace-nowrap will-change-transform animate-[ticker_linear_infinite] leading-[1] py-2 pl-6"
             style={{
               animationDuration: `${dur}s` as any,
-              // nice fade at the edges (works in WebKit/Chromium + FF)
               maskImage:
-                'linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%)',
+                'linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%)',
               WebkitMaskImage:
-                'linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%)',
+                'linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%)',
             }}
           >
             {loop.map((t, i) => (
