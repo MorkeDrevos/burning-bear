@@ -6,21 +6,26 @@ import LiveBurnProgress from './LiveBurnProgress';
 
 /**
  * Broadcast overlays used on the live stream.
- * Activate via:
- *   #broadcast?showSmoke=1&showTicker=1&title=The%20Burning%20Bear
- * or  #/broadcast?...
- * or  ?broadcast=1&...
  *
- * Supported params:
+ * Activate via:
+ *   #broadcast?on=1&showSmoke=1&showTicker=1&title=The%20Burning%20Bear
+ * or #/broadcast?...
+ * or ?broadcast=1&...
+ *
+ * Params:
+ * - on=1 (optional with the hash versions)
  * - showSmoke=0/1
  * - showBug=0/1
  * - showTicker=0/1
  * - showProgress=0/1
- * - title, subtitle
- * - track, artist
+ * - title=..., subtitle=...  OR  lower=Title|Subtitle
+ * - track=..., artist=...
  * - reward=<number>
- * - revealAt=<ISO or ms> (alias: at)
- * - revealIn=<ms>        (alias: in)
+ * - revealAt=<ISO or ms>  (alias: at)
+ * - revealIn=<ms>         (alias: in)
+ * - nextBurnMs=<ms>       (forces progress bar source)
+ * - smoke=light|medium|heavy (visual strength; default heavy)
+ * - ticker=a;b;c          (custom ticker items)
  */
 
 type Props = {
@@ -69,14 +74,14 @@ export default function BroadcastOverlays({ nextBurnMs }: Props) {
       const looksHash =
         lower.startsWith('#broadcast') || lower.startsWith('#/broadcast');
 
-      // params: prefer hash query; otherwise use window.search
       const fromHash = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
       const fromSearch = new URLSearchParams(search.startsWith('?') ? search.slice(1) : '');
       const params = fromHash.toString() ? fromHash : fromSearch;
 
-      const queryFlag = (fromSearch.get('broadcast') || '') === '1';
+      const queryFlag = (fromSearch.get('broadcast') || '') === '1' || (fromSearch.get('on') || '') === '1';
+      const hashFlag  = (fromHash.get('on') || '') === '1';
 
-      const isOn = looksHash || queryFlag;
+      const isOn = looksHash || queryFlag || hashFlag;
 
       setActive(isOn);
       setQs(params);
@@ -97,7 +102,6 @@ export default function BroadcastOverlays({ nextBurnMs }: Props) {
     };
     window.addEventListener('resize', onResize);
 
-    // re-measure if header/buy button size changes
     const ro = new ResizeObserver(() => onResize());
     const header = document.querySelector('header') as HTMLElement | null;
     const buyBtn = document.querySelector(
@@ -131,16 +135,27 @@ export default function BroadcastOverlays({ nextBurnMs }: Props) {
   };
   const txt = (k: string) => qs.get(k) ?? undefined;
 
-  const showSmoke = bool('showSmoke', true);
-  const showBug = bool('showBug', true);
-  const showTicker = bool('showTicker', true);
+  const showSmoke    = bool('showSmoke', true);
+  const showBug      = bool('showBug', true);
+  const showTicker   = bool('showTicker', true);
   const showProgress = bool('showProgress', true);
 
-  const title = txt('title') ?? 'The Burning Bear — LIVE';
-  const subtitle = txt('subtitle') ?? 'Real burns. Real supply drop.';
-  const track = txt('track');
+  // titles: lower=Title|Subtitle overrides title/subtitle if present
+  const lower = txt('lower');
+  const [lowerTitle, lowerSub] =
+    lower ? lower.split('|', 2) : [undefined, undefined];
+
+  const title    = (lowerTitle ?? txt('title')) ?? 'The Burning Bear — LIVE';
+  const subtitle = (lowerSub   ?? txt('subtitle')) ?? 'Real burns. Real supply drop.';
+
+  const track  = txt('track');
   const artist = txt('artist');
   const reward = num('reward') ?? 0;
+
+  // allow forcing nextBurnMs via URL
+  const nextBurnMsParam = num('nextBurnMs');
+  const effectiveNextBurnMs =
+    Number.isFinite(nextBurnMsParam) ? (nextBurnMsParam as number) : nextBurnMs;
 
   // reveal scheduling (LIVE gates)
   const atParam = txt('revealAt') ?? txt('at');
@@ -155,40 +170,56 @@ export default function BroadcastOverlays({ nextBurnMs }: Props) {
   const live = revealAt == null ? true : now >= revealAt;
   const liveInMs = revealAt != null ? Math.max(0, revealAt - now) : 0;
 
-  // ticker
+  // smoke density (default heavy so it's clearly visible on stream)
+  const smoke = ((txt('smoke') ?? 'heavy') as 'light' | 'medium' | 'heavy');
+
+  // ticker (URL wins; else default)
+  const urlTicker = txt('ticker');
   const tickerItems = React.useMemo(
-    () => [
-      'Supply down — burns logged on-chain',
-      'Follow @burningbearcamp on X',
-      'Next scripted burn coming soon…',
-    ],
-    []
+    () =>
+      (urlTicker
+        ? urlTicker.split(';').map((s) => s.trim()).filter(Boolean)
+        : [
+            'Supply down — burns logged on-chain',
+            'Follow @burningbearcamp on X',
+            'Next scripted burn coming soon…',
+          ]),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [urlTicker]
   );
 
   return (
     <>
       {showBug && <LiveBug live={live} liveInMs={liveInMs} />}
+
       <LowerThird title={title} subtitle={subtitle} />
+
       {track && <NowPlaying track={track} artist={artist} />}
 
       {reward > 0 && <RewardPill potBBURN={reward} />}
 
-      {showProgress && typeof nextBurnMs === 'number' && Number.isFinite(nextBurnMs) && (
-        <div
-          className="pointer-events-none fixed left-0 right-0 z-[83]"
-          style={{ bottom: 'calc(var(--safe-bottom, 0px) + 8px)' }}
-        >
-          <div className="mx-auto max-w-6xl px-4">
-            <LiveBurnProgress nextBurnMs={Math.max(0, nextBurnMs)} />
+      {showProgress &&
+        typeof effectiveNextBurnMs === 'number' &&
+        Number.isFinite(effectiveNextBurnMs) && (
+          <div
+            className="pointer-events-none fixed left-0 right-0 z-[83]"
+            style={{ bottom: 'calc(var(--safe-bottom, 0px) + 8px)' }}
+          >
+            <div className="mx-auto max-w-6xl px-4">
+              <LiveBurnProgress nextBurnMs={Math.max(0, effectiveNextBurnMs)} />
+            </div>
           </div>
-        </div>
       )}
 
       {showTicker && <NewsTicker items={tickerItems} />}
 
       {showSmoke && (
         <div className="pointer-events-none fixed inset-0 z-[70]">
-          <SmokeOverlay density="light" area="full" plumes={10} />
+          <SmokeOverlay
+            density={smoke}                     // light | medium | heavy
+            area="full"
+            plumes={smoke === 'heavy' ? 18 : smoke === 'medium' ? 14 : 10}
+          />
         </div>
       )}
     </>
