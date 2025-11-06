@@ -2,79 +2,48 @@
 
 import React from 'react';
 
-/* ========= Types ========= */
 type Schedule = {
-  burnIntervalMinutes?: number;
-  burnIntervalMs?: number;
   nextBurnAt?: number;
+  burnIntervalMs?: number;
+  burnIntervalMinutes?: number;
   lastBurnAt?: number;
 };
 type StateJson = { schedule?: Schedule };
 
-/* ========= Helpers ========= */
-const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
-
-function fmtHMS(ms: number) {
-  const t = Math.max(0, Math.floor(ms / 1000));
-  const h = Math.floor(t / 3600);
-  const m = Math.floor((t % 3600) / 60);
-  const s = t % 60;
-  return `${h.toString()}h ${m.toString().padStart(2, '0')}m ${s
-    .toString()
-    .padStart(2, '0')}s`;
-}
-
-function rollForward(next: number, intervalMs: number, nowTs: number) {
-  if (!Number.isFinite(next) || !Number.isFinite(intervalMs) || intervalMs <= 0)
-    return null;
-  if (nowTs <= next) return next;
-  const k = Math.ceil((nowTs - next) / intervalMs);
-  return next + k * intervalMs;
-}
-
-/* ========= Page ========= */
 export default function Tease() {
+  // Safe query access (client only)
   const [qs, setQs] = React.useState<URLSearchParams | null>(null);
-  const [now, setNow] = React.useState<number>(Date.now());
-  const [target, setTarget] = React.useState<number | null>(null);
-
-  // URL params (safe after mount)
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setQs(new URLSearchParams(window.location.search));
-    }
+    if (typeof window !== 'undefined') setQs(new URLSearchParams(window.location.search));
   }, []);
 
-  // Controls (with sensible defaults)
-  const title =
-    (qs?.get('title') ?? '🎥 Something’s heating up at the Campfire…').trim();
-  const sub = (qs?.get('sub') ?? 'Stay near the flames.').trim();
-  const note =
-    (qs?.get('note') ??
-      "If the prize isn’t claimed in 5 minutes, it rolls over to the next Campfire. 🔥").trim();
+  // ---------- Controls (URL params) ----------
+  const title = (qs?.get('title') ?? '🎥 Something’s heating up at the Campfire…').trim();
+  const sub   = (qs?.get('sub')   ?? 'Stay near the flames.').trim();
 
-  const livePill = (qs?.get('live') ?? '1') === '1'; // show pill
-  const align = (qs?.get('align') ?? 'center') as 'left' | 'center' | 'right';
+  // Position / layout
+  const bandTopVh = Number(qs?.get('y') ?? 62);         // vertical center of the plate (vh)
+  const plateW    = Number(qs?.get('w') ?? 1180);       // max width (px)
+  const plateH    = Number(qs?.get('h') ?? 116);        // height (px)
+  const opacity   = Math.max(0, Math.min(1, Number(qs?.get('op') ?? 0.88)));
+  const blurPx    = Number(qs?.get('blur') ?? 12);
+  const radius    = Number(qs?.get('r') ?? 18);
+  const align     = (qs?.get('align') ?? 'center') as 'left' | 'center' | 'right';
+  const curtain   = (qs?.get('curtain') ?? '0') === '1'; // wide dim band (full width)
 
-  // Plate + position
-  const bandTopVh = Number(qs?.get('y') ?? 62); // vertical position (vh)
-  const plateW = Number(qs?.get('w') ?? 1180); // max width (px)
-  const plateH = Number(qs?.get('h') ?? 116); // height (px)
-  const opacity = clamp01(Number(qs?.get('op') ?? 0.92));
-  const blur = Number(qs?.get('blur') ?? 14);
-  const radius = Number(qs?.get('r') ?? 18);
+  // LIVE pill & independent countdown
+  const liveEnabled = (qs?.get('live') ?? '1') === '1';
 
-  // Optional curtain to dim hero (helps hide H1 / CA)
-  const useCurtain = (qs?.get('curtain') ?? '1') === '1';
-  const coverH = Number(qs?.get('coverH') ?? 520); // height of dim area
-  const cop = clamp01(Number(qs?.get('cop') ?? 0.70)); // opacity of curtain
-  const fadeMs = Number(qs?.get('fadeMs') ?? 1200);
+  // ------ NEW: friendlier aliases + originals ------
+  const revealAt = qs?.get('revealAt');
+  const revealIn = qs?.get('revealIn');
+  const atParam  = revealAt ?? qs?.get('at');   // ISO 8601 UTC e.g., 2025-11-06T11:00:00Z
+  const inParam  = revealIn ?? qs?.get('in');   // seconds (e.g., 2700)
 
-  // OPTIONAL explicit target override:
-  //   ?at=2025-11-06T12:00:00Z  (ISO UTC)
-  //   ?in=600  (seconds) or minutes if > 10? We'll treat as minutes when >= 60.
-  const atParam = qs?.get('at');
-  const inParam = qs?.get('in');
+  // Time state
+  const [now, setNow] = React.useState<number>(Date.now());
+  const [customTarget, setCustomTarget] = React.useState<number | null>(null); // for revealAt/in
+  const [fallbackTarget, setFallbackTarget] = React.useState<number | null>(null); // burn fallback
 
   // Ticker
   React.useEffect(() => {
@@ -82,77 +51,86 @@ export default function Tease() {
     return () => clearInterval(id);
   }, []);
 
-  // Resolve target time:
-  // 1) explicit at/in
-  // 2) from /data/state.json schedule (nextBurnAt or lastBurnAt + interval)
+  // Compute custom countdown target from at/in
   React.useEffect(() => {
+    if (!qs) return;
+
+    let target: number | null = null;
+
+    if (atParam) {
+      const t = Date.parse(atParam);
+      target = Number.isFinite(t) ? t : null;
+    } else if (inParam) {
+      const sec = Number(inParam);
+      target = Number.isFinite(sec) ? Date.now() + Math.max(0, sec) * 1000 : null;
+    }
+
+    setCustomTarget(target);
+  }, [qs, atParam, inParam]);
+
+  // Fallback to /data/state.json → nextBurnAt (only used when no custom target provided)
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
     let alive = true;
 
-    async function resolveTarget() {
-      // Explicit overrides first
-      if (atParam) {
-        const t = Date.parse(atParam);
-        if (Number.isFinite(t)) {
-          setTarget(t);
-          return;
-        }
-      }
-      if (inParam) {
-        const n = Number(inParam);
-        if (Number.isFinite(n) && n > 0) {
-          // interpret >= 60 as minutes, otherwise seconds
-          const ms = n >= 60 ? n * 60_000 : n * 1_000;
-          setTarget(Date.now() + ms);
-          return;
-        }
-      }
-
-      // Else, load schedule
+    const load = async () => {
       try {
-        const r = await fetch(`/data/state.json?t=${Date.now()}`, {
-          cache: 'no-store',
-        });
+        const r = await fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' });
         const d: StateJson = await r.json();
         if (!alive) return;
 
         const s = d?.schedule ?? {};
-        const burnIntervalMs =
+        const nowTs = Date.now();
+
+        let next = typeof s.nextBurnAt === 'number' ? s.nextBurnAt : null;
+
+        // derive from lastBurnAt + interval
+        const interval =
           typeof s.burnIntervalMs === 'number'
             ? s.burnIntervalMs
             : typeof s.burnIntervalMinutes === 'number'
             ? s.burnIntervalMinutes * 60_000
-            : undefined;
+            : null;
 
-        const nowTs = Date.now();
-        let next: number | null =
-          typeof s.nextBurnAt === 'number' ? s.nextBurnAt : null;
+        if (next == null && typeof s.lastBurnAt === 'number' && interval) {
+          next = s.lastBurnAt + interval;
+        }
 
-        if (next == null && typeof s.lastBurnAt === 'number' && burnIntervalMs) {
-          next = s.lastBurnAt + burnIntervalMs;
+        // roll forward if stale
+        if (next != null && interval) {
+          if (nowTs > next) {
+            const k = Math.ceil((nowTs - next) / interval);
+            next = next + k * interval;
+          }
         }
-        if (next != null && burnIntervalMs) {
-          const rolled = rollForward(next, burnIntervalMs, nowTs);
-          setTarget(rolled ?? next);
-        } else {
-          setTarget(next ?? null);
-        }
+
+        setFallbackTarget(next ?? null);
       } catch {
-        // silent; keep target as-is
+        setFallbackTarget(null);
       }
-    }
+    };
 
-    resolveTarget();
-    const id = setInterval(resolveTarget, 20_000);
+    load();
+    const id = setInterval(load, 15_000);
     return () => {
       alive = false;
       clearInterval(id);
     };
-  }, [atParam, inParam]);
+  }, []);
 
-  const remainingMs = target != null ? target - now : Number.POSITIVE_INFINITY;
-  const isLiveNow = Number.isFinite(remainingMs) && remainingMs <= 0;
+  // Which target drives the LIVE pill?
+  const liveTarget = customTarget ?? fallbackTarget;
+  const liveMs = liveEnabled && liveTarget ? Math.max(0, liveTarget - now) : 0;
 
-  // ===== Styles =====
+  const fmtHMS = (ms: number) => {
+    const t = Math.max(0, Math.floor(ms / 1000));
+    const h = Math.floor(t / 3600);
+    const m = Math.floor((t % 3600) / 60);
+    const s = t % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  };
+
+  // ---------- Styles ----------
   const container: React.CSSProperties = {
     position: 'fixed',
     inset: 0,
@@ -161,17 +139,29 @@ export default function Tease() {
     background: 'transparent',
   };
 
-  const justify =
-    align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
+  // Optional wide dim band (full width) to suppress underlying UI contrast
+  const curtainBand: React.CSSProperties = curtain
+    ? {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: `calc(${bandTopVh}vh - ${plateH / 2 + 20}px)`,
+        height: plateH + 40,
+        background:
+          'linear-gradient(180deg, rgba(8,6,4,.78), rgba(8,6,4,.82))',
+        backdropFilter: `blur(${blurPx}px)`,
+        WebkitBackdropFilter: `blur(${blurPx}px)`,
+      }
+    : {};
 
   const plateWrap: React.CSSProperties = {
     position: 'absolute',
     top: `${bandTopVh}vh`,
     left: '50%',
-    transform: 'translate(-50%, -50%)',
+    transform: 'translate(-50%,-50%)',
     width: 'min(96vw, 1680px)',
     display: 'flex',
-    justifyContent: justify,
+    justifyContent: align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center',
   };
 
   const plate: React.CSSProperties = {
@@ -179,28 +169,25 @@ export default function Tease() {
     height: plateH,
     borderRadius: radius,
     padding: '16px 22px',
-    background: `rgba(12,10,8, ${opacity})`,
-    border: '1px solid rgba(255,235,210,.16)',
-    boxShadow:
-      '0 22px 64px rgba(0,0,0,.55), inset 0 0 40px rgba(255,200,140,.06)',
-    backdropFilter: `blur(${blur}px)`,
-    WebkitBackdropFilter: `blur(${blur}px)`,
     display: 'grid',
     gridTemplateColumns: 'auto 1fr',
-    gridTemplateRows: 'auto auto',
     alignItems: 'center',
-    columnGap: 14,
-    rowGap: 6,
+    gap: 14,
+    background: `rgba(12,10,8, ${opacity})`,
+    border: '1px solid rgba(255,235,210,.18)',
+    boxShadow: '0 24px 64px rgba(0,0,0,.50), inset 0 0 40px rgba(255,200,140,.06)',
+    backdropFilter: `blur(${blurPx}px)`,
+    WebkitBackdropFilter: `blur(${blurPx}px)`,
   };
 
-  const pill: React.CSSProperties = {
-    display: livePill ? 'inline-flex' : 'none',
+  const livePill: React.CSSProperties = {
+    display: liveEnabled ? 'inline-flex' : 'none',
     alignItems: 'center',
     gap: 10,
     padding: '8px 12px',
     borderRadius: 999,
-    background: 'rgba(60,16,16,.80)',
-    border: '1px solid rgba(255,120,120,.35)',
+    background: 'rgba(60,16,16,.82)',
+    border: '1px solid rgba(255,130,130,.35)',
     color: '#ffd7c9',
     fontWeight: 900,
     fontSize: 13,
@@ -215,7 +202,12 @@ export default function Tease() {
     borderRadius: 999,
     background: '#ff4747',
     boxShadow: '0 0 14px #ff4747',
-    opacity: isLiveNow ? 1 : 0.9,
+  };
+
+  const body: React.CSSProperties = {
+    display: 'grid',
+    gap: 6,
+    minWidth: 0,
   };
 
   const headline: React.CSSProperties = {
@@ -223,109 +215,55 @@ export default function Tease() {
     fontSize: 'clamp(18px, 2.2vw, 22px)',
     letterSpacing: '.2px',
     color: '#ffedd6',
-    textShadow: '0 1px 0 rgba(0,0,0,.65)',
+    textShadow: '0 0 28px rgba(255,200,120,.28), 0 1px 0 rgba(0,0,0,.5)',
+    whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
   };
 
   const subline: React.CSSProperties = {
-    gridColumn: '2 / span 1',
     fontWeight: 700,
     fontSize: 12,
-    color: '#ffe8c9',
+    color: 'rgba(255,240,220,.75)',
     opacity: 0.9,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   };
 
-  const noteline: React.CSSProperties = {
-    gridColumn: '2 / span 1',
-    fontWeight: 600,
-    fontSize: 11,
-    color: '#e6c7a3',
-    opacity: 0.85,
-  };
-
-  // Curtain strip to soften & hide H1/CA beneath
-  const curtainWrap: React.CSSProperties = {
-    position: 'absolute',
-    top: `${bandTopVh - 8}vh`,
-    left: 0,
-    width: '100%',
-    height: coverH,
-    transform: 'translateY(-50%)',
-    pointerEvents: 'none',
-    display: useCurtain ? 'block' : 'none',
-  };
-
-  const curtain: React.CSSProperties = {
-    width: '100%',
-    height: '100%',
-    background: `linear-gradient(
-      to bottom,
-      rgba(8,6,5, ${cop}) 0%,
-      rgba(8,6,5, ${Math.max(0, cop - 0.18)}) 60%,
-      rgba(8,6,5, 0) 100%
-    )`,
-    borderTop: '1px solid rgba(255,235,210,.08)',
-    borderBottom: '1px solid rgba(255,235,210,.05)',
-    animation: `curtainFade ${fadeMs}ms ease both`,
-  };
+  // Smooth fade on top page H1 (non-destructive)
+  const fadeH1Css = `
+    /* fade the hero H1 behind the plate for smoother look */
+    h1, h1 * {
+      transition: opacity .35s ease;
+    }
+  `;
 
   return (
     <>
       <div style={container}>
-        {/* Curtain to gently hide H1 / copy CA zone */}
-        <div style={curtainWrap}>
-          <div style={curtain} />
-        </div>
+        {curtain && <div style={curtainBand} />}
 
-        {/* Plate */}
         <div style={plateWrap}>
           <div style={plate}>
-            {/* LIVE pill with countdown inside */}
-            <span style={pill}>
+            <span style={livePill}>
               <span style={dot} />
-              {isLiveNow ? (
-                <>LIVE&nbsp;NOW</>
-              ) : Number.isFinite(remainingMs) ? (
-                <>LIVE&nbsp;in&nbsp;{fmtHMS(remainingMs)}</>
-              ) : (
-                <>LIVE</>
-              )}
+              {liveTarget && liveMs > 0 ? `LIVE in ${fmtHMS(liveMs)}` : 'LIVE NOW'}
             </span>
 
-            {/* Headline */}
-            <div style={headline}>{title}</div>
-
-            {/* Sub + note rows (optional) */}
-            {sub && <div style={subline}>{sub}</div>}
-            {note && <div style={noteline}>{note}</div>}
+            <div style={body}>
+              <div style={headline}>{title}</div>
+              <div style={subline}>{sub}</div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Keep the whole overlay transparent */}
+      {/* Force overlay transparency & gently fade any H1 */}
       <style jsx global>{`
-        @keyframes curtainFade {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-        html,
-        body,
-        #__next,
-        :root {
-          background: transparent !important;
-        }
-        html,
-        body {
-          margin: 0 !important;
-          padding: 0 !important;
-          overflow: hidden !important;
-        }
+        html, body, #__next, :root { background: transparent !important; }
+        html, body { margin: 0 !important; padding: 0 !important; overflow: hidden !important; }
+        ${fadeH1Css}
       `}</style>
     </>
   );
