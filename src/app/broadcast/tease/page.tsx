@@ -14,7 +14,6 @@ export default function Tease() {
   const [now, setNow] = React.useState<number>(Date.now());
   const [target, setTarget] = React.useState<number | null>(null);
 
-  // Parse query params safely
   const params =
     typeof window !== 'undefined'
       ? new URLSearchParams(window.location.search)
@@ -27,13 +26,11 @@ export default function Tease() {
     | 'right';
   const margin = Number(params?.get('m') || 24);
 
-  // tick clock every second
   React.useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  // helper to roll next burn forward
   function rollForward(next: number, intervalMs: number, nowTs: number) {
     if (!Number.isFinite(next) || !Number.isFinite(intervalMs) || intervalMs <= 0)
       return null;
@@ -42,7 +39,6 @@ export default function Tease() {
     return next + k * intervalMs;
   }
 
-  // load /data/state.json
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
     let alive = true;
@@ -78,9 +74,7 @@ export default function Tease() {
         } else {
           setTarget(next ?? null);
         }
-      } catch {
-        /* silent */
-      }
+      } catch {}
     };
 
     load();
@@ -100,7 +94,6 @@ export default function Tease() {
     return `${h}h ${String(m).padStart(2, '0')}m ${String(s).padStart(2, '0')}s`;
   };
 
-  // --- layout
   const justify =
     align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
 
@@ -117,83 +110,104 @@ export default function Tease() {
 
   if (mini) {
     return (
-      <div style={containerStyle}>
-        <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 10,
-            padding: '10px 14px',
-            borderRadius: 999,
-            border: '1px solid rgba(255,235,200,.22)',
-            background: 'rgba(20,16,10,.55)',
-            backdropFilter: 'blur(8px)',
-            fontWeight: 800,
-            fontSize: 16,
-            color: '#ffe7c3',
-            textShadow: '0 0 10px rgba(255,190,90,.15)',
-            boxShadow:
-              '0 6px 18px rgba(0,0,0,.35), inset 0 0 24px rgba(255,180,70,.08)',
-          }}
-        >
-          ⏳ {Number.isFinite(remainingMs) ? fmtSegs(remainingMs) : '—'}
-        </span>
-      </div>
+      <>
+        <div style={containerStyle}>
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 10,
+              padding: '10px 14px',
+              borderRadius: 999,
+              border: '1px solid rgba(255,235,200,.22)',
+              background: 'rgba(20,16,10,.55)',
+              backdropFilter: 'blur(8px)',
+              fontWeight: 800,
+              fontSize: 16,
+              color: '#ffe7c3',
+              textShadow: '0 0 10px rgba(255,190,90,.15)',
+              boxShadow:
+                '0 6px 18px rgba(0,0,0,.35), inset 0 0 24px rgba(255,180,70,.08)',
+            }}
+          >
+            ⏳ {Number.isFinite(remainingMs) ? fmtSegs(remainingMs) : '—'}
+          </span>
+        </div>
+
+        <style jsx global>{`
+          html,
+          body,
+          #__next,
+          :root {
+            background: transparent !important;
+          }
+          html,
+          body {
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+          }
+        `}</style>
+      </>
     );
   }
 
-  // fallback full teaser
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        display: 'grid',
-        placeItems: 'center',
-        pointerEvents: 'none',
-        background: 'transparent',
-      }}
-    >
-      <div style={{ textAlign: 'center', transform: 'translateY(-6vh)' }}>
-        <h1
-          style={{
-            fontSize: 'clamp(28px, 4.8vw, 64px)',
-            fontWeight: 900,
-            letterSpacing: '0.3px',
-            color: '#ffe7b4',
-            textShadow:
-              '0 0 22px rgba(255,200,120,.25), 0 0 44px rgba(255,170,70,.20)',
-          }}
-        >
-          🎥 Something’s heating up at the Campfire…
-        </h1>
-        <p
-          style={{
-            marginTop: 12,
-            fontSize: 'clamp(14px, 2.2vw, 22px)',
-            fontWeight: 700,
-            color: '#ffdca0',
-            textShadow: '0 0 10px rgba(255,160,70,.35)',
-          }}
-        >
-          ⏳ Find out in{' '}
-          <span style={{ color: '#fff3d6' }}>
-            {Number.isFinite(remainingMs) ? fmtSegs(remainingMs) : '—'}
-          </span>
-        </p>
+    <>
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          display: 'grid',
+          placeItems: 'center',
+          pointerEvents: 'none',
+          background: 'transparent',
+        }}
+      >
+        <div style={{ textAlign: 'center', transform: 'translateY(-6vh)' }}>
+          <h1
+            style={{
+              fontSize: 'clamp(28px, 4.8vw, 64px)',
+              fontWeight: 900,
+              letterSpacing: '0.3px',
+              color: '#ffe7b4',
+              textShadow:
+                '0 0 22px rgba(255,200,120,.25), 0 0 44px rgba(255,170,70,.20)',
+            }}
+          >
+            🎥 Something’s heating up at the Campfire…
+          </h1>
+          <p
+            style={{
+              marginTop: 12,
+              fontSize: 'clamp(14px, 2.2vw, 22px)',
+              fontWeight: 700,
+              color: '#ffdca0',
+              textShadow: '0 0 10px rgba(255,160,70,.35)',
+            }}
+          >
+            ⏳ Find out in{' '}
+            <span style={{ color: '#fff3d6' }}>
+              {Number.isFinite(remainingMs) ? fmtSegs(remainingMs) : '—'}
+            </span>
+          </p>
+        </div>
       </div>
-    </div>
+
+      <style jsx global>{`
+        html,
+        body,
+        #__next,
+        :root {
+          background: transparent !important;
+        }
+        html,
+        body {
+          margin: 0 !important;
+          padding: 0 !important;
+          overflow: hidden !important;
+        }
+      `}</style>
+    </>
   );
 }
-
-{/* global transparency + reset for OBS */}
-<style jsx global>{`
-  html, body, #__next, :root {
-    background: transparent !important;
-  }
-  html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden; /* avoids scrollbars in Browser Source */
-  }
-`}</style>
