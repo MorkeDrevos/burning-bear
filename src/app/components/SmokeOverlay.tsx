@@ -8,10 +8,14 @@ export default function SmokeOverlay({
   density = 'light',
   area = 'full',
   plumes = 8,
+  className = '',
+  style,
 }: {
   density?: Density;
   area?: Area;
-  plumes?: number;   // how many puffs
+  plumes?: number;           // how many puffs
+  className?: string;        // ✅ allow callers to position/stack
+  style?: React.CSSProperties;
 }) {
   // map density → overall opacity multiplier
   const baseOpacity =
@@ -26,9 +30,9 @@ export default function SmokeOverlay({
 
   return (
     <div
-      className={`smoke-overlay absolute ${areaClass}`}
+      className={`smoke-overlay absolute ${areaClass} ${className}`}
       aria-hidden="true"
-      style={{ opacity: baseOpacity }}
+      style={{ opacity: baseOpacity, ...style }}
     >
       {items.map((_, i) => {
         // stylized randomness
@@ -47,7 +51,6 @@ export default function SmokeOverlay({
             className="smoke-plume"
             style={
               {
-                // CSS vars used by your globals.css
                 '--delay': `${delay}s`,
                 '--size': `${size}px`,
                 '--left': `${leftPct}%`,
