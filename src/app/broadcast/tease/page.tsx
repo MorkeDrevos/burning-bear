@@ -2,7 +2,6 @@
 
 import React from 'react';
 
-/* ========= Types ========= */
 type Schedule = {
   burnIntervalMinutes?: number;
   burnIntervalMs?: number;
@@ -11,59 +10,66 @@ type Schedule = {
 };
 type StateJson = { schedule?: Schedule };
 
-/* ========= Helpers ========= */
+// --------- helpers
 const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
 const toMs = (mins?: number) =>
   typeof mins === 'number' ? mins * 60_000 : undefined;
-
-function rollForward(next: number, intervalMs: number, nowTs: number) {
-  if (!Number.isFinite(next) || !Number.isFinite(intervalMs) || intervalMs <= 0) return null;
-  if (nowTs <= next) return next;
-  const k = Math.ceil((nowTs - next) / intervalMs);
-  return next + k * intervalMs;
-}
 
 function fmtHHMMSS(ms: number) {
   const t = Math.max(0, Math.floor(ms / 1000));
   const h = Math.floor(t / 3600);
   const m = Math.floor((t % 3600) / 60);
   const s = t % 60;
-  return `${h}h ${String(m).padStart(2, '0')}m ${String(s).padStart(2, '0')}s`;
+  const hh = String(h);
+  const mm = String(m).padStart(2, '0');
+  const ss = String(s).padStart(2, '0');
+  return `${hh}h ${mm}m ${ss}s`;
 }
 
-/* ========= Page ========= */
 export default function Tease() {
   const [now, setNow] = React.useState<number>(Date.now());
   const [target, setTarget] = React.useState<number | null>(null);
 
-  // Safe query parsing
-  const qs = React.useMemo(
-    () =>
-      typeof window !== 'undefined'
-        ? new URLSearchParams(window.location.search)
-        : new URLSearchParams(),
-    []
-  );
+  // parse query params (client-only)
+  const qs = React.useMemo(() => {
+    if (typeof window === 'undefined') return new URLSearchParams();
+    return new URLSearchParams(window.location.search);
+  }, []);
 
-  // Modes & controls
+  // layout controls (with safe fallbacks)
   const mode = (qs.get('mode') || 'banner') as 'banner' | 'center';
   const pos = (qs.get('pos') || 'top') as 'top' | 'bottom';
   const align = (qs.get('align') || 'center') as 'left' | 'center' | 'right';
-  const m = Number(qs.get('m') ?? 12); // margin
-  const bg = (qs.get('bg') || 'solid') as 'glass' | 'solid';
-  const alpha = clamp(Number(qs.get('alpha') ?? (mode === 'banner' ? 0.92 : 0.88)), 0, 1);
-  const y = Number(qs.get('y') || 0); // vertical nudge
-  const scale = Number(qs.get('scale') || 1);
-  const icon = qs.get('icon') ?? '🎥';
-  const title = qs.get('title') ?? "Something’s heating up at the Campfire…";
+  const m = Number(qs.get('m') || 18); // margin
+  const y = Number(qs.get('y') || 0); // vertical offset
+  const scale = clamp(Number(qs.get('scale') || 1), 0.8, 1.4);
 
-  // Clock
+  const bg = (qs.get('bg') || 'glass') as 'glass' | 'solid' | 'none';
+  const alpha = clamp(Number(qs.get('alpha') || (bg === 'glass' ? 0.65 : 0.9)), 0, 1);
+
+  const icon = qs.get('icon') || '🎬';
+  const title = qs.get('title') || `Something’s heating up at the Campfire…`;
+
+  const live = qs.get('live') === '1';
+  const reward = qs.get('reward') || '';
+  const rewardIcon = qs.get('rewardIcon') || '🎁';
+
+  // tick clock every second
   React.useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  // Load schedule + compute next burn (and roll forward if stale)
+  // roll forward helper
+  function rollForward(next: number, intervalMs: number, nowTs: number) {
+    if (!Number.isFinite(next) || !Number.isFinite(intervalMs) || intervalMs <= 0)
+      return null;
+    if (nowTs <= next) return next;
+    const k = Math.ceil((nowTs - next) / intervalMs);
+    return next + k * intervalMs;
+  }
+
+  // load schedule
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
     let alive = true;
@@ -93,7 +99,7 @@ export default function Tease() {
           setTarget(next ?? null);
         }
       } catch {
-        /* swallow */
+        /* ignore */
       }
     };
 
@@ -105,147 +111,230 @@ export default function Tease() {
     };
   }, []);
 
-  const remainingMs = target != null ? target - now : Number.POSITIVE_INFINITY;
+  const remainingMs =
+    target != null ? target - now : Number.POSITIVE_INFINITY;
+  const isLiveNow = Number.isFinite(remainingMs) && remainingMs <= 0;
 
-  /* ======= Styles ======= */
-  const justify =
-    align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
-
-  const bannerWrap: React.CSSProperties = {
-    position: 'fixed',
-    left: 0,
-    right: 0,
-    top: pos === 'top' ? m : 'auto',
-    bottom: pos === 'bottom' ? m : 'auto',
-    display: 'flex',
-    justifyContent: justify,
-    pointerEvents: 'none',
-    zIndex: 99999,
-    transform: `translateY(${y}px) scale(${scale})`,
-    transformOrigin:
-      align === 'left' ? 'left top' : align === 'right' ? 'right top' : 'center top',
-  };
-
-  const centerWrap: React.CSSProperties = {
-    position: 'fixed',
-    inset: 0,
-    display: 'grid',
-    placeItems: 'center',
-    pointerEvents: 'none',
-    zIndex: 99999,
-    transform: `scale(${scale})`,
-  };
-
-  const card: React.CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 14,
-    padding: mode === 'banner' ? '12px 18px' : '22px 26px',
-    borderRadius: 16,
-    border: '1px solid rgba(255,220,160,.25)',
-    background:
-      bg === 'solid'
-        ? `rgba(12,10,8,${alpha})`
-        : `linear-gradient(180deg,
-            rgba(20,16,10,${Math.max(alpha - 0.12, 0)}),
-            rgba(17,13,9,${alpha})
-          )`,
-    backdropFilter: bg === 'solid' ? 'none' : 'blur(10px)',
-    boxShadow:
-      '0 16px 40px rgba(0,0,0,.55), inset 0 0 34px rgba(255,180,70,.08), 0 0 0 1px rgba(0,0,0,.28)',
-    pointerEvents: 'none',
-  };
-
-  const headTxt: React.CSSProperties = {
-    fontWeight: 900,
-    letterSpacing: '.2px',
-    color: '#ffe7c3',
-    WebkitTextStroke: '1px rgba(0,0,0,.35)',
-    textShadow:
-      '0 2px 8px rgba(0,0,0,.55), 0 0 22px rgba(255,190,90,.22), 0 0 42px rgba(255,170,70,.18)',
-    fontSize: mode === 'banner' ? 20 : 28,
-    whiteSpace: 'nowrap',
-    lineHeight: 1.2,
-  };
-
-  const subTxt: React.CSSProperties = {
-    fontWeight: 800,
-    color: '#ffdca0',
-    WebkitTextStroke: '0.6px rgba(0,0,0,.35)',
-    textShadow: '0 2px 6px rgba(0,0,0,.55), 0 0 14px rgba(255,160,70,.22)',
-    fontSize: mode === 'banner' ? 16 : 18,
-    whiteSpace: 'nowrap',
-  };
-
-  const timerTxt: React.CSSProperties = {
-    color: '#fff3d6',
-    WebkitTextStroke: '0.6px rgba(0,0,0,.3)',
-    textShadow: '0 2px 6px rgba(0,0,0,.6), 0 0 12px rgba(255,210,120,.25)',
-    fontWeight: 900,
-  };
-
-  const row: React.CSSProperties = { display: 'flex', flexDirection: 'column', gap: 4 };
-
-  /* ======= UI ======= */
+  // --- small UI atoms
   const Pill = ({ children }: { children: React.ReactNode }) => (
     <span
       style={{
-        marginLeft: 8,
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 8,
         padding: '6px 10px',
         borderRadius: 999,
-        border: '1px solid rgba(255,220,160,.25)',
-        background: 'rgba(0,0,0,.35)',
-        fontSize: 12,
+        border: '1px solid rgba(255,235,200,.22)',
+        background: 'rgba(20,16,10,.45)',
+        backdropFilter: 'blur(8px)',
         fontWeight: 800,
+        fontSize: 12,
         color: '#ffe7c3',
-        textShadow: '0 2px 4px rgba(0,0,0,.6)',
+        textShadow: '0 2px 6px rgba(0,0,0,.6)',
+        pointerEvents: 'none',
       }}
     >
       {children}
     </span>
   );
 
+  const LivePill = () => (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '6px 10px',
+        borderRadius: 999,
+        border: '1px solid rgba(255,120,120,.35)',
+        background: 'rgba(120,0,0,.55)',
+        boxShadow: '0 0 24px rgba(255,80,80,.35), inset 0 0 18px rgba(255,70,70,.25)',
+        color: '#fff',
+        fontWeight: 900,
+        letterSpacing: '.3px',
+        textShadow: '0 2px 6px rgba(0,0,0,.7)',
+        fontSize: 12,
+        pointerEvents: 'none',
+      }}
+    >
+      <span
+        style={{
+          width: 8,
+          height: 8,
+          borderRadius: 99,
+          background: '#ff5757',
+          boxShadow: '0 0 12px #ff5757',
+          animation: 'bburn-pulse 1.25s ease-in-out infinite',
+        }}
+      />
+      LIVE
+    </span>
+  );
+
+  const RewardPill = ({ text }: { text: string }) => (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 6,
+        padding: '6px 10px',
+        borderRadius: 999,
+        border: '1px solid rgba(255,220,160,.35)',
+        background: 'rgba(0,0,0,.35)',
+        color: '#ffe7c3',
+        fontWeight: 800,
+        fontSize: 12,
+        textShadow: '0 2px 6px rgba(0,0,0,.6)',
+        pointerEvents: 'none',
+      }}
+    >
+      <span style={{ filter: 'drop-shadow(0 0 8px rgba(255,180,70,.45))' }}>
+        {rewardIcon}
+      </span>
+      Rewards: {text}
+    </span>
+  );
+
+  // --- layout style
+  const justify =
+    align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
+
+  const containerStyle: React.CSSProperties =
+    mode === 'banner'
+      ? {
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          [pos === 'top' ? 'top' : 'bottom']: 0,
+          display: 'flex',
+          justifyContent: justify,
+          padding: m,
+          transform: `translateY(${y}px)`,
+          pointerEvents: 'none',
+          background: 'transparent',
+          zIndex: 2147483647,
+        }
+      : {
+          position: 'fixed',
+          inset: 0,
+          display: 'grid',
+          placeItems: 'center',
+          transform: `translateY(${y}px) scale(${scale})`,
+          pointerEvents: 'none',
+          background: 'transparent',
+          zIndex: 2147483647,
+        };
+
+  const cardBg =
+    bg === 'none'
+      ? 'transparent'
+      : bg === 'glass'
+      ? `rgba(10, 8, 6, ${alpha})`
+      : `rgba(12, 10, 7, ${alpha})`;
+
+  const card: React.CSSProperties =
+    mode === 'banner'
+      ? {
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 14,
+          padding: '10px 14px',
+          borderRadius: 14,
+          border: '1px solid rgba(255,235,200,.18)',
+          background: cardBg,
+          backdropFilter: bg === 'glass' ? 'blur(8px)' : undefined,
+          boxShadow:
+            '0 6px 24px rgba(0,0,0,.35), inset 0 0 22px rgba(255,200,100,.06)',
+          transform: `scale(${scale})`,
+        }
+      : {
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 12,
+          padding: '18px 22px',
+          borderRadius: 18,
+          border: '1px solid rgba(255,235,200,.18)',
+          background: cardBg,
+          backdropFilter: bg === 'glass' ? 'blur(10px)' : undefined,
+          boxShadow:
+            '0 12px 40px rgba(0,0,0,.45), inset 0 0 26px rgba(255,200,100,.06)',
+        };
+
+  const row: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 6,
+    alignItems: mode === 'banner' ? 'flex-start' : 'center',
+    textAlign: mode === 'banner' ? 'left' : 'center',
+  };
+
+  const headTxt: React.CSSProperties = {
+    fontSize: mode === 'banner' ? 18 : 28,
+    lineHeight: 1.15,
+    fontWeight: 900,
+    letterSpacing: '.2px',
+    color: '#ffe7b4',
+    textShadow:
+      '0 0 16px rgba(255,200,120,.22), 0 0 24px rgba(255,170,70,.18)',
+    pointerEvents: 'none',
+  };
+
+  const subTxt: React.CSSProperties = {
+    fontSize: mode === 'banner' ? 13 : 16,
+    fontWeight: 700,
+    color: '#ffdca0',
+    textShadow: '0 0 10px rgba(255,160,70,.25)',
+    pointerEvents: 'none',
+  };
+
+  const timerTxt: React.CSSProperties = {
+    color: '#fff3d6',
+    textShadow: '0 0 12px rgba(255,200,120,.35)',
+  };
+
+  // --- content
   const content = (
     <div style={card}>
-      <div style={{ fontSize: mode === 'banner' ? 22 : 26, lineHeight: 1 }}> {icon} </div>
+      <div style={{ fontSize: mode === 'banner' ? 18 : 26, lineHeight: 1 }}>{icon}</div>
       <div style={row}>
-        <div style={headTxt}>{title}</div>
-        <div style={subTxt}>
-          ⏳ Find out in{' '}
-          <span style={timerTxt}>
-            {Number.isFinite(remainingMs) ? fmtHHMMSS(remainingMs) : '—'}
-          </span>
-          {/* Optional timed badge in last 60s */}
-          {Number.isFinite(remainingMs) && remainingMs <= 60_000 ? (
-            <Pill>Rolls over if unclaimed</Pill>
-          ) : null}
+        {/* badges row */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {live && <LivePill />}
+          {!!reward && <RewardPill text={reward} />}
         </div>
+
+        <div style={headTxt}>{title}</div>
+
+        {!isLiveNow ? (
+          <div style={subTxt}>
+            ⏳ Find out in{' '}
+            <span style={timerTxt}>
+              {Number.isFinite(remainingMs) ? fmtHHMMSS(remainingMs) : '—'}
+            </span>
+            {Number.isFinite(remainingMs) && remainingMs <= 60_000 ? (
+              <span style={{ marginLeft: 8 }}>
+                <Pill>Rolls over if unclaimed</Pill>
+              </span>
+            ) : null}
+          </div>
+        ) : (
+          <div style={subTxt}>
+            🎥 <span style={{ fontWeight: 900, color: '#fff3d6' }}>Live now</span>
+          </div>
+        )}
       </div>
     </div>
   );
 
   return (
     <>
-      {mode === 'center' ? (
-        <div style={centerWrap}>{content}</div>
-      ) : (
-        <div style={bannerWrap}>{content}</div>
-      )}
+      <div style={containerStyle}>{content}</div>
 
-      {/* Force full transparency for OBS */}
+      {/* global styles: force transparency & pulse */}
       <style jsx global>{`
-        html,
-        body,
-        #__next,
-        :root {
-          background: transparent !important;
-        }
-        html,
-        body {
-          margin: 0 !important;
-          padding: 0 !important;
-          overflow: hidden !important;
-        }
+        html, body, #__next, :root { background: transparent !important; }
+        html, body { margin: 0 !important; padding: 0 !important; overflow: hidden !important; }
+        @keyframes bburn-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.35);opacity:.8} }
       `}</style>
     </>
   );
