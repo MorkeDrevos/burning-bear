@@ -9,6 +9,8 @@ import TreasuryLockCard from '../components/TreasuryLockCard';
 // 👉 CopyButton is in src/app/components/
 import CopyButton from './components/CopyButton';
 
+import BroadcastOverlays from './components/BroadcastOverlays';
+
 /* =========================
    Config
 ========================= */
@@ -1186,6 +1188,8 @@ useEffect(() => {
     )}
   </>
 )}
+
+<BroadcastOverlays />
 
 </main>
 );
