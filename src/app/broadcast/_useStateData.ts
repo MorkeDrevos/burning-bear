@@ -1,45 +1,64 @@
 'use client';
+
 import { useEffect, useMemo, useState } from 'react';
 
-export type Burn = { id: string; amount: number; sol?: number; timestamp: number | string; tx: string; };
-export type StateJson = {
-  stats: { initialSupply: number; burned: number; currentSupply: number; buybackSol?: number; priceUsdPerSol?: number; };
-  schedule?: { burnIntervalMinutes?: number; burnIntervalMs?: number; nextBurnAt?: number; lastBurnAt?: number; };
+type Burn = { id: string; amount: number; sol?: number; timestamp: number | string; tx: string };
+type StateJson = {
+  stats: { initialSupply: number; burned: number; currentSupply: number; buybackSol?: number; priceUsdPerSol?: number };
+  schedule?: {
+    burnIntervalMinutes?: number; buybackIntervalMinutes?: number;
+    burnIntervalMs?: number; buybackIntervalMs?: number;
+    nextBurnAt?: number; nextBuybackAt?: number;
+    lastBurnAt?: number; lastBuybackAt?: number;
+  };
   burns?: Burn[];
 };
 
-const toMs = (ts: number | string) => (typeof ts === 'number' ? ts : Date.parse(ts));
-
-export function useStateData() {
+export default function useStateData() {
   const [data, setData] = useState<StateJson | null>(null);
-  const [now, setNow] = useState(Date.now());
-  useEffect(() => { const id = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(id); }, []);
+  const [now, setNow] = useState<number>(Date.now());
+
   useEffect(() => {
     let alive = true;
-    fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
-      .then(r => r.json())
-      .then((d: StateJson) => {
-        if (!alive) return;
-        const s: any = { ...(d.schedule ?? {}) };
-        const burnMins = typeof s.burnIntervalMinutes === 'number' ? s.burnIntervalMinutes : 60;
-        if (s.burnIntervalMs == null) s.burnIntervalMs = burnMins * 60 * 1000;
-        if (s.nextBurnAt == null) s.nextBurnAt = Date.now() + (s.burnIntervalMs ?? 0);
-        const burns = (d.burns ?? []).map(b => ({ ...b, timestamp: toMs(b.timestamp) }))
-                                      .filter(b => Number.isFinite(b.timestamp as number));
-        setData({ ...d, schedule: s, burns });
-      }).catch(() => {});
-    return () => { alive = false; };
+    const load = () =>
+      fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
+        .then(r => r.json())
+        .then((d: StateJson) => {
+          if (!alive) return;
+          const s: any = { ...(d?.schedule ?? {}) };
+          const burnM = s.burnIntervalMinutes, buyM = s.buybackIntervalMinutes;
+          if (s.burnIntervalMs == null && typeof burnM === 'number') s.burnIntervalMs = burnM * 60_000;
+          if (s.buybackIntervalMs == null && typeof buyM === 'number') s.buybackIntervalMs = buyM * 60_000;
+          const burns = (d?.burns ?? []).map(b => ({ ...b, timestamp: typeof b.timestamp === 'number' ? b.timestamp : Date.parse(b.timestamp) }))
+                                         .filter(b => Number.isFinite(b.timestamp));
+          setData({ ...d, schedule: s, burns });
+        })
+        .catch(() => {});
+    load();
+    const id = setInterval(load, 15_000);
+    return () => { alive = false; clearInterval(id); };
   }, []);
-  const INITIAL = data?.stats?.initialSupply ?? 0;
-  const BURNED = data?.stats?.burned ?? 0;
-  const CURRENT = data?.stats?.currentSupply ?? Math.max(0, INITIAL - BURNED);
-  const burnAt = data?.schedule?.nextBurnAt ?? null;
-  const nextBurnMs = burnAt ? burnAt - now : Number.POSITIVE_INFINITY;
-  const burnsSorted = useMemo(() => {
-    const arr = (data?.burns ?? []) as Array<Burn & { timestamp: number }>;
-    return arr.slice().sort((a, b) => b.timestamp - a.timestamp);
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const priceUsdPerSol = data?.stats?.priceUsdPerSol ?? 0;
+  const burnsSorted = useMemo(() => (data?.burns ?? []).slice().sort((a: any, b: any) => (b.timestamp as number) - (a.timestamp as number)), [data]);
+
+  const targets = useMemo(() => {
+    const s = data?.schedule ?? {};
+    const bb = s.nextBuybackAt ?? (s.lastBuybackAt && s.buybackIntervalMs ? s.lastBuybackAt + s.buybackIntervalMs : undefined);
+    const burn = s.nextBurnAt ?? (s.lastBurnAt && s.burnIntervalMs ? s.lastBurnAt + s.burnIntervalMs : undefined);
+    return { bb, burn };
   }, [data]);
-  return { data, burnsSorted, nextBurnMs, INITIAL, BURNED, CURRENT };
+
+  const nextBurnMs = typeof targets.burn === 'number' ? targets.burn - now : Number.POSITIVE_INFINITY;
+
+  return { data, burnsSorted, priceUsdPerSol, nextBurnMs, now };
 }
 
 export const fmtInt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+export const fmtMoney = (n?: number) => (n == null || !isFinite(n) ? '$0.00' : n.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+export const pad2 = (n: number) => String(n).padStart(2, '0');
