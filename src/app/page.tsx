@@ -3,13 +3,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 
-// 👉 TreasuryLockCard is in src/components/
-import TreasuryLockCard from '../components/TreasuryLockCard';
-
-// 👉 CopyButton is in src/app/components/
-import CopyButton from './components/CopyButton';
-
-import BonusBanner from './components/BonusBanner';
+import TreasuryLockCard from '@/components/TreasuryLockCard';
+import CopyButton from '@/app/components/CopyButton';
+import BonusBanner from '@/components/BonusBanner';
 
 /* =========================
    Config
