@@ -6,82 +6,78 @@ export default function Tease() {
   const [qs, setQs] = React.useState<URLSearchParams | null>(null);
   React.useEffect(() => { if (typeof window !== 'undefined') setQs(new URLSearchParams(window.location.search)); }, []);
 
-  // Tweak by URL
-  const msg   = (qs?.get('title') ?? "🔥 Something’s heating up at the Campfire…").trim();
-  const y     = Number(qs?.get('y') ?? 28);     // vertical anchor in vh over the hero/H1
-  const w     = Number(qs?.get('w') ?? 1280);   // max width (px)
-  const live  = (qs?.get('live') ?? '1') === '1';
-  const dim   = Number(qs?.get('dim') ?? 0.28); // background dim behind the banner (0–0.6)
-  const align = (qs?.get('align') ?? 'center') as 'left'|'center'|'right';
+  // Controls (URL params)
+  const title = (qs?.get('title') ?? "🔥 Something’s heating up at the Campfire…").trim();
+
+  // Position the plate directly over the hero/H1 zone
+  // Tune these quickly via URL:
+  const bandTopVh  = Number(qs?.get('y')     ?? 31);   // vertical position (vh) – center of the plate
+  const plateW     = Number(qs?.get('w')     ?? 1200); // max width (px)
+  const plateH     = Number(qs?.get('h')     ?? 120);  // height (px) – makes it cover the whole H1 row
+  const opacity    = Math.max(0, Math.min(1, Number(qs?.get('op') ?? 0.88))); // background opacity
+  const blur       = Number(qs?.get('blur')  ?? 12);   // backdrop blur (px)
+  const radius     = Number(qs?.get('r')     ?? 20);   // border radius (px)
+  const livePill   = (qs?.get('live') ?? '0') === '1';
+  const align      = (qs?.get('align') ?? 'center') as 'left'|'center'|'right';
 
   const container: React.CSSProperties = {
-    position: 'fixed',
-    inset: 0,
-    pointerEvents: 'none',
-    zIndex: 999999,
-    background: 'transparent',
+    position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 999999, background: 'transparent'
   };
 
-  const dimmer: React.CSSProperties = dim > 0 ? {
+  // A subtle dim ONLY where the plate sits, to hide the H1 underneath
+  const plateWrap: React.CSSProperties = {
     position: 'absolute',
-    left: 0, right: 0,
-    top: `${y - 7}vh`, // a little above
-    height: '14vh',    // slim band to improve contrast
-    background: `linear-gradient(180deg, rgba(0,0,0,${dim}) 0%, rgba(0,0,0,${Math.max(dim-0.08,0)}) 100%)`,
-    filter: 'blur(0.5px)',
-  } : {};
-
-  const wrap: React.CSSProperties = {
-    position: 'absolute',
-    top: `${y}vh`,
+    top: `${bandTopVh}vh`,
     left: '50%',
     transform: 'translate(-50%,-50%)',
-    width: 'min(95vw, 1600px)',
+    width: 'min(96vw, 1680px)',
     display: 'flex',
     justifyContent: align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center',
   };
 
-  const bar: React.CSSProperties = {
-    maxWidth: w,
-    width: '100%',
-    borderRadius: 18,
-    padding: '16px 22px',
-    border: '1px solid rgba(255,235,210,.22)',
-    background: 'rgba(18,14,10,.70)',
-    backdropFilter: 'blur(10px)',
-    boxShadow: '0 18px 48px rgba(0,0,0,.45), inset 0 0 34px rgba(255,200,140,.06)',
-    display: 'flex',
+  const plate: React.CSSProperties = {
+    width: 'min(100%, '+plateW+'px)',
+    height: plateH,
+    borderRadius: radius,
+    padding: '20px 26px',
+    background: `rgba(10,8,6, ${opacity})`,
+    border: '1px solid rgba(255,235,210,.18)',
+    boxShadow: '0 24px 64px rgba(0,0,0,.50), inset 0 0 40px rgba(255,200,140,.06)',
+    backdropFilter: `blur(${blur}px)`,
+    WebkitBackdropFilter: `blur(${blur}px)`,
+    display: 'grid',
+    gridTemplateColumns: 'auto 1fr',
     alignItems: 'center',
-    gap: 14,
+    gap: 16,
   };
 
-  const livePill: React.CSSProperties = {
-    display: live ? 'inline-flex' : 'none',
+  const pill: React.CSSProperties = {
+    display: livePill ? 'inline-flex' : 'none',
     alignItems: 'center',
     gap: 8,
-    padding: '7px 12px',
+    padding: '8px 12px',
     borderRadius: 999,
+    background: 'rgba(60,16,16,.75)',
     border: '1px solid rgba(255,130,130,.35)',
-    background: 'rgba(40,14,14,.55)',
     color: '#ffd7c9',
     fontWeight: 900,
     fontSize: 13,
     lineHeight: 1,
     whiteSpace: 'nowrap',
+    filter: 'drop-shadow(0 0 8px rgba(255,70,70,.35))',
   };
 
   const dot: React.CSSProperties = {
-    width: 8, height: 8, borderRadius: 999,
-    background: '#ff4747', boxShadow: '0 0 12px #ff4747',
+    width: 10, height: 10, borderRadius: 999,
+    background: '#ff4747', boxShadow: '0 0 14px #ff4747'
   };
 
-  const headline: React.CSSProperties = {
-    flex: 1,
+  const text: React.CSSProperties = {
     fontWeight: 900,
-    fontSize: 'clamp(18px, 2.1vw, 26px)',
+    fontSize: 'clamp(22px, 2.6vw, 34px)',
     letterSpacing: '.2px',
-    color: '#ffead0',
-    textShadow: '0 0 26px rgba(255,200,120,.28), 0 1px 0 rgba(0,0,0,.5)',
+    color: '#ffedd6',
+    textShadow: '0 0 28px rgba(255,200,120,.28), 0 1px 0 rgba(0,0,0,.5)',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -90,16 +86,15 @@ export default function Tease() {
   return (
     <>
       <div style={container}>
-        {dim > 0 && <div style={dimmer} />}
-        <div style={wrap}>
-          <div style={bar}>
-            <span style={livePill}><span style={dot} /> LIVE</span>
-            <div style={headline}>{msg}</div>
+        <div style={plateWrap}>
+          <div style={plate}>
+            <span style={pill}><span style={dot} /> LIVE</span>
+            <div style={text}>{title}</div>
           </div>
         </div>
       </div>
 
-      {/* Force full transparency */}
+      {/* Keep overlay transparent overall */}
       <style jsx global>{`
         html, body, #__next, :root { background: transparent !important; }
         html, body { margin:0 !important; padding:0 !important; overflow:hidden !important; }
