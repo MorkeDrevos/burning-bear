@@ -1256,7 +1256,7 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
    (Lowered overlays + bigger reward pill)
 ========================= */
 
-const OVERLAY_TOP = 46;         // px from very top (under navbar/H1 area)
+const OVERLAY_TOP = 33;         // px from very top (under navbar/H1 area)
 const TICKER_GAP  = 56;         // px the LowerThird sits above bottom ticker
 
 function LiveBug({ className = "" }: { className?: string }) {
@@ -1320,7 +1320,7 @@ function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number
           soon ? "animate-[warmPulse_2.4s_ease-in-out_infinite]" : ""
         ].join(" ")}  // ✅ fixed join syntax — no trailing > or missing paren
       >
-        <span className="font-semibold">Campfire Reward:</span>{" "}
+        <span className="font-semibold">🔥🔥🔥 Campfire Reward:</span>{" "}
         <span className="font-extrabold">{potBBURN.toLocaleString()} BBURN</span>
       </div>
     </div>
