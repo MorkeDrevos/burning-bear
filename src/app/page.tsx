@@ -1256,7 +1256,7 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
    (Lowered overlays + bigger reward pill)
 ========================= */
 
-const OVERLAY_TOP = 5;         // px from very top (under navbar/H1 area)
+const OVERLAY_TOP = 10;         // px from very top (under navbar/H1 area)
 const TICKER_GAP  = 56;         // px the LowerThird sits above bottom ticker
 
 function LiveBug({ className = "" }: { className?: string }) {
@@ -1337,17 +1337,25 @@ function NewsTicker({ items }: { items: string[] }) {
       style={{ bottom: 'var(--safe-bottom, 0px)' }}
     >
       <div className="mx-auto max-w-6xl px-3">
-        <div className="relative rounded-xl border border-white/10 bg-black/45 backdrop-blur px-1">
+        {/* ⬇️ overflow-hidden keeps the text inside the rounded box */}
+        <div className="relative rounded-xl border border-white/10 bg-black/45 backdrop-blur px-1 overflow-hidden">
           <div
-            className="whitespace-nowrap will-change-transform animate-[ticker_linear_infinite]"
-            style={{ animationDuration: `${dur}s` as any }}
+            className="whitespace-nowrap will-change-transform animate-[ticker_linear_infinite] leading-[1] py-2"
+            style={{
+              animationDuration: `${dur}s` as any,
+              // nice fade at the edges (works in WebKit/Chromium + FF)
+              maskImage:
+                'linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%)',
+              WebkitMaskImage:
+                'linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%)',
+            }}
           >
             {loop.map((t, i) => (
               <span
                 key={i}
-                className="inline-flex items-center gap-2 px-5 py-2 text-[13px] text-white/85"
+                className="inline-flex items-center gap-2 px-5 text-[13px] text-white/85 align-middle"
               >
-                <span className="h-1.5 w-1.5 rounded-full bg-amber-300" />
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-300 inline-block" />
                 <span>{t}</span>
               </span>
             ))}
