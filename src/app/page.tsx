@@ -3,10 +3,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 
-// ✅ use relative paths (simplest + Vercel-safe)
 import TreasuryLockCard from '../components/TreasuryLockCard';
-import CopyButton from './components/CopyButton';
-import BonusBanner from '../components/BonusBanner';
+import CopyButton       from './components/CopyButton';
+import BonusBanner      from '../components/BonusBanner';
 
 /* =========================
    Config
