@@ -6,21 +6,21 @@ import LiveBurnProgress from './LiveBurnProgress';
 
 /**
  * Broadcast overlays used on the live stream.
- * Activate by visiting the site with a hash like:
+ * Activate via:
  *   #broadcast?showSmoke=1&showTicker=1&title=The%20Burning%20Bear
+ * or  #/broadcast?...
+ * or  ?broadcast=1&...
  *
- * Supported query params (in the hash after `#broadcast?`):
+ * Supported params:
  * - showSmoke=0/1
  * - showBug=0/1
  * - showTicker=0/1
  * - showProgress=0/1
- * - title=<lower-third title>
- * - subtitle=<lower-third subtitle>
- * - track=<now playing track>
- * - artist=<now playing artist>
- * - reward=<number of BBURN shown in the reward pill>
- * - revealAt=<ISO or ms>  (alias: at)
- * - revealIn=<ms>         (alias: in)
+ * - title, subtitle
+ * - track, artist
+ * - reward=<number>
+ * - revealAt=<ISO or ms> (alias: at)
+ * - revealIn=<ms>        (alias: in)
  */
 
 type Props = {
@@ -33,25 +33,87 @@ export default function BroadcastOverlays({ nextBurnMs }: Props) {
   const [qs, setQs] = React.useState<URLSearchParams>(new URLSearchParams());
   const [now, setNow] = React.useState<number>(Date.now());
 
-  // keep time ticking for countdowns
+  // tick so countdowns advance
   React.useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(id);
   }, []);
 
-  // parse hash for #broadcast and query params
+  // safe-area helpers (avoid covering header / buy button)
+  const applySafe = React.useCallback(() => {
+    const header = document.querySelector('header') as HTMLElement | null;
+    const safeTop = (header?.getBoundingClientRect().height ?? 0) + 10;
+
+    const buyBtn = document.querySelector(
+      'a[aria-label="Buy $BBURN on Jupiter"]'
+    ) as HTMLElement | null;
+    const btnH = buyBtn?.getBoundingClientRect().height ?? 0;
+    const safeBottom = Math.min(btnH + 18, 88);
+
+    document.documentElement.style.setProperty('--safe-top', `${safeTop}px`);
+    document.documentElement.style.setProperty('--safe-bottom', `${safeBottom}px`);
+  }, []);
+
+  const clearSafe = React.useCallback(() => {
+    document.documentElement.style.removeProperty('--safe-top');
+    document.documentElement.style.removeProperty('--safe-bottom');
+  }, []);
+
+  // robust URL parsing for broadcast mode
   React.useEffect(() => {
     const parse = () => {
-      const hash = window.location.hash || '';
-      const on = hash.startsWith('#broadcast');
-      const qp = new URLSearchParams(hash.split('?')[1] || '');
-      setActive(on);
-      setQs(qp);
+      const hash = (window.location.hash || '').trim();      // "#broadcast?..." or "#/broadcast?..."
+      const search = (window.location.search || '').trim();  // "?broadcast=1&..."
+
+      const lower = hash.toLowerCase();
+      const looksHash =
+        lower.startsWith('#broadcast') || lower.startsWith('#/broadcast');
+
+      // params: prefer hash query; otherwise use window.search
+      const fromHash = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
+      const fromSearch = new URLSearchParams(search.startsWith('?') ? search.slice(1) : '');
+      const params = fromHash.toString() ? fromHash : fromSearch;
+
+      const queryFlag = (fromSearch.get('broadcast') || '') === '1';
+
+      const isOn = looksHash || queryFlag;
+
+      setActive(isOn);
+      setQs(params);
+
+      if (isOn) {
+        requestAnimationFrame(applySafe);
+      } else {
+        clearSafe();
+      }
     };
+
     parse();
     window.addEventListener('hashchange', parse);
-    return () => window.removeEventListener('hashchange', parse);
-  }, []);
+    window.addEventListener('popstate', parse);
+
+    const onResize = () => {
+      if (active) requestAnimationFrame(applySafe);
+    };
+    window.addEventListener('resize', onResize);
+
+    // re-measure if header/buy button size changes
+    const ro = new ResizeObserver(() => onResize());
+    const header = document.querySelector('header') as HTMLElement | null;
+    const buyBtn = document.querySelector(
+      'a[aria-label="Buy $BBURN on Jupiter"]'
+    ) as HTMLElement | null;
+    if (header) ro.observe(header);
+    if (buyBtn) ro.observe(buyBtn);
+
+    return () => {
+      window.removeEventListener('hashchange', parse);
+      window.removeEventListener('popstate', parse);
+      window.removeEventListener('resize', onResize);
+      ro.disconnect();
+      clearSafe();
+    };
+  }, [active, applySafe, clearSafe]);
 
   if (!active) return null;
 
@@ -61,14 +123,12 @@ export default function BroadcastOverlays({ nextBurnMs }: Props) {
     if (v == null) return def;
     return v === '1' || v.toLowerCase() === 'true';
   };
-
   const num = (k: string) => {
     const v = qs.get(k);
     if (v == null) return undefined;
     const n = Number(v);
     return Number.isFinite(n) ? n : undefined;
   };
-
   const txt = (k: string) => qs.get(k) ?? undefined;
 
   const showSmoke = bool('showSmoke', true);
@@ -95,7 +155,7 @@ export default function BroadcastOverlays({ nextBurnMs }: Props) {
   const live = revealAt == null ? true : now >= revealAt;
   const liveInMs = revealAt != null ? Math.max(0, revealAt - now) : 0;
 
-  // ------- Ticker items (simple examples; replace as needed) -------
+  // ticker
   const tickerItems = React.useMemo(
     () => [
       'Supply down — burns logged on-chain',
@@ -107,31 +167,25 @@ export default function BroadcastOverlays({ nextBurnMs }: Props) {
 
   return (
     <>
-      {/* LIVE bug / pre-live bug */}
       {showBug && <LiveBug live={live} liveInMs={liveInMs} />}
-
-      {/* Lower-third */}
       <LowerThird title={title} subtitle={subtitle} />
-
-      {/* Now playing (optional) */}
       {track && <NowPlaying track={track} artist={artist} />}
 
-      {/* Reward pill (center-top) */}
       {reward > 0 && <RewardPill potBBURN={reward} />}
 
-      {/* Progress bar for next burn */}
       {showProgress && typeof nextBurnMs === 'number' && Number.isFinite(nextBurnMs) && (
-        <div className="pointer-events-none fixed left-0 right-0 z-[83]" style={{ bottom: 'calc(var(--safe-bottom, 0px) + 8px)' }}>
+        <div
+          className="pointer-events-none fixed left-0 right-0 z-[83]"
+          style={{ bottom: 'calc(var(--safe-bottom, 0px) + 8px)' }}
+        >
           <div className="mx-auto max-w-6xl px-4">
             <LiveBurnProgress nextBurnMs={Math.max(0, nextBurnMs)} />
           </div>
         </div>
       )}
 
-      {/* News ticker (bottom) */}
       {showTicker && <NewsTicker items={tickerItems} />}
 
-      {/* Smoke overlay — wrapped so we don't pass className to the component */}
       {showSmoke && (
         <div className="pointer-events-none fixed inset-0 z-[70]">
           <SmokeOverlay density="light" area="full" plumes={10} />
