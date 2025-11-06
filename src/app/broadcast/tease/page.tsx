@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 
 export default function TeaseCard() {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false); 
 
   useEffect(() => {
     const t = setTimeout(() => setShow(true), 300);
