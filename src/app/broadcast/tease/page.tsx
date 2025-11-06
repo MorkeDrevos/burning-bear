@@ -2,192 +2,194 @@
 
 import React from 'react';
 
-type Schedule = {
-  nextBurnAt?: number;
-  burnIntervalMs?: number;
-  burnIntervalMinutes?: number;
-  lastBurnAt?: number;
-};
-type StateJson = { schedule?: Schedule };
+/**
+ * The Burning Bear — Broadcast Tease Overlay
+ *
+ * URL controls (all optional):
+ *   title    = main line (default: "🔥 Something’s heating up at the Campfire…")
+ *   sub      = small line under title
+ *   live     = 1 to show the red LIVE pill
+ *
+ *   // separate "Live in" countdown (NOT the burn timer)
+ *   revealAt / at = ISO 8601 string or epoch ms (e.g., 2025-11-06T11:45:00Z)
+ *   revealIn / in = duration like "10m", "1h20m", "45s", "1h", "90m30s"
+ *
+ *   // layout & aesthetics
+ *   y       = vertical position in vh (center of the plate)   (default 60)
+ *   w       = inner plate max width in px                     (default 980)
+ *   h       = plate height px                                 (default 96)
+ *   op      = plate bg opacity [0..1]                         (default .86)
+ *   blur    = backdrop blur px                                (default 10)
+ *   r       = border radius px                                (default 16)
+ *   align   = left|center|right                               (default center)
+ *
+ *   // alignment with site container
+ *   wrap    = outer content width to match (px)               (default 1180)
+ *   dx      = horizontal nudge px (+ right, - left)           (default 0)
+ *   pad     = inner side padding px                           (default 22)
+ *
+ *   // extras
+ *   roll    = 1 to show rollover strip                        (default 1)
+ *   curtain = 1 to draw a soft dim bar behind the plate       (default 0)
+ *   ca      = curtain alpha [0..1]                            (default .25)
+ *   cblur   = curtain blur px                                 (default 2)
+ */
 
 export default function Tease() {
-  // Safe query access (client only)
   const [qs, setQs] = React.useState<URLSearchParams | null>(null);
+  const [now, setNow] = React.useState<number>(Date.now());
+  const [revealTarget, setRevealTarget] = React.useState<number | null>(null);
+
   React.useEffect(() => {
-    if (typeof window !== 'undefined') setQs(new URLSearchParams(window.location.search));
+    if (typeof window !== 'undefined') {
+      setQs(new URLSearchParams(window.location.search));
+    }
   }, []);
 
-  // ---------- Controls (URL params) ----------
-  const title = (qs?.get('title') ?? '🎥 Something’s heating up at the Campfire…').trim();
-  const sub   = (qs?.get('sub')   ?? 'Stay near the flames.').trim();
-
-  // Position / layout
-  const bandTopVh = Number(qs?.get('y') ?? 62);         // vertical center of the plate (vh)
-  const plateW    = Number(qs?.get('w') ?? 1180);       // max width (px)
-  const plateH    = Number(qs?.get('h') ?? 116);        // height (px)
-  const opacity   = Math.max(0, Math.min(1, Number(qs?.get('op') ?? 0.88)));
-  const blurPx    = Number(qs?.get('blur') ?? 12);
-  const radius    = Number(qs?.get('r') ?? 18);
-  const align     = (qs?.get('align') ?? 'center') as 'left' | 'center' | 'right';
-  const curtain   = (qs?.get('curtain') ?? '0') === '1'; // wide dim band (full width)
-
-  // LIVE pill & independent countdown
-  const liveEnabled = (qs?.get('live') ?? '1') === '1';
-
-  // ------ NEW: friendlier aliases + originals ------
-  const revealAt = qs?.get('revealAt');
-  const revealIn = qs?.get('revealIn');
-  const atParam  = revealAt ?? qs?.get('at');   // ISO 8601 UTC e.g., 2025-11-06T11:00:00Z
-  const inParam  = revealIn ?? qs?.get('in');   // seconds (e.g., 2700)
-
-  // Time state
-  const [now, setNow] = React.useState<number>(Date.now());
-  const [customTarget, setCustomTarget] = React.useState<number | null>(null); // for revealAt/in
-  const [fallbackTarget, setFallbackTarget] = React.useState<number | null>(null); // burn fallback
-
-  // Ticker
+  // tick clock for countdown
   React.useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  // Compute custom countdown target from at/in
-  React.useEffect(() => {
-    if (!qs) return;
+  // ---- helpers
+  const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 
-    let target: number | null = null;
-
-    if (atParam) {
-      const t = Date.parse(atParam);
-      target = Number.isFinite(t) ? t : null;
-    } else if (inParam) {
-      const sec = Number(inParam);
-      target = Number.isFinite(sec) ? Date.now() + Math.max(0, sec) * 1000 : null;
+  function parseDuration(str: string): number | null {
+    // supports "1h20m30s", "90m", "45s", "2h"
+    const re = /(\d+)(h|m|s)/gi;
+    let m: RegExpExecArray | null;
+    let total = 0;
+    let hits = 0;
+    while ((m = re.exec(str))) {
+      const n = Number(m[1]);
+      const u = m[2].toLowerCase();
+      if (u === 'h') total += n * 3600;
+      else if (u === 'm') total += n * 60;
+      else if (u === 's') total += n;
+      hits++;
     }
+    return hits ? total * 1000 : null;
+  }
 
-    setCustomTarget(target);
-  }, [qs, atParam, inParam]);
-
-  // Fallback to /data/state.json → nextBurnAt (only used when no custom target provided)
-  React.useEffect(() => {
-    if (typeof window === 'undefined') return;
-    let alive = true;
-
-    const load = async () => {
-      try {
-        const r = await fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' });
-        const d: StateJson = await r.json();
-        if (!alive) return;
-
-        const s = d?.schedule ?? {};
-        const nowTs = Date.now();
-
-        let next = typeof s.nextBurnAt === 'number' ? s.nextBurnAt : null;
-
-        // derive from lastBurnAt + interval
-        const interval =
-          typeof s.burnIntervalMs === 'number'
-            ? s.burnIntervalMs
-            : typeof s.burnIntervalMinutes === 'number'
-            ? s.burnIntervalMinutes * 60_000
-            : null;
-
-        if (next == null && typeof s.lastBurnAt === 'number' && interval) {
-          next = s.lastBurnAt + interval;
-        }
-
-        // roll forward if stale
-        if (next != null && interval) {
-          if (nowTs > next) {
-            const k = Math.ceil((nowTs - next) / interval);
-            next = next + k * interval;
-          }
-        }
-
-        setFallbackTarget(next ?? null);
-      } catch {
-        setFallbackTarget(null);
-      }
-    };
-
-    load();
-    const id = setInterval(load, 15_000);
-    return () => {
-      alive = false;
-      clearInterval(id);
-    };
-  }, []);
-
-  // Which target drives the LIVE pill?
-  const liveTarget = customTarget ?? fallbackTarget;
-  const liveMs = liveEnabled && liveTarget ? Math.max(0, liveTarget - now) : 0;
-
-  const fmtHMS = (ms: number) => {
+  function fmtHMS(ms: number): string {
     const t = Math.max(0, Math.floor(ms / 1000));
     const h = Math.floor(t / 3600);
     const m = Math.floor((t % 3600) / 60);
     const s = t % 60;
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-  };
+    return `${h}h ${String(m).padStart(2, '0')}m ${String(s).padStart(2, '0')}s`;
+  }
 
-  // ---------- Styles ----------
+  // ---- query params (safe defaults)
+  const title =
+    (qs?.get('title') ?? "🔥 Something’s heating up at the Campfire…").trim();
+  const sub = (qs?.get('sub') ?? '').trim();
+  const livePill = (qs?.get('live') ?? '1') === '1';
+
+  // aliases for the *separate* go-live countdown
+  const revealAt = qs?.get('revealAt') ?? qs?.get('at');
+  const revealIn = qs?.get('revealIn') ?? qs?.get('in');
+
+  const bandTopVh = Number(qs?.get('y') ?? 60);
+  const plateW = Number(qs?.get('w') ?? 980);
+  const plateH = Number(qs?.get('h') ?? 96);
+  const opacity = clamp01(Number(qs?.get('op') ?? 0.86));
+  const blur = Number(qs?.get('blur') ?? 10);
+  const radius = Number(qs?.get('r') ?? 16);
+  const align = (qs?.get('align') ?? 'center') as 'left' | 'center' | 'right';
+
+  const wrapW = Number(qs?.get('wrap') ?? 1180);
+  const dx = Number(qs?.get('dx') ?? 0);
+  const pad = Number(qs?.get('pad') ?? 22);
+
+  const showRollover = (qs?.get('roll') ?? '1') === '1';
+  const curtain = (qs?.get('curtain') ?? '0') === '1';
+  const curtainAlpha = clamp01(Number(qs?.get('ca') ?? 0.25));
+  const curtainBlur = Number(qs?.get('cblur') ?? 2);
+
+  // compute reveal target
+  React.useEffect(() => {
+    // Note: guard SSR
+    if (!revealAt && !revealIn) {
+      setRevealTarget(null);
+      return;
+    }
+
+    // "in" has priority if both provided
+    if (revealIn) {
+      const dur = parseDuration(revealIn);
+      if (dur != null) {
+        setRevealTarget(Date.now() + dur);
+        return;
+      }
+    }
+
+    if (revealAt) {
+      // accept epoch ms or ISO
+      const n = Number(revealAt);
+      if (Number.isFinite(n) && n > 0) {
+        setRevealTarget(n);
+      } else {
+        const d = new Date(revealAt);
+        if (!Number.isNaN(d.getTime())) {
+          setRevealTarget(d.getTime());
+        } else {
+          setRevealTarget(null);
+        }
+      }
+    }
+  }, [revealAt, revealIn]);
+
+  const remainingReveal = revealTarget != null ? revealTarget - now : NaN;
+  const hasCountdown = Number.isFinite(remainingReveal) && remainingReveal > 0;
+
+  // ---- layout styles
   const container: React.CSSProperties = {
     position: 'fixed',
     inset: 0,
     pointerEvents: 'none',
-    zIndex: 999999,
+    zIndex: 1_000_000,
     background: 'transparent',
   };
 
-  // Optional wide dim band (full width) to suppress underlying UI contrast
-  const curtainBand: React.CSSProperties = curtain
-    ? {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: `calc(${bandTopVh}vh - ${plateH / 2 + 20}px)`,
-        height: plateH + 40,
-        background:
-          'linear-gradient(180deg, rgba(8,6,4,.78), rgba(8,6,4,.82))',
-        backdropFilter: `blur(${blurPx}px)`,
-        WebkitBackdropFilter: `blur(${blurPx}px)`,
-      }
-    : {};
+  const justify =
+    align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
 
   const plateWrap: React.CSSProperties = {
     position: 'absolute',
     top: `${bandTopVh}vh`,
     left: '50%',
-    transform: 'translate(-50%,-50%)',
-    width: 'min(96vw, 1680px)',
+    transform: `translate(calc(-50% + ${dx}px), -50%)`,
+    width: `min(96vw, ${wrapW}px)`,
     display: 'flex',
-    justifyContent: align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center',
+    justifyContent: justify,
   };
 
   const plate: React.CSSProperties = {
     width: `min(100%, ${plateW}px)`,
     height: plateH,
     borderRadius: radius,
-    padding: '16px 22px',
+    padding: `16px ${pad}px`,
+    background: `rgba(12,10,8, ${opacity})`,
+    border: '1px solid rgba(255,235,210,.16)',
+    boxShadow:
+      '0 22px 64px rgba(0,0,0,.55), inset 0 0 38px rgba(255,200,140,.06)',
+    backdropFilter: `blur(${blur}px)`,
+    WebkitBackdropFilter: `blur(${blur}px)`,
     display: 'grid',
     gridTemplateColumns: 'auto 1fr',
     alignItems: 'center',
     gap: 14,
-    background: `rgba(12,10,8, ${opacity})`,
-    border: '1px solid rgba(255,235,210,.18)',
-    boxShadow: '0 24px 64px rgba(0,0,0,.50), inset 0 0 40px rgba(255,200,140,.06)',
-    backdropFilter: `blur(${blurPx}px)`,
-    WebkitBackdropFilter: `blur(${blurPx}px)`,
   };
 
-  const livePill: React.CSSProperties = {
-    display: liveEnabled ? 'inline-flex' : 'none',
+  const livePillStyle: React.CSSProperties = {
+    display: livePill ? 'inline-flex' : 'none',
     alignItems: 'center',
     gap: 10,
-    padding: '8px 12px',
+    padding: '10px 12px',
     borderRadius: 999,
-    background: 'rgba(60,16,16,.82)',
-    border: '1px solid rgba(255,130,130,.35)',
+    background: 'rgba(60,16,16,.78)',
+    border: '1px solid rgba(255,120,120,.35)',
     color: '#ffd7c9',
     fontWeight: 900,
     fontSize: 13,
@@ -196,7 +198,7 @@ export default function Tease() {
     filter: 'drop-shadow(0 0 8px rgba(255,70,70,.35))',
   };
 
-  const dot: React.CSSProperties = {
+  const liveDot: React.CSSProperties = {
     width: 10,
     height: 10,
     borderRadius: 999,
@@ -204,66 +206,99 @@ export default function Tease() {
     boxShadow: '0 0 14px #ff4747',
   };
 
-  const body: React.CSSProperties = {
-    display: 'grid',
-    gap: 6,
-    minWidth: 0,
+  const liveClock: React.CSSProperties = {
+    marginLeft: 8,
+    padding: '6px 8px',
+    borderRadius: 8,
+    background: 'rgba(255,255,255,.08)',
+    border: '1px solid rgba(255,255,255,.15)',
+    fontWeight: 800,
+    fontSize: 12,
+    color: '#ffe7d6',
   };
 
-  const headline: React.CSSProperties = {
+  const titleStyle: React.CSSProperties = {
     fontWeight: 900,
-    fontSize: 'clamp(18px, 2.2vw, 22px)',
+    fontSize: 'clamp(18px, 2.2vw, 28px)',
     letterSpacing: '.2px',
     color: '#ffedd6',
-    textShadow: '0 0 28px rgba(255,200,120,.28), 0 1px 0 rgba(0,0,0,.5)',
+    textShadow:
+      '0 0 28px rgba(255,200,120,.28), 0 1px 0 rgba(0,0,0,.5)',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
   };
 
-  const subline: React.CSSProperties = {
+  const subStyle: React.CSSProperties = {
+    gridColumn: '1 / -1',
+    marginTop: 8,
     fontWeight: 700,
     fontSize: 12,
-    color: 'rgba(255,240,220,.75)',
+    color: '#ffe0bd',
     opacity: 0.9,
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
   };
 
-  // Smooth fade on top page H1 (non-destructive)
-  const fadeH1Css = `
-    /* fade the hero H1 behind the plate for smoother look */
-    h1, h1 * {
-      transition: opacity .35s ease;
-    }
-  `;
+  const rollStyle: React.CSSProperties = {
+    gridColumn: '1 / -1',
+    marginTop: 6,
+    fontSize: 12,
+    fontWeight: 700,
+    color: '#ffcf9d',
+    opacity: 0.85,
+  };
+
+  const curtainWrap: React.CSSProperties = {
+    position: 'absolute',
+    top: `${bandTopVh}vh`,
+    left: '50%',
+    transform: `translate(calc(-50% + ${dx}px), -50%)`,
+    width: `min(96vw, ${wrapW}px)`,
+    height: plateH,
+    borderRadius: radius,
+    background: `rgba(0,0,0,${curtainAlpha})`,
+    filter: `blur(${curtainBlur}px)`,
+  };
 
   return (
     <>
       <div style={container}>
-        {curtain && <div style={curtainBand} />}
+        {/* optional dim bar */}
+        {curtain && <div style={curtainWrap} />}
 
+        {/* main plate */}
         <div style={plateWrap}>
           <div style={plate}>
-            <span style={livePill}>
-              <span style={dot} />
-              {liveTarget && liveMs > 0 ? `LIVE in ${fmtHMS(liveMs)}` : 'LIVE NOW'}
+            {/* LIVE + countdown */}
+            <span style={livePillStyle}>
+              <span style={liveDot} />
+              LIVE
+              {hasCountdown && (
+                <span style={liveClock}>
+                  in {fmtHMS(remainingReveal)}
+                </span>
+              )}
             </span>
 
-            <div style={body}>
-              <div style={headline}>{title}</div>
-              <div style={subline}>{sub}</div>
-            </div>
+            {/* Title */}
+            <div style={titleStyle}>{title}</div>
+
+            {/* Subtitle (optional) */}
+            {sub && <div style={subStyle}>{sub}</div>}
+
+            {/* Rollover strip (optional) */}
+            {showRollover && (
+              <div style={rollStyle}>
+                ⏳ If the prize isn’t claimed in 5 minutes, it rolls over to the next Campfire round.
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Force overlay transparency & gently fade any H1 */}
+      {/* Force full transparency for OBS */}
       <style jsx global>{`
         html, body, #__next, :root { background: transparent !important; }
         html, body { margin: 0 !important; padding: 0 !important; overflow: hidden !important; }
-        ${fadeH1Css}
       `}</style>
     </>
   );
