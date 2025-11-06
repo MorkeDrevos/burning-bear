@@ -1256,7 +1256,7 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
    (Lowered overlays + bigger reward pill)
 ========================= */
 
-const OVERLAY_TOP = 33;         // px from very top (under navbar/H1 area)
+const OVERLAY_TOP = 30;         // px from very top (under navbar/H1 area)
 const TICKER_GAP  = 56;         // px the LowerThird sits above bottom ticker
 
 function LiveBug({ className = "" }: { className?: string }) {
