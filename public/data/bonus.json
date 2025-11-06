@@ -1,0 +1,11 @@
+{
+  "round": 1,
+  "reward": 1000000,
+  "status": "open",        // open | picking | claim | rolled | paid
+  "openedAt": null,
+  "closesAt": null,        // set to nextBurnAt (ms)
+  "winner": null,          // { address, pickedAt, burnTxSig }
+  "claimDeadlineAt": null, // winner must claim by this time (ms)
+  "claimedBy": null,       // { address, at }
+  "history": []
+}
