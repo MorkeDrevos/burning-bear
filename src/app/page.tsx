@@ -3,10 +3,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 
-// ✅ Components (all inside src/app/components/)
-import TreasuryLockCard from './components/TreasuryLockCard';
+// 👉 TreasuryLockCard is in src/components/
+import TreasuryLockCard from '../components/TreasuryLockCard';
+
+// 👉 CopyButton is in src/app/components/
 import CopyButton from './components/CopyButton';
-import BroadcastOverlays from './components/BroadcastOverlays';
 
 /* =========================
    Config
@@ -162,8 +163,6 @@ export default function Page() {
   const [solUsd, setSolUsd] = useState<number | null>(null);
   const [now, setNow] = useState<number>(Date.now());
 
-  const broadcast = useBroadcast();
-
   // 🔥 Burn overlay trigger state (visual only)
   const [showBurnMoment, setShowBurnMoment] = useState(false);
 
@@ -183,54 +182,50 @@ export default function Page() {
     return () => clearInterval(id);
   }, []);
 
-  // Load JSON data (cache-busted), normalize, and persist a last-good copy
-useEffect(() => {
-  let alive = true;
+  // Load JSON data (cache-busted) and normalize timestamps
+  useEffect(() => {
+    let alive = true;
 
-  (async () => {
-    try {
-      const res = await fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' });
-      if (!res.ok) throw new Error(`state.json HTTP ${res.status}`);
-      const d = await res.json();
+    fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((d) => {
+        if (!alive || !d) return;
 
-      if (!alive || !d) return;
+        // Make a shallow copy so we can mutate safely
+        const s = { ...(d.schedule ?? {}) } as any;
 
-      // --- schedule normalization ---
-      const s = { ...(d.schedule ?? {}) } as any;
-      const burnMins    = typeof s.burnIntervalMinutes === 'number' ? s.burnIntervalMinutes : 60;
-      const buybackMins = typeof s.buybackIntervalMinutes === 'number' ? s.buybackIntervalMinutes : 20;
+        // Accept either minutes or ms in incoming JSON
+        const burnMins = typeof s.burnIntervalMinutes === 'number' ? s.burnIntervalMinutes : 60;
+        const buybackMins = typeof s.buybackIntervalMinutes === 'number' ? s.buybackIntervalMinutes : 20;
 
-      if (s.burnIntervalMs == null && burnMins != null)    s.burnIntervalMs = burnMins * 60_000;
-      if (s.buybackIntervalMs == null && buybackMins != null) s.buybackIntervalMs = buybackMins * 60_000;
+        // Ensure ms fields exist (if minutes exist)
+        if (s.burnIntervalMs == null && burnMins != null) s.burnIntervalMs = burnMins * 60 * 1000;
+        if (s.buybackIntervalMs == null && buybackMins != null) s.buybackIntervalMs = buybackMins * 60 * 1000;
 
-      const nowTs = Date.now();
-      if (s.nextBurnAt == null && s.burnIntervalMs)    s.nextBurnAt = nowTs + s.burnIntervalMs;
-      if (s.nextBuybackAt == null && s.buybackIntervalMs) s.nextBuybackAt = nowTs + s.buybackIntervalMs;
+        // Seed next times if missing
+        const nowTs = Date.now();
+        if (s.nextBurnAt == null && s.burnIntervalMs) s.nextBurnAt = nowTs + s.burnIntervalMs;
+        if (s.nextBuybackAt == null && s.buybackIntervalMs) s.nextBuybackAt = nowTs + s.buybackIntervalMs;
 
-      // --- burns normalization ---
-      const burns = (d?.burns ?? [])
-        .map((b: any) => ({ ...b, timestamp: typeof b.timestamp === 'number' ? b.timestamp : Date.parse(b.timestamp) }))
-        .filter((b: any) => Number.isFinite(b.timestamp));
+        // Normalize burns: coerce timestamp to ms and drop invalid rows
+        const burns = (d?.burns ?? [])
+          .map((b: any) => ({ ...b, timestamp: toMs(b.timestamp) }))
+          .filter((b: any) => Number.isFinite(b.timestamp as number));
 
-      const nextState: StateJson = { ...d, schedule: s, burns };
+        setData({
+          ...d,
+          schedule: s,
+          burns,
+        });
+      })
+      .catch(() => {
+        // keep previous data on fetch failure
+      });
 
-      setData(nextState);
-
-      // persist last good copy for offline/404 fallback
-      try { sessionStorage.setItem('bburn_last_state', JSON.stringify(nextState)); } catch {}
-    } catch (err) {
-      console.error('Failed to load /data/state.json:', err);
-
-      // try fallback to last good state
-      try {
-        const cached = sessionStorage.getItem('bburn_last_state');
-        if (cached) setData(JSON.parse(cached));
-      } catch {}
-    }
-  })();
-
-  return () => { alive = false; };
-}, []);
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   // Live SOL price (falls back to stats.priceUsdPerSol)
   useEffect(() => {
@@ -285,94 +280,67 @@ if (typeof window !== 'undefined' && window.location.hash === '#testburn') {
   nextBurnMs = 500; // 0.5s for manual testing only
 }
 
-// ========= Toggle (near other config at top) =========
-const ENABLE_BURN_OVERLAY = false; // set false to disable the banner entirely
+  // Fire overlay once when countdown hits ~0 (no sound)
+  useEffect(() => {
+    const nearZero = nextBurnMs >= 0 && nextBurnMs <= 800; // last 0.8s
+    if (!nearZero) return;
 
-// ========= Fire overlay once when countdown crosses ~0 (no sound) =========
-const prevMsRef = useRef<number | null>(null);
+    const nowTs = Date.now();
+    const COOLDOWN = 60_000; // 60s
+    const last = lastTriggerRef.current || 0;
+    const tooSoon = nowTs - last < COOLDOWN;
+    if (tooSoon || showBurnMoment) return;
 
-useEffect(() => {
-  if (!ENABLE_BURN_OVERLAY) return;
-
-  // Not a number or not yet initialized
-  if (!Number.isFinite(nextBurnMs)) return;
-
-  // Support manual testing: if URL has #testburn, allow tiny negative drift
-  const forceTest =
-    typeof window !== 'undefined' && window.location.hash === '#testburn';
-
-  const prev = prevMsRef.current;
-  prevMsRef.current = nextBurnMs;
-
-  // Show in the last 0.8s, allow short negative grace for timer drift
-  const THRESHOLD = 800;   // ms before zero
-  const NEG_GRACE = forceTest ? 3500 : 2500;
-
-  // Only trigger once when we cross from >THRESHOLD down into the window
-  const crossed =
-    (prev == null || prev > THRESHOLD) &&
-    nextBurnMs <= THRESHOLD &&
-    nextBurnMs >= -NEG_GRACE;
-
-  if (!crossed) return;
-
-  // Prevent double-flash if React re-renders around zero
-  const nowTs = Date.now();
-  const COOLDOWN = 10_000; // ms
-  const last = lastTriggerRef.current || 0;
-
-  if (nowTs - last < COOLDOWN || showBurnMoment) return;
-
-  lastTriggerRef.current = nowTs;
-  setShowBurnMoment(true);
-}, [nextBurnMs, showBurnMoment]);
+    lastTriggerRef.current = nowTs;
+    setShowBurnMoment(true);
+  }, [nextBurnMs, showBurnMoment]);
 
   // Auto-loop: seed if missing and roll forward with a small buffer
-useEffect(() => {
-  setData((prev) => {
-    if (!prev?.schedule) return prev;
+  useEffect(() => {
+    setData((prev) => {
+      if (!prev?.schedule) return prev;
 
-    const s = prev.schedule as any;
-    const nowTs = Date.now();
+      const s = prev.schedule as any;
+      const nowTs = Date.now();
 
-    // accept minutes or ms
-    const toMs = (v?: number) => (typeof v === 'number' ? (v >= 10_000 ? v : v * 60_000) : undefined);
+      // accept minutes or ms
+      const toMs = (v?: number) => (typeof v === 'number' ? (v >= 10_000 ? v : v * 60_000) : undefined);
 
-    const burnI = s.burnIntervalMs ?? toMs(s.burnIntervalMinutes);
-    const buyI  = s.buybackIntervalMs ?? toMs(s.buybackIntervalMinutes);
-    if (!burnI && !buyI) return prev;
+      const burnI = s.burnIntervalMs ?? toMs(s.burnIntervalMinutes);
+      const buyI = s.buybackIntervalMs ?? toMs(s.buybackIntervalMinutes);
+      if (!burnI && !buyI) return prev;
 
-    // seed if missing
-    let nextBurnAt    = s.nextBurnAt    ?? (burnI ? nowTs + burnI : undefined);
-    let nextBuybackAt = s.nextBuybackAt ?? (buyI  ? nowTs + buyI  : undefined);
+      // seed if missing
+      let nextBurnAt = s.nextBurnAt ?? (burnI ? nowTs + burnI : undefined);
+      let nextBuybackAt = s.nextBuybackAt ?? (buyI ? nowTs + buyI : undefined);
 
-    // only advance after a tiny buffer past the target (handles sleeping tabs)
-    const BUFFER = 15_000; // 15s
+      // only advance after a tiny buffer past the target
+      const BUFFER = 15_000; // 15s
 
-    if (nextBurnAt && burnI && nowTs > nextBurnAt + BUFFER) {
-      const k = Math.ceil((nowTs - (nextBurnAt + BUFFER)) / burnI);
-      nextBurnAt = nextBurnAt + k * burnI;
-    }
-    if (nextBuybackAt && buyI && nowTs > nextBuybackAt + BUFFER) {
-      const k = Math.ceil((nowTs - (nextBuybackAt + BUFFER)) / buyI);
-      nextBuybackAt = nextBuybackAt + k * buyI;
-    }
+      if (nextBurnAt && burnI && nowTs > nextBurnAt + BUFFER) {
+        const k = Math.ceil((nowTs - (nextBurnAt + BUFFER)) / burnI);
+        nextBurnAt = nextBurnAt + k * burnI;
+      }
+      if (nextBuybackAt && buyI && nowTs > nextBuybackAt + BUFFER) {
+        const k = Math.ceil((nowTs - (nextBuybackAt + BUFFER)) / buyI);
+        nextBuybackAt = nextBuybackAt + k * buyI;
+      }
 
-    // no change? keep previous object to avoid re-render churn
-    if (nextBurnAt === s.nextBurnAt && nextBuybackAt === s.nextBuybackAt) return prev;
+      // no change? keep previous object
+      if (nextBurnAt === s.nextBurnAt && nextBuybackAt === s.nextBuybackAt) return prev;
 
-    return {
-      ...prev,
-      schedule: {
-        ...s,
-        burnIntervalMs: burnI ?? s.burnIntervalMs,
-        buybackIntervalMs: buyI ?? s.buybackIntervalMs,
-        nextBurnAt,
-        nextBuybackAt,
-      },
-    };
-  });
-}, [now]);
+      return {
+        ...prev,
+        schedule: {
+          ...s,
+          burnIntervalMs: burnI ?? s.burnIntervalMs,
+          buybackIntervalMs: buyI ?? s.buybackIntervalMs,
+          nextBurnAt,
+          nextBuybackAt,
+        },
+      };
+    });
+  }, [now]);
 
   // ...rest of your component (render) continues below
  
@@ -409,7 +377,7 @@ useEffect(() => {
   return (
     <main id="top">
       {/* ===== Header ===== */}
-      <header className="sticky top-0 z-[90] w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
+      <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
           {/* Left: Logo + Title */}
           <Link href="#top" className="flex items-center gap-3 md:gap-4 min-w-0">
@@ -505,11 +473,7 @@ useEffect(() => {
       {/* Countdowns */}
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
         {/* <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} /> */}
-        <Countdown
-  label="Next burn in"
-  ms={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined}
-  variant="segments"
-/>
+        <Countdown label="Next burn in" ms={nextBurnMs} variant="segments" />
       </div>
 
      {/* Stats */}
@@ -1124,69 +1088,30 @@ useEffect(() => {
       </footer>
 
 {/* Sticky Buy button (bottom-right) */}
-{!broadcast.on && (
-  <a
-    href={JUP_URL}
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="Buy $BBURN on Jupiter"
-    className="
-      fixed z-50
-      right-6 bottom-[calc(1.25rem+env(safe-area-inset-bottom,0))]
-      inline-flex items-center gap-2.5
-      rounded-full px-5 py-3 font-semibold
-      text-[#120d05]
-      bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400
-      ring-1 ring-amber-200/40 shadow-xl
-      hover:scale-[1.04] hover:brightness-110 active:scale-[0.98]
-      transition-transform duration-150
-    "
-    style={{
-      boxShadow:
-        '0 0 0 10px rgba(16,12,8,0.35), 0 10px 25px rgba(255,190,70,0.35), 0 0 40px rgba(255,180,60,0.25)',
-    }}
-  >
-    <JupiterMark className="h-6 w-6 text-amber-900/80" />
-    <span>Buy $BBURN on Jupiter</span>
-  </a>
-)}
-
-{/* --- Top Overlays (above everything) --- */}
-{broadcast.on && (
-  <>
-    {/* 🔴 LIVE badge (top-left) */}
-    <LiveBug />
-
-    {/* 🎵 Now Playing (top-right) */}
-    <NowPlaying
-      track={(broadcast.params.get('now') || '').split('|')[0] || ''}
-      artist={(broadcast.params.get('now') || '').split('|')[1] || ''}
-    />
-
-    {/* 🪙 Reward Pill — always show, fallback to 100,000 BBURN */}
-    <RewardPill
-      msToBurn={nextBurnMs}
-      potBBURN={Number(broadcast.params.get('reward') || 100000)}
-    />
-
-    {/* 📢 Lower-third banner (optional) */}
-    {broadcast.params.get('lower') && (
-      <LowerThird
-        title={(broadcast.params.get('lower') || '').split('|')[0] || 'Live Campfire'}
-        subtitle={(broadcast.params.get('lower') || '').split('|')[1] || undefined}
-      />
-    )}
-
-    {/* 🗞️ Ticker messages (bottom) */}
-    {broadcast.params.get('ticker') && (
-      <NewsTicker
-        items={(broadcast.params.get('ticker') || '').split(';').filter(Boolean)}
-      />
-    )}
-  </>
-)}
-
-<BroadcastOverlays />
+<a
+  href={JUP_URL}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Buy $BBURN on Jupiter"
+  className="
+    fixed z-50
+    right-6 bottom-[calc(1.25rem+env(safe-area-inset-bottom,0))]
+    inline-flex items-center gap-2.5
+    rounded-full px-5 py-3 font-semibold
+    text-[#120d05]
+    bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400
+    ring-1 ring-amber-200/40 shadow-xl
+    hover:scale-[1.04] hover:brightness-110 active:scale-[0.98]
+    transition-transform duration-150
+  "
+  style={{
+    boxShadow:
+      '0 0 0 10px rgba(16,12,8,0.35), 0 10px 25px rgba(255,190,70,0.35), 0 0 40px rgba(255,180,60,0.25)',
+  }}
+>
+  <JupiterMark className="h-6 w-6 text-amber-900/80" />
+  <span>Buy $BBURN on Jupiter</span>
+</a>
 
 </main>
 );
@@ -1206,21 +1131,20 @@ type CountdownProps = {
 };
 
 function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
-  const hasFiniteMs = typeof ms === 'number' && Number.isFinite(ms);
-
-  const segs = hasFiniteMs
-    ? (() => {
-        const t = Math.max(0, Math.floor(ms! / 1000));
-        const h = Math.floor(t / 3600);
-        const m = Math.floor((t % 3600) / 60);
-        const s = t % 60;
-        return {
-          h: String(h),
-          m: m.toString().padStart(2, '0'),
-          s: s.toString().padStart(2, '0'),
-        };
-      })()
-    : null;
+  const segs =
+    typeof ms === 'number'
+      ? (() => {
+          const t = Math.max(0, Math.floor(ms / 1000));
+          const h = Math.floor(t / 3600);
+          const m = Math.floor((t % 3600) / 60);
+          const s = t % 60;
+          return {
+            h: String(h),
+            m: m.toString().padStart(2, '0'),
+            s: s.toString().padStart(2, '0'),
+          };
+        })()
+      : null;
 
   return (
     <div>
@@ -1228,21 +1152,12 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
         {label}
       </div>
 
-      {variant === 'segments' ? (
-        segs ? (
-          <div className="mt-2 flex items-center gap-[4px] md:gap-[6px]">
-            <SegmentBox>{segs.h}</SegmentBox><Colon />
-            <SegmentBox>{segs.m}</SegmentBox><Colon />
-            <SegmentBox>{segs.s}</SegmentBox>
-          </div>
-        ) : (
-          // Placeholder when no valid countdown target yet
-          <div className="mt-2 flex items-center gap-[4px] md:gap-[6px] opacity-70">
-            <SegmentBox>--</SegmentBox><Colon />
-            <SegmentBox>--</SegmentBox><Colon />
-            <SegmentBox>--</SegmentBox>
-          </div>
-        )
+      {variant === 'segments' && segs ? (
+        <div className="mt-2 flex items-center gap-[4px] md:gap-[6px]">
+          <SegmentBox>{segs.h}</SegmentBox><Colon />
+          <SegmentBox>{segs.m}</SegmentBox><Colon />
+          <SegmentBox>{segs.s}</SegmentBox>
+        </div>
       ) : variant === 'glow' ? (
         <div
           className="mt-1 text-3xl font-extrabold bg-gradient-to-r from-amber-200 via-amber-100 to-white bg-clip-text text-transparent md:text-[36px]"
@@ -1255,106 +1170,6 @@ function Countdown({ label, value, ms, variant = 'plain' }: CountdownProps) {
           {value}
         </div>
       )}
-    </div>
-  );
-}
-
-function LiveBug({ className = "" }: { className?: string }) {
-  return (
-    <div
-      className={"pointer-events-none fixed left-4 z-[80] " + className}
-      style={{ top: 'calc(var(--safe-top, 8px) - 6px)' }}
-    >
-      <div className="inline-flex items-center gap-2 rounded-full bg-red-600/90 px-3.5 py-1.5 shadow-lg">
-        <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
-        <span className="text-[13px] font-bold text-white tracking-wide">LIVE • ON AIR</span>
-      </div>
-    </div>
-  );
-}
-
-function NowPlaying({ track, artist }: { track: string; artist?: string }) {
-  return (
-    <div
-      className="pointer-events-none fixed right-4 z-[80]"
-      style={{ top: 'calc(var(--safe-top, 8px) - 6px)' }}
-    >
-      <div className="inline-flex max-w-[66vw] items-center gap-2 rounded-full border border-amber-400/25 bg-black/55 px-3.5 py-1.5 backdrop-blur shadow-lg">
-        <span className="h-2 w-2 rounded-full bg-amber-300" />
-        <span className="text-[13px] font-semibold text-amber-100 truncate">
-          Now Playing: {track}{artist ? ` — ${artist}` : ''}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }) {
-  const soon = msToBurn >= 0 && msToBurn <= 5 * 60_000;
-  const pretty = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(potBBURN);
-
-  return (
-    <div
-      className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[80]"
-      style={{ top: 'calc(var(--safe-top, 8px) + 48px)' }}
-    >
-      <div className="inline-flex items-center gap-3 rounded-2xl border border-amber-400/30 bg-amber-500/10 px-4 py-2 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
-        <span className={`text-[13px] font-extrabold ${soon ? 'text-amber-200' : 'text-amber-100'}`}>
-          Campfire Reward:
-        </span>
-        <span className={`text-[15px] font-extrabold ${soon ? 'animate-pulse text-amber-200' : 'text-amber-100'}`}>
-          {pretty} $BBURN
-        </span>
-      </div>
-    </div>
-  );
-}
-
-/* =========================
-   Broadcast UI — Live TV vibe
-========================= */
-
-function LowerThird({ title, subtitle }: { title: string; subtitle?: string }) {
-  return (
-    <div
-  className="pointer-events-none fixed left-4 z-[86] max-w-[60vw]"
-  style={{ bottom: 'calc(var(--safe-bottom, 16px) + 60px)' }}
->
-      <div className="rounded-2xl border border-amber-400/25 bg-black/55 backdrop-blur-md px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
-        <div className="text-amber-200 font-extrabold text-lg leading-tight">{title}</div>
-        {subtitle ? <div className="text-white/75 text-sm mt-0.5">{subtitle}</div> : null}
-      </div>
-    </div>
-  );
-}
-
-function NewsTicker({ items }: { items: string[] }) {
-  const loop = items.length ? [...items, ...items] : [];
-  const dur = Math.max(20, items.length * 7);
-
-  return (
-    <div
-  className="pointer-events-none fixed left-0 right-0 z-[84]"
-  style={{ bottom: 'var(--safe-bottom, 16px)' }}
->
-      <div className="mx-auto max-w-6xl px-3">
-        <div className="relative rounded-xl border border-white/10 bg-black/45 backdrop-blur px-1">
-          <div
-            className="whitespace-nowrap will-change-transform animate-[ticker_linear_infinite]"
-            style={{ animationDuration: `${dur}s` as any }}
-          >
-            {loop.map((t, i) => (
-              <span
-                key={i}
-                className="inline-flex items-center gap-2 px-5 py-2 text-[13px] text-white/85"
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-amber-300" />
-                <span>{t}</span>
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
@@ -1608,81 +1423,6 @@ function JupiterMark({ className = '' }: { className?: string }) {
       />
     </svg>
   );
-}
-
-function useBroadcast() {
-  const [on, setOn] = React.useState(false);
-  const [params, setParams] = React.useState<URLSearchParams>(new URLSearchParams());
-  const onRef = React.useRef(false);
-
-  React.useEffect(() => {
-    const applySafeAreas = () => {
-      const header = document.querySelector('header') as HTMLElement | null;
-
-      // Measure header height and add a tiny cushion
-      const headerH = Math.round(header?.getBoundingClientRect().height ?? 0);
-      const safeTop = Math.max(8, headerH + 2);      // tighter than before
-      const safeBottom = 18;                          // stable padding above ticker/lower-third
-
-      document.documentElement.style.setProperty('--safe-top', `${safeTop}px`);
-      document.documentElement.style.setProperty('--safe-bottom', `${safeBottom}px`);
-    };
-
-    const clearSafeAreas = () => {
-      document.documentElement.style.removeProperty('--safe-top');
-      document.documentElement.style.removeProperty('--safe-bottom');
-    };
-
-    const parse = () => {
-      const h = window.location.hash || '';
-      const isBroadcast = h.startsWith('#broadcast');
-      const qs = new URLSearchParams(h.split('?')[1] || '');
-
-      setOn(isBroadcast);
-      onRef.current = isBroadcast;
-      setParams(qs);
-
-      if (isBroadcast) {
-        // 1) next frame (after DOM paints)
-        requestAnimationFrame(applySafeAreas);
-        // 2) after fonts/layout settle
-        (document as any).fonts?.ready?.then?.(() => applySafeAreas());
-        // 3) final safety re-measure
-        window.setTimeout(applySafeAreas, 150);
-      } else {
-        clearSafeAreas();
-      }
-    };
-
-    const onResize = () => {
-      if (onRef.current) applySafeAreas();
-    };
-
-    const onVisibility = () => {
-      if (onRef.current && !document.hidden) applySafeAreas();
-    };
-
-    // Initial run + listeners
-    parse();
-    window.addEventListener('hashchange', parse);
-    window.addEventListener('resize', onResize);
-    document.addEventListener('visibilitychange', onVisibility);
-
-    // Observe header size only (no dependency on Buy button)
-    const ro = new ResizeObserver(() => onResize());
-    const header = document.querySelector('header') as HTMLElement | null;
-    if (header) ro.observe(header);
-
-    return () => {
-      window.removeEventListener('hashchange', parse);
-      window.removeEventListener('resize', onResize);
-      document.removeEventListener('visibilitychange', onVisibility);
-      ro.disconnect();
-      clearSafeAreas();
-    };
-  }, []);
-
-  return { on, params };
 }
 
 /* =========================
