@@ -13,15 +13,20 @@ type StateJson = { schedule?: Schedule };
 export default function Tease() {
   const [now, setNow] = React.useState<number>(Date.now());
   const [target, setTarget] = React.useState<number | null>(null);
-  const [visible, setVisible] = React.useState(true);
 
-  // tick 1s
+  // URL controls
+  const params =
+    typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+  const mini = params?.get('mini') === '1';                 // mini pill (lower-third style)
+  const pos = (params?.get('pos') || 'bottom') as 'top' | 'bottom';
+  const align = (params?.get('align') || 'center') as 'left' | 'center' | 'right';
+  const margin = Number(params?.get('m') || 24);            // margin from edges (px)
+
   React.useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  // load state.json (client only)
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
     let alive = true;
@@ -31,7 +36,6 @@ export default function Tease() {
         .then((r) => r.json())
         .then((d: StateJson) => {
           if (!alive) return;
-
           const s = d?.schedule ?? {};
           const burnI =
             typeof s.burnIntervalMs === 'number'
@@ -50,28 +54,17 @@ export default function Tease() {
           setTarget(next ?? null);
         })
         .catch(() => {});
-
     load();
-    const id = setInterval(load, 60_000); // refresh each minute
+    const id = setInterval(load, 60_000);
     return () => {
       alive = false;
       clearInterval(id);
     };
   }, []);
 
-  // auto-hide a few seconds after it fires
-  React.useEffect(() => {
-    if (target == null) return;
-    const remaining = target - now;
-    if (remaining <= 0 && visible) {
-      const t = setTimeout(() => setVisible(false), 4000); // fade away after 4s
-      return () => clearTimeout(t);
-    }
-  }, [target, now, visible]);
+  const remainingMs =
+    target != null ? target - now : Number.POSITIVE_INFINITY;
 
-  if (!visible) return null;
-
-  // countdown formatting
   const fmtSegs = (ms: number) => {
     const t = Math.max(0, Math.floor(ms / 1000));
     const h = Math.floor(t / 3600);
@@ -80,18 +73,51 @@ export default function Tease() {
     return `${h}h ${String(m).padStart(2, '0')}m ${String(s).padStart(2, '0')}s`;
   };
 
-  // Marbella clock text (Europe/Madrid)
-  const marbellaTime =
-    target != null
-      ? new Date(target).toLocaleTimeString('en-GB', {
-          timeZone: 'Europe/Madrid',
-          hour: '2-digit',
-          minute: '2-digit',
-        })
-      : '—:—';
+  // --- layout helpers
+  const justify =
+    align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
 
-  const remainingMs = target != null ? target - now : Number.POSITIVE_INFINITY;
+  const containerStyle: React.CSSProperties = {
+    position: 'fixed',
+    inset: 0,
+    display: 'flex',
+    alignItems: pos === 'top' ? 'flex-start' : 'flex-end',
+    justifyContent: justify,
+    padding: margin,
+    background: 'transparent',
+    pointerEvents: 'none',
+  };
 
+  if (mini) {
+    // MINI: countdown pill only
+    return (
+      <div style={containerStyle}>
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '10px 14px',
+            borderRadius: 999,
+            border: '1px solid rgba(255,235,200,.22)',
+            background: 'rgba(20,16,10,.55)',
+            backdropFilter: 'blur(8px)',
+            fontWeight: 800,
+            fontSize: 16,
+            color: '#ffe7c3',
+            textShadow: '0 0 10px rgba(255,190,90,.15)',
+            boxShadow:
+              '0 6px 18px rgba(0,0,0,.35), inset 0 0 24px rgba(255,180,70,.08)',
+          }}
+        >
+          <span aria-hidden>⏳</span>
+          <span>{Number.isFinite(remainingMs) ? fmtSegs(remainingMs) : '—'}</span>
+        </span>
+      </div>
+    );
+  }
+
+  // FULL: headline + countdown line (kept if you still want to use it sometimes)
   return (
     <div
       style={{
@@ -103,14 +129,7 @@ export default function Tease() {
         background: 'transparent',
       }}
     >
-      <div
-        style={{
-          textAlign: 'center',
-          transform: 'translateY(-6vh)',
-          opacity: 1,
-          animation: 'fadein 300ms ease-out',
-        }}
-      >
+      <div style={{ textAlign: 'center', transform: 'translateY(-6vh)' }}>
         <h1
           style={{
             fontSize: 'clamp(28px, 4.8vw, 64px)',
@@ -119,12 +138,12 @@ export default function Tease() {
             color: '#ffe7b4',
             textShadow:
               '0 0 22px rgba(255,200,120,.25), 0 0 44px rgba(255,170,70,.20)',
+            margin: 0,
           }}
         >
           🎥 Something’s heating up at the Campfire…
         </h1>
 
-        {/* Countdown line (hooked to state.json) */}
         <p
           style={{
             marginTop: 12,
@@ -137,14 +156,9 @@ export default function Tease() {
           ⏳ Find out in{' '}
           <span style={{ color: '#fff3d6' }}>
             {Number.isFinite(remainingMs) ? fmtSegs(remainingMs) : '—'}
-          </span>{' '}
-          <span style={{ opacity: 0.6 }}>({marbellaTime} Marbella)</span>
+          </span>
         </p>
       </div>
-
-      <style>{`
-        @keyframes fadein { from { opacity: 0; transform: translateY(-8vh) } to { opacity: 1; transform: translateY(-6vh) } }
-      `}</style>
     </div>
   );
 }
