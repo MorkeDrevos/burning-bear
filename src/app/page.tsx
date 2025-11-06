@@ -1331,6 +1331,9 @@ function NewsTicker({ items }: { items: string[] }) {
   const loop = items.length ? [...items, ...items] : [];
   const dur = Math.max(20, items.length * 7);
 
+  // pixels of empty space before the first visible item
+  const leading = 56; // tweak 40–80 to taste
+
   return (
     <div
       className="pointer-events-none fixed left-0 right-0 z-[84]"
@@ -1339,15 +1342,19 @@ function NewsTicker({ items }: { items: string[] }) {
       <div className="mx-auto max-w-6xl px-3">
         <div className="relative rounded-xl border border-white/10 bg-black/45 backdrop-blur overflow-hidden">
           <div
-            className="whitespace-nowrap will-change-transform animate-[ticker_linear_infinite] leading-[1] py-2 pl-6"
+            className="whitespace-nowrap will-change-transform animate-[ticker_linear_infinite] leading-[1] py-2"
             style={{
               animationDuration: `${dur}s` as any,
+              // soft edge fade
               maskImage:
                 'linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%)',
               WebkitMaskImage:
                 'linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%)',
             }}
           >
+            {/* left buffer so the first item doesn't start on the border */}
+            <span style={{ display: 'inline-block', width: leading }} />
+
             {loop.map((t, i) => (
               <span
                 key={i}
@@ -1357,6 +1364,9 @@ function NewsTicker({ items }: { items: string[] }) {
                 <span>{t}</span>
               </span>
             ))}
+
+            {/* optional trailing spacer to smooth the wrap */}
+            <span style={{ display: 'inline-block', width: leading }} />
           </div>
         </div>
       </div>
