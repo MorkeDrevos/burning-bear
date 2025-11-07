@@ -1018,14 +1018,6 @@ export default function Page() {
       />
     )}
 
-    {/* Reward pill disabled; box shows the reward */}
-    {false && Boolean(broadcast.params.get('reward')) && (
-      <RewardPill
-        msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : Infinity}
-        potBBURN={Number(broadcast.params.get('reward')) || 0}
-      />
-    )}
-
     {Boolean(broadcast.params.get('now')) && (
       <NowPlaying
         track={(broadcast.params.get('now') || '').split('|')[0]}
