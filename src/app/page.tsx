@@ -9,10 +9,9 @@ import BonusBanner from './components/BonusBanner';
 import CampfireBonusBox from './components/CampfireBonusBox';
 
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 // 🔥 Redirect #broadcast?... to correct overlay route
-export default function HashRedirect() {
+function HashRedirect() {
   const router = useRouter();
 
   useEffect(() => {
@@ -20,10 +19,7 @@ export default function HashRedirect() {
     const h = window.location.hash || '';
     if (!h.startsWith('#broadcast')) return;
 
-    // Extract query string after "#broadcast?"
     const qs = h.includes('?') ? h.split('?')[1] : '';
-
-    // Decide which overlay to show (lower or tease)
     const params = new URLSearchParams(qs);
     const hasLower = params.has('lower');
     const dest = hasLower ? '/broadcast/lower' : '/broadcast/tease';
@@ -173,14 +169,6 @@ export default function Page() {
     return () => { alive = false; };
   }, []); // run on mount; adjust if you want periodic reloads
 
-  // ----- JSX -----
-  return (
-    <>
-      <HashRedirect /> {/* runs immediately, rewrites #broadcast to /broadcast/* */}
-      {/* your existing page JSX (hero, stats, burn log, etc.) */}
-    </>
-  );
-} // ← end Page() — nothing after this
 
   // Live SOL price (falls back to stats.priceUsdPerSol)
   useEffect(() => {
@@ -347,7 +335,13 @@ export default function Page() {
     return { count, sol, usd, largest, avgSol };
   }, [burnsSorted, weekStart, priceUsdPerSol]);
 
-  return (
+  // ...all your hooks and computed values ABOVE this line...
+
+// ----- JSX -----
+return (
+  <>
+    <HashRedirect /> {/* rewrites #broadcast?... to /broadcast/* */}
+
     <main id="top">
       {/* ===== Header ===== */}
       <header className="sticky top-0 z-[90] w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
@@ -394,6 +388,7 @@ export default function Page() {
       </header>
 
       {/* ===== HERO ===== */}
+    
       <section className="relative">
         {/* Background video + vignette */}
         <div className="absolute inset-0 -z-10 overflow-hidden hero-vignette">
