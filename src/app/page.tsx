@@ -315,27 +315,25 @@ export default function Page() {
 
   return (
     <main id="top">
-      {/* Live On Air badge — adjusted so it never hides behind header */}
+      {/* Live On Air badge — final refined version */}
 <a
   href="https://pump.fun/coin/BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump"
   target="_blank"
   rel="noopener noreferrer"
   className="
-    fixed left-[18px] z-[200]   /* ← above header (your header is ~z-[90]) */
+    fixed left-[20px] top-[82px] z-[200]
     flex items-center gap-2
-    bg-red-700/40 hover:bg-red-700/55
-    text-white/90 font-semibold text-[13px] tracking-wide
-    px-3.5 py-1.5 rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.25)]
-    backdrop-blur-sm transition-all duration-200
-    pointer-events-auto
+    bg-gradient-to-r from-red-800/40 to-red-600/30
+    hover:from-red-700/45 hover:to-red-600/40
+    text-white/80 font-semibold text-[12.5px] tracking-wide
+    px-3.5 py-[5px] rounded-full
+    shadow-[0_4px_20px_rgba(0,0,0,0.3)]
+    backdrop-blur-[6px] transition-all duration-200
+    border border-red-400/10
   "
-  style={{
-    // respects any safe-top / iOS notch; sits below your sticky header
-    top: 'calc(var(--safe-top, 0px) + 84px)',
-  }}
 >
-  <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-  LIVE — On Air
+  <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse shadow-[0_0_6px_#f87171]" />
+  LIVE&nbsp;On&nbsp;Air
 </a>
       {/* ===== Header ===== */}
       <header className="sticky top-0 z-[90] w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
