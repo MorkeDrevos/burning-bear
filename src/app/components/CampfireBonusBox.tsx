@@ -49,16 +49,54 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
       </div>
 
       {/* Jackpot */}
-<div className="mb-10">
+<div className="mb-8">
   <p className="uppercase text-amber-400/70 tracking-widest text-sm md:text-base mb-2">
     Jackpot
   </p>
-  <h3 className="text-5xl md:text-6xl font-extrabold text-amber-300 drop-shadow-[0_2px_10px_rgba(255,200,0,0.25)] leading-tight">
+  <h3 className="text-6xl md:text-[4.5rem] font-extrabold text-amber-300 drop-shadow-[0_2px_12px_rgba(255,200,0,0.3)] leading-[1.05]">
     WIN <span className="text-amber-200">1,000,000</span> <span className="text-amber-300">$BBURN</span>
   </h3>
-  <p className="text-base md:text-lg text-white/60 mt-3 max-w-xl">
+  <p className="text-lg md:text-xl text-white/60 mt-2">
     If unclaimed within 5 minutes, the prize rolls into the next round.
   </p>
+</div>
+
+{/* Buttons */}
+<div className="flex flex-wrap gap-4 mb-6">
+  <a
+    href="https://jup.ag/swap/SOL-BBURN"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="px-6 py-3 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/20 rounded-xl text-lg font-semibold transition"
+  >
+    🌕 Buy $BBURN to Join the Draw
+  </a>
+  <a
+    href="https://burningbear.camp/#broadcast"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-lg font-semibold transition"
+  >
+    📺 Campfire Bonus Live
+  </a>
+  <a
+    href="https://x.com/burningbearcamp"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="px-6 py-3 bg-white/5 hover:bg-white/15 border border-white/20 rounded-xl text-lg font-semibold transition"
+  >
+    ✖ Follow @burningbearcamp
+  </a>
+</div>
+
+{/* Timer (aligned left) */}
+<div className="flex flex-col md:flex-row md:items-end md:gap-6 md:justify-start">
+  <div className="uppercase tracking-widest text-sm text-white/60">
+    Next Burn In
+  </div>
+  <div className="flex gap-2 text-4xl md:text-5xl font-bold bg-black/30 px-4 py-2 rounded-2xl border border-white/10">
+    <span>04</span><span>:</span><span>42</span><span>:</span><span>02</span>
+  </div>
 </div>
 
       {/* Buttons */}
