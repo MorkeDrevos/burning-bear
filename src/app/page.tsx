@@ -5,25 +5,28 @@ import Link from 'next/link';
 
 import TreasuryLockCard from './components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
-import BonusBanner from './components/BonusBanner';
 import CampfireBonusBox from './components/CampfireBonusBox';
 
 import { useRouter } from 'next/navigation';
 
-// 🔥 Redirect #broadcast?... to correct overlay route
+// 🔥 Redirect #broadcast?... to overlay routes ONLY when mode=overlay
 function HashRedirect() {
   const router = useRouter();
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
     const h = window.location.hash || '';
     if (!h.startsWith('#broadcast')) return;
 
     const qs = h.includes('?') ? h.split('?')[1] : '';
     const params = new URLSearchParams(qs);
-    const hasLower = params.has('lower');
-    const dest = hasLower ? '/broadcast/lower' : '/broadcast/tease';
 
+    // 👇 New: only redirect when explicitly requested
+    const wantsOverlay = params.get('mode') === 'overlay';
+    if (!wantsOverlay) return; // stay on main page and show all overlays together
+
+    const dest = params.has('lower') ? '/broadcast/lower' : '/broadcast/tease';
     router.replace(`${dest}?${qs}`);
   }, [router]);
 
@@ -939,11 +942,6 @@ return (
   <>
     <LiveBug live={broadcast.live} liveInMs={broadcast.liveInMs} />
 
-    {/* BonusBanner only when we have a finite number */}
-    {Number.isFinite(nextBurnMs) && (
-      <BonusBanner msToBurn={nextBurnMs as number} />
-    )}
-
     {Boolean(broadcast.params.get('lower')) && (
       <LowerThird
         title={(broadcast.params.get('lower') ?? '').split('|')[0] || 'Live Campfire'}
@@ -1083,7 +1081,7 @@ function NowPlaying({ track, artist }: { track: string; artist?: string }) {
   );
 }
 
-function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }) {
+<function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }) {
   const soon = isFinite(msToBurn) && msToBurn >= 0 && msToBurn <= 5 * 60_000;
   return (
     <div className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[82]" style={{ top: `calc(var(--safe-top, 0px) + ${OVERLAY_TOP - 6}px)` }}>
