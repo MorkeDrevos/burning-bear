@@ -5,7 +5,6 @@ import Link from 'next/link';
 
 import TreasuryLockCard from './components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
-import BonusBanner from './components/BonusBanner';
 import CampfireBonusBox from './components/CampfireBonusBox';
 
 import { useRouter } from 'next/navigation';
@@ -943,11 +942,6 @@ return (
   <>
     <LiveBug live={broadcast.live} liveInMs={broadcast.liveInMs} />
 
-    {/* BonusBanner only when we have a finite number */}
-    {Number.isFinite(nextBurnMs) && (
-      {/* <BonusBanner msToBurn={nextBurnMs as number} /> */}
-    )}
-
     {Boolean(broadcast.params.get('lower')) && (
       <LowerThird
         title={(broadcast.params.get('lower') ?? '').split('|')[0] || 'Live Campfire'}
@@ -1087,7 +1081,7 @@ function NowPlaying({ track, artist }: { track: string; artist?: string }) {
   );
 }
 
-function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }) {
+<function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }) {
   const soon = isFinite(msToBurn) && msToBurn >= 0 && msToBurn <= 5 * 60_000;
   return (
     <div className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[82]" style={{ top: `calc(var(--safe-top, 0px) + ${OVERLAY_TOP - 6}px)` }}>
@@ -1104,7 +1098,7 @@ function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number
       </div>
     </div>
   );
-}
+}>
 
 function NewsTicker({ items }: { items: string[] }) {
   const loop = items.length ? [...items, ...items] : [];
