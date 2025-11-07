@@ -62,9 +62,7 @@ export default function WinnerReveal({
       <div className="text-amber-200 font-extrabold text-lg leading-tight flex items-center gap-2">
   <span className="text-[18px]">🏆</span>
   <span>Winner picked!</span>
-  <span className="ml-2 text-[12px] font-bold rounded-md px-2 py-[2px] border border-white/15 bg-white/10 text-white/85">
-    {done ? 'CLAIM CLOSED' : 'CLAIM WINDOW'}
-  </span>
+
   {!done && (
     <span className="ml-2 text-white/85 font-extrabold tabular-nums tracking-wide">
       {mm}:{ss}
