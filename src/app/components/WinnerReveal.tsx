@@ -59,19 +59,18 @@ export default function WinnerReveal({
       aria-live="polite"
       role="status"
     >
-      <div className="rounded-2xl border border-amber-400/25 bg-black/60 backdrop-blur-md px-5 py-4 shadow-[0_20px_60px_rgba(0,0,0,.45)] max-w-[90vw]">
-        <div className="text-amber-200 font-extrabold text-lg leading-tight flex items-center gap-2">
-          <span className="text-[18px]">🏆</span>
-          <span>Winner picked!</span>
-          <span className="ml-2 text-[12px] font-bold rounded-md px-2 py-[2px] border border-white/15 bg-white/10 text-white/85">
-            {done ? 'CLAIM CLOSED' : 'CLAIM WINDOW'}
-          </span>
-          {!done && (
-            <span className="ml-2 text-white/85 font-extrabold tabular-nums tracking-wide">
-              {mm}:{ss}
-            </span>
-          )}
-        </div>
+      <div className="text-amber-200 font-extrabold text-lg leading-tight flex items-center gap-2">
+  <span className="text-[18px]">🏆</span>
+  <span>Winner picked!</span>
+  <span className="ml-2 text-[12px] font-bold rounded-md px-2 py-[2px] border border-white/15 bg-white/10 text-white/85">
+    {done ? 'CLAIM CLOSED' : 'CLAIM WINDOW'}
+  </span>
+  {!done && (
+    <span className="ml-2 text-white/85 font-extrabold tabular-nums tracking-wide">
+      {mm}:{ss}
+    </span>
+  )}
+</div>
 
         <div className="mt-2 flex flex-wrap items-center gap-2 text-[15px] text-white/90">
           <code className="rounded-lg bg-white/10 px-2.5 py-1 font-mono">
