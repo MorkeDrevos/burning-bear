@@ -411,8 +411,10 @@ export default function Page() {
         {/* Panel */}
         <div className="relative w-full rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
           <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
-            Meet The Burning Bear – Solana’s deflation engine
-          </h1>
+  {broadcast.on
+    ? 'With The Burning Bear – Solana’s deflation engine'
+    : 'Meet The Burning Bear – Solana’s deflation engine'}
+</h1>
 
           {/* Countdowns */}
           <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
