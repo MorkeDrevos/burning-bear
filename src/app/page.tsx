@@ -482,16 +482,18 @@ return (
                 <span>Powered by the Solana blockchain</span>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+          
 
-      {/* Burn overlay */}
-      <BurnMoment
-        show={showBurnMoment}
-        onDone={() => setShowBurnMoment(false)}
-        durationMs={4500}
-      />
+          </div>
+</div>
+</section>
+
+{/* Burn overlay */}
+<BurnMoment
+  show={showBurnMoment}
+  onDone={() => setShowBurnMoment(false)}
+  durationMs={4500}
+/>
 
       {/* ↓↓↓ Contract + Treasury strip ↓↓↓ */}
       <section className="bg-[#0d1411] border-t border-white/5 pt-8 pb-5">
