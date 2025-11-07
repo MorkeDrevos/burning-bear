@@ -49,15 +49,17 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
       </div>
 
       {/* Jackpot */}
-      <div className="mb-12 text-center md:text-left">
-        <p className="uppercase text-amber-400/70 tracking-widest text-sm md:text-base mb-2">Jackpot</p>
-        <h3 className="text-7xl md:text-8xl font-extrabold text-amber-300 leading-[1.05] drop-shadow-[0_3px_18px_rgba(255,200,0,0.35)]">
-          WIN 1,000,000 <span className="tracking-tight">$BBURN</span>
-        </h3>
-        <p className="text-lg text-white/60 mt-4 max-w-xl">
-          If unclaimed within 5 minutes, the prize rolls into the next round.
-        </p>
-      </div>
+<div className="mb-10">
+  <p className="uppercase text-amber-400/70 tracking-widest text-sm md:text-base mb-2">
+    Jackpot
+  </p>
+  <h3 className="text-5xl md:text-6xl font-extrabold text-amber-300 drop-shadow-[0_2px_10px_rgba(255,200,0,0.25)] leading-tight">
+    WIN <span className="text-amber-200">1,000,000</span> <span className="text-amber-300">$BBURN</span>
+  </h3>
+  <p className="text-base md:text-lg text-white/60 mt-3 max-w-xl">
+    If unclaimed within 5 minutes, the prize rolls into the next round.
+  </p>
+</div>
 
       {/* Buttons */}
       <div className="flex flex-wrap gap-4 mb-10">
@@ -103,7 +105,7 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
       </div>
 
       <p className="text-white/70 text-base md:text-lg mt-3">
-        Eligible buys must settle before this timer ends.
+        
       </p>
     </div>
   );
