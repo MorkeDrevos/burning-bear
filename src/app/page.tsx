@@ -366,7 +366,7 @@ export default function Page() {
 {broadcast.on && Boolean(broadcast.params.get('reward')) && (
   <section className="w-full mt-8 md:mt-10">
     <div className="mx-auto max-w-6xl px-4">
-      <CampfireBonusBox />
+      <CampfireBonusBox nextBurnMs={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined} />
     </div>
   </section>
 )}
@@ -550,7 +550,7 @@ export default function Page() {
 {broadcast.on && Boolean(broadcast.params.get('reward')) && (
   <section className="w-full mt-8 md:mt-10">
     <div className="mx-auto max-w-6xl px-4 sm:px-6">
-      <CampfireBonusBox />
+      <CampfireBonusBox nextBurnMs={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined} />
     </div>
   </section>
 )}
