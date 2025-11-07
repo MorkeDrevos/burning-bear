@@ -315,6 +315,32 @@ export default function Page() {
 
   return (
     <main id="top">
+      {/* Live On Air badge (auto-hide if ?on=0) */}
+{(() => {
+  const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.hash.slice(1) : '');
+  const isLive = params.get('on') === '1';
+
+  if (!isLive) return null;
+
+  return (
+    <a
+      href="https://pump.fun/coin/BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="
+        fixed top-[16px] left-[16px] z-[100]
+        flex items-center gap-2
+        bg-red-700/90 hover:bg-red-600/90
+        text-white font-bold text-[15px] tracking-wide
+        px-4 py-2 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.4)]
+        backdrop-blur-md transition-all duration-200
+      "
+    >
+      <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse"></span>
+      LIVE — On Air
+    </a>
+  );
+})()}
       {/* ===== Header ===== */}
       <header className="sticky top-0 z-[90] w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
