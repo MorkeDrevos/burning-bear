@@ -362,14 +362,14 @@ export default function Page() {
 {broadcast.on ? (
   /* --- LIVESTREAM: show Campfire Bonus FIRST, then Hero --- */
   <>
-    {/* ===== Campfire Bonus (broadcast only) ===== */}
-    {Boolean(broadcast.params.get('reward')) && (
-      <section className="w-full mt-8 md:mt-10">
-  <div className="mx-auto max-w-6xl px-4 sm:px-6">
-    <CampfireBonusBox />
-  </div>
-</section>
-    )}
+    {/* ==== Campfire Bonus (broadcast only) ==== */}
+{broadcast.on && Boolean(broadcast.params.get('reward')) && (
+  <section className="w-full mt-8 md:mt-10">
+    <div className="mx-auto max-w-6xl px-4">
+      <CampfireBonusBox />
+    </div>
+  </section>
+)}
 
     {/* ===== HERO ===== */}
     <section className="relative">
@@ -1020,12 +1020,13 @@ export default function Page() {
       />
     )}
 
-    {Boolean(broadcast.params.get('reward')) && (
-      <RewardPill
-        msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : Infinity}
-        potBBURN={Number(broadcast.params.get('reward')) || 0}
-      />
-    )}
+    {/* Reward pill disabled; box shows the reward */}
+{false && Boolean(broadcast.params.get('reward')) && (
+  <RewardPill
+    msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : Infinity}
+    potBBURN={Number(broadcast.params.get('reward')) || 0}
+  />
+)}
 
     {Boolean(broadcast.params.get('now')) && (
       <NowPlaying
