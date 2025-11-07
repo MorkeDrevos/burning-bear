@@ -1034,33 +1034,43 @@ export default function Page() {
       <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
     )}
 {/* Winner Reveal (URL-driven) */}
-    {(() => {
-      const w = broadcast.params.get('winner');
-      if (!w) return null;
+{(() => {
+  const w = broadcast.params.get('winner'); // winner wallet from URL
+  if (!w) return null;
 
-      const claimUntilParam = broadcast.params.get('claimUntil');
-      let claimUntil: number | null = null;
+  // claim-until (ms or ISO) OR ?claim=seconds (fallback 300s)
+  const claimUntilParam = broadcast.params.get('claimUntil');
+  let claimUntil: number | null = null;
 
-      if (claimUntilParam) {
-        claimUntil = isFinite(Number(claimUntilParam))
-          ? Number(claimUntilParam)
-          : Date.parse(claimUntilParam);
-      } else {
-        const secs = Number(broadcast.params.get('claim') ?? '300');
-        claimUntil = Date.now() + (isFinite(secs) ? secs * 1000 : 300000);
-      }
+  if (claimUntilParam) {
+    claimUntil = isFinite(Number(claimUntilParam))
+      ? Number(claimUntilParam)
+      : Date.parse(claimUntilParam);
+  } else {
+    const secs = Number(broadcast.params.get('claim') ?? '300');
+    claimUntil = Date.now() + (isFinite(secs) ? secs * 1000 : 300000);
+  }
 
-      const msg = broadcast.params.get('wmsg') ?? undefined;
+  const msg = broadcast.params.get('wmsg') ?? undefined;
 
-      return Number.isFinite(claimUntil) ? (
-        <WinnerReveal
-          wallet={w}
-          claimUntil={claimUntil as number}
-          explorerBase={EXPLORER}
-          message={msg}
-        />
-      ) : null;
-    })()}
+  // 🆕 Positioning params (all optional)
+  const sideParam = (broadcast.params.get('wside') || 'right').toLowerCase() as 'left' | 'right';
+  const vposParam = (broadcast.params.get('wy') || 'top').toLowerCase() as 'top' | 'middle' | 'bottom';
+  const topPxRaw = broadcast.params.get('wtop');
+  const topPx = topPxRaw && isFinite(Number(topPxRaw)) ? Number(topPxRaw) : undefined;
+
+  return Number.isFinite(claimUntil) ? (
+    <WinnerReveal
+      wallet={w}
+      claimUntil={claimUntil as number}
+      explorerBase={EXPLORER}
+      message={msg}
+      side={sideParam}
+      vpos={vposParam}
+      topOffsetPx={topPx}
+    />
+  ) : null;
+})()}
   </>
 )}
 
