@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-// Optional: you already have this helper in page.tsx. If exported elsewhere, import it.
+// middle truncation helper
 const truncateMiddle = (str: string, left = 6, right = 6) =>
   !str || str.length <= left + right + 1 ? str : `${str.slice(0, left)}…${str.slice(-right)}`;
 
@@ -11,9 +11,17 @@ type Props = {
   claimUntil: number;             // epoch ms when claim window ends
   explorerBase?: string;          // e.g. 'https://explorer.solana.com'
   message?: string;               // optional custom line
+  placement?: 'floating' | 'by-timer'; // where to render the banner
 };
 
-export default function WinnerReveal({ wallet, claimUntil, explorerBase = 'https://explorer.solana.com', message }: Props) {
+export default function WinnerReveal({
+  wallet,
+  claimUntil,
+  explorerBase = 'https://explorer.solana.com',
+  message,
+  placement = 'floating',
+}: Props) {
+  // tick every second
   const [now, setNow] = React.useState(Date.now());
   React.useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
@@ -30,11 +38,26 @@ export default function WinnerReveal({ wallet, claimUntil, explorerBase = 'https
     try { await navigator.clipboard.writeText(wallet); } catch {}
   };
 
+  // positioning
+  const wrapperClass =
+    placement === 'by-timer'
+      ? // anchored near the "NEXT BURN IN" timer (left column of the bonus card)
+        // tweak the left/bottom values to nudge it if needed
+        'fixed z-[96] left-4 md:left-[calc(50%-560px+16px)] bottom-[132px] md:bottom-[148px]'
+      : // original floating top-center placement
+        'fixed z-[96] left-1/2 -translate-x-1/2';
+
+  const wrapperStyle =
+    placement === 'floating'
+      ? { top: `calc(var(--safe-top, 0px) + 64px)` }
+      : undefined;
+
   return (
     <div
-      className="pointer-events-auto fixed left-1/2 z-[88] -translate-x-1/2"
-      style={{ top: `calc(var(--safe-top, 0px) + 64px)` }}
+      className={`pointer-events-auto ${wrapperClass}`}
+      style={wrapperStyle}
       aria-live="polite"
+      role="status"
     >
       <div className="rounded-2xl border border-amber-400/25 bg-black/60 backdrop-blur-md px-5 py-4 shadow-[0_20px_60px_rgba(0,0,0,.45)] max-w-[90vw]">
         <div className="text-amber-200 font-extrabold text-lg leading-tight flex items-center gap-2">
@@ -59,6 +82,7 @@ export default function WinnerReveal({ wallet, claimUntil, explorerBase = 'https
             onClick={copy}
             className="rounded-md border border-white/15 bg-white/10 px-2 py-1 text-sm hover:bg-white/15"
             aria-label="Copy winner wallet"
+            type="button"
           >
             Copy
           </button>
