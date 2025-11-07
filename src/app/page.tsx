@@ -1048,10 +1048,13 @@ export default function Page() {
       <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
     </div>
   </div>
-)}
+)}   {/* ← ticker closes */}
+  </>  {/* ← close fragment */}
+)}     {/* ← close broadcast.on && (...) */}
+
 </main>
-);   // closes return(
-}     // closes component
+);     // closes return(
+}       // closes component
 
 /* =========================
    Components
