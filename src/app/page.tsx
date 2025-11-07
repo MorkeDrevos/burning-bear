@@ -321,7 +321,7 @@ export default function Page() {
   target="_blank"
   rel="noopener noreferrer"
   className="
-    fixed top-[72px] left-[18px] z-[50]
+    fixed top-[92px] left-[18px] z-[50]
     flex items-center gap-2
     bg-red-700/40 hover:bg-red-700/55
     text-white/90 font-semibold text-[13px] tracking-wide
