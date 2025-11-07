@@ -474,16 +474,15 @@ return (
               </div>
 
               {/* Right: Powered by Solana */}
-              <div
-                className="inline-flex items-center gap-2 text-amber-200 font-semibold sm:ml-auto select-none"
-                aria-label="Powered by the Solana blockchain"
-              >
-                <SolanaMark className="h-4 w-4 text-amber-200" />
-                <span>Powered by the Solana blockchain</span>
-              </div>
-          
+<div
+  className="inline-flex items-center gap-2 text-amber-200 font-semibold sm:ml-auto select-none"
+  aria-label="Powered by the Solana blockchain"
+>
+  <SolanaMark className="h-4 w-4 text-amber-200" />
+  <span>Powered by the Solana blockchain</span>
+</div>
 
-          </div>
+</div>
 </div>
 </section>
 
@@ -494,7 +493,7 @@ return (
   durationMs={4500}
 />
 
-      {/* ↓↓↓ Contract + Treasury strip ↓↓↓ */}
+{/* ↓↓↓ Contract + Treasury strip ↓↓↓ */}
       <section className="bg-[#0d1411] border-t border-white/5 pt-8 pb-5">
         <div className="mx-auto flex flex-wrap items-center justify-center gap-5 text-[16px] md:text[17px] text-white/90 font-medium px-4 max-w-6xl">
           {/* $BBURN + CA + Copy */}
