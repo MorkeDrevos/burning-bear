@@ -8,6 +8,7 @@ import CopyButton from './components/CopyButton';
 import BonusBanner from './components/BonusBanner';
 import CampfireBonusBox from './components/CampfireBonusBox';
 import WinnerReveal from './components/WinnerReveal';
+import SystemStatusBadge from './components/SystemStatusBadge';
 
 /* =========================
    Config
@@ -1081,6 +1082,27 @@ export default function Page() {
   </>
 )}
 
+{/* 🔥 Status Beacon — bottom-left */}
+<SystemStatusBadge mode="ok" />
+
+  {/* 🔥 Dynamic System Status Badge */}
+  {(() => {
+    const status =
+      nextBurnMs < 60_000 ? 'burn' :
+      nextBuybackMs < 60_000 ? 'buyback' :
+      broadcast.on && broadcast.params.get('reward') ? 'bonus' :
+      'ok';
+
+    return (
+      <SystemStatusBadge
+        mode={status}
+        round={broadcast.params.get('round')
+          ? Number(broadcast.params.get('round'))
+          : 1}
+      />
+    );
+  })()}
+</main>
 </main>
 );
 } // end component
