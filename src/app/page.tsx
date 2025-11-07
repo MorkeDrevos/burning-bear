@@ -1006,12 +1006,10 @@ export default function Page() {
         </a>
       )}
 
-      {/* --- Broadcast overlays (top-most) --- */}
-{broadcast.on && <LiveBug live={broadcast.live} liveInMs={broadcast.liveInMs} />}
-
+  {/* --- Broadcast overlays (top-most) --- */}
 {broadcast.on && (
   <>
-    <BonusBanner msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined as any} />
+    <BonusBanner msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : (undefined as any)} />
 
     {Boolean(broadcast.params.get('lower')) && (
       <LowerThird
@@ -1021,40 +1019,42 @@ export default function Page() {
     )}
 
     {/* Reward pill disabled; box shows the reward */}
-{false && Boolean(broadcast.params.get('reward')) && (
-  <RewardPill
-    msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : Infinity}
-    potBBURN={Number(broadcast.params.get('reward')) || 0}
-  />
-)}
+    {false && Boolean(broadcast.params.get('reward')) && (
+      <RewardPill
+        msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : Infinity}
+        potBBURN={Number(broadcast.params.get('reward')) || 0}
+      />
+    )}
 
-{Boolean(broadcast.params.get('now')) && (
-  <NowPlaying
-    track={(broadcast.params.get('now') || '').split('|')[0]}
-    artist={(broadcast.params.get('now') || '').split('|')[1]}
-  />
-)}
+    {Boolean(broadcast.params.get('now')) && (
+      <NowPlaying
+        track={(broadcast.params.get('now') || '').split('|')[0]}
+        artist={(broadcast.params.get('now') || '').split('|')[1]}
+      />
+    )}
 
-{Boolean(broadcast.params.get('ticker')) && (
-  <div className="w-full fixed left-0 bottom-0 z-[86] bg-black/30 backdrop-blur border-t border-white/10"
-       style={{
-         maskImage:
-           'linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%)',
-         WebkitMaskImage:
-           'linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%)',
-         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-       }}>
-    <div className="max-w-none w-full overflow-hidden">
-      <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
+    {Boolean(broadcast.params.get('ticker')) && (
+      <div
+        className="w-full fixed left-0 bottom-0 z-[86] bg-black/30 backdrop-blur border-t border-white/10"
+        style={{
+          maskImage:
+            'linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%)',
+          WebkitMaskImage:
+            'linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%)',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        }}
+      >
+        <div className="max-w-none w-full overflow-hidden">
+          <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
         </div>
-  </div>
-)}  {/* ticker closes */}
-  </> {/* close fragment */}
-)}  {/* close broadcast.on && (...) */}
+      </div>
+    )}
+  </>
+)}
 
 </main>
-); // close return
-} // close component
+);
+} // end component
 /* =========================
    Components
 ========================= */
