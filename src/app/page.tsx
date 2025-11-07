@@ -6,7 +6,7 @@ import Link from 'next/link';
 import TreasuryLockCard from './components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
 import BonusBanner from './components/BonusBanner';
-
+import CampfireBonusBox from '@/components/CampfireBonusBox';
 
 /* =========================
    Config
@@ -443,6 +443,15 @@ export default function Page() {
           </div>
         </div>
       </section>
+
+      {/* ===== Campfire Bonus (broadcast only) ===== */}
+{broadcast.on && Boolean(broadcast.params.get('reward')) && (
+  <section className="w-full px-4 sm:px-6 lg:px-8 mt-4">
+    <div className="mx-auto max-w-6xl">
+      <CampfireBonusBox />
+    </div>
+  </section>
+)}
 
       {/* Burn overlay */}
       <BurnMoment
