@@ -22,7 +22,7 @@ export default function CampfireBonusBox() {
 
       {/* Jackpot */}
       <div className="mb-10">
-        <p className="uppercase text-amber-400/70 tracking-widest text-sm md:text-base mb-2">Jackpot</p>
+        <p className="uppercase text-amber-400/70 tracking-widest text-sm md:text-base mb-2">🔥🔥</p>
         <h3 className="text-6xl md:text-7xl font-extrabold text-amber-300 drop-shadow-[0_2px_10px_rgba(255,200,0,0.25)]">
           WIN 1,000,000 $BBURN
         </h3>
