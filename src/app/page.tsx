@@ -1013,7 +1013,9 @@ function LiveBug({ live, liveInMs, className = "" }: { live: boolean; liveInMs: 
     >
       <div className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 shadow-lg ${live ? 'bg-red-600/90' : 'bg-amber-600/90'}`}>
         <span className="h-2.5 w-2.5 rounded-full bg-white animate-[blink_1.2s_infinite]" />
-        <span className="text-xs font-extrabold tracking-widest text-white">{live ? 'LIVE' : 'LIVE IN'}</span>
+        <span className="text-xs font-extrabold tracking-widest text-white">
+  {live ? 'LIVE — On Air' : 'LIVE IN'}
+</span>
         {!live && <span className="text-xs font-semibold text-white/90">{fmt(liveInMs)}</span>}
       </div>
     </div>
