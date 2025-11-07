@@ -5,7 +5,6 @@ import Link from 'next/link';
 
 import TreasuryLockCard from './components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
-import CampfireBonusBox from './components/CampfireBonusBox';
 
 import { useRouter } from 'next/navigation';
 
@@ -429,13 +428,13 @@ return (
 
           <div className="relative w-full rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:py-7 md:mx-auto md:w-[90%]">
 
-  {/* 🔥 Campfire Pill */}
-  <CampfirePill
-    label="Campfire Reward"
-    amount="1,000,000 $BBURN"
-    note="Claim live within 5 min • rolls forward if unclaimed"
-    href="https://burningbear.camp"
-  />
+{/* 🔥 Campfire Pill */}
+<CampfirePill
+  label="Campfire Reward"
+  amount="1,000,000 $BBURN"
+  note="Claim live within 5 min • rolls forward if unclaimed"
+  href="https://burningbear.camp/#how-it-works"
+/>
 
           {/* Panel */}
           <div className="relative w-full rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
@@ -1117,6 +1116,34 @@ function RewardPill(
         </span>
         <span className="ml-2 text-white/70 text-sm">• live bonus pool</span>
       </div>
+    </div>
+  );
+}
+
+function CampfirePill({
+  label,
+  amount,
+  note,
+  href,
+}: {
+  label: string;
+  amount: string;
+  note?: string;
+  href?: string;
+}) {
+  return (
+    <div className="mb-4 flex w-full justify-center">
+      <a
+        href={href ?? 'https://burningbear.camp/#how-it-works'}
+        className="inline-flex items-center gap-3 rounded-full border border-amber-400/25 bg-amber-500/10 px-5 py-2.5 text-amber-100 backdrop-blur shadow-[0_10px_25px_rgba(0,0,0,.35)] hover:bg-amber-500/15 transition"
+      >
+        <span role="img" aria-label="fire">🔥🔥🔥</span>
+        <span className="font-semibold">{label}:</span>
+        <span className="font-extrabold tracking-wide">{amount}</span>
+        {note ? (
+          <span className="ml-2 text-[13px] text-white/80 hidden sm:inline">{note}</span>
+        ) : null}
+      </a>
     </div>
   );
 }
