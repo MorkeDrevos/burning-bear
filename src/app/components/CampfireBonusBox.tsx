@@ -11,8 +11,7 @@ export default function CampfireBonusBox() {
             🔥🔥 Campfire Bonus — <span className="text-amber-400">Round 1</span>
           </h2>
           <p className="text-lg md:text-xl text-white/70 mt-2 max-w-2xl leading-snug">
-            To join the draw, make your $BBURN purchase <span className="text-amber-300 font-semibold">before the next burn</span>.
-            The winning wallet will be revealed live on-stream.
+            Get your $BBURN before <span className="text-amber-300 font-semibold">before the next burn</span>. The winning wallet will be revealed live on-stream.
           </p>
         </div>
 
@@ -40,7 +39,7 @@ export default function CampfireBonusBox() {
           rel="noopener noreferrer"
           className="px-6 py-3 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/20 rounded-xl text-xl font-semibold transition"
         >
-          🌕 Buy $BBURN on Jupiter
+          🌕 Buy $BBURN to Join the Draw
         </a>
         <a
           href="https://burningbear.camp/#broadcast"
@@ -71,7 +70,7 @@ export default function CampfireBonusBox() {
             <span>06</span><span>:</span><span>28</span><span>:</span><span>48</span>
           </div>
           <p className="text-white/70 text-base md:text-lg">
-            Eligible buys must settle before this timer ends.
+            
           </p>
         </div>
       </div>
