@@ -481,7 +481,6 @@ return (
                 <SolanaMark className="h-4 w-4 text-amber-200" />
                 <span>Powered by the Solana blockchain</span>
               </div>
-            </div>
           
 
           </div>
