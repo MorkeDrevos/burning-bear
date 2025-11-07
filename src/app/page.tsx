@@ -315,25 +315,25 @@ export default function Page() {
 
   return (
     <main id="top">
-      {/* Live On Air badge — final refined version */}
+    {/* Live On Air badge — boxy version */}
 <a
   href="https://pump.fun/coin/BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump"
   target="_blank"
   rel="noopener noreferrer"
   className="
-    fixed left-[20px] top-[82px] z-[200]
+    fixed left-[16px] top-[80px] z-[200]
     flex items-center gap-2
-    bg-gradient-to-r from-red-800/40 to-red-600/30
-    hover:from-red-700/45 hover:to-red-600/40
-    text-white/80 font-semibold text-[12.5px] tracking-wide
-    px-3.5 py-[5px] rounded-full
-    shadow-[0_4px_20px_rgba(0,0,0,0.3)]
-    backdrop-blur-[6px] transition-all duration-200
-    border border-red-400/10
+    bg-[#a03030]/90 hover:bg-[#b23232]/90
+    text-white font-semibold text-[13px]
+    px-4 py-[6px] rounded-xl
+    border border-red-500/30
+    shadow-[0_4px_18px_rgba(0,0,0,0.35)]
+    backdrop-blur-[4px]
+    transition-all duration-200
   "
 >
-  <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse shadow-[0_0_6px_#f87171]" />
-  LIVE&nbsp;On&nbsp;Air
+  <span className="w-2.5 h-2.5 rounded-full bg-red-400 animate-pulse shadow-[0_0_8px_#f87171]" />
+  LIVE&nbsp;—&nbsp;On&nbsp;Air
 </a>
       {/* ===== Header ===== */}
       <header className="sticky top-0 z-[90] w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
