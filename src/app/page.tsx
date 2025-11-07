@@ -315,22 +315,21 @@ export default function Page() {
 
   return (
     <main id="top">
-      {/* Live On Air badge – always visible */}
+      {/* Live On Air badge (subtle version) */}
 <a
   href="https://pump.fun/coin/BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump"
   target="_blank"
   rel="noopener noreferrer"
   className="
-    fixed top-[16px] left-[16px] z-[120]
+    fixed top-[72px] left-[18px] z-[50]
     flex items-center gap-2
-    bg-red-700/90 hover:bg-red-600/90
-    text-white font-bold text-[15px] tracking-wide
-    px-4 py-2 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.4)]
-    backdrop-blur-md transition-all duration-200
+    bg-red-700/40 hover:bg-red-700/55
+    text-white/90 font-semibold text-[13px] tracking-wide
+    px-3.5 py-1.5 rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.25)]
+    backdrop-blur-sm transition-all duration-200
   "
-  style={{ top: `calc(var(--safe-top, 0px) + 16px)` }}
 >
-  <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
+  <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
   LIVE — On Air
 </a>
       {/* ===== Header ===== */}
