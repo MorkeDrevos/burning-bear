@@ -8,31 +8,6 @@ import CopyButton from './components/CopyButton';
 import BonusBanner from './components/BonusBanner';
 import CampfireBonusBox from './components/CampfireBonusBox';
 
-import { useRouter } from 'next/navigation';
-
-// 🔥 Redirect #broadcast?... to correct overlay route
-export default function HashRedirect() {
-  const router = useRouter();
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const h = window.location.hash || '';
-    if (!h.startsWith('#broadcast')) return;
-
-    // Extract query string after "#broadcast?"
-    const qs = h.includes('?') ? h.split('?')[1] : '';
-
-    // Decide which overlay to show (lower or tease)
-    const params = new URLSearchParams(qs);
-    const hasLower = params.has('lower');
-    const dest = hasLower ? '/broadcast/lower' : '/broadcast/tease';
-
-    router.replace(`${dest}?${qs}`);
-  }, [router]);
-
-  return null;
-}
-
 /* =========================
    Config
 ========================= */
@@ -96,7 +71,6 @@ const fmtInt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits:
 const fmtMoney = (n?: number) =>
   n == null || !isFinite(n) ? '$0.00' : n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
-
 /* =========================
    Page
 ========================= */
@@ -104,24 +78,27 @@ export default function Page() {
   const [data, setData] = useState<StateJson | null>(null);
   const [solUsd, setSolUsd] = useState<number | null>(null);
   const [now, setNow] = useState<number>(Date.now());
+
   const broadcast = useBroadcast(now);
+
+  // 🔥 Burn overlay trigger state (visual only)
   const [showBurnMoment, setShowBurnMoment] = useState(false);
-  const lastTriggerRef = useRef<number>(0);
 
-  // Tick each second (browser-only)
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const id = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => window.clearInterval(id);
-  }, []);
-
-  // Hide burn overlay after 4.5s (browser-only)
+  // Hide overlay after 4.5s
   useEffect(() => {
     if (!showBurnMoment) return;
-    if (typeof window === 'undefined') return;
     const t = window.setTimeout(() => setShowBurnMoment(false), 4500);
     return () => window.clearTimeout(t);
   }, [showBurnMoment]);
+
+  // Prevent double triggers when countdown hovers near zero
+  const lastTriggerRef = useRef<number>(0);
+
+  // Tick each second (drives countdowns)
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
 
   // Load JSON data (cache-busted), normalize, and persist a last-good copy
   useEffect(() => {
@@ -143,25 +120,23 @@ export default function Page() {
         if (s.buybackIntervalMs == null) s.buybackIntervalMs = buybackMins * 60_000;
 
         const nowTs = Date.now();
-        if (s.nextBurnAt == null && s.burnIntervalMs)        s.nextBurnAt = nowTs + s.burnIntervalMs;
+        if (s.nextBurnAt == null && s.burnIntervalMs)    s.nextBurnAt = nowTs + s.burnIntervalMs;
         if (s.nextBuybackAt == null && s.buybackIntervalMs) s.nextBuybackAt = nowTs + s.buybackIntervalMs;
 
         // --- burns normalization ---
         const burns = (d?.burns ?? [])
-          .map((b: any) => ({
-            ...b,
-            timestamp: typeof b.timestamp === 'number' ? b.timestamp : Date.parse(b.timestamp),
-          }))
+          .map((b: any) => ({ ...b, timestamp: typeof b.timestamp === 'number' ? b.timestamp : Date.parse(b.timestamp) }))
           .filter((b: any) => Number.isFinite(b.timestamp));
 
         const nextState: StateJson = { ...d, schedule: s, burns };
         setData(nextState);
 
-        // persist last good copy
+        // persist last good copy for offline/404 fallback
         try { sessionStorage.setItem('bburn_last_state', JSON.stringify(nextState)); } catch {}
       } catch (err) {
         console.error('Failed to load /data/state.json:', err);
-        // fallback to cached last good state
+
+        // try fallback to last good state
         try {
           const cached = sessionStorage.getItem('bburn_last_state');
           if (cached) setData(JSON.parse(cached));
@@ -170,16 +145,7 @@ export default function Page() {
     })();
 
     return () => { alive = false; };
-  }, []); // run on mount; adjust if you want periodic reloads
-
-  // ----- JSX -----
-  return (
-    <>
-      <HashRedirect /> {/* runs immediately, rewrites #broadcast to /broadcast/* */}
-      {/* your existing page JSX (hero, stats, burn log, etc.) */}
-    </>
-  );
-} // ← end Page() — nothing after this
+  }, []);
 
   // Live SOL price (falls back to stats.priceUsdPerSol)
   useEffect(() => {
@@ -479,13 +445,20 @@ export default function Page() {
       </section>
 
       {/* ===== Campfire Bonus (broadcast only) ===== */}
-{broadcast.on && Boolean(broadcast.params.get('reward')) && (
-  <section className="w-full px-4 sm:px-6 lg:px-8 mt-4">
-    <div className="mx-auto max-w-6xl">
-      <CampfireBonusBox />
-    </div>
-  </section>
-)}
+      {broadcast.on && Boolean(broadcast.params.get('reward')) && (
+        <section className="w-full px-4 sm:px-6 lg:px-8 mt-4">
+          <div className="mx-auto max-w-6xl">
+            <CampfireBonusBox />
+          </div>
+        </section>
+      )}
+
+      {/* Burn overlay */}
+      <BurnMoment
+        show={showBurnMoment}
+        onDone={() => setShowBurnMoment(false)}
+        durationMs={4500}
+      />
 
       {/* Burn overlay */}
       <BurnMoment
