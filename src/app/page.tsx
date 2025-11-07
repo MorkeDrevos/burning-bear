@@ -1036,9 +1036,22 @@ export default function Page() {
     )}
 
     {Boolean(broadcast.params.get('ticker')) && (
+  <div
+    className="w-full fixed left-0 bottom-0 z-[84] bg-black/30 backdrop-blur border-t border-white/10"
+    style={{
+      // fade the left/right edges so the items enter/exit smoothly
+      maskImage:
+        'linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%)',
+      WebkitMaskImage:
+        'linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%)',
+      // keep clear of iOS home bar if present
+      paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+    }}
+  >
+    <div className="max-w-none w-full overflow-hidden">
       <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
-    )}
-  </>
+    </div>
+  </div>
 )}
     </main>
   );
