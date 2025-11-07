@@ -7,6 +7,7 @@ import TreasuryLockCard from './components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
 import BonusBanner from './components/BonusBanner';
 import CampfireBonusBox from './components/CampfireBonusBox';
+import WinnerReveal from './components/WinnerReveal';
 
 /* =========================
    Config
@@ -1032,6 +1033,34 @@ export default function Page() {
     {Boolean(broadcast.params.get('ticker')) && (
       <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
     )}
+    {/* Winner Reveal (URL-driven) */}
+{(() => {
+  const w = broadcast.params.get('winner');
+  if (!w) return null;
+
+  const claimUntilParam = broadcast.params.get('claimUntil');
+  let claimUntil: number | null = null;
+
+  if (claimUntilParam) {
+    claimUntil = isFinite(Number(claimUntilParam))
+      ? Number(claimUntilParam)
+      : Date.parse(claimUntilParam);
+  } else {
+    const secs = Number(broadcast.params.get('claim') ?? '300');
+    claimUntil = Date.now() + (isFinite(secs) ? secs * 1000 : 300000);
+  }
+
+  const msg = broadcast.params.get('wmsg') ?? undefined;
+
+  return Number.isFinite(claimUntil) ? (
+    <WinnerReveal
+      wallet={w}
+      claimUntil={claimUntil as number}
+      explorerBase={EXPLORER}
+      message={msg}
+    />
+  ) : null;
+})()}
   </>
 )}
 
