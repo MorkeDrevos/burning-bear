@@ -8,6 +8,32 @@ import CopyButton from './components/CopyButton';
 import BonusBanner from './components/BonusBanner';
 import CampfireBonusBox from './components/CampfireBonusBox';
 
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+// 🔥 Redirect #broadcast?... to correct overlay route
+export default function HashRedirect() {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const h = window.location.hash || '';
+    if (!h.startsWith('#broadcast')) return;
+
+    // Extract query string after "#broadcast?"
+    const qs = h.includes('?') ? h.split('?')[1] : '';
+
+    // Decide which overlay to show (lower or tease)
+    const params = new URLSearchParams(qs);
+    const hasLower = params.has('lower');
+    const dest = hasLower ? '/broadcast/lower' : '/broadcast/tease';
+
+    router.replace(`${dest}?${qs}`);
+  }, [router]);
+
+  return null;
+}
+
 /* =========================
    Config
 ========================= */
@@ -72,6 +98,7 @@ const fmtMoney = (n?: number) =>
   n == null || !isFinite(n) ? '$0.00' : n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
 /* =========================
+/* =========================
    Page
 ========================= */
 export default function Page() {
@@ -84,9 +111,11 @@ export default function Page() {
   // 🔥 Burn overlay trigger state (visual only)
   const [showBurnMoment, setShowBurnMoment] = useState(false);
 
-  // Hide overlay after 4.5s
+  // Hide overlay after 4.5s (browser-only)
   useEffect(() => {
     if (!showBurnMoment) return;
+    if (typeof window === 'undefined') return;
+
     const t = window.setTimeout(() => setShowBurnMoment(false), 4500);
     return () => window.clearTimeout(t);
   }, [showBurnMoment]);
@@ -94,11 +123,14 @@ export default function Page() {
   // Prevent double triggers when countdown hovers near zero
   const lastTriggerRef = useRef<number>(0);
 
-  // Tick each second (drives countdowns)
+  // Tick each second (drives countdowns) — browser-only
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const id = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
+    return () => window.clearInterval(id);
   }, []);
+
 
   // Load JSON data (cache-busted), normalize, and persist a last-good copy
   useEffect(() => {
