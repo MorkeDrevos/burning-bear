@@ -6,15 +6,20 @@ const truncateMiddle = (str: string, left = 6, right = 6) =>
   !str || str.length <= left + right + 1 ? str : `${str.slice(0, left)}…${str.slice(-right)}`;
 
 type Props = {
-  wallet: string;                 // full winner wallet
-  explorerBase?: string;          // e.g. https://explorer.solana.com
-  message?: string;               // optional custom line
-  // optional position controls (default left/top; you can still override via URL if you want)
-  side?: 'left' | 'right';
-  vpos?: 'top' | 'middle' | 'bottom';
-  topOffsetPx?: number;           // overrides vpos if provided
+  wallet: string;                           // full winner wallet (required)
+  explorerBase?: string;                    // defaults to solana explorer
+  message?: string;                         // optional custom line
+  side?: 'left' | 'right';                  // default: left
+  vpos?: 'top' | 'middle' | 'bottom';       // default: top
+  topOffsetPx?: number;                     // overrides vpos if provided
 };
 
+/**
+ * WinnerReveal
+ * - Positions left/right
+ * - Pushes itself low enough to avoid covering the Campfire Bonus box
+ * - No timer; shows UNCLAIMED + rollover text
+ */
 export default function WinnerReveal({
   wallet,
   explorerBase = 'https://explorer.solana.com',
@@ -23,7 +28,7 @@ export default function WinnerReveal({
   vpos = 'top',
   topOffsetPx,
 }: Props) {
-  // Compute vertical placement
+  // Base vertical position from props (or vpos)
   const baseTop =
     typeof topOffsetPx === 'number'
       ? topOffsetPx
@@ -33,19 +38,26 @@ export default function WinnerReveal({
       ? 160
       : 260;
 
+  // 🚫 Do not cover header or the Campfire Bonus box:
+  // Push down at least 240px from the safe-top, and also a bit beyond baseTop.
+  const safeTopPx = Math.max(baseTop + 160, 240);
+
   const isLeft = side === 'left';
 
   return (
     <div
       className={[
-        'pointer-events-auto',
         'fixed z-[88]',
         isLeft ? 'left-[16px]' : 'right-[16px]',
+        'max-w-[92vw] sm:max-w-[520px]',
+        'pointer-events-auto',
       ].join(' ')}
-      style={{ top: `calc(var(--safe-top, 0px) + ${baseTop}px)` }}
+      style={{
+        top: `calc(var(--safe-top, 0px) + ${safeTopPx}px)`,
+      }}
       aria-live="polite"
     >
-      <div className="max-w-[92vw] sm:max-w-[520px] rounded-2xl border border-amber-400/25 bg-black/60 backdrop-blur-md px-5 py-4 shadow-[0_20px_60px_rgba(0,0,0,.45)]">
+      <div className="rounded-2xl border border-amber-400/25 bg-black/60 backdrop-blur-md px-5 py-4 shadow-[0_20px_60px_rgba(0,0,0,.45)]">
         {/* Header */}
         <div className="flex items-center gap-2 text-amber-200 font-extrabold text-lg leading-tight">
           <span className="text-[18px]">🏆</span>
@@ -63,7 +75,9 @@ export default function WinnerReveal({
 
           <button
             onClick={async () => {
-              try { await navigator.clipboard.writeText(wallet); } catch {}
+              try {
+                await navigator.clipboard.writeText(wallet);
+              } catch {}
             }}
             className="rounded-md border border-white/15 bg-white/10 px-2 py-1 text-sm hover:bg-white/15"
             aria-label="Copy winner wallet"
