@@ -932,27 +932,49 @@ return (
         </a>
       )}
 
-      {/* --- Broadcast overlays (top-most) --- */}
-      {broadcast.on && <LiveBug live={broadcast.live} liveInMs={broadcast.liveInMs} />}
-      {broadcast.on && <BonusBanner msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined as any} />}
-      {broadcast.on && Boolean(broadcast.params.get('lower')) && (
-        <LowerThird
-          title={(broadcast.params.get('lower') || '').split('|')[0] || 'Live Campfire'}
-          subtitle={(broadcast.params.get('lower') || '').split('|')[1] || undefined}
-        />
-      )}
-      {broadcast.on && Boolean(broadcast.params.get('reward')) && (
-        <RewardPill msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : Infinity} potBBURN={Number(broadcast.params.get('reward')) || 0} />
-      )}
-      {broadcast.on && Boolean(broadcast.params.get('now')) && (
-        <NowPlaying track={(broadcast.params.get('now') || '').split('|')[0]} artist={(broadcast.params.get('now') || '').split('|')[1]} />
-      )}
-      {broadcast.on && Boolean(broadcast.params.get('ticker')) && (
-        <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
-      )}
-    </main>
-  );
-}
+      </main>
+
+</main>
+
+{/* --- Broadcast overlays (top-most) --- */}
+{broadcast.on && (
+  <>
+    <LiveBug live={broadcast.live} liveInMs={broadcast.liveInMs} />
+
+    <BonusBanner
+      msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined}
+    />
+
+    {Boolean(broadcast.params.get('lower')) && (
+      <LowerThird
+        title={(broadcast.params.get('lower') ?? '').split('|')[0] || 'Live Campfire'}
+        subtitle={(broadcast.params.get('lower') ?? '').split('|')[1] || undefined}
+      />
+    )}
+
+    {Boolean(broadcast.params.get('reward')) && (
+      <RewardPill
+        msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : Number.POSITIVE_INFINITY}
+        potBBURN={Number(broadcast.params.get('reward')) || 0}
+      />
+    )}
+
+    {Boolean(broadcast.params.get('now')) && (
+      <NowPlaying
+        track={(broadcast.params.get('now') ?? '').split('|')[0]}
+        artist={(broadcast.params.get('now') ?? '').split('|')[1]}
+      />
+    )}
+
+    {Boolean(broadcast.params.get('ticker')) && (
+      <NewsTicker items={(broadcast.params.get('ticker') ?? '').split(';')} />
+    )}
+  </>
+)}
+
+</>
+); // closes return ( ... )
+} // end Page()
 
 /* =========================
    Components
