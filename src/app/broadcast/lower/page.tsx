@@ -5,9 +5,11 @@ import React from 'react';
 export default function Lower() {
   const [qs, setQs] = React.useState<URLSearchParams | null>(null);
   React.useEffect(() => {
-    if (typeof window !== 'undefined') setQs(new URLSearchParams(window.location.search));
+    if (typeof window !== 'undefined')
+      setQs(new URLSearchParams(window.location.search));
   }, []);
 
+  // URL params
   const lower = qs?.get('lower')?.replace('|', ' | ') ?? 'Campfire Bonus | Round 1';
   const reward = qs?.get('reward') ?? '1,000,000';
   const now = qs?.get('now')?.replace('|', ' | ') ?? 'Haunted Forest | The Bear';
@@ -20,6 +22,7 @@ export default function Lower() {
   const w = Number(qs?.get('w') ?? 1180);
   const tone = qs?.get('tone') ?? 'amber';
 
+  // Colors
   const bgColor = tone === 'amber'
     ? 'rgba(35,25,10,0.85)'
     : 'rgba(45,15,15,0.85)';
@@ -41,7 +44,7 @@ export default function Lower() {
   const box: React.CSSProperties = {
     marginTop: `${y}vh`,
     width: 'min(96vw, ' + w + 'px)',
-    padding: '20px 28px',
+    padding: '22px 34px',
     borderRadius: 22,
     background: bgColor,
     border: `1px solid ${borderColor}`,
@@ -53,10 +56,12 @@ export default function Lower() {
   };
 
   const title: React.CSSProperties = {
-    fontSize: '1.8rem',
-    fontWeight: 800,
+    fontSize: '2rem',
+    fontWeight: 900,
     marginBottom: 4,
     letterSpacing: '-0.3px',
+    color: '#ffeccc',
+    textShadow: '0 0 22px rgba(255,200,120,.3)',
   };
 
   const subtitle: React.CSSProperties = {
@@ -77,11 +82,8 @@ export default function Lower() {
     <>
       <div style={container}>
         <div style={box}>
-          <div style={title}>🔥🔥🔥 {lower}</div>
-          <div style={subtitle}>
-            💰 Reward: {Number(reward).toLocaleString()} BBURN<br />
-            🪵 Now: {now}
-          </div>
+          <div style={title}>🔥🔥🔥 WIN {Number(reward).toLocaleString()} $BBURN</div>
+          <div style={subtitle}>🪵 Now: {now}</div>
           <div style={tickerWrap}>
             {ticker.map((t, i) => (
               <span key={i}>• {t}</span>
