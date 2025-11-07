@@ -1028,32 +1028,24 @@ export default function Page() {
   />
 )}
 
-{Boolean(broadcast.params.get('now')) && (
-  <NowPlaying
-    track={(broadcast.params.get('now') || '').split('|')[0]}
-    artist={(broadcast.params.get('now') || '').split('|')[1]}
-  />
-)}
+    {Boolean(broadcast.params.get('now')) && (
+      <NowPlaying
+        track={(broadcast.params.get('now') || '').split('|')[0]}
+        artist={(broadcast.params.get('now') || '').split('|')[1]}
+      />
+    )}
 
-{Boolean(broadcast.params.get('ticker')) && (
+    {Boolean(broadcast.params.get('ticker')) && (
   <div
-    className="w-full fixed left-0 bottom-0 z-[86] bg-black/30 backdrop-blur border-t border-white/10"
-    style={{
-      maskImage:
-        'linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%)',
-      WebkitMaskImage:
-        'linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%)',
-      paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-    }}
+    className="w-full fixed bottom-0 left-0 z-40 bg-black/30 backdrop-blur border-t border-white/10"
   >
     <div className="max-w-none w-full overflow-hidden">
       <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
     </div>
   </div>
 )}
-
-</main>
-);
+    </main>
+  );
 }
 
 /* =========================
