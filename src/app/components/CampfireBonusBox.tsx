@@ -30,20 +30,33 @@ function Seg({ children }: { children: React.ReactNode }) {
 }
 
 export default function CampfireBonusBox() {
-  const [params, setParams] = useState<URLSearchParams>();
-  const [nextBurnAt, setNextBurnAt] = useState<number | null>(null);
-  const [now, setNow] = useState(Date.now());
+  
+  const [params, setParams] = useState<URLSearchParams>(new URLSearchParams());
+const [nextBurnAt, setNextBurnAt] = useState<number | null>(null);
+const [now, setNow] = useState(Date.now());
 
-  useEffect(() => {
-    setParams(new URLSearchParams((window.location.hash || '').split('?')[1]));
-    fetch(`https://burningbear.camp/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
-      .then(r => r.json())
-      .then((d: StateJson) => setNextBurnAt(d?.schedule?.nextBurnAt ?? null))
-      .catch(() => null);
+// keep params in sync with the URL hash (#broadcast?...), and tick time
+useEffect(() => {
+  const parse = () => {
+    const qs = new URLSearchParams((window.location.hash || '').split('?')[1] || '');
+    setParams(qs);
+  };
+  parse();
+  window.addEventListener('hashchange', parse);
+  const i = setInterval(() => setNow(Date.now()), 500);
+  return () => {
+    window.removeEventListener('hashchange', parse);
+    clearInterval(i);
+  };
+}, []);
 
-    const i = setInterval(() => setNow(Date.now()), 500);
-    return () => clearInterval(i);
-  }, []);
+// fetch nextBurnAt from state.json (relative path avoids CORS in dev)
+useEffect(() => {
+  fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
+    .then(r => r.json())
+    .then((d: StateJson) => setNextBurnAt(d?.schedule?.nextBurnAt ?? null))
+    .catch(() => null);
+}, []);
 
   // URL-driven content
   const reward = useMemo(() => Number(params?.get('reward') ?? 0), [params]);
@@ -131,7 +144,7 @@ export default function CampfireBonusBox() {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 bg-white/[0.06] hover:bg-white/[0.10] text-white/85 font-semibold px-4 py-3 transition"
             >
-              🎥 Campfire Bonus live
+              🎥 Campfire Bonus Live
             </a>
             <a
               href="https://x.com/burningbearcamp"
