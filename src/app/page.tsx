@@ -1082,9 +1082,6 @@ export default function Page() {
   </>
 )}
 
-{/* 🔥 Status Beacon — bottom-left */}
-<SystemStatusBadge mode="ok" />
-
   {/* 🔥 Dynamic System Status Badge */}
   {(() => {
     const status =
