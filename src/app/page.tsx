@@ -445,13 +445,18 @@ export default function Page() {
       </section>
 
       {/* ===== Campfire Bonus (broadcast only) ===== */}
-      {broadcast.on && Boolean(broadcast.params.get('reward')) && (
-        <section className="w-full px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="mx-auto max-w-6xl">
-            <CampfireBonusBox />
-          </div>
-        </section>
-      )}
+{broadcast.on && Boolean(broadcast.params.get('reward')) && (
+  <section className="w-full px-4 sm:px-6 lg:px-8 mt-4">
+    <div className="mx-auto max-w-6xl">
+      <CampfireBonusBox
+        msToBurn={Number.isFinite(nextBurnMs) ? Math.max(0, nextBurnMs) : undefined}
+        nextBurnAt={typeof burnAt === 'number' && isFinite(burnAt) ? burnAt : undefined}
+        potBBURN={Number(broadcast.params.get('reward')) || 0}
+        jupUrl={JUP_URL}
+      />
+    </div>
+  </section>
+)}
 
       {/* Burn overlay */}
       <BurnMoment
