@@ -364,12 +364,11 @@ export default function Page() {
   <>
     {/* ===== Campfire Bonus (broadcast only) ===== */}
     {Boolean(broadcast.params.get('reward')) && (
-      <section className="w-full px-4 sm:px-6 lg:px-8 mt-4">
-        <div className="mx-auto max-w-6xl">
-          {/* No props — component reads URL/state itself */}
-          <CampfireBonusBox />
-        </div>
-      </section>
+      <section className="w-full mt-8 md:mt-10">
+  <div className="mx-auto max-w-6xl px-4 sm:px-6">
+    <CampfireBonusBox />
+  </div>
+</section>
     )}
 
     {/* ===== HERO ===== */}
