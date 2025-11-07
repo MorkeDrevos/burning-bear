@@ -942,10 +942,6 @@ return (
   <>
     <LiveBug live={broadcast.live} liveInMs={broadcast.liveInMs} />
 
-    {/* BonusBanner only when we have a finite number */}
-    {Number.isFinite(nextBurnMs) && (
-    )}
-
     {Boolean(broadcast.params.get('lower')) && (
       <LowerThird
         title={(broadcast.params.get('lower') ?? '').split('|')[0] || 'Live Campfire'}
