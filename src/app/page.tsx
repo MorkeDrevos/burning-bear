@@ -358,212 +358,119 @@ export default function Page() {
         </div>
       </header>
 
-{/* ===== HERO / BONUS (dynamic order) ===== */}
-{broadcast.on ? (
-  /* --- LIVESTREAM: show Campfire Bonus FIRST, then Hero --- */
-  <>
-    {/* ===== Campfire Bonus (broadcast only) ===== */}
-    {Boolean(broadcast.params.get('reward')) && (
-      <section className="w-full px-4 sm:px-6 lg:px-8 mt-4">
-        <div className="mx-auto max-w-6xl">
-          {/* No props — component reads URL/state itself */}
-          <CampfireBonusBox />
+      {/* ===== HERO ===== */}
+      <section className="relative">
+        {/* Background video + vignette */}
+        <div className="absolute inset-0 -z-10 overflow-hidden hero-vignette">
+          <video
+            className="h-[66vh] w-full object-cover hero-zoom"
+            playsInline
+            autoPlay
+            muted
+            loop
+            poster="/img/burning-bear-frame.jpg"
+          >
+            <source src="/img/burning-bear.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
+        </div>
+
+        <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20 relative">
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-amber-600/10 via-transparent to-transparent blur-[120px]" />
+          {/* ember particles */}
+          <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+            {[...Array(10)].map((_, i) => (
+              <span
+                key={i}
+                className="ember-dot"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  bottom: `${Math.random() * 40}%`,
+                  animationDelay: `${Math.random() * 5}s`,
+                  ['--drift-x' as any]: `${Math.random() * 40 - 20}px`,
+                  ['--rise' as any]: `${5 + Math.random() * 4}s`,
+                } as React.CSSProperties}
+              />
+            ))}
+          </div>
+
+          {/* Panel */}
+          <div className="relative w-full rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
+            <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
+              Meet The Burning Bear – Solana’s deflation engine
+            </h1>
+
+            {/* Countdowns */}
+            <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+              {/* <Countdown label="Next buyback in" value={fmtCountdown(nextBuybackMs)} /> */}
+              <Countdown
+                label="Next burn in"
+                ms={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined}
+                variant="segments"
+              />
+            </div>
+
+            {/* Stats */}
+            <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
+              <Stat label="Burned So Far"       value={fmtInt(data?.stats?.burned ?? 0)}     highlight={showBurnMoment} />
+              <Stat label="Current Supply"      value={fmtInt(data?.stats?.currentSupply ?? Math.max(0, (data?.stats?.initialSupply ?? 0) - (data?.stats?.burned ?? 0)))} highlight={showBurnMoment} />
+              <Stat label="Buyback Spent"       value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} highlight={showBurnMoment} />
+              <Stat label="Total Buyback Value" value={fmtMoney((data?.stats?.buybackSol ?? 0) * priceUsdPerSol)} highlight={showBurnMoment} />
+            </div>
+
+            {/* Pills */}
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+              {/* Left */}
+              <div className="flex flex-wrap items-center gap-3">
+                <a href="#log">
+                  <Pill className="cursor-pointer bg-orange-500/20 text-orange-400 font-semibold hover:bg-orange-500/25">
+                    🔥 Total Burns: {data?.burns?.length ?? 0}
+                  </Pill>
+                </a>
+                <Pill>Initial Supply: {fmtInt(data?.stats?.initialSupply ?? 0)}</Pill>
+                <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
+              </div>
+
+              {/* Right: Powered by Solana */}
+              <div
+                className="inline-flex items-center gap-2 text-amber-200 font-semibold sm:ml-auto select-none"
+                aria-label="Powered by the Solana blockchain"
+              >
+                <SolanaMark className="h-4 w-4 text-amber-200" />
+                <span>Powered by the Solana blockchain</span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
-    )}
 
-    {/* ===== HERO ===== */}
-    <section className="relative">
-      {/* Background video + vignette */}
-      <div className="absolute inset-0 -z-10 overflow-hidden hero-vignette">
-        <video
-          className="h-[66vh] w-full object-cover hero-zoom"
-          playsInline
-          autoPlay
-          muted
-          loop
-          poster="/img/burning-bear-frame.jpg"
-        >
-          <source src="/img/burning-bear.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
-      </div>
-
-      <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20 relative">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-amber-600/10 via-transparent to-transparent blur-[120px]" />
-        {/* ember particles */}
-        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-          {[...Array(10)].map((_, i) => (
-            <span
-              key={i}
-              className="ember-dot"
-              style={{
-                left: `${Math.random() * 100}%`,
-                bottom: `${Math.random() * 40}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                ['--drift-x' as any]: `${Math.random() * 40 - 20}px`,
-                ['--rise' as any]: `${5 + Math.random() * 4}s`,
-              } as React.CSSProperties}
-            />
-          ))}
-        </div>
-
-        {/* Panel */}
-        <div className="relative w-full rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
-          <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
-  {broadcast.on
-    ? 'With The Burning Bear – Solana’s deflation engine'
-    : 'Meet The Burning Bear – Solana’s deflation engine'}
-</h1>
-
-          {/* Countdowns */}
-          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <Countdown
-              label="Next burn in"
-              ms={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined}
-              variant="segments"
-            />
-          </div>
-
-          {/* Stats */}
-          <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
-            <Stat label="Burned So Far"       value={fmtInt(data?.stats?.burned ?? 0)}     highlight={showBurnMoment} />
-            <Stat label="Current Supply"      value={fmtInt(data?.stats?.currentSupply ?? Math.max(0, (data?.stats?.initialSupply ?? 0) - (data?.stats?.burned ?? 0)))} highlight={showBurnMoment} />
-            <Stat label="Buyback Spent"       value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} highlight={showBurnMoment} />
-            <Stat label="Total Buyback Value" value={fmtMoney((data?.stats?.buybackSol ?? 0) * priceUsdPerSol)} highlight={showBurnMoment} />
-          </div>
-
-          {/* Pills */}
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-            {/* Left */}
-            <div className="flex flex-wrap items-center gap-3">
-              <a href="#log">
-                <Pill className="cursor-pointer bg-orange-500/20 text-orange-400 font-semibold hover:bg-orange-500/25">
-                  🔥 Total Burns: {data?.burns?.length ?? 0}
-                </Pill>
-              </a>
-              <Pill>Initial Supply: {fmtInt(data?.stats?.initialSupply ?? 0)}</Pill>
-              <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
-            </div>
-
-            {/* Right: Powered by Solana */}
-            <div
-              className="inline-flex items-center gap-2 text-amber-200 font-semibold sm:ml-auto select-none"
-              aria-label="Powered by the Solana blockchain"
-            >
-              <SolanaMark className="h-4 w-4 text-amber-200" />
-              <span>Powered by the Solana blockchain</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </>
-) : (
-  /* --- NOT LIVE: keep Hero FIRST, then (optional) Bonus --- */
-  <>
-    {/* ===== HERO ===== */}
-    <section className="relative">
-      {/* Background video + vignette */}
-      <div className="absolute inset-0 -z-10 overflow-hidden hero-vignette">
-        <video
-          className="h-[66vh] w-full object-cover hero-zoom"
-          playsInline
-          autoPlay
-          muted
-          loop
-          poster="/img/burning-bear-frame.jpg"
-        >
-          <source src="/img/burning-bear.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-[#0b1712]/35 to-[#0b1712]" />
-      </div>
-
-      <div className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:pt-20 relative">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-amber-600/10 via-transparent to-transparent blur-[120px]" />
-        {/* ember particles */}
-        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-          {[...Array(10)].map((_, i) => (
-            <span
-              key={i}
-              className="ember-dot"
-              style={{
-                left: `${Math.random() * 100}%`,
-                bottom: `${Math.random() * 40}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                ['--drift-x' as any]: `${Math.random() * 40 - 20}px`,
-                ['--rise' as any]: `${5 + Math.random() * 4}s`,
-              } as React.CSSProperties}
-            />
-          ))}
-        </div>
-
-        {/* Panel */}
-        <div className="relative w-full rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
-          <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
-            Meet The Burning Bear – Solana’s deflation engine
-          </h1>
-
-          {/* Countdowns */}
-          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <Countdown
-              label="Next burn in"
-              ms={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined}
-              variant="segments"
-            />
-          </div>
-
-          {/* Stats */}
-          <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
-            <Stat label="Burned So Far"       value={fmtInt(data?.stats?.burned ?? 0)}     highlight={showBurnMoment} />
-            <Stat label="Current Supply"      value={fmtInt(data?.stats?.currentSupply ?? Math.max(0, (data?.stats?.initialSupply ?? 0) - (data?.stats?.burned ?? 0)))} highlight={showBurnMoment} />
-            <Stat label="Buyback Spent"       value={`${(data?.stats?.buybackSol ?? 0).toFixed(2)} SOL`} highlight={showBurnMoment} />
-            <Stat label="Total Buyback Value" value={fmtMoney((data?.stats?.buybackSol ?? 0) * priceUsdPerSol)} highlight={showBurnMoment} />
-          </div>
-
-          {/* Pills */}
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-            {/* Left */}
-            <div className="flex flex-wrap items-center gap-3">
-              <a href="#log">
-                <Pill className="cursor-pointer bg-orange-500/20 text-orange-400 font-semibold hover:bg-orange-500/25">
-                  🔥 Total Burns: {data?.burns?.length ?? 0}
-                </Pill>
-              </a>
-              <Pill>Initial Supply: {fmtInt(data?.stats?.initialSupply ?? 0)}</Pill>
-              <Pill>SOL: {fmtMoney(priceUsdPerSol)}</Pill>
-            </div>
-
-            {/* Right: Powered by Solana */}
-            <div
-              className="inline-flex items-center gap-2 text-amber-200 font-semibold sm:ml-auto select-none"
-              aria-label="Powered by the Solana blockchain"
-            >
-              <SolanaMark className="h-4 w-4 text-amber-200" />
-              <span>Powered by the Solana blockchain</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  {/* ==== Campfire Bonus (broadcast only) ==== */}
+      {/* ===== Campfire Bonus (broadcast only) ===== */}
 {broadcast.on && Boolean(broadcast.params.get('reward')) && (
-  <section className="w-full mt-8 md:mt-10">
-    <div className="mx-auto max-w-6xl px-4 sm:px-6">
-      <CampfireBonusBox />
+  <section className="w-full px-4 sm:px-6 lg:px-8 mt-4">
+    <div className="mx-auto max-w-6xl">
+      <CampfireBonusBox
+        msToBurn={Number.isFinite(nextBurnMs) ? Math.max(0, nextBurnMs) : undefined}
+        nextBurnAt={typeof burnAt === 'number' && isFinite(burnAt) ? burnAt : undefined}
+        potBBURN={Number(broadcast.params.get('reward')) || 0}
+        jupUrl={JUP_URL}
+      />
     </div>
   </section>
 )}
-  </>
-)}
 
       {/* Burn overlay */}
-<BurnMoment
-  show={showBurnMoment}
-  onDone={() => setShowBurnMoment(false)}
-  durationMs={4500}
-/>
+      <BurnMoment
+        show={showBurnMoment}
+        onDone={() => setShowBurnMoment(false)}
+        durationMs={4500}
+      />
+
+      {/* Burn overlay */}
+      <BurnMoment
+        show={showBurnMoment}
+        onDone={() => setShowBurnMoment(false)}
+        durationMs={4500}
+      />
 
       {/* ↓↓↓ Contract + Treasury strip ↓↓↓ */}
       <section className="bg-[#0d1411] border-t border-white/5 pt-8 pb-5">
