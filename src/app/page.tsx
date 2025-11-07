@@ -939,9 +939,10 @@ return (
   <>
     <LiveBug live={broadcast.live} liveInMs={broadcast.liveInMs} />
 
-    <BonusBanner
-      msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined}
-    />
+    {/* BonusBanner only when we have a finite number */}
+    {Number.isFinite(nextBurnMs) && (
+      <BonusBanner msToBurn={nextBurnMs as number} />
+    )}
 
     {Boolean(broadcast.params.get('lower')) && (
       <LowerThird
@@ -952,7 +953,7 @@ return (
 
     {Boolean(broadcast.params.get('reward')) && (
       <RewardPill
-        msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : Number.POSITIVE_INFINITY}
+        msToBurn={Number.isFinite(nextBurnMs) ? (nextBurnMs as number) : Number.POSITIVE_INFINITY}
         potBBURN={Number(broadcast.params.get('reward')) || 0}
       />
     )}
