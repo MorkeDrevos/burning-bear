@@ -1028,7 +1028,7 @@ export default function Page() {
   />
 )}
 
-    {Boolean(broadcast.params.get('now')) && (
+{Boolean(broadcast.params.get('now')) && (
   <NowPlaying
     track={(broadcast.params.get('now') || '').split('|')[0]}
     artist={(broadcast.params.get('now') || '').split('|')[1]}
@@ -1051,6 +1051,7 @@ export default function Page() {
     </div>
   </div>
 )}
+
 </main>
 );
 }
