@@ -545,15 +545,14 @@ export default function Page() {
       </div>
     </section>
 
-    {/* (Optional) Campfire Bonus when *not* live — keep hidden unless you want it */}
-    {/* If you want it visible off-stream too, drop the broadcast.on guard */}
-    {Boolean(broadcast.params.get('reward')) && (
-      <section className="w-full px-4 sm:px-6 lg:px-8 mt-4">
-        <div className="mx-auto max-w-6xl">
-          <CampfireBonusBox />
-        </div>
-      </section>
-    )}
+  {/* ==== Campfire Bonus (broadcast only) ==== */}
+{broadcast.on && Boolean(broadcast.params.get('reward')) && (
+  <section className="w-full mt-8 md:mt-10">
+    <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <CampfireBonusBox />
+    </div>
+  </section>
+)}
   </>
 )}
 
