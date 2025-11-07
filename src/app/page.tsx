@@ -8,13 +8,6 @@ import CopyButton from './components/CopyButton';
 import BonusBanner from './components/BonusBanner';
 import CampfireBonusBox from './components/CampfireBonusBox';
 
-// top of file imports:
-import AdminBroadcastControls from './components/AdminBroadcastControls';
-
-// ...
-// at the bottom where your overlays are:
-{broadcast.on && broadcast.params.get('admin') === '1' && <AdminBroadcastControls />}
-
 /* =========================
    Config
 ========================= */
