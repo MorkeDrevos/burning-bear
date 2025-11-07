@@ -23,7 +23,7 @@ export default function CampfireBonusBox() {
 
   useEffect(() => {
     setParams(new URLSearchParams(window.location.hash.split('?')[1]));
-    fetch(`https://burningbear.camp/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
+    fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' })
       .then(r => r.json())
       .then((d: StateJson) => setNextBurnAt(d?.schedule?.nextBurnAt ?? null))
       .catch(() => null);
@@ -53,7 +53,7 @@ export default function CampfireBonusBox() {
   const { d, h, m, s } = msToParts(deadlineMs - now);
 
   return (
-    <div className="mt-6 w-full max-w-6xl rounded-2xl border border-amber-400/20 bg-amber-500/5 p-6 md:p-8">
+    <div className="mt-6 w-full rounded-2xl border border-amber-400/20 bg-amber-500/5 p-6 md:p-8">
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
           <div className="text-2xl md:text-3xl font-black text-amber-200">
@@ -89,7 +89,7 @@ export default function CampfireBonusBox() {
         </div>
 
         <div className="text-right text-xs text-amber-300/70">
-          Eligible buys must settle before this timer ends.  
+          Eligible buys must settle before this timer ends.
           <div className="text-[10px] text-amber-300/50">
             {new Date(deadlineMs).toISOString().replace('.000Z','Z')}
           </div>
@@ -97,13 +97,15 @@ export default function CampfireBonusBox() {
       </div>
 
       {/* Ticker line */}
-      <div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-3">
-        {tickers.map((t, i) => (
-          <div key={i} className="rounded-xl border border-amber-400/20 bg-amber-500/10 px-4 py-3 text-amber-100 text-sm font-semibold">
-            {t}
-          </div>
-        ))}
-      </div>
+      {tickers.length > 0 && (
+        <div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-3">
+          {tickers.map((t, i) => (
+            <div key={i} className="rounded-xl border border-amber-400/20 bg-amber-500/10 px-4 py-3 text-amber-100 text-sm font-semibold">
+              {t}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
