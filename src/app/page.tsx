@@ -486,6 +486,7 @@ return (
           </div>
         </div>
       </section>
+      
 {/** ===== Campfire Bonus (broadcast only) ===== */}
 {broadcast.on && Boolean(broadcast.params.get('reward')) && (
   <section className="w-full px-4 sm:px-6 lg:px-8 mt-4">
