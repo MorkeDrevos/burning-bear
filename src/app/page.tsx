@@ -1033,39 +1033,34 @@ export default function Page() {
     {Boolean(broadcast.params.get('ticker')) && (
       <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
     )}
-    // --- Winner Reveal (URL-driven; stable claimUntil) ---
-{(() => {
-  const w = broadcast.params.get('winner');
-  if (!w) return null;
+{/* Winner Reveal (URL-driven) */}
+    {(() => {
+      const w = broadcast.params.get('winner');
+      if (!w) return null;
 
-  // compute claimUntil ONCE so the timer doesn't jump back on re-renders
-  const onceRef = React.useRef<null | { until: number; msg?: string }>(null);
-  if (!onceRef.current) {
-    const claimUntilParam = broadcast.params.get('claimUntil');
-    let until: number;
+      const claimUntilParam = broadcast.params.get('claimUntil');
+      let claimUntil: number | null = null;
 
-    if (claimUntilParam) {
-      const n = Number(claimUntilParam);
-      until = Number.isFinite(n) ? n : Date.parse(claimUntilParam);
-    } else {
-      const secs = Number(broadcast.params.get('claim') ?? '300');
-      until = Date.now() + (Number.isFinite(secs) ? secs * 1000 : 300000);
-    }
+      if (claimUntilParam) {
+        claimUntil = isFinite(Number(claimUntilParam))
+          ? Number(claimUntilParam)
+          : Date.parse(claimUntilParam);
+      } else {
+        const secs = Number(broadcast.params.get('claim') ?? '300');
+        claimUntil = Date.now() + (isFinite(secs) ? secs * 1000 : 300000);
+      }
 
-    const msg = broadcast.params.get('wmsg') ?? undefined;
-    onceRef.current = { until, msg };
-  }
+      const msg = broadcast.params.get('wmsg') ?? undefined;
 
-  return Number.isFinite(onceRef.current.until) ? (
-    <WinnerReveal
-      wallet={w}
-      claimUntil={onceRef.current.until}
-      explorerBase={EXPLORER}
-      message={onceRef.current.msg}
-      placement="by-timer"   // <- we’ll use this next
-    />
-  ) : null;
-})()}
+      return Number.isFinite(claimUntil) ? (
+        <WinnerReveal
+          wallet={w}
+          claimUntil={claimUntil as number}
+          explorerBase={EXPLORER}
+          message={msg}
+        />
+      ) : null;
+    })()}
   </>
 )}
 
