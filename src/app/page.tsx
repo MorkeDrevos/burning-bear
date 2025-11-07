@@ -490,7 +490,7 @@ return (
   <section className="w-full px-4 sm:px-6 lg:px-8 mt-4">
     <div className="mx-auto max-w-6xl">
       <RewardPill
-        msToBurn={Number.isFinite(nextBurnMs) ? (nextBurnMs as number) : Number.POSITIVE_INFINITY}
+        msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : Number.POSITIVE_INFINITY}
         potBBURN={Number(broadcast.params.get('reward')) || 0}
       />
     </div>
