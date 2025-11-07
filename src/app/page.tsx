@@ -5,28 +5,29 @@ import Link from 'next/link';
 
 import TreasuryLockCard from './components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
+import BonusBanner from './components/BonusBanner';
 import CampfireBonusBox from './components/CampfireBonusBox';
 
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
-// 🔥 Redirect #broadcast?... to overlay routes ONLY when mode=overlay
-function HashRedirect() {
+// 🔥 Redirect #broadcast?... to correct overlay route
+export default function HashRedirect() {
   const router = useRouter();
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
     const h = window.location.hash || '';
     if (!h.startsWith('#broadcast')) return;
 
+    // Extract query string after "#broadcast?"
     const qs = h.includes('?') ? h.split('?')[1] : '';
+
+    // Decide which overlay to show (lower or tease)
     const params = new URLSearchParams(qs);
+    const hasLower = params.has('lower');
+    const dest = hasLower ? '/broadcast/lower' : '/broadcast/tease';
 
-    // 👇 New: only redirect when explicitly requested
-    const wantsOverlay = params.get('mode') === 'overlay';
-    if (!wantsOverlay) return; // stay on main page and show all overlays together
-
-    const dest = params.has('lower') ? '/broadcast/lower' : '/broadcast/tease';
     router.replace(`${dest}?${qs}`);
   }, [router]);
 
@@ -104,8 +105,21 @@ export default function Page() {
   const [data, setData] = useState<StateJson | null>(null);
   const [solUsd, setSolUsd] = useState<number | null>(null);
   const [now, setNow] = useState<number>(Date.now());
+
   const broadcast = useBroadcast(now);
+
+  // 🔥 Burn overlay trigger state (visual only)
   const [showBurnMoment, setShowBurnMoment] = useState(false);
+
+  // Hide overlay after 4.5s (browser-only)
+  useEffect(() => {
+    if (!showBurnMoment) return;
+    if (typeof window === 'undefined') return;
+    const t = window.setTimeout(() => setShowBurnMoment(false), 4500);
+    return () => window.clearTimeout(t);
+  }, [showBurnMoment]);
+
+  // Prevent double triggers when countdown hovers near zero
   const lastTriggerRef = useRef<number>(0);
 
   // Tick each second (browser-only)
@@ -115,13 +129,35 @@ export default function Page() {
     return () => window.clearInterval(id);
   }, []);
 
-  // Hide burn overlay after 4.5s (browser-only)
+  // Load JSON data (cache-busted), normalize, and persist a last-good copy
   useEffect(() => {
-    if (!showBurnMoment) return;
-    if (typeof window === 'undefined') return;
-    const t = window.setTimeout(() => setShowBurnMoment(false), 4500);
-    return () => window.clearTimeout(t);
-  }, [showBurnMoment]);
+    let alive = true;
+    (async () => {
+      try {
+        const res = await fetch(`/data/state.json?t=${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`state.json HTTP ${res.status}`);
+        const j: StateJson = await res.json();
+        if (!alive) return;
+        setData(j);
+        // …any normalization you already had…
+      } catch (err) {
+        // optional: keep last-good data
+        // console.warn(err);
+      }
+    })();
+    return () => { alive = false; };
+  }, [now]);
+
+  // (Any other effects/handlers you already have stay ABOVE the return)
+
+    return (
+    <>
+      <HashRedirect />
+      {/* …your existing page JSX (hero, stats, burn log, etc.) … */}
+    </>
+  );
+} // ← this single brace closes the Page() function. Nothing after this.
+
 
   // Load JSON data (cache-busted), normalize, and persist a last-good copy
   useEffect(() => {
@@ -143,25 +179,23 @@ export default function Page() {
         if (s.buybackIntervalMs == null) s.buybackIntervalMs = buybackMins * 60_000;
 
         const nowTs = Date.now();
-        if (s.nextBurnAt == null && s.burnIntervalMs)        s.nextBurnAt = nowTs + s.burnIntervalMs;
+        if (s.nextBurnAt == null && s.burnIntervalMs)    s.nextBurnAt = nowTs + s.burnIntervalMs;
         if (s.nextBuybackAt == null && s.buybackIntervalMs) s.nextBuybackAt = nowTs + s.buybackIntervalMs;
 
         // --- burns normalization ---
         const burns = (d?.burns ?? [])
-          .map((b: any) => ({
-            ...b,
-            timestamp: typeof b.timestamp === 'number' ? b.timestamp : Date.parse(b.timestamp),
-          }))
+          .map((b: any) => ({ ...b, timestamp: typeof b.timestamp === 'number' ? b.timestamp : Date.parse(b.timestamp) }))
           .filter((b: any) => Number.isFinite(b.timestamp));
 
         const nextState: StateJson = { ...d, schedule: s, burns };
         setData(nextState);
 
-        // persist last good copy
+        // persist last good copy for offline/404 fallback
         try { sessionStorage.setItem('bburn_last_state', JSON.stringify(nextState)); } catch {}
       } catch (err) {
         console.error('Failed to load /data/state.json:', err);
-        // fallback to cached last good state
+
+        // try fallback to last good state
         try {
           const cached = sessionStorage.getItem('bburn_last_state');
           if (cached) setData(JSON.parse(cached));
@@ -170,8 +204,7 @@ export default function Page() {
     })();
 
     return () => { alive = false; };
-  }, []); // run on mount; adjust if you want periodic reloads
-
+  }, []);
 
   // Live SOL price (falls back to stats.priceUsdPerSol)
   useEffect(() => {
@@ -338,13 +371,7 @@ export default function Page() {
     return { count, sol, usd, largest, avgSol };
   }, [burnsSorted, weekStart, priceUsdPerSol]);
 
-  // ...all your hooks and computed values ABOVE this line...
-
-// ----- JSX -----
-return (
-  <>
-    <HashRedirect /> {/* rewrites #broadcast?... to /broadcast/* */}
-
+  return (
     <main id="top">
       {/* ===== Header ===== */}
       <header className="sticky top-0 z-[90] w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
@@ -391,7 +418,6 @@ return (
       </header>
 
       {/* ===== HERO ===== */}
-    
       <section className="relative">
         {/* Background video + vignette */}
         <div className="absolute inset-0 -z-10 overflow-hidden hero-vignette">
@@ -935,42 +961,27 @@ return (
         </a>
       )}
 
-</main>
-
-{/* --- Broadcast overlays (top-most) --- */}
-{broadcast.on && (
-  <>
-    <LiveBug live={broadcast.live} liveInMs={broadcast.liveInMs} />
-
-    {Boolean(broadcast.params.get('lower')) && (
-      <LowerThird
-        title={(broadcast.params.get('lower') ?? '').split('|')[0] || 'Live Campfire'}
-        subtitle={(broadcast.params.get('lower') ?? '').split('|')[1] || undefined}
-      />
-    )}
-
-    {Boolean(broadcast.params.get('reward')) && (
-      <RewardPill
-        msToBurn={Number.isFinite(nextBurnMs) ? (nextBurnMs as number) : Number.POSITIVE_INFINITY}
-        potBBURN={Number(broadcast.params.get('reward')) || 0}
-      />
-    )}
-
-    {Boolean(broadcast.params.get('now')) && (
-      <NowPlaying
-        track={(broadcast.params.get('now') ?? '').split('|')[0]}
-        artist={(broadcast.params.get('now') ?? '').split('|')[1]}
-      />
-    )}
-
-    {Boolean(broadcast.params.get('ticker')) && (
-      <NewsTicker items={(broadcast.params.get('ticker') ?? '').split(';')} />
-    )}
-  </>
-)}
-</>
-);
-} // end Page()
+      {/* --- Broadcast overlays (top-most) --- */}
+      {broadcast.on && <LiveBug live={broadcast.live} liveInMs={broadcast.liveInMs} />}
+      {broadcast.on && <BonusBanner msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined as any} />}
+      {broadcast.on && Boolean(broadcast.params.get('lower')) && (
+        <LowerThird
+          title={(broadcast.params.get('lower') || '').split('|')[0] || 'Live Campfire'}
+          subtitle={(broadcast.params.get('lower') || '').split('|')[1] || undefined}
+        />
+      )}
+      {broadcast.on && Boolean(broadcast.params.get('reward')) && (
+        <RewardPill msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : Infinity} potBBURN={Number(broadcast.params.get('reward')) || 0} />
+      )}
+      {broadcast.on && Boolean(broadcast.params.get('now')) && (
+        <NowPlaying track={(broadcast.params.get('now') || '').split('|')[0]} artist={(broadcast.params.get('now') || '').split('|')[1]} />
+      )}
+      {broadcast.on && Boolean(broadcast.params.get('ticker')) && (
+        <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
+      )}
+    </main>
+  );
+}
 
 /* =========================
    Components
@@ -1081,7 +1092,7 @@ function NowPlaying({ track, artist }: { track: string; artist?: string }) {
   );
 }
 
-<function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }) {
+function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }) {
   const soon = isFinite(msToBurn) && msToBurn >= 0 && msToBurn <= 5 * 60_000;
   return (
     <div className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[82]" style={{ top: `calc(var(--safe-top, 0px) + ${OVERLAY_TOP - 6}px)` }}>
@@ -1098,7 +1109,7 @@ function NowPlaying({ track, artist }: { track: string; artist?: string }) {
       </div>
     </div>
   );
-}>
+}
 
 function NewsTicker({ items }: { items: string[] }) {
   const loop = items.length ? [...items, ...items] : [];
