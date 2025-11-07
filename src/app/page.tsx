@@ -1046,16 +1046,15 @@ export default function Page() {
        }}>
     <div className="max-w-none w-full overflow-hidden">
       <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
-    </div>
+        </div>
   </div>
-)}   {/* ← ticker closes */}
-  </>  {/* ← close fragment */}
-)}     {/* ← close broadcast.on && (...) */}
+)}  {/* ticker closes */}
+  </> {/* close fragment */}
+)}  {/* close broadcast.on && (...) */}
 
 </main>
-);     // closes return(
-}       // closes component
-
+); // close return
+} // close component
 /* =========================
    Components
 ========================= */
