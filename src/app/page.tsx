@@ -6,7 +6,7 @@ import Link from 'next/link';
 import TreasuryLockCard from './components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
 import BonusBanner from './components/BonusBanner';
-import CampfireBonusBox from '@/components/CampfireBonusBox';
+import CampfireBonusBox from '../components/CampfireBonusBox';
 
 /* =========================
    Config
