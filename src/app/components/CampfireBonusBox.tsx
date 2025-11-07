@@ -1176,36 +1176,30 @@ function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number
 function NewsTicker({ items }: { items: string[] }) {
   const loop = items.length ? [...items, ...items] : [];
   const dur = Math.max(20, items.length * 7);
-  const edgeFade = 48; // px fade at both edges
+  const leading = 56;
 
   return (
-    <div
-      className="pointer-events-none fixed inset-x-0 z-[84]"
-      style={{ bottom: 'var(--safe-bottom, 0px)' }}
-    >
-      {/* full-width bar */}
-      <div className="w-full">
-        <div className="relative overflow-hidden border-t border-white/10 bg-black/40 backdrop-blur-md">
+    <div className="pointer-events-none fixed left-0 right-0 z-[84]" style={{ bottom: 'var(--safe-bottom, 0px)' }}>
+      <div className="mx-auto max-w-6xl px-3">
+        <div className="relative rounded-xl border border-white/10 bg-black/45 backdrop-blur overflow-hidden">
           <div
             className="whitespace-nowrap will-change-transform animate-[ticker_linear_infinite] leading-[1] py-2"
             style={{
               animationDuration: `${dur}s` as any,
-              // soft fade at edges so text doesn’t hard-cut
-              maskImage: `linear-gradient(to right, transparent 0, black ${edgeFade}px, black calc(100% - ${edgeFade}px), transparent 100%)`,
-              WebkitMaskImage: `linear-gradient(to right, transparent 0, black ${edgeFade}px, black calc(100% - ${edgeFade}px), transparent 100%)`,
+              maskImage:
+                'linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%)',
+              WebkitMaskImage:
+                'linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%)',
             }}
           >
-            <span style={{ display: 'inline-block', width: edgeFade }} />
+            <span style={{ display: 'inline-block', width: leading }} />
             {loop.map((t, i) => (
-              <span
-                key={i}
-                className="inline-flex items-center gap-2 px-6 text-[15px] md:text-[16px] text-white/85 align-middle"
-              >
+              <span key={i} className="inline-flex items-center gap-2 px-5 text-[13px] text-white/85 align-middle">
                 <span className="h-1.5 w-1.5 rounded-full bg-amber-300 inline-block" />
                 <span>{t}</span>
               </span>
             ))}
-            <span style={{ display: 'inline-block', width: edgeFade }} />
+            <span style={{ display: 'inline-block', width: leading }} />
           </div>
         </div>
       </div>
