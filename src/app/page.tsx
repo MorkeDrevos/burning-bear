@@ -1049,13 +1049,11 @@ export default function Page() {
 
   return (
     <WinnerReveal
-      wallet={w}
-      explorerBase={EXPLORER}
-      message={msg}
-      side={sideParam}
-      vpos={vposParam}
-      topOffsetPx={topPx}
-    />
+  wallet={w}
+  message={msg}
+  side={sideParam}
+  vpos={vposParam}
+/>
   );
 })()}
   </>
