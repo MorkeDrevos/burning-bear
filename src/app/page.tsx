@@ -945,7 +945,7 @@ return (
 
     {/* BonusBanner only when we have a finite number */}
     {Number.isFinite(nextBurnMs) && (
-      <BonusBanner msToBurn={nextBurnMs as number} />
+      {/* <BonusBanner msToBurn={nextBurnMs as number} /> */}
     )}
 
     {Boolean(broadcast.params.get('lower')) && (
