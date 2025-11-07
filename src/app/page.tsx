@@ -6,7 +6,33 @@ import Link from 'next/link';
 import TreasuryLockCard from './components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
 import BonusBanner from './components/BonusBanner';
-import CampfireBonusBox from '@/components/CampfireBonusBox';
+import CampfireBonusBox from './components/CampfireBonusBox';
+
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+// 🔥 Redirect #broadcast?... to correct overlay route
+export default function HashRedirect() {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const h = window.location.hash || '';
+    if (!h.startsWith('#broadcast')) return;
+
+    // Extract query string after "#broadcast?"
+    const qs = h.includes('?') ? h.split('?')[1] : '';
+
+    // Decide which overlay to show (lower or tease)
+    const params = new URLSearchParams(qs);
+    const hasLower = params.has('lower');
+    const dest = hasLower ? '/broadcast/lower' : '/broadcast/tease';
+
+    router.replace(`${dest}?${qs}`);
+  }, [router]);
+
+  return null;
+}
 
 /* =========================
    Config
