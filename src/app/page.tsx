@@ -932,8 +932,6 @@ return (
         </a>
       )}
 
-      </main>
-
 </main>
 
 {/* --- Broadcast overlays (top-most) --- */}
@@ -973,7 +971,7 @@ return (
 )}
 
 </>
-); // closes return ( ... )
+); // closes return(...)
 } // end Page()
 
 /* =========================
