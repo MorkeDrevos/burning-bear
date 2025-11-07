@@ -315,21 +315,26 @@ export default function Page() {
 
   return (
     <main id="top">
-      {/* Live On Air badge (subtle version) */}
+      {/* Live On Air badge — adjusted so it never hides behind header */}
 <a
   href="https://pump.fun/coin/BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump"
   target="_blank"
   rel="noopener noreferrer"
   className="
-    fixed top-[92px] left-[18px] z-[50]
+    fixed left-[18px] z-[200]   /* ← above header (your header is ~z-[90]) */
     flex items-center gap-2
     bg-red-700/40 hover:bg-red-700/55
     text-white/90 font-semibold text-[13px] tracking-wide
     px-3.5 py-1.5 rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.25)]
     backdrop-blur-sm transition-all duration-200
+    pointer-events-auto
   "
+  style={{
+    // respects any safe-top / iOS notch; sits below your sticky header
+    top: 'calc(var(--safe-top, 0px) + 84px)',
+  }}
 >
-  <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
+  <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
   LIVE — On Air
 </a>
       {/* ===== Header ===== */}
