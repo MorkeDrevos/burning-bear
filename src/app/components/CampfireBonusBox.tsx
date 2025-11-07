@@ -30,7 +30,11 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
   }, [ms]);
 
   return (
-    <div className="w-full rounded-2xl border border-white/10 bg-[#0f1f19]/80 backdrop-blur px-8 py-10 shadow-[0_10px_40px_rgba(0,0,0,0.45)] text-white">
+    <div
+      id="campfire-bonus"               // ✨ tag so overlays can measure/avoid it
+      aria-label="Campfire Bonus Card"  // (optional) helpful for accessibility/debugging
+      className="w-full rounded-2xl border border-white/10 bg-[#0f1f19]/80 backdrop-blur px-8 py-10 shadow-[0_10px_40px_rgba(0,0,0,0.45)] text-white"
+    >
       {/* Title */}
       <div className="flex flex-wrap justify-between items-start mb-8">
         <div>
@@ -49,17 +53,17 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
       </div>
 
       {/* Jackpot */}
-<div className="mb-10">
-  <p className="uppercase text-amber-400/70 tracking-widest text-sm md:text-base mb-2">
-    Jackpot
-  </p>
-  <h3 className="text-5xl md:text-6xl font-extrabold text-amber-300 drop-shadow-[0_2px_10px_rgba(255,200,0,0.25)] leading-tight">
-    WIN <span className="text-amber-200">1,000,000</span> <span className="text-amber-300">$BBURN</span>
-  </h3>
-  <p className="text-base md:text-lg text-white/60 mt-3 max-w-xl">
-    If unclaimed within 5 minutes, the prize rolls into the next round.
-  </p>
-</div>
+      <div className="mb-10">
+        <p className="uppercase text-amber-400/70 tracking-widest text-sm md:text-base mb-2">
+          Jackpot
+        </p>
+        <h3 className="text-5xl md:text-6xl font-extrabold text-amber-300 drop-shadow-[0_2px_10px_rgba(255,200,0,0.25)] leading-tight">
+          WIN <span className="text-amber-200">1,000,000</span> <span className="text-amber-300">$BBURN</span>
+        </h3>
+        <p className="text-base md:text-lg text-white/60 mt-3 max-w-xl">
+          If unclaimed within 5 minutes, the prize rolls into the next round.
+        </p>
+      </div>
 
       {/* Buttons */}
       <div className="flex flex-wrap gap-4 mb-10">
@@ -89,7 +93,7 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
         </a>
       </div>
 
-      {/* Timer (left-aligned label + big segments) */}
+      {/* Timer */}
       <div className="flex flex-col md:flex-row md:items-end md:justify-start gap-3">
         <div className="uppercase tracking-widest text-sm text-white/60">
           Next Burn In
@@ -104,9 +108,7 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
         </div>
       </div>
 
-      <p className="text-white/70 text-base md:text-lg mt-3">
-        
-      </p>
+      <p className="text-white/70 text-base md:text-lg mt-3"></p>
     </div>
   );
 }
