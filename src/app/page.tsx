@@ -10,20 +10,24 @@ import CampfireBonusBox from './components/CampfireBonusBox';
 
 import { useRouter } from 'next/navigation';
 
-// 🔥 Redirect #broadcast?... to correct overlay route
+// 🔥 Redirect #broadcast?... to overlay routes ONLY when mode=overlay
 function HashRedirect() {
   const router = useRouter();
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
     const h = window.location.hash || '';
     if (!h.startsWith('#broadcast')) return;
 
     const qs = h.includes('?') ? h.split('?')[1] : '';
     const params = new URLSearchParams(qs);
-    const hasLower = params.has('lower');
-    const dest = hasLower ? '/broadcast/lower' : '/broadcast/tease';
 
+    // 👇 New: only redirect when explicitly requested
+    const wantsOverlay = params.get('mode') === 'overlay';
+    if (!wantsOverlay) return; // stay on main page and show all overlays together
+
+    const dest = params.has('lower') ? '/broadcast/lower' : '/broadcast/tease';
     router.replace(`${dest}?${qs}`);
   }, [router]);
 
