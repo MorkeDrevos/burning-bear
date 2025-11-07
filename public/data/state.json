@@ -6,12 +6,12 @@
     "buybackSol": 3.4678,
     "priceUsdPerSol": 165.8
   },
-  "schedule": {
-    "burnIntervalMinutes": 720,
-    "buybackIntervalMinutes": 180,
-    "nextBurnAt": 1762380000000,
-    "nextBuybackAt": null
-  },
+ "schedule": {
+  "burnIntervalMinutes": 720,
+  "buybackIntervalMinutes": 180,
+  "nextBurnAt": 1762380000000,
+  "nextBuybackAt": null
+},
   "wallets": {
     "burn": "2nkSpJx9S7U13ujrSibYLpBHeBWbvRkHBF8bkqwS9xMS",
     "treasury": "FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE",
