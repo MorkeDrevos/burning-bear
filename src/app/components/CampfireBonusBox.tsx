@@ -1,9 +1,36 @@
 'use client';
 
-export default function CampfireBonusBox() {
+import React from 'react';
+
+export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }) {
+  // ── simple formatter for HH:MM:SS from ms (updates every second)
+  const [ms, setMs] = React.useState<number | undefined>(nextBurnMs);
+
+  React.useEffect(() => setMs(nextBurnMs), [nextBurnMs]);
+
+  React.useEffect(() => {
+    if (!Number.isFinite(ms as number)) return;
+    const id = window.setInterval(() => {
+      setMs((prev) => (typeof prev === 'number' ? prev - 1000 : prev));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [ms]);
+
+  const segs = React.useMemo(() => {
+    if (!Number.isFinite(ms as number)) return null;
+    const t = Math.max(0, Math.floor((ms as number) / 1000));
+    const h = Math.floor(t / 3600);
+    const m = Math.floor((t % 3600) / 60);
+    const s = t % 60;
+    return {
+      h: String(h).padStart(2, '0'),
+      m: String(m).padStart(2, '0'),
+      s: String(s).padStart(2, '0'),
+    };
+  }, [ms]);
+
   return (
     <div className="w-full rounded-2xl border border-white/10 bg-[#0f1f19]/80 backdrop-blur px-8 py-10 shadow-[0_10px_40px_rgba(0,0,0,0.45)] text-white">
-      
       {/* Title */}
       <div className="flex flex-wrap justify-between items-start mb-8">
         <div>
@@ -11,7 +38,8 @@ export default function CampfireBonusBox() {
             🔥🔥 Campfire Bonus — <span className="text-amber-400">Round 1</span>
           </h2>
           <p className="text-lg md:text-xl text-white/70 mt-2 max-w-2xl leading-snug">
-            Get your $BBURN before <span className="text-amber-300 font-semibold">before the next burn</span>. The winning wallet will be revealed live on-stream.
+            Get your $BBURN before <span className="text-amber-300 font-semibold">the next burn</span>.
+            The winning wallet is revealed live on-stream.
           </p>
         </div>
 
@@ -21,15 +49,17 @@ export default function CampfireBonusBox() {
       </div>
 
       {/* Jackpot */}
-      <div className="mb-10">
-        <p className="uppercase text-amber-400/70 tracking-widest text-sm md:text-base mb-2">🔥🔥</p>
-        <h3 className="text-6xl md:text-7xl font-extrabold text-amber-300 drop-shadow-[0_2px_10px_rgba(255,200,0,0.25)]">
-          WIN 1,000,000 $BBURN
-        </h3>
-        <p className="text-lg text-white/60 mt-3">
-          If unclaimed within 5 minutes, the prize rolls into the next round.
-        </p>
-      </div>
+<div className="mb-10">
+  <p className="uppercase text-amber-400/70 tracking-widest text-sm md:text-base mb-2">
+    Jackpot
+  </p>
+  <h3 className="text-5xl md:text-6xl font-extrabold text-amber-300 drop-shadow-[0_2px_10px_rgba(255,200,0,0.25)] leading-tight">
+    WIN <span className="text-amber-200">1,000,000</span> <span className="text-amber-300">$BBURN</span>
+  </h3>
+  <p className="text-base md:text-lg text-white/60 mt-3 max-w-xl">
+    If unclaimed within 5 minutes, the prize rolls into the next round.
+  </p>
+</div>
 
       {/* Buttons */}
       <div className="flex flex-wrap gap-4 mb-10">
@@ -59,23 +89,24 @@ export default function CampfireBonusBox() {
         </a>
       </div>
 
-      {/* Timer Section */}
-<div className="flex flex-col items-start md:items-center gap-3 mt-10">
-  <div className="flex items-center gap-3">
-    <div className="uppercase tracking-widest text-sm text-white/60">
-      Next Burn In
-    </div>
+      {/* Timer (left-aligned label + big segments) */}
+      <div className="flex flex-col md:flex-row md:items-end md:justify-start gap-3">
+        <div className="uppercase tracking-widest text-sm text-white/60">
+          Next Burn In
+        </div>
 
-    {/* Timer */}
-    <div className="flex gap-2 text-4xl md:text-5xl font-bold bg-black/30 px-4 py-2 rounded-2xl border border-white/10">
-      <span>06</span><span>:</span><span>28</span><span>:</span><span>48</span>
-    </div>
-  </div>
+        <div className="flex gap-2 text-4xl md:text-5xl font-bold bg-black/40 px-5 py-3 rounded-2xl border border-white/10 shadow-[0_0_25px_rgba(255,200,0,0.15)]">
+          <span>{segs ? segs.h : '--'}</span>
+          <span>:</span>
+          <span>{segs ? segs.m : '--'}</span>
+          <span>:</span>
+          <span>{segs ? segs.s : '--'}</span>
+        </div>
+      </div>
 
-  <p className="text-white/70 text-base md:text-lg">
-    Eligible buys must settle before this timer ends.
-  </p>
-</div>
+      <p className="text-white/70 text-base md:text-lg mt-3">
+        
+      </p>
     </div>
   );
 }
