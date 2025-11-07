@@ -1033,43 +1033,30 @@ export default function Page() {
     {Boolean(broadcast.params.get('ticker')) && (
       <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
     )}
-{/* Winner Reveal (URL-driven) */}
+{/* Winner Reveal (URL-driven, left side, unclaimed) */}
 {(() => {
-  const w = broadcast.params.get('winner'); // winner wallet from URL
+  const w = broadcast.params.get('winner');
   if (!w) return null;
 
-  // claim-until (ms or ISO) OR ?claim=seconds (fallback 300s)
-  const claimUntilParam = broadcast.params.get('claimUntil');
-  let claimUntil: number | null = null;
-
-  if (claimUntilParam) {
-    claimUntil = isFinite(Number(claimUntilParam))
-      ? Number(claimUntilParam)
-      : Date.parse(claimUntilParam);
-  } else {
-    const secs = Number(broadcast.params.get('claim') ?? '300');
-    claimUntil = Date.now() + (isFinite(secs) ? secs * 1000 : 300000);
-  }
-
+  // Optional custom message via ?wmsg=
   const msg = broadcast.params.get('wmsg') ?? undefined;
 
-  // 🆕 Positioning params (all optional)
-  const sideParam = (broadcast.params.get('wside') || 'right').toLowerCase() as 'left' | 'right';
-  const vposParam = (broadcast.params.get('wy') || 'top').toLowerCase() as 'top' | 'middle' | 'bottom';
+  // Optional overrides via URL:
+  const sideParam = ((broadcast.params.get('wside') as any) || 'left').toLowerCase() as 'left'|'right';
+  const vposParam = ((broadcast.params.get('wy') as any) || 'top').toLowerCase() as 'top'|'middle'|'bottom';
   const topPxRaw = broadcast.params.get('wtop');
   const topPx = topPxRaw && isFinite(Number(topPxRaw)) ? Number(topPxRaw) : undefined;
 
-  return Number.isFinite(claimUntil) ? (
+  return (
     <WinnerReveal
       wallet={w}
-      claimUntil={claimUntil as number}
       explorerBase={EXPLORER}
       message={msg}
       side={sideParam}
       vpos={vposParam}
       topOffsetPx={topPx}
     />
-  ) : null;
+  );
 })()}
   </>
 )}
