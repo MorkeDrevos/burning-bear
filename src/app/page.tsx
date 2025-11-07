@@ -5,27 +5,25 @@ import Link from 'next/link';
 
 import TreasuryLockCard from './components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
+import BonusBanner from './components/BonusBanner';
+import CampfireBonusBox from './components/CampfireBonusBox';
 
 import { useRouter } from 'next/navigation';
 
-// 🔥 Redirect #broadcast?... to overlay routes ONLY when mode=overlay
+// 🔥 Redirect #broadcast?... to correct overlay route
 function HashRedirect() {
   const router = useRouter();
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
     const h = window.location.hash || '';
     if (!h.startsWith('#broadcast')) return;
 
     const qs = h.includes('?') ? h.split('?')[1] : '';
     const params = new URLSearchParams(qs);
+    const hasLower = params.has('lower');
+    const dest = hasLower ? '/broadcast/lower' : '/broadcast/tease';
 
-    // 👇 New: only redirect when explicitly requested
-    const wantsOverlay = params.get('mode') === 'overlay';
-    if (!wantsOverlay) return; // stay on main page and show all overlays together
-
-    const dest = params.has('lower') ? '/broadcast/lower' : '/broadcast/tease';
     router.replace(`${dest}?${qs}`);
   }, [router]);
 
@@ -426,16 +424,6 @@ return (
             ))}
           </div>
 
-          <div className="relative w-full rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:py-7 md:mx-auto md:w-[90%]">
-
-{/* 🔥 Campfire Pill */}
-<CampfirePill
-  label="Campfire Reward"
-  amount="1,000,000 $BBURN"
-  note="Claim live within 5 min • rolls forward if unclaimed"
-  href="https://burningbear.camp/#how-it-works"
-/>
-
           {/* Panel */}
           <div className="relative w-full rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
             <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
@@ -474,26 +462,35 @@ return (
               </div>
 
               {/* Right: Powered by Solana */}
-<div
-  className="inline-flex items-center gap-2 text-amber-200 font-semibold sm:ml-auto select-none"
-  aria-label="Powered by the Solana blockchain"
->
-  <SolanaMark className="h-4 w-4 text-amber-200" />
-  <span>Powered by the Solana blockchain</span>
-</div>
+              <div
+                className="inline-flex items-center gap-2 text-amber-200 font-semibold sm:ml-auto select-none"
+                aria-label="Powered by the Solana blockchain"
+              >
+                <SolanaMark className="h-4 w-4 text-amber-200" />
+                <span>Powered by the Solana blockchain</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-</div>
-</div>
-</section>
+      {/* ===== Campfire Bonus (broadcast only) ===== */}
+{broadcast.on && Boolean(broadcast.params.get('reward')) && (
+  <section className="w-full px-4 sm:px-6 lg:px-8 mt-4">
+    <div className="mx-auto max-w-6xl">
+      <CampfireBonusBox />
+    </div>
+  </section>
+)}
 
-{/* Burn overlay */}
-<BurnMoment
-  show={showBurnMoment}
-  onDone={() => setShowBurnMoment(false)}
-  durationMs={4500}
-/>
+      {/* Burn overlay */}
+      <BurnMoment
+        show={showBurnMoment}
+        onDone={() => setShowBurnMoment(false)}
+        durationMs={4500}
+      />
 
-{/* ↓↓↓ Contract + Treasury strip ↓↓↓ */}
+      {/* ↓↓↓ Contract + Treasury strip ↓↓↓ */}
       <section className="bg-[#0d1411] border-t border-white/5 pt-8 pb-5">
         <div className="mx-auto flex flex-wrap items-center justify-center gap-5 text-[16px] md:text[17px] text-white/90 font-medium px-4 max-w-6xl">
           {/* $BBURN + CA + Copy */}
@@ -942,6 +939,11 @@ return (
   <>
     <LiveBug live={broadcast.live} liveInMs={broadcast.liveInMs} />
 
+    {/* BonusBanner only when we have a finite number */}
+    {Number.isFinite(nextBurnMs) && (
+      <BonusBanner msToBurn={nextBurnMs as number} />
+    )}
+
     {Boolean(broadcast.params.get('lower')) && (
       <LowerThird
         title={(broadcast.params.get('lower') ?? '').split('|')[0] || 'Live Campfire'}
@@ -1081,17 +1083,10 @@ function NowPlaying({ track, artist }: { track: string; artist?: string }) {
   );
 }
 
-function RewardPill(
-  { msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }
-) {
-  const soon =
-    Number.isFinite(msToBurn) && msToBurn >= 0 && msToBurn <= 5 * 60_000;
-
+function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }) {
+  const soon = isFinite(msToBurn) && msToBurn >= 0 && msToBurn <= 5 * 60_000;
   return (
-    <div
-      className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[82]"
-      style={{ top: `calc(var(--safe-top, 0px) + ${OVERLAY_TOP - 6}px)` }}
-    >
+    <div className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[82]" style={{ top: `calc(var(--safe-top, 0px) + ${OVERLAY_TOP - 6}px)` }}>
       <div
         className={[
           "rounded-full border backdrop-blur shadow-lg",
@@ -1100,39 +1095,9 @@ function RewardPill(
           soon ? "animate-[warmPulse_2.4s_ease-in-out_infinite]" : ""
         ].join(" ")}
       >
-        <span className="font-extrabold tracking-wide">
-          {potBBURN.toLocaleString()} $BBURN
-        </span>
-        <span className="ml-2 text-white/70 text-sm">• live bonus pool</span>
+        <span className="font-semibold">🔥🔥🔥 Campfire Reward:</span>{' '}
+        <span className="font-extrabold">{potBBURN.toLocaleString()} BBURN</span>
       </div>
-    </div>
-  );
-}
-
-function CampfirePill({
-  label,
-  amount,
-  note,
-  href,
-}: {
-  label: string;
-  amount: string;
-  note?: string;
-  href?: string;
-}) {
-  return (
-    <div className="mb-4 flex w-full justify-center">
-      <a
-        href={href ?? 'https://burningbear.camp/#how-it-works'}
-        className="inline-flex items-center gap-3 rounded-full border border-amber-400/25 bg-amber-500/10 px-5 py-2.5 text-amber-100 backdrop-blur shadow-[0_10px_25px_rgba(0,0,0,.35)] hover:bg-amber-500/15 transition"
-      >
-        <span role="img" aria-label="fire">🔥🔥🔥</span>
-        <span className="font-semibold">{label}:</span>
-        <span className="font-extrabold tracking-wide">{amount}</span>
-        {note ? (
-          <span className="ml-2 text-[13px] text-white/80 hidden sm:inline">{note}</span>
-        ) : null}
-      </a>
     </div>
   );
 }
