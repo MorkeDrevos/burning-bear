@@ -39,7 +39,7 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
       <div className="flex flex-wrap justify-between items-start mb-8">
         <div>
           <h2 className="text-3xl md:text-4xl font-extrabold flex items-center gap-3">
-            🔥🔥 Campfire Bonus — <span className="text-amber-400">Round 1</span>
+            🔥🔥 Campfire Bonus — <span className="text-amber-400">Round 2</span>
           </h2>
           <p className="text-lg md:text-xl text-white/70 mt-2 max-w-2xl leading-snug">
             Get your $BBURN before <span className="text-amber-300 font-semibold">the next burn</span>.
@@ -58,10 +58,10 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
           Jackpot
         </p>
         <h3 className="text-5xl md:text-6xl font-extrabold text-amber-300 drop-shadow-[0_2px_10px_rgba(255,200,0,0.25)] leading-tight">
-          WIN <span className="text-amber-200">1,000,000</span> <span className="text-amber-300">$BBURN</span>
+          WIN <span className="text-amber-200">2,000,000</span> <span className="text-amber-300">$BBURN</span>
         </h3>
         <p className="text-base md:text-lg text-white/60 mt-3 max-w-xl">
-          If unclaimed within 5 minutes, the prize rolls into the next round.
+          Claim by posting this wallet in chat or replying on X. If unclaimed within 5 minutes, the prize rolls into the next round. 
         </p>
       </div>
 
