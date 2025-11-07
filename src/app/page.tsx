@@ -5,7 +5,6 @@ import Link from 'next/link';
 
 import TreasuryLockCard from './components/TreasuryLockCard';
 import CopyButton from './components/CopyButton';
-import BonusBanner from './components/BonusBanner';
 import CampfireBonusBox from './components/CampfireBonusBox';
 
 import { useRouter } from 'next/navigation';
@@ -945,7 +944,6 @@ return (
 
     {/* BonusBanner only when we have a finite number */}
     {Number.isFinite(nextBurnMs) && (
-      {/* <BonusBanner msToBurn={nextBurnMs as number} /> */}
     )}
 
     {Boolean(broadcast.params.get('lower')) && (
