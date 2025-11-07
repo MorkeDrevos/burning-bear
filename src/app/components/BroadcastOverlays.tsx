@@ -13,7 +13,7 @@ import LiveBurnProgress from './LiveBurnProgress';
  * or ?broadcast=1&...
  *
  * Params:
- * - on=1 (optional with the hash versions)
+ * - on=1                     (optional with the hash versions)
  * - showSmoke=0/1
  * - showBug=0/1
  * - showTicker=0/1
@@ -21,11 +21,11 @@ import LiveBurnProgress from './LiveBurnProgress';
  * - title=..., subtitle=...  OR  lower=Title|Subtitle
  * - track=..., artist=...
  * - reward=<number>
- * - revealAt=<ISO or ms>  (alias: at)
- * - revealIn=<ms>         (alias: in)
- * - nextBurnMs=<ms>       (forces progress bar source)
+ * - revealAt=<ISO or ms>     (alias: at)
+ * - revealIn=<ms>            (alias: in)
+ * - nextBurnMs=<ms>          (forces progress bar source)
  * - smoke=light|medium|heavy (visual strength; default heavy)
- * - ticker=a;b;c          (custom ticker items)
+ * - ticker=a;b;c             (custom ticker items)
  */
 
 type Props = {
@@ -49,11 +49,16 @@ export default function BroadcastOverlays({ nextBurnMs }: Props) {
     const header = document.querySelector('header') as HTMLElement | null;
     const safeTop = (header?.getBoundingClientRect().height ?? 0) + 10;
 
-    const buyBtn = document.querySelector(
-      'a[aria-label="Buy $BBURN on Jupiter"]'
-    ) as HTMLElement | null;
-    const btnH = buyBtn?.getBoundingClientRect().height ?? 0;
-    const safeBottom = Math.min(btnH + 18, 88);
+    // prefer aria-label, fallback to any jup.ag link, default height if not found
+    let buyBtn =
+      document.querySelector('a[aria-label="Buy $BBURN on Jupiter"]') as
+        | HTMLElement
+        | null;
+    if (!buyBtn) {
+      buyBtn = document.querySelector('a[href*="jup.ag"]') as HTMLElement | null;
+    }
+    const btnH = buyBtn?.getBoundingClientRect().height ?? 64;
+    const safeBottom = Math.min(btnH + 18, 96);
 
     document.documentElement.style.setProperty('--safe-top', `${safeTop}px`);
     document.documentElement.style.setProperty('--safe-bottom', `${safeBottom}px`);
@@ -67,19 +72,26 @@ export default function BroadcastOverlays({ nextBurnMs }: Props) {
   // robust URL parsing for broadcast mode
   React.useEffect(() => {
     const parse = () => {
-      const hash = (window.location.hash || '').trim();      // "#broadcast?..." or "#/broadcast?..."
-      const search = (window.location.search || '').trim();  // "?broadcast=1&..."
+      const hash = (window.location.hash || '').trim(); // "#broadcast?..." or "#/broadcast?..."
+      const search = (window.location.search || '').trim(); // "?broadcast=1&..."
 
       const lower = hash.toLowerCase();
       const looksHash =
         lower.startsWith('#broadcast') || lower.startsWith('#/broadcast');
 
-      const fromHash = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
-      const fromSearch = new URLSearchParams(search.startsWith('?') ? search.slice(1) : '');
+      // prefer params from hash; otherwise use search
+      const fromHash = new URLSearchParams(
+        hash.includes('?') ? hash.split('?')[1] : '',
+      );
+      const fromSearch = new URLSearchParams(
+        search.startsWith('?') ? search.slice(1) : '',
+      );
       const params = fromHash.toString() ? fromHash : fromSearch;
 
-      const queryFlag = (fromSearch.get('broadcast') || '') === '1' || (fromSearch.get('on') || '') === '1';
-      const hashFlag  = (fromHash.get('on') || '') === '1';
+      const queryFlag =
+        (fromSearch.get('broadcast') || '') === '1' ||
+        (fromSearch.get('on') || '') === '1';
+      const hashFlag = (fromHash.get('on') || '') === '1';
 
       const isOn = looksHash || queryFlag || hashFlag;
 
@@ -102,10 +114,11 @@ export default function BroadcastOverlays({ nextBurnMs }: Props) {
     };
     window.addEventListener('resize', onResize);
 
+    // re-measure if header / buy button size changes
     const ro = new ResizeObserver(() => onResize());
     const header = document.querySelector('header') as HTMLElement | null;
     const buyBtn = document.querySelector(
-      'a[aria-label="Buy $BBURN on Jupiter"]'
+      'a[aria-label="Buy $BBURN on Jupiter"]',
     ) as HTMLElement | null;
     if (header) ro.observe(header);
     if (buyBtn) ro.observe(buyBtn);
@@ -135,34 +148,37 @@ export default function BroadcastOverlays({ nextBurnMs }: Props) {
   };
   const txt = (k: string) => qs.get(k) ?? undefined;
 
-  const showSmoke    = bool('showSmoke', true);
-  const showBug      = bool('showBug', true);
-  const showTicker   = bool('showTicker', true);
+  const showSmoke = bool('showSmoke', true);
+  const showBug = bool('showBug', true);
+  const showTicker = bool('showTicker', true);
   const showProgress = bool('showProgress', true);
 
   // titles: lower=Title|Subtitle overrides title/subtitle if present
   const lower = txt('lower');
-  const [lowerTitle, lowerSub] =
-    lower ? lower.split('|', 2) : [undefined, undefined];
+  const [lowerTitle, lowerSub] = lower ? lower.split('|', 2) : [undefined, undefined];
 
-  const title    = (lowerTitle ?? txt('title')) ?? 'The Burning Bear — LIVE';
-  const subtitle = (lowerSub   ?? txt('subtitle')) ?? 'Real burns. Real supply drop.';
+  const title = (lowerTitle ?? txt('title')) ?? 'The Burning Bear — LIVE';
+  const subtitle =
+    (lowerSub ?? txt('subtitle')) ?? 'Real burns. Real supply drop.';
 
-  const track  = txt('track');
+  const track = txt('track');
   const artist = txt('artist');
   const reward = num('reward') ?? 0;
 
   // allow forcing nextBurnMs via URL
   const nextBurnMsParam = num('nextBurnMs');
-  const effectiveNextBurnMs =
-    Number.isFinite(nextBurnMsParam) ? (nextBurnMsParam as number) : nextBurnMs;
+  const effectiveNextBurnMs = Number.isFinite(nextBurnMsParam)
+    ? (nextBurnMsParam as number)
+    : nextBurnMs;
 
   // reveal scheduling (LIVE gates)
   const atParam = txt('revealAt') ?? txt('at');
   const inParam = txt('revealIn') ?? txt('in');
   const revealAt =
     atParam != null
-      ? (isFinite(Number(atParam)) ? Number(atParam) : Date.parse(atParam))
+      ? isFinite(Number(atParam))
+        ? Number(atParam)
+        : Date.parse(atParam)
       : inParam != null
       ? now + Number(inParam)
       : undefined;
@@ -170,34 +186,42 @@ export default function BroadcastOverlays({ nextBurnMs }: Props) {
   const live = revealAt == null ? true : now >= revealAt;
   const liveInMs = revealAt != null ? Math.max(0, revealAt - now) : 0;
 
-  // smoke density (default heavy so it's clearly visible on stream)
+  // smoke density (default heavy so it's clearly visible)
   const smoke = ((txt('smoke') ?? 'heavy') as 'light' | 'medium' | 'heavy');
 
   // ticker (URL wins; else default)
   const urlTicker = txt('ticker');
   const tickerItems = React.useMemo(
     () =>
-      (urlTicker
-        ? urlTicker.split(';').map((s) => s.trim()).filter(Boolean)
+      urlTicker
+        ? urlTicker
+            .split(';')
+            .map((s) => s.trim())
+            .filter(Boolean)
         : [
             'Supply down — burns logged on-chain',
             'Follow @burningbearcamp on X',
             'Next scripted burn coming soon…',
-          ]),
+          ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [urlTicker]
+    [urlTicker],
   );
 
   return (
     <>
+      {/* LIVE bug / pre-live */}
       {showBug && <LiveBug live={live} liveInMs={liveInMs} />}
 
+      {/* Lower-third */}
       <LowerThird title={title} subtitle={subtitle} />
 
+      {/* Now playing */}
       {track && <NowPlaying track={track} artist={artist} />}
 
+      {/* Reward pill */}
       {reward > 0 && <RewardPill potBBURN={reward} />}
 
+      {/* Progress bar for next burn */}
       {showProgress &&
         typeof effectiveNextBurnMs === 'number' &&
         Number.isFinite(effectiveNextBurnMs) && (
@@ -209,19 +233,42 @@ export default function BroadcastOverlays({ nextBurnMs }: Props) {
               <LiveBurnProgress nextBurnMs={Math.max(0, effectiveNextBurnMs)} />
             </div>
           </div>
-      )}
+        )}
 
+      {/* News ticker */}
       {showTicker && <NewsTicker items={tickerItems} />}
 
+      {/* Smoke overlay */}
       {showSmoke && (
         <div className="pointer-events-none fixed inset-0 z-[70]">
           <SmokeOverlay
-            density={smoke}                     // light | medium | heavy
+            density={smoke} // light | medium | heavy
             area="full"
             plumes={smoke === 'heavy' ? 18 : smoke === 'medium' ? 14 : 10}
           />
         </div>
       )}
+
+      {/* Keyframes used by small utility classes (safe to include here) */}
+      <style jsx global>{`
+        @keyframes ticker {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        @keyframes blink {
+          0%, 100% { opacity: 0.2; }
+          50% { opacity: 1; }
+        }
+        @keyframes levels {
+          0% { transform: scaleY(0.4); }
+          50% { transform: scaleY(1); }
+          100% { transform: scaleY(0.4); }
+        }
+        @keyframes warmPulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.25); }
+          50% { box-shadow: 0 0 30px 0 rgba(251, 191, 36, 0.45); }
+        }
+      `}</style>
     </>
   );
 }
@@ -236,8 +283,9 @@ function LiveBug({ live, liveInMs }: { live: boolean; liveInMs: number }) {
     const h = Math.floor(t / 3600);
     const m = Math.floor((t % 3600) / 60);
     const s = t % 60;
-    return h > 0 ? `${h}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`
-                 : `${m}m ${s.toString().padStart(2, '0')}s`;
+    return h > 0
+      ? `${h}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`
+      : `${m}m ${s.toString().padStart(2, '0')}s`;
   };
 
   return (
@@ -245,9 +293,11 @@ function LiveBug({ live, liveInMs }: { live: boolean; liveInMs: number }) {
       className="pointer-events-none fixed left-4 z-[80]"
       style={{ top: `calc(var(--safe-top, 0px) + 10px)` }}
     >
-      <div className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 shadow-lg ${
-        live ? 'bg-red-600/90' : 'bg-amber-600/90'
-      }`}>
+      <div
+        className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 shadow-lg ${
+          live ? 'bg-red-600/90' : 'bg-amber-600/90'
+        }`}
+      >
         <span className="h-2.5 w-2.5 rounded-full bg-white animate-[blink_1.2s_infinite]" />
         <span className="text-xs font-extrabold tracking-widest text-white">
           {live ? 'LIVE' : 'LIVE IN'}
@@ -267,7 +317,9 @@ function LowerThird({ title, subtitle }: { title: string; subtitle?: string }) {
       style={{ bottom: `calc(var(--safe-bottom, 0px) + 56px)` }}
     >
       <div className="rounded-2xl border border-amber-400/25 bg-black/55 backdrop-blur-md px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
-        <div className="text-amber-200 font-extrabold text-lg leading-tight">{title}</div>
+        <div className="text-amber-200 font-extrabold text-lg leading-tight">
+          {title}
+        </div>
         {subtitle ? <div className="text-white/75 text-sm mt-0.5">{subtitle}</div> : null}
       </div>
     </div>
