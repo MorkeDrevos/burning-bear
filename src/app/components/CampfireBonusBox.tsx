@@ -59,21 +59,23 @@ export default function CampfireBonusBox() {
         </a>
       </div>
 
-      {/* Timer */}
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between">
-        <div className="uppercase tracking-widest text-sm text-white/60 mb-3 md:mb-0">
-          Next Burn In
-        </div>
+      {/* Timer Section */}
+<div className="flex flex-col items-start md:items-center gap-3 mt-10">
+  <div className="flex items-center gap-3">
+    <div className="uppercase tracking-widest text-sm text-white/60">
+      Next Burn In
+    </div>
 
-        <div className="flex gap-3 items-center">
-          <div className="flex gap-2 text-4xl md:text-5xl font-bold bg-black/30 px-4 py-2 rounded-2xl border border-white/10">
-            <span>06</span><span>:</span><span>28</span><span>:</span><span>48</span>
-          </div>
-          <p className="text-white/70 text-base md:text-lg">
-            
-          </p>
-        </div>
-      </div>
+    {/* Timer */}
+    <div className="flex gap-2 text-4xl md:text-5xl font-bold bg-black/30 px-4 py-2 rounded-2xl border border-white/10">
+      <span>06</span><span>:</span><span>28</span><span>:</span><span>48</span>
+    </div>
+  </div>
+
+  <p className="text-white/70 text-base md:text-lg">
+    Eligible buys must settle before this timer ends.
+  </p>
+</div>
     </div>
   );
 }
