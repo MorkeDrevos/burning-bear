@@ -3,7 +3,6 @@
 import React from 'react';
 
 export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }) {
-  // ── simple formatter for HH:MM:SS from ms (updates every second)
   const [ms, setMs] = React.useState<number | undefined>(nextBurnMs);
 
   React.useEffect(() => setMs(nextBurnMs), [nextBurnMs]);
@@ -30,20 +29,20 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
   }, [ms]);
 
   return (
-    <div
-      id="campfire-bonus"               // ✨ tag so overlays can measure/avoid it
-      aria-label="Campfire Bonus Card"  // (optional) helpful for accessibility/debugging
-      className="w-full rounded-2xl border border-white/10 bg-[#0f1f19]/80 backdrop-blur px-8 py-10 shadow-[0_10px_40px_rgba(0,0,0,0.45)] text-white"
-    >
-      {/* Title */}
+    <div className="w-full rounded-2xl border border-white/10 bg-[#0f1f19]/80 backdrop-blur px-8 py-10 shadow-[0_10px_40px_rgba(0,0,0,0.45)] text-white">
+      {/* Header */}
       <div className="flex flex-wrap justify-between items-start mb-8">
         <div>
           <h2 className="text-3xl md:text-4xl font-extrabold flex items-center gap-3">
             🔥🔥 Campfire Bonus — <span className="text-amber-400">Round 2</span>
+            <span className="ml-3 text-red-500 text-sm font-bold uppercase tracking-widest bg-red-500/10 border border-red-500/40 px-2 py-[2px] rounded-md">
+              LIVE NOW
+            </span>
           </h2>
           <p className="text-lg md:text-xl text-white/70 mt-2 max-w-2xl leading-snug">
-            Get your $BBURN before <span className="text-amber-300 font-semibold">the next burn</span>.
-            The winning wallet is revealed live on-stream.
+            Buy <span className="text-amber-300 font-semibold">$BBURN</span> before{' '}
+            <span className="text-amber-300 font-semibold">the next burn</span> to
+            automatically enter the draw. One wallet wins the Campfire Bonus each round!
           </p>
         </div>
 
@@ -58,10 +57,11 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
           Jackpot
         </p>
         <h3 className="text-5xl md:text-6xl font-extrabold text-amber-300 drop-shadow-[0_2px_10px_rgba(255,200,0,0.25)] leading-tight">
-          WIN <span className="text-amber-200">2,000,000</span> <span className="text-amber-300">$BBURN</span>
+          WIN <span className="text-amber-200">2,000,000</span>{' '}
+          <span className="text-amber-300">$BBURN</span>
         </h3>
-        <p className="text-base md:text-lg text-white/60 mt-3 max-w-xl">
-          Claim by posting this wallet in chat or replying on X. If unclaimed within 5 minutes, the prize rolls into the next round. 
+        <p className="text-base md:text-lg text-white/65 mt-3 max-w-xl">
+          💥 Every burn event crowns a winner. Unclaimed prizes roll over and grow the next jackpot!
         </p>
       </div>
 
@@ -73,7 +73,7 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
           rel="noopener noreferrer"
           className="px-6 py-3 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/20 rounded-xl text-xl font-semibold transition"
         >
-          🌕 Buy $BBURN to Join the Draw
+          🌕 Buy $BBURN to Enter the Draw
         </a>
         <a
           href="https://burningbear.camp/#broadcast"
@@ -98,7 +98,6 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
         <div className="uppercase tracking-widest text-sm text-white/60">
           Next Burn In
         </div>
-
         <div className="flex gap-2 text-4xl md:text-5xl font-bold bg-black/40 px-5 py-3 rounded-2xl border border-white/10 shadow-[0_0_25px_rgba(255,200,0,0.15)]">
           <span>{segs ? segs.h : '--'}</span>
           <span>:</span>
@@ -108,7 +107,7 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
         </div>
       </div>
 
-      <p className="text-white/70 text-base md:text-lg mt-3"></p>
+      <p className="text-white/70 text-base md:text-lg mt-3" />
     </div>
   );
 }
