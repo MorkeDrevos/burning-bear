@@ -427,6 +427,16 @@ return (
             ))}
           </div>
 
+          <div className="relative w-full rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:py-7 md:mx-auto md:w-[90%]">
+
+  {/* 🔥 Campfire Pill */}
+  <CampfirePill
+    label="Campfire Reward"
+    amount="1,000,000 $BBURN"
+    note="Claim live within 5 min • rolls forward if unclaimed"
+    href="https://burningbear.camp"
+  />
+
           {/* Panel */}
           <div className="relative w-full rounded-2xl bg-black/25 backdrop-blur-sm px-5 py-6 md:px-7 md:py-7 shadow-[0_0_40px_rgba(255,170,60,0.12)]">
             <h1 className="max-w-4xl text-5xl md:text-6xl font-extrabold leading-tight text-amber-50 drop-shadow-[0_0_12px_rgba(255,184,76,0.25)]">
@@ -1081,10 +1091,17 @@ function NowPlaying({ track, artist }: { track: string; artist?: string }) {
   );
 }
 
-function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }) {
-  const soon = isFinite(msToBurn) && msToBurn >= 0 && msToBurn <= 5 * 60_000;
+function RewardPill(
+  { msToBurn, potBBURN }: { msToBurn: number; potBBURN: number }
+) {
+  const soon =
+    Number.isFinite(msToBurn) && msToBurn >= 0 && msToBurn <= 5 * 60_000;
+
   return (
-    <div className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[82]" style={{ top: `calc(var(--safe-top, 0px) + ${OVERLAY_TOP - 6}px)` }}>
+    <div
+      className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[82]"
+      style={{ top: `calc(var(--safe-top, 0px) + ${OVERLAY_TOP - 6}px)` }}
+    >
       <div
         className={[
           "rounded-full border backdrop-blur shadow-lg",
@@ -1093,8 +1110,10 @@ function RewardPill({ msToBurn, potBBURN }: { msToBurn: number; potBBURN: number
           soon ? "animate-[warmPulse_2.4s_ease-in-out_infinite]" : ""
         ].join(" ")}
       >
-        <span className="font-semibold">🔥🔥🔥 Campfire Reward:</span>{' '}
-        <span className="font-extrabold">{potBBURN.toLocaleString()} BBURN</span>
+        <span className="font-extrabold tracking-wide">
+          {potBBURN.toLocaleString()} $BBURN
+        </span>
+        <span className="ml-2 text-white/70 text-sm">• live bonus pool</span>
       </div>
     </div>
   );
