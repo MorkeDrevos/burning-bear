@@ -8,12 +8,6 @@ import CopyButton from './components/CopyButton';
 import BonusBanner from './components/BonusBanner';
 import CampfireBonusBox from './components/CampfireBonusBox';
 
-// Overlays
-import LiveBug from '../overlay/LiveBug';
-import LowerThird from '../overlay/LowerThird';
-import NowPlaying from '../overlay/NowPlaying';
-import NewsTicker from '../overlay/NewsTicker';
-
 /* =========================
    Config
 ========================= */
@@ -1013,8 +1007,6 @@ export default function Page() {
       )}
 
   {/* --- Broadcast overlays (top-most) --- */}
-{broadcast.on && <LiveBug live={broadcast.live} liveInMs={broadcast.liveInMs} />}
-
 {broadcast.on && (
   <>
     <BonusBanner msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : (undefined as any)} />
@@ -1035,7 +1027,7 @@ export default function Page() {
 
     {Boolean(broadcast.params.get('ticker')) && (
       <div
-        className="w-full fixed left-0 bottom-0 z-[99] bg-black/30 backdrop-blur border-t border-white/10"
+        className="w-full fixed left-0 bottom-0 z-[86] bg-black/30 backdrop-blur border-t border-white/10"
         style={{
           maskImage:
             'linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%)',
