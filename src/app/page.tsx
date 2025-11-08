@@ -442,10 +442,11 @@ export default function Page() {
 
           {/* Countdowns */}
           <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <<NextTimer
-  label="Next burn in"
-  ms={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined}
-/>
+            <Countdown
+              label="Next burn in"
+              ms={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined}
+              variant="segments"
+            />
           </div>
 
           {/* Stats */}
@@ -1399,28 +1400,6 @@ function JupiterMark({ className = '' }: { className?: string }) {
       <path d="M9 12.5c4.8-1.4 9.2-1.4 14 0" stroke="#5b3a0a" strokeWidth="2" strokeLinecap="round" fill="none" opacity=".9" />
       <path d="M9 21.5c4.8 1.4 9.2 1.4 14 0" stroke="#5b3a0a" strokeWidth="2" strokeLinecap="round" fill="none" opacity=".9" />
     </svg>
-  );
-}
-
-function NextTimer({ label, ms }: { label: string; ms?: number }) {
-  const time = React.useMemo(() => {
-    if (!Number.isFinite(ms!)) return '—:—:—';
-    const total = Math.max(0, Math.floor((ms as number) / 1000));
-    const hh = String(Math.floor(total / 3600)).padStart(2, '0');
-    const mm = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
-    const ss = String(total % 60).padStart(2, '0');
-    return `${hh}:${mm}:${ss}`;
-  }, [ms]);
-
-  return (
-    <div className="flex items-center gap-3">
-      <span className="text-[14px] tracking-[0.15em] text-white/40 uppercase translate-y-[1px]">
-        {label}
-      </span>
-      <span className="rounded-xl bg-black/60 px-5 py-2 text-[38px] font-extrabold leading-none tracking-tight text-white shadow-[0_0_20px_rgba(0,0,0,0.45)]">
-        {time}
-      </span>
-    </div>
   );
 }
 
