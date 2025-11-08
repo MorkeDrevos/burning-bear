@@ -53,7 +53,7 @@ export default function BonusBanner({ msToBurn }: { msToBurn: number }) {
     >
       <div className="pointer-events-auto rounded-2xl border border-amber-400/25 bg-black/55 backdrop-blur-md px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
         <div className="text-amber-200 font-extrabold text-lg leading-tight">
-          Campfire Bonus • Round {state.round} • {state.reward.toLocaleString()} BBURN
+          Campfire Bonus •  {state.round} • {state.reward.toLocaleString()} BBURN
         </div>
         <div className="text-white/80 text-sm mt-0.5">{sub}</div>
         {isClaim && state.winner ? (
