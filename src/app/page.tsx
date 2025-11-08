@@ -1184,12 +1184,15 @@ function LowerThird({ title, subtitle }: { title: string; subtitle?: string }) {
 
 function NowPlaying({ track, artist }: { track: string; artist?: string }) {
   return (
-    <div className="pointer-events-none fixed right-4 z-[80]" style={{ top: `calc(var(--safe-top, 0px) + ${OVERLAY_TOP}px)` }}>
-      <div className="flex items-center gap-2 rounded-xl border border-white/12 bg-white/8 backdrop-blur px-3 py-1.5">
-        <span className="h-[10px] w-[10px] rounded-[2px] bg-amber-300 animate-[levels_1.6s_ease-in-out_infinite]" />
-        <div className="flex items-center gap-2 rounded-xl border border-amber-400/25 bg-black/60 backdrop-blur px-3 py-1.5">
-  Now Playing - 🐻 DJ Bear Live
-</div>
+    <div
+      className="pointer-events-none fixed right-4 z-[80]"
+      style={{ top: `calc(var(--safe-top, 0px) + ${OVERLAY_TOP}px)` }}
+    >
+      <div className="flex items-center gap-2 rounded-full border border-amber-400/25 bg-black/60 backdrop-blur px-3.5 py-2 shadow-[0_8px_30px_rgba(0,0,0,.35)]">
+        <span className="h-[10px] w-[10px] rounded-[3px] bg-amber-300 animate-pulse" />
+        <span className="text-[13px] text-white/70">Now Playing</span>
+        <span className="text-white/30">—</span>
+        <span className="text-[15px] font-semibold text-amber-200">🐻 DJ Bear Live</span>
       </div>
     </div>
   );
