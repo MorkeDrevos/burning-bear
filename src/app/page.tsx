@@ -8,7 +8,6 @@ import CopyButton from './components/CopyButton';
 import BonusBanner from './components/BonusBanner';
 import CampfireBonusBox from './components/CampfireBonusBox';
 import WinnerReveal from './components/WinnerReveal';
-import SystemStatusBadge from './components/SystemStatusBadge';
 
 /* =========================
    Config
@@ -316,6 +315,28 @@ export default function Page() {
 
   return (
     <main id="top">
+    {/* Live On Air badge — adjusted so it never hides behind header */}
+<a
+  href="https://pump.fun/coin/BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="
+    fixed left-[18px] z-[200]   /* ← above header (your header is ~z-[90]) */
+    flex items-center gap-2
+    bg-red-700/40 hover:bg-red-700/55
+    text-white/90 font-semibold text-[13px] tracking-wide
+    px-3.5 py-1.5 rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.25)]
+    backdrop-blur-sm transition-all duration-200
+    pointer-events-auto
+  "
+  style={{
+    // respects any safe-top / iOS notch; sits below your sticky header
+    top: 'calc(var(--safe-top, 0px) + 84px)',
+  }}
+>
+  <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
+  LIVE — On Air
+</a>
       {/* ===== Header ===== */}
       <header className="sticky top-0 z-[90] w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
@@ -1008,38 +1029,15 @@ export default function Page() {
         </a>
       )}
 
-  {/* --- Broadcast overlays (single top layer) --- */}
+  {/* --- Broadcast overlays (top-most) --- */}
 {broadcast.on && (
-  <div className="pointer-events-none fixed inset-0 z-[120]">
-    {/* Live pill (no duplicate red anchor) */}
+  <>
     <LiveBug live={broadcast.live} liveInMs={broadcast.liveInMs} />
 
-    {(() => {
-      const hasReward = !!broadcast.params.get('reward');
-      const hasWinner = !!broadcast.params.get('winner');
+    <BonusBanner
+      msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : (undefined as any)}
+    />
 
-      // Show BonusBanner only while there’s a reward and BEFORE winner reveal
-      if (hasReward && !hasWinner) {
-        return (
-          <BonusBanner
-            msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : (undefined as any)}
-          />
-        );
-      }
-
-      // Otherwise show compact status badge (burn/buyback/ok)
-      const status =
-        (Number.isFinite(nextBurnMs) && (nextBurnMs as number) < 60_000) ? 'burn' :
-        (Number.isFinite(nextBuybackMs) && (nextBuybackMs as number) < 60_000) ? 'buyback' :
-        hasReward ? 'bonus' : 'ok';
-
-      const roundParam = broadcast.params.get('round');
-      const round = roundParam && isFinite(Number(roundParam)) ? Number(roundParam) : 1;
-
-      return <SystemStatusBadge mode={status as any} round={round} />;
-    })()}
-
-    {/* Lower third (optional) */}
     {Boolean(broadcast.params.get('lower')) && (
       <LowerThird
         title={(broadcast.params.get('lower') || '').split('|')[0] || 'Live Campfire'}
@@ -1047,7 +1045,6 @@ export default function Page() {
       />
     )}
 
-    {/* Now Playing (optional) */}
     {Boolean(broadcast.params.get('now')) && (
       <NowPlaying
         track={(broadcast.params.get('now') || '').split('|')[0]}
@@ -1055,36 +1052,35 @@ export default function Page() {
       />
     )}
 
-    {/* News ticker (optional) */}
     {Boolean(broadcast.params.get('ticker')) && (
       <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
     )}
+{/* Winner Reveal (URL-driven, left side, unclaimed) */}
+{(() => {
+  const w = broadcast.params.get('winner');
+  if (!w) return null;
 
-    {/* Winner reveal (takes precedence visually) */}
-    {(() => {
-      const w = broadcast.params.get('winner');
-      if (!w) return null;
+  // Optional custom message via ?wmsg=
+  const msg = broadcast.params.get('wmsg') ?? undefined;
 
-      const msg = broadcast.params.get('wmsg') ?? undefined;
-      const side = ((broadcast.params.get('wside') ?? 'left') as string).toLowerCase() as 'left'|'right';
-      const vpos = ((broadcast.params.get('wy') ?? 'top') as string).toLowerCase() as 'top'|'middle'|'bottom';
-      const topPxRaw = broadcast.params.get('wtop');
-      const topOffsetPx = topPxRaw && isFinite(Number(topPxRaw)) ? Number(topPxRaw) : undefined;
+  // Optional overrides via URL:
+  const sideParam = ((broadcast.params.get('wside') as any) || 'left').toLowerCase() as 'left'|'right';
+  const vposParam = ((broadcast.params.get('wy') as any) || 'top').toLowerCase() as 'top'|'middle'|'bottom';
+  const topPxRaw = broadcast.params.get('wtop');
+  const topPx = topPxRaw && isFinite(Number(topPxRaw)) ? Number(topPxRaw) : undefined;
 
-      return (
-        <WinnerReveal
-          wallet={w}
-          message={msg}
-          side={side}
-          vpos={vpos}
-          topOffsetPx={topOffsetPx}
-        />
-      );
-    })()}
-  </div>
+  return (
+    <WinnerReveal
+  wallet={w}
+  message={msg}
+  side={sideParam}
+  vpos={vposParam}
+/>
+  );
+})()}
+  </>
 )}
-{/* 🔥 Status Beacon — bottom-left */}
-<SystemStatusBadge mode="ok" />
+
 </main>
 );
 } // end component
