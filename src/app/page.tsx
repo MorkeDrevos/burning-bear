@@ -315,29 +315,30 @@ export default function Page() {
 
   return (
     <main id="top">
-    {/* Live On Air badge — adjusted so it never hides behind header */}
-<a
-  href="https://pump.fun/coin/BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="
-    fixed left-[18px] z-[200]   /* ← above header (your header is ~z-[90]) */
-    flex items-center gap-2
-    bg-red-700/40 hover:bg-red-700/55
-    text-white/90 font-semibold text-[13px] tracking-wide
-    px-3.5 py-1.5 rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.25)]
-    backdrop-blur-sm transition-all duration-200
-    pointer-events-auto
-  "
-  style={{
-    // respects any safe-top / iOS notch; sits below your sticky header
-    top: 'calc(var(--safe-top, 0px) + 84px)',
-  }}
->
-  <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-  LIVE — On Air
-</a>
-      {/* ===== Header ===== */}
+  {/* 🔴 Live On Air badge — single version, links to Pump.fun */}
+  <a
+    href="https://pump.fun/coin/BXvBhz6Va2Ed8HnzMDChzHCTqKXLvJpGadfLhvK5pump"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="
+      fixed left-[18px] z-[200]   /* above header (header is ~z-[90]) */
+      flex items-center gap-2
+      bg-red-700/40 hover:bg-red-700/55
+      text-white/90 font-semibold text-[13px] tracking-wide
+      px-3.5 py-1.5 rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.25)]
+      backdrop-blur-sm transition-all duration-200
+      pointer-events-auto
+    "
+    style={{
+      // sits neatly below header and adapts for broadcast safe-top
+      top: 'calc(var(--safe-top, 0px) + 10px)',
+    }}
+  >
+    <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
+    LIVE — On Air
+  </a>
+
+  {/* ===== Header ===== */}
       <header className="sticky top-0 z-[90] w-full border-b border-white/10 bg-[#0d1a14]/90 backdrop-blur-md shadow-lg">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
           {/* Left: Logo + Title */}
