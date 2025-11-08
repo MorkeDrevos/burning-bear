@@ -443,10 +443,10 @@ export default function Page() {
           {/* Countdowns */}
           <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
             <Countdown
-              label="Next burn in"
-              ms={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined}
-              variant="segments"
-            />
+  label="Next burn in"
+  ms={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined}
+  variant="segments"
+/>
           </div>
 
           {/* Stats */}
