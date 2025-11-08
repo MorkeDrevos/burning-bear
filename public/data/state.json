@@ -6,12 +6,12 @@
     "buybackSol": 3.4678,
     "priceUsdPerSol": 165.8
   },
- "schedule": {
-  "burnIntervalMinutes": 720,
-  "buybackIntervalMinutes": 180,
-  "nextBurnAt": 1762380000000,
-  "nextBuybackAt": 1762380000000
-},
+  "schedule": {
+    "burnIntervalMinutes": 720,
+    "buybackIntervalMinutes": 180,
+    "nextBurnAt": 1762380000000,
+    "nextBuybackAt": 1762380000000
+  },
   "wallets": {
     "burn": "2nkSpJx9S7U13ujrSibYLpBHeBWbvRkHBF8bkqwS9xMS",
     "treasury": "FH2EathAXbSScfmb2Zn4FYVEbjLwGo7QoSNxvNxQZ5qE",
@@ -41,34 +41,208 @@
     "lastWinner": null
   },
   "burns": [
-    { "id": "tx_001", "amount": 1130587.564785, "sol": 0.160931, "timestamp": "2025-10-25T14:26:51Z", "tx": "https://solscan.io/tx/5YCJzXJwoztzubHZnkqqShanfDWBhjxWKWUQV3BxheQtwG6ki4H7G52XieyfG7kmYVcruGTRTHZMv67NMwEDpiC8" },
-    { "id": "tx_002", "amount": 665545, "sol": 0.06087629, "timestamp": "2025-10-25T14:20:00Z", "tx": "https://solscan.io/tx/5fBwMojnTAYsJK2s1ovCdLogYa1G2rjBtUTvLtFSYo4QFsej78q6HHYMC2yJgUZ61HiefXrBrLnHTcZJA2qeHipN" },
-    { "id": "tx_003", "amount": 628104, "sol": 0.029373, "timestamp": "2025-10-25T15:20:00Z", "tx": "https://solscan.io/tx/51VL4zwp9hh3uBSaXepneB6sQb6hrAKYDDzKaZfj31JTsh4Mf8Z4xAieTGFM5Dnxtf4swfKCtQkQxvdcAy1owQXq" },
-    { "id": "tx_004", "amount": 653405, "sol": 0.036448139, "timestamp": "2025-10-25T18:19:00Z", "tx": "https://solscan.io/tx/2CvmESyjAf6d5u2q7A2Uu9m7RCtDFzPkxqgVivruj4s7GmDA29f1j6s39AEi9cgnXC25i4AWVwPiyZ254WxFd1Zk" },
-    { "id": "tx_005", "amount": 506578.394837, "sol": 0.029208729, "timestamp": "2025-10-26T00:25:34Z", "tx": "https://solscan.io/tx/3UxQuxEpj7igJKvRHy3pVFeHCVUVHx9ha1U7dQS3wr8BQMVXPqfrUaJsjy1ymejATArtWw3UU7UxhoQYoYgSotEH" },
-    { "id": "tx_006", "amount": 331648, "sol": 0.029208729, "timestamp": "2025-10-26T00:25:34Z", "tx": "https://solscan.io/tx/gHZUWwWA7eUHLoZk7CwJt81WUYie6JN3Z5wkVJZZZBUbrLysqJaJhcseJ24dVGJpnBTFXtnGZ6DUyF8WJWPR9kb" },
-    { "id": "tx_007", "amount": 555020.7, "sol": 0.037693523, "timestamp": "2025-10-26T16:31:21Z", "tx": "https://solscan.io/tx/gHZUWwWA7eUHLoZk7CwJt81WUYie6JN3Z5wkVJZZZBUbrLysqJaJhcseJ24dVGJpnBTFXtnGZ6DUyF8WJWPR9kb" },
-    { "id": "tx_008", "amount": 306283.647645, "sol": 0.026654197, "timestamp": "2025-10-26T23:42:36Z", "tx": "https://solscan.io/tx/2RjgiqA9pvyw7QYodLfZHVrZZKBVUU4xuVNDoK5BwxYsHV6sv8BLSSJQswsbivxQxpkkmbCZuzjnyxNTRWNMKx4q" },
-    { "id": "tx_009", "amount": 416324, "sol": 0.036263193, "timestamp": "2025-10-27T07:11:26Z", "tx": "https://solscan.io/tx/2pf6eEBK2AvGrUqduSwho9uH5NEZ9pxwaqbXcLGofVKf3tMU8brMEfKc38kGwtBmofJw6Xk5zCNjXxF1rRTKuU29" },
-    { "id": "tx_010", "amount": 304658.5487, "sol": 0.030242913, "timestamp": "2025-10-27T14:16:20Z", "tx": "https://solscan.io/tx/3TMWRG7QvZEcxcwzvGfAiFAXun8fVpCwdddzRWn4Ee6hoAD27GwXa22TEcP1UvcCR4z8RZeen8APAUbyc5VCQMJR" },
-    { "id": "tx_011", "amount": 252654.55, "sol": 0.022521037, "timestamp": "2025-10-27T22:07:05Z", "tx": "https://solscan.io/tx/4KMsDNwf6z17wjcHhLuLE9NFgYiTmMWZzX8YDqrFwF7xTXyWXs3go9dyWq9X5z8Y5s1LCkGyV2qd2b7WS1ktE4Jb" },
-    { "id": "tx_012", "amount": 301897.45, "sol": 0.030943883, "timestamp": "2025-10-28T05:47:34Z", "tx": "https://solscan.io/tx/zQWwf56MfskDWRqGK1paZT4xd4L54p6dm62owGt7mnPJBXPaY5eAfaF1xFMriuF11SkvL3bSABwoMhy6QKJZJgy" },
-    { "id": "tx_013", "amount": 201987.45, "sol": 0.021072448, "timestamp": "2025-10-28T12:44:35Z", "tx": "https://solscan.io/tx/485ngXEiPJJ4WfWBJWeDDXJ1KYbQ2MpXTCaK8YZAUQik4otchmfz4ZMdGxxpVNkzuSoUPMqSgBnztqag4k1YSTUm" },
-    { "id": "tx_014", "amount": 204493.54, "sol": 0.022296586, "timestamp": "2025-10-28T20:01:28Z", "tx": "https://solscan.io/tx/Cz89eBWzfLyXNyrX6K7tdTwmaKP9y72yY614oPosGqwt3zuUT7a6edRxyM1mUMnikh1EybtEc8hFVXo89gxqqx3" },
-    { "id": "tx_015", "amount": 213741.57, "sol": 0.020738695, "timestamp": "2025-10-29T07:33:16Z", "tx": "https://solscan.io/tx/2Lg6uLnrAbPdhTMZNKiLK6FVLymkaDvGLzcPw47TZJGcdhvmqxxExdFQ3fQpe3Ddz7KAoJRNzA8Em4bWbNRcL5qr" },
-    { "id": "tx_016", "amount": 228974.48, "sol": 0.021722588, "timestamp": "2025-10-29T14:40:41Z", "tx": "https://solscan.io/tx/4Gwdq2tpGWCmc4dRha1FZqP11FaqLCfBuZcBwhvPJjqXyHBHc4mhsH14sCBbuZ9iSJGPQM7kzG9aAygfztbLxJZX" },
-    { "id": "tx_017", "amount": 351886.48, "sol": 0.027807639, "timestamp": "2025-10-29T22:52:23Z", "tx": "https://solscan.io/tx/57QkjEg7e1GXjLJabJTso55RZ9JwbuSS4pfi67AmeNa43AwUWF13Aay65cKowYxmTpnbS2zGid4YXvuQ7e5NpkjJ" },
-    { "id": "tx_018", "amount": 201987.69, "sol": 0.015739786, "timestamp": "2025-10-30T07:17:50Z", "tx": "https://solscan.io/tx/3SeXy1aaxCyUpmsSMBDtWVSik6CqZf2fyaik85yimDem51VvVN9S4NTeGGTXtCYZKSe8NUtNW2eq2BtsLdcdKWeh" },
-    { "id": "tx_019", "amount": 612715.73, "sol": 0.046720204, "timestamp": "2025-10-30T23:00:47Z", "tx": "https://solscan.io/tx/5uviAFg6jR3qrvE3ecXXk9EYtQYCNWnQCvJFBsRXAN3gW8wfm9nfFHT39qrtwwcAcZhUYwQNDvtKhMh3ZakMxK3H" },
-    { "id": "tx_020", "amount": 302775.58, "sol": 0.046720204, "timestamp": "2025-10-31T08:05:37Z", "tx": "https://solscan.io/tx/5gDL9bhaoe1XELZNdSwxGeAvz6QrH57Zv2pg6UXJQJC1zRb4F9oqfBkNA1QJQx9pfdbeye9dyHpPW5osDUVcYT1S" },
-    { "id": "tx_021", "amount": 204987.54, "sol": 0.015976187, "timestamp": "2025-10-31T08:05:37Z", "tx": "https://solscan.io/tx/3kKjePWH1BwrwCZdo8R6z7QZ6bTyVpPaRJH2CTD6g5j5mzKmZbuMfCqBCAFdpBSL5bRUgTLVYggkaS2L3ot9sn9q" },
-    { "id": "tx_022", "amount": 203634.68, "sol": 0.015514111, "timestamp": "2025-11-01T15:20:02Z", "tx": "https://solscan.io/tx/3GV5QVcrrh96BgfkgVBVQVCWBD5DS3nroihW1VrXc7tmRhHmyPK9LKzFbdshXneQTQTtHiHPppJCn8CDS4WQLaes" },
-    { "id": "tx_023", "amount": 203634.68, "sol": 0.015706015, "timestamp": "2025-11-02T14:56:12Z", "tx": "https://solscan.io/tx/4QAacu1AWEzZvmeUDFymENqSMNQXoWKUrfQg74vmmcn6jymGtbBo7XUPKKTNg8BHMaz8MASgxyfCeXQEkCTr7rjS" },
-    { "id": "tx_024", "amount": 201879.56, "sol": 0.014291381, "timestamp": "2025-11-02T22:46:22Z", "tx": "https://solscan.io/tx/4h5bXMWv6oV3HhHkEkvm7Eepm1nqmpR1r5xCqE33ufK52A87YutB9AfszCBDqDRo3UTZQkzPtARqhiYLnLjSwt2i" },
-    { "id": "tx_025", "amount": 248478.54, "sol": 0.015663154, "timestamp": "2025-11-03T06:07:06Z", "tx": "https://solscan.io/tx/4mEBfZQDeVALppqp8kNxEnaVxdbiaojom9Gq2Adac86J2LLNYXpv6VTz3kT5KLwVZ45umqkp1pejsoUwn7HmwCQH" },
-    { "id": "tx_026", "amount": 221336.82, "sol": 0.015701612, "timestamp": "2025-11-03T15:18:21Z", "tx": "https://solscan.io/tx/R4LB8wDXuAV7kJYCTo5gbCKSBBUQyTgyYgBAeoaBx7fRzpdRwNRvGFc1nMhG5PsMzSduqM3SuSGN19zyLLEVXTP" },
-    { "id": "tx_027", "amount": 178857.79, "sol": 0.012074601, "timestamp": "2025-11-04T15:04:13Z", "tx": "https://solscan.io/tx/3RKzZynLEpPBEWx6h1mRZeS8Cj1TMTrFG9GmiMWDjxEABsYYjaYNWEJ3ZnmSUvMU5rKDbwebi6QqVbLNVoa5AxC4" },
-    { "id": "tx_028", "amount": 101987.55, "sol": 0.006798565, "timestamp": "2025-11-04T22:28:24Z", "tx": "https://solscan.io/tx/5xevxsKwLmVdqHvQ9CrcXnkwQVAnT5tNu6m1kuCCWsV2fRs51pbdx291zx6vb7Bay5tJAVB6TM1uFzmaDoFPqgGE" },
-    { "id": "tx_029", "amount": 208012.44, "sol": 0.015375782, "timestamp": "2025-11-05T14:44:35Z", "tx": "https://solscan.io/tx/BK98qGR9GSsLC8e7hZ37TqK2584SMvGxNvTwZCk1SsW2M5LZzkp1r4Rq5TGPN9WDDy58gJdZKBZJDMyhwTMRvSg" }
+    {
+      "id": "tx_001",
+      "timestamp": "2025-10-25T14:26:51Z",
+      "amount": 1130587.564785,
+      "sol": 0.160931,
+      "tx": "https://solscan.io/tx/5YCJzXJwoztzubHZnkqqShanfDWBhjxWKWUQV3BxheQtwG6ki4H7G52XieyfG7kmYVcruGTRTHZMv67NMwEDpiC8"
+    },
+    {
+      "id": "tx_002",
+      "timestamp": "2025-10-25T14:20:00Z",
+      "amount": 665545,
+      "sol": 0.06087629,
+      "tx": "https://solscan.io/tx/5fBwMojnTAYsJK2s1ovCdLogYa1G2rjBtUTvLtFSYo4QFsej78q6HHYMC2yJgUZ61HiefXrBrLnHTcZJA2qeHipN"
+    },
+    {
+      "id": "tx_003",
+      "timestamp": "2025-10-25T15:20:00Z",
+      "amount": 628104,
+      "sol": 0.029373,
+      "tx": "https://solscan.io/tx/51VL4zwp9hh3uBSaXepneB6sQb6hrAKYDDzKaZfj31JTsh4Mf8Z4xAieTGFM5Dnxtf4swfKCtQkQxvdcAy1owQXq"
+    },
+    {
+      "id": "tx_004",
+      "timestamp": "2025-10-25T18:19:00Z",
+      "amount": 653405,
+      "sol": 0.036448139,
+      "tx": "https://solscan.io/tx/2CvmESyjAf6d5u2q7A2Uu9m7RCtDFzPkxqgVivruj4s7GmDA29f1j6s39AEi9cgnXC25i4AWVwPiyZ254WxFd1Zk"
+    },
+    {
+      "id": "tx_005",
+      "timestamp": "2025-10-26T00:25:34Z",
+      "amount": 506578.394837,
+      "sol": 0.029208729,
+      "tx": "https://solscan.io/tx/3UxQuxEpj7igJKvRHy3pVFeHCVUVHx9ha1U7dQS3wr8BQMVXPqfrUaJsjy1ymejATArtWw3UU7UxhoQYoYgSotEH"
+    },
+    {
+      "id": "tx_006",
+      "timestamp": "2025-10-26T00:25:34Z",
+      "amount": 331648,
+      "sol": 0.029208729,
+      "tx": "https://solscan.io/tx/gHZUWwWA7eUHLoZk7CwJt81WUYie6JN3Z5wkVJZZZBUbrLysqJaJhcseJ24dVGJpnBTFXtnGZ6DUyF8WJWPR9kb"
+    },
+    {
+      "id": "tx_007",
+      "timestamp": "2025-10-26T16:31:21Z",
+      "amount": 555020.7,
+      "sol": 0.037693523,
+      "tx": "https://solscan.io/tx/gHZUWwWA7eUHLoZk7CwJt81WUYie6JN3Z5wkVJZZZBUbrLysqJaJhcseJ24dVGJpnBTFXtnGZ6DUyF8WJWPR9kb"
+    },
+    {
+      "id": "tx_008",
+      "timestamp": "2025-10-26T23:42:36Z",
+      "amount": 306283.647645,
+      "sol": 0.026654197,
+      "tx": "https://solscan.io/tx/2RjgiqA9pvyw7QYodLfZHVrZZKBVUU4xuVNDoK5BwxYsHV6sv8BLSSJQswsbivxQxpkkmbCZuzjnyxNTRWNMKx4q"
+    },
+    {
+      "id": "tx_009",
+      "timestamp": "2025-10-27T07:11:26Z",
+      "amount": 416324,
+      "sol": 0.036263193,
+      "tx": "https://solscan.io/tx/2pf6eEBK2AvGrUqduSwho9uH5NEZ9pxwaqbXcLGofVKf3tMU8brMEfKc38kGwtBmofJw6Xk5zCNjXxF1rRTKuU29"
+    },
+    {
+      "id": "tx_010",
+      "timestamp": "2025-10-27T14:16:20Z",
+      "amount": 304658.5487,
+      "sol": 0.030242913,
+      "tx": "https://solscan.io/tx/3TMWRG7QvZEcxcwzvGfAiFAXun8fVpCwdddzRWn4Ee6hoAD27GwXa22TEcP1UvcCR4z8RZeen8APAUbyc5VCQMJR"
+    },
+    {
+      "id": "tx_011",
+      "timestamp": "2025-10-27T22:07:05Z",
+      "amount": 252654.55,
+      "sol": 0.022521037,
+      "tx": "https://solscan.io/tx/4KMsDNwf6z17wjcHhLuLE9NFgYiTmMWZzX8YDqrFwF7xTXyWXs3go9dyWq9X5z8Y5s1LCkGyV2qd2b7WS1ktE4Jb"
+    },
+    {
+      "id": "tx_012",
+      "timestamp": "2025-10-28T05:47:34Z",
+      "amount": 301897.45,
+      "sol": 0.030943883,
+      "tx": "https://solscan.io/tx/zQWwf56MfskDWRqGK1paZT4xd4L54p6dm62owGt7mnPJBXPaY5eAfaF1xFMriuF11SkvL3bSABwoMhy6QKJZJgy"
+    },
+    {
+      "id": "tx_013",
+      "timestamp": "2025-10-28T12:44:35Z",
+      "amount": 201987.45,
+      "sol": 0.021072448,
+      "tx": "https://solscan.io/tx/485ngXEiPJJ4WfWBJWeDDXJ1KYbQ2MpXTCaK8YZAUQik4otchmfz4ZMdGxxpVNkzuSoUPMqSgBnztqag4k1YSTUm"
+    },
+    {
+      "id": "tx_014",
+      "timestamp": "2025-10-28T20:01:28Z",
+      "amount": 204493.54,
+      "sol": 0.022296586,
+      "tx": "https://solscan.io/tx/Cz89eBWzfLyXNyrX6K7tdTwmaKP9y72yY614oPosGqwt3zuUT7a6edRxyM1mUMnikh1EybtEc8hFVXo89gxqqx3"
+    },
+    {
+      "id": "tx_015",
+      "timestamp": "2025-10-29T07:33:16Z",
+      "amount": 213741.57,
+      "sol": 0.020738695,
+      "tx": "https://solscan.io/tx/2Lg6uLnrAbPdhTMZNKiLK6FVLymkaDvGLzcPw47TZJGcdhvmqxxExdFQ3fQpe3Ddz7KAoJRNzA8Em4bWbNRcL5qr"
+    },
+    {
+      "id": "tx_016",
+      "timestamp": "2025-10-29T14:40:41Z",
+      "amount": 228974.48,
+      "sol": 0.021722588,
+      "tx": "https://solscan.io/tx/4Gwdq2tpGWCmc4dRha1FZqP11FaqLCfBuZcBwhvPJjqXyHBHc4mhsH14sCBbuZ9iSJGPQM7kzG9aAygfztbLxJZX"
+    },
+    {
+      "id": "tx_017",
+      "timestamp": "2025-10-29T22:52:23Z",
+      "amount": 351886.48,
+      "sol": 0.027807639,
+      "tx": "https://solscan.io/tx/57QkjEg7e1GXjLJabJTso55RZ9JwbuSS4pfi67AmeNa43AwUWF13Aay65cKowYxmTpnbS2zGid4YXvuQ7e5NpkjJ"
+    },
+    {
+      "id": "tx_018",
+      "timestamp": "2025-10-30T07:17:50Z",
+      "amount": 201987.69,
+      "sol": 0.015739786,
+      "tx": "https://solscan.io/tx/3SeXy1aaxCyUpmsSMBDtWVSik6CqZf2fyaik85yimDem51VvVN9S4NTeGGTXtCYZKSe8NUtNW2eq2BtsLdcdKWeh"
+    },
+    {
+      "id": "tx_019",
+      "timestamp": "2025-10-30T23:00:47Z",
+      "amount": 612715.73,
+      "sol": 0.046720204,
+      "tx": "https://solscan.io/tx/5uviAFg6jR3qrvE3ecXXk9EYtQYCNWnQCvJFBsRXAN3gW8wfm9nfFHT39qrtwwcAcZhUYwQNDvtKhMh3ZakMxK3H"
+    },
+    {
+      "id": "tx_020",
+      "timestamp": "2025-10-31T08:05:37Z",
+      "amount": 302775.58,
+      "sol": 0.046720204,
+      "tx": "https://solscan.io/tx/5gDL9bhaoe1XELZNdSwxGeAvz6QrH57Zv2pg6UXJQJC1zRb4F9oqfBkNA1QJQx9pfdbeye9dyHpPW5osDUVcYT1S"
+    },
+    {
+      "id": "tx_021",
+      "timestamp": "2025-10-31T08:05:37Z",
+      "amount": 204987.54,
+      "sol": 0.015976187,
+      "tx": "https://solscan.io/tx/3kKjePWH1BwrwCZdo8R6z7QZ6bTyVpPaRJH2CTD6g5j5mzKmZbuMfCqBCAFdpBSL5bRUgTLVYggkaS2L3ot9sn9q"
+    },
+    {
+      "id": "tx_022",
+      "timestamp": "2025-11-01T15:20:02Z",
+      "amount": 203634.68,
+      "sol": 0.015514111,
+      "tx": "https://solscan.io/tx/3GV5QVcrrh96BgfkgVBVQVCWBD5DS3nroihW1VrXc7tmRhHmyPK9LKzFbdshXneQTQTtHiHPppJCn8CDS4WQLaes"
+    },
+    {
+      "id": "tx_023",
+      "timestamp": "2025-11-02T14:56:12Z",
+      "amount": 203634.68,
+      "sol": 0.015706015,
+      "tx": "https://solscan.io/tx/4QAacu1AWEzZvmeUDFymENqSMNQXoWKUrfQg74vmmcn6jymGtbBo7XUPKKTNg8BHMaz8MASgxyfCeXQEkCTr7rjS"
+    },
+    {
+      "id": "tx_024",
+      "timestamp": "2025-11-02T22:46:22Z",
+      "amount": 201879.56,
+      "sol": 0.014291381,
+      "tx": "https://solscan.io/tx/4h5bXMWv6oV3HhHkEkvm7Eepm1nqmpR1r5xCqE33ufK52A87YutB9AfszCBDqDRo3UTZQkzPtARqhiYLnLjSwt2i"
+    },
+    {
+      "id": "tx_025",
+      "timestamp": "2025-11-03T06:07:06Z",
+      "amount": 248478.54,
+      "sol": 0.015663154,
+      "tx": "https://solscan.io/tx/4mEBfZQDeVALppqp8kNxEnaVxdbiaojom9Gq2Adac86J2LLNYXpv6VTz3kT5KLwVZ45umqkp1pejsoUwn7HmwCQH"
+    },
+    {
+      "id": "tx_026",
+      "timestamp": "2025-11-03T15:18:21Z",
+      "amount": 221336.82,
+      "sol": 0.015701612,
+      "tx": "https://solscan.io/tx/R4LB8wDXuAV7kJYCTo5gbCKSBBUQyTgyYgBAeoaBx7fRzpdRwNRvGFc1nMhG5PsMzSduqM3SuSGN19zyLLEVXTP"
+    },
+    {
+      "id": "tx_027",
+      "timestamp": "2025-11-04T15:04:13Z",
+      "amount": 178857.79,
+      "sol": 0.012074601,
+      "tx": "https://solscan.io/tx/3RKzZynLEpPBEWx6h1mRZeS8Cj1TMTrFG9GmiMWDjxEABsYYjaYNWEJ3ZnmSUvMU5rKDbwebi6QqVbLNVoa5AxC4"
+    },
+    {
+      "id": "tx_028",
+      "timestamp": "2025-11-04T22:28:24Z",
+      "amount": 101987.55,
+      "sol": 0.006798565,
+      "tx": "https://solscan.io/tx/5xevxsKwLmVdqHvQ9CrcXnkwQVAnT5tNu6m1kuCCWsV2fRs51pbdx291zx6vb7Bay5tJAVB6TM1uFzmaDoFPqgGE"
+    },
+    {
+      "id": "tx_030",
+      "timestamp": "2025-11-05T14:44:35Z",
+      "amount": 208012.44,
+      "sol": 0.015375782,
+      "tx": "https://solscan.io/tx/BK98qGR9GSsLC8e7hZ37TqK2584SMvGxNvTwZCk1SsW2M5LZzkp1r4Rq5TGPN9WDDy58gJdZKBZJDMyhwTMRvSg"
+    }
   ]
 }
