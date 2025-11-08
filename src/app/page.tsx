@@ -1032,7 +1032,6 @@ export default function Page() {
   {/* --- Broadcast overlays (top-most) --- */}
 {broadcast.on && (
   <>
-    <LiveBug live={broadcast.live} liveInMs={broadcast.liveInMs} />
 
     <BonusBanner
       msToBurn={Number.isFinite(nextBurnMs) ? nextBurnMs : (undefined as any)}
