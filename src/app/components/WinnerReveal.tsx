@@ -20,7 +20,6 @@ export default function WinnerReveal({
   vpos = 'top',
   topOffsetPx,
 }: Props) {
-  // Static vertical placement for broadcast
   const baseTop =
     typeof topOffsetPx === 'number'
       ? topOffsetPx
@@ -61,10 +60,7 @@ export default function WinnerReveal({
           {message ?? '🔥 Prize rolled over to the next round.'}
         </div>
 
-        {/* Optional decorative footer */}
-        <div className="mt-2 text-xs text-white/50 tracking-wide uppercase">
-          Campfire Bonus • Round 1
-        </div>
+        {/* Removed footer (Campfire Bonus • Round 1) */}
       </div>
     </div>
   );
