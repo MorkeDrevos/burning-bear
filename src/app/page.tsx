@@ -1187,10 +1187,9 @@ function NowPlaying({ track, artist }: { track: string; artist?: string }) {
     <div className="pointer-events-none fixed right-4 z-[80]" style={{ top: `calc(var(--safe-top, 0px) + ${OVERLAY_TOP}px)` }}>
       <div className="flex items-center gap-2 rounded-xl border border-white/12 bg-white/8 backdrop-blur px-3 py-1.5">
         <span className="h-[10px] w-[10px] rounded-[2px] bg-amber-300 animate-[levels_1.6s_ease-in-out_infinite]" />
-        <div className="text-[12px] text-white/85">
-          <span className="font-semibold text-amber-100">Now Playing:</span> {track}
-          {artist ? <span className="text-white/65"> — {artist}</span> : null}
-        </div>
+        <div className="flex items-center gap-2 rounded-xl border border-amber-400/25 bg-black/40 px-3 py-[6px] text-amber-200 text-[15px] font-semibold">
+  🐻 DJ Bear Live
+</div>
       </div>
     </div>
   );
