@@ -441,13 +441,14 @@ export default function Page() {
 </h1>
 
           {/* Countdowns */}
-          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <Countdown
-  label="Next burn in"
-  ms={Number.isFinite(nextBurnMs) ? nextBurnMs : undefined}
-  variant="segments"
-/>
-          </div>
+          <div className="flex items-center gap-3">
+  <span className="text-[14px] tracking-[0.15em] text-white/40 uppercase translate-y-[1px]">
+    {label}
+  </span>
+  <span className="rounded-xl bg-black/60 px-5 py-2 text-[38px] font-extrabold leading-none tracking-tight text-white shadow-[0_0_20px_rgba(0,0,0,0.45)]">
+    {time}
+  </span>
+</div>
 
           {/* Stats */}
           <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
