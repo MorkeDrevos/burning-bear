@@ -1030,7 +1030,7 @@ export default function Page() {
         </a>
       )}
 
-  {/* --- Broadcast overlays (top-most) --- */}
+{/* --- Broadcast overlays (top-most) --- */}
 {broadcast.on && (
   <>
     <LiveBug live={broadcast.live} liveInMs={broadcast.liveInMs} />
@@ -1056,50 +1056,51 @@ export default function Page() {
     {Boolean(broadcast.params.get('ticker')) && (
       <NewsTicker items={(broadcast.params.get('ticker') || '').split(';')} />
     )}
-{/* Winner Reveal (URL-driven, left side, unclaimed) */}
-{(() => {
-  const w = broadcast.params.get('winner');
-  if (!w) return null;
 
-  // Optional custom message via ?wmsg=
-  const msg = broadcast.params.get('wmsg') ?? undefined;
+    {/* Winner Reveal (URL-driven) */}
+    {(() => {
+      const w = broadcast.params.get('winner');
+      if (!w) return null;
 
-  // Optional overrides via URL:
-  const sideParam = ((broadcast.params.get('wside') as any) || 'left').toLowerCase() as 'left'|'right';
-  const vposParam = ((broadcast.params.get('wy') as any) || 'top').toLowerCase() as 'top'|'middle'|'bottom';
-  const topPxRaw = broadcast.params.get('wtop');
-  const topPx = topPxRaw && isFinite(Number(topPxRaw)) ? Number(topPxRaw) : undefined;
+      const msg = broadcast.params.get('wmsg') ?? undefined;
 
-  return (
-    <WinnerReveal
-  wallet={w}
-  message={msg}
-  side={sideParam}
-  vpos={vposParam}
-/>
-  );
-})()}
+      const side = ((broadcast.params.get('wside') ?? 'left') as string)
+        .toLowerCase() as 'left' | 'right';
+
+      const vpos = ((broadcast.params.get('wy') ?? 'top') as string)
+        .toLowerCase() as 'top' | 'middle' | 'bottom';
+
+      const topPxRaw = broadcast.params.get('wtop');
+      const topOffsetPx =
+        topPxRaw && isFinite(Number(topPxRaw)) ? Number(topPxRaw) : undefined;
+
+      return (
+        <WinnerReveal
+          wallet={w}
+          message={msg}
+          side={side}
+          vpos={vpos}
+          topOffsetPx={topOffsetPx}
+        />
+      );
+    })()}
+
+    {/* System status badge (optional) */}
+    {(() => {
+      const status =
+        (Number.isFinite(nextBurnMs) && (nextBurnMs as number) < 60_000) ? 'burn' :
+        (Number.isFinite(nextBuybackMs) && (nextBuybackMs as number) < 60_000) ? 'buyback' :
+        (broadcast.on && !!broadcast.params.get('reward')) ? 'bonus' :
+        'ok';
+
+      const roundParam = broadcast.params.get('round');
+      const round = roundParam && isFinite(Number(roundParam)) ? Number(roundParam) : 1;
+
+      return <SystemStatusBadge mode={status as any} round={round} />;
+    })()}
   </>
-)}
+)}  
 
-  {/* 🔥 Dynamic System Status Badge */}
-  {(() => {
-    const status =
-      nextBurnMs < 60_000 ? 'burn' :
-      nextBuybackMs < 60_000 ? 'buyback' :
-      broadcast.on && broadcast.params.get('reward') ? 'bonus' :
-      'ok';
-
-    return (
-      <SystemStatusBadge
-        mode={status}
-        round={broadcast.params.get('round')
-          ? Number(broadcast.params.get('round'))
-          : 1}
-      />
-    );
-  })()}
-</main>
 </main>
 );
 } // end component
