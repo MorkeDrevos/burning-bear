@@ -57,7 +57,7 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
           Jackpot
         </p>
         <h3 className="text-5xl md:text-6xl font-extrabold text-amber-300 drop-shadow-[0_2px_10px_rgba(255,200,0,0.25)] leading-tight">
-          WIN <span className="text-amber-200">5,000,000</span>{' '}
+          WIN <span className="text-amber-200">6,000,000</span>{' '}
           <span className="text-amber-300">$BBURN</span>
         </h3>
         <p className="text-base md:text-lg text-white/65 mt-3 max-w-xl">
