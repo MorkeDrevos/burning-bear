@@ -1,9 +1,9 @@
 {
   "stats": {
     "initialSupply": 1000000000,
-    "burned": 10991999,
-    "currentSupply": 989008001,
-    "buybackSol": 3.4864,
+    "burned": 11193586.46,
+    "currentSupply": 988806413.54,
+    "buybackSol": 3.5001,
     "priceUsdPerSol": 165.8
   },
   "schedule": {
@@ -250,6 +250,13 @@
       "amount": 249115.15,
       "sol": 0.018634347,
       "tx": "https://solscan.io/tx/3PhDdSeUiRSHqt3hKDv7CR45KVd5kzmGBurGkJrr2iAnUd7K9EFvB4FpQDbeDSSGDSvkWNFTqDzvagMRojF5NCyB"
+    },
+    {
+      "id": "tx_031",
+      "timestamp": "2025-11-09T09:39:39Z",
+      "amount": 201587.45,
+      "sol": 0.013700561,
+      "tx": "https://solscan.io/tx/62NVMentZwp9oZmBhwFSfLpQAUzXY8j9TAK2d7Sbixq8m418pP2SkjMw83ZTMpzxE6au2Z2MSiAiqnK7XxD2bFwp"
     }
   ]
 }
