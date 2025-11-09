@@ -34,7 +34,7 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
       <div className="flex flex-wrap justify-between items-start mb-8">
         <div>
           <h2 className="text-3xl md:text-4xl font-extrabold flex items-center gap-3">
-            🔥🔥 Campfire Bonus — <span className="text-amber-400">Round 4</span>
+            🔥🔥 Campfire Bonus — <span className="text-amber-400">Round 5</span>
             <span className="ml-3 text-red-500 text-sm font-bold uppercase tracking-widest bg-red-500/10 border border-red-500/40 px-2 py-[2px] rounded-md">
               LIVE NOW
             </span>
