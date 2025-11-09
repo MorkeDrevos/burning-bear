@@ -34,7 +34,7 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
       <div className="flex flex-wrap justify-between items-start mb-8">
         <div>
           <h2 className="text-3xl md:text-4xl font-extrabold flex items-center gap-3">
-            🔥🔥 Campfire Bonus — <span className="text-amber-400">Round 3</span>
+            🔥🔥 Campfire Bonus — <span className="text-amber-400">Round 4</span>
             <span className="ml-3 text-red-500 text-sm font-bold uppercase tracking-widest bg-red-500/10 border border-red-500/40 px-2 py-[2px] rounded-md">
               LIVE NOW
             </span>
@@ -57,7 +57,7 @@ export default function CampfireBonusBox({ nextBurnMs }: { nextBurnMs?: number }
           Jackpot
         </p>
         <h3 className="text-5xl md:text-6xl font-extrabold text-amber-300 drop-shadow-[0_2px_10px_rgba(255,200,0,0.25)] leading-tight">
-          WIN <span className="text-amber-200">4,000,000</span>{' '}
+          WIN <span className="text-amber-200">5,000,000</span>{' '}
           <span className="text-amber-300">$BBURN</span>
         </h3>
         <p className="text-base md:text-lg text-white/65 mt-3 max-w-xl">
