@@ -12,11 +12,9 @@ type Props = {
   vpos?: 'top' | 'middle' | 'bottom';
   topOffsetPx?: number;
 
-  /** New: show the claim ticker when this reveal mounts */
+  /** Optional manual control */
   claimTicker?: boolean;
-  /** New: custom text for the ticker */
   tickerText?: string;
-  /** New: how long to keep ticker visible (ms). Default 5 min */
   tickerDurationMs?: number;
 };
 
@@ -26,7 +24,7 @@ export default function WinnerReveal({
   side = 'left',
   vpos = 'top',
   topOffsetPx,
-  claimTicker = true,
+  claimTicker,
   tickerText = '🔥 CLAIM WINDOW OPEN — if this is your wallet, drop it in chat NOW!',
   tickerDurationMs = 5 * 60 * 1000,
 }: Props) {
@@ -41,18 +39,22 @@ export default function WinnerReveal({
 
   const isLeft = side === 'left';
 
-  // ---- Claim Ticker visibility ----
-  const [showTicker, setShowTicker] = useState<boolean>(!!claimTicker);
+  // 👇 Detect ?claim=1 in URL
+  const [shouldShowTicker, setShouldShowTicker] = useState(false);
   useEffect(() => {
-    if (!claimTicker) return;
-    setShowTicker(true);
-    const t = window.setTimeout(() => setShowTicker(false), tickerDurationMs);
-    return () => window.clearTimeout(t);
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const claimParam = params.get('claim');
+    if (claimParam === '1' || claimTicker) {
+      setShouldShowTicker(true);
+      const t = setTimeout(() => setShouldShowTicker(false), tickerDurationMs);
+      return () => clearTimeout(t);
+    }
   }, [claimTicker, tickerDurationMs]);
 
   return (
     <>
-      {/* Winner toast */}
+      {/* Winner popup */}
       <div
         className={[
           'pointer-events-none fixed z-[88]',
@@ -62,7 +64,6 @@ export default function WinnerReveal({
         aria-live="polite"
       >
         <div className="w-full max-w-[340px] sm:max-w-[340px] rounded-2xl border border-amber-400/25 bg-black/60 backdrop-blur-md px-5 py-4 shadow-[0_20px_60px_rgba(0,0,0,.45)]">
-          {/* Header */}
           <div className="flex items-center gap-2 text-amber-200 font-extrabold text-lg leading-tight">
             <span className="text-[18px]">🏆</span>
             <span>Winner picked!</span>
@@ -71,20 +72,18 @@ export default function WinnerReveal({
             </span>
           </div>
 
-          {/* Static wallet display */}
           <div className="mt-2 flex items-center gap-2 text-[15px] text-white/90 font-mono">
             💡 <span>{truncateMiddle(wallet, 8, 8)}</span>
           </div>
 
-          {/* Message area */}
           <div className="mt-2 text-[15px] text-amber-200 font-semibold">
             {message ?? '🔥 Prize rolled over to the next round.'}
           </div>
         </div>
       </div>
 
-      {/* Claim ticker (bottom-center) */}
-      {showTicker && (
+      {/* Claim ticker */}
+      {shouldShowTicker && (
         <div
           className="fixed left-1/2 -translate-x-1/2 z-[99] pointer-events-none"
           style={{ bottom: 'calc(var(--safe-bottom, 0px) + 18px)' }}
